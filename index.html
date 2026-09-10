@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Aventura Educativa — Plataforma de videojuegos educativos para Inicial, Primaria y Secundaria">
+    <meta name="theme-color" content="#0a0e27">
+    <title>AVENTURA EDUCATIVA | Aprende Jugando</title>
+
+    <!-- Tipografías modernas: Fredoka (títulos) + Nunito (texto) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/styles.css">
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
+</head>
+<body>
+
+<!-- ============================================================
+     BOTÓN FLOTANTE: SONIDO
+     ============================================================ -->
+<button id="soundToggle" class="sound-toggle" aria-label="Activar o desactivar sonido" title="Sonido">
+    <span class="sound-icon sound-on">🔊</span>
+    <span class="sound-icon sound-off">🔇</span>
+</button>
+
+
+<!-- ============================================================
+     ENCABEZADO PRINCIPAL — FLOTANTE GLASSMORPHISM
+     ============================================================ -->
+<header class="site-header" id="siteHeader">
+    <div class="header-inner">
+
+        <a href="#hero" class="brand" aria-label="Ir al inicio">
+            <div class="brand-logo" aria-hidden="true">
+                <span class="brand-logo-glow"></span>
+                <span class="brand-logo-emoji">🎮</span>
+            </div>
+            <div class="brand-text">
+                <h1 class="brand-name">AVENTURA EDUCATIVA</h1>
+                <p class="brand-tagline">Aprende jugando, descubre y supera nuevos desafíos.</p>
+            </div>
+        </a>
+
+        <nav class="main-nav" aria-label="Navegación principal">
+            <span class="nav-indicator" aria-hidden="true"></span>
+            <a href="#hero"       class="nav-btn nav-inicio"     data-nav="hero">
+                <span class="nav-btn-ico">🏠</span>
+                <span class="nav-btn-txt">Inicio</span>
+            </a>
+            <a href="#inicial"    class="nav-btn nav-inicial"    data-nav="inicial">
+                <span class="nav-btn-ico">🐝</span>
+                <span class="nav-btn-txt">Inicial</span>
+            </a>
+            <a href="#primaria"   class="nav-btn nav-primaria"   data-nav="primaria">
+                <span class="nav-btn-ico">🚗</span>
+                <span class="nav-btn-txt">Primaria</span>
+            </a>
+            <a href="#secundaria" class="nav-btn nav-secundaria" data-nav="secundaria">
+                <span class="nav-btn-ico">🤖</span>
+                <span class="nav-btn-txt">Secundaria</span>
+            </a>
+        </nav>
+
+        <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú" aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+    <div class="scroll-progress" id="scrollProgress"></div>
+</header>
+
+
+<!-- ============================================================
+     HERO CINEMATOGRÁFICO
+     ============================================================ -->
+<section id="hero" class="hero">
+
+    <!-- CAPA 1: cielo con degradados y aurora -->
+    <div class="hero-bg" aria-hidden="true">
+        <div class="hero-aurora"></div>
+        <div class="star-field" id="starField"></div>
+
+        <!-- Nubes de fondo -->
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-2"></div>
+        <div class="cloud cloud-3"></div>
+
+        <!-- Iconos educativos flotantes -->
+        <div class="float-icon" style="--x: 6%;  --y: 22%; --d: 7s;  --s: 2.4rem;">📚</div>
+        <div class="float-icon" style="--x: 92%; --y: 18%; --d: 8s;  --s: 2.2rem;">✏️</div>
+        <div class="float-icon" style="--x: 12%; --y: 78%; --d: 6s;  --s: 2.6rem;">🎨</div>
+        <div class="float-icon" style="--x: 88%; --y: 74%; --d: 9s;  --s: 2.4rem;">🔢</div>
+        <div class="float-icon" style="--x: 50%; --y: 5%;  --d: 7.5s;--s: 2rem;">⭐</div>
+        <div class="float-icon" style="--x: 22%; --y: 40%; --d: 6.5s;--s: 1.9rem;">🧩</div>
+        <div class="float-icon" style="--x: 78%; --y: 42%; --d: 7.2s;--s: 2rem;">💡</div>
+    </div>
+
+    <!-- Contenido central -->
+    <div class="hero-content">
+
+        <div class="hero-badge">
+            <span class="badge-dot"></span>
+            <span class="badge-text">Plataforma de videojuegos educativos</span>
+            <span class="badge-dot"></span>
+        </div>
+
+        <h2 class="hero-title">
+            <span class="hero-title-line">AVENTURA</span>
+            <span class="hero-title-line hero-title-accent">EDUCATIVA</span>
+        </h2>
+
+        <p class="hero-subtitle">
+            <span class="sub-dot">•</span> Aprende <span class="sub-dot">•</span> Juega <span class="sub-dot">•</span> Descubre <span class="sub-dot">•</span>
+        </p>
+
+        <p class="hero-quote">
+            "El conocimiento también puede convertirse en aventura."
+        </p>
+
+        <button class="btn btn-hero" id="btnStart" data-target="#inicial">
+            <span class="btn-glow"></span>
+            <span class="btn-icon">🚀</span>
+            <span class="btn-label">COMENZAR AVENTURA</span>
+            <span class="btn-arrow">›</span>
+        </button>
+
+        <!-- Preview de los 3 robots / mundos -->
+        <div class="hero-worlds" aria-hidden="true">
+            <div class="world-preview wp-inicial" style="--delay: .5s;">
+                <div class="wp-orb">
+                    <div class="mini-robot mini-beebot">
+                        <div class="mini-antenna"><span></span></div>
+                        <div class="mini-face">
+                            <span class="mini-eye"></span>
+                            <span class="mini-eye"></span>
+                        </div>
+                    </div>
+                </div>
+                <span class="wp-label">INICIAL</span>
+            </div>
+
+            <div class="world-preview wp-primaria" style="--delay: .7s;">
+                <div class="wp-orb">
+                    <div class="mini-robot mini-rayet">
+                        <div class="mini-cabin">
+                            <span class="mini-eye"></span>
+                            <span class="mini-eye"></span>
+                        </div>
+                    </div>
+                </div>
+                <span class="wp-label">PRIMARIA</span>
+            </div>
+
+            <div class="world-preview wp-secundaria" style="--delay: .9s;">
+                <div class="wp-orb">
+                    <div class="mini-robot mini-ludio">
+                        <div class="mini-screen">
+                            <span class="mini-dot"></span>
+                            <span class="mini-dot"></span>
+                        </div>
+                    </div>
+                </div>
+                <span class="wp-label">SECUNDARIA</span>
+            </div>
+        </div>
+
+        <div class="scroll-hint" aria-hidden="true">
+            <span class="scroll-txt">Desliza para explorar</span>
+            <div class="scroll-mouse"><span class="scroll-wheel"></span></div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ============================================================
+     TRANSICIÓN 1: Jardín → Ciudad
+     ============================================================ -->
+<div class="transition transition-1" aria-hidden="true">
+    <div class="t1-sky"></div>
+    <div class="t1-mountains-far"></div>
+    <div class="t1-mountains-near"></div>
+    <div class="t1-hills"></div>
+    <div class="t1-houses"></div>
+    <div class="t1-road"></div>
+</div>
+
+
+<!-- ============================================================
+     MUNDO 1 — INICIAL (BEEBOT)
+     ============================================================ -->
+<section id="inicial" class="world world-inicial">
+
+    <!-- ESCENARIO EN CAPAS -->
+    <div class="world-bg garden-bg" aria-hidden="true">
+
+        <!-- CAPA 1: Cielo + Sol -->
+        <div class="layer layer-sky">
+            <div class="sun">
+                <span class="sun-rays"></span>
+            </div>
+            <div class="cloud cloud-a"></div>
+            <div class="cloud cloud-b"></div>
+            <div class="cloud cloud-c"></div>
+        </div>
+
+        <!-- CAPA 2: Montañas lejanas -->
+        <div class="layer layer-mountains">
+            <div class="mountains-far"></div>
+            <div class="mountains-near"></div>
+        </div>
+
+        <!-- CAPA 3: Árboles y vegetación -->
+        <div class="layer layer-trees">
+            <div class="tree tree-1"></div>
+            <div class="tree tree-2"></div>
+            <div class="tree tree-3"></div>
+            <div class="bush bush-1"></div>
+            <div class="bush bush-2"></div>
+        </div>
+
+        <!-- CAPA 4: Flores, mariposas, abejas -->
+        <div class="layer layer-deco">
+            <div class="flower flower-1">🌷</div>
+            <div class="flower flower-2">🌻</div>
+            <div class="flower flower-3">🌼</div>
+            <div class="flower flower-4">🌸</div>
+            <div class="flower flower-5">🌺</div>
+            <div class="flower flower-6">🌷</div>
+            <div class="butterfly bf-1">🦋</div>
+            <div class="butterfly bf-2">🦋</div>
+            <div class="butterfly bf-3">🦋</div>
+            <div class="bee bee-1">🐝</div>
+            <div class="bee bee-2">🐝</div>
+        </div>
+
+        <!-- CAPA 5: Camino y césped -->
+        <div class="layer layer-ground">
+            <div class="grass-strip"></div>
+            <div class="garden-path"></div>
+        </div>
+    </div>
+
+    <!-- CONTENIDO -->
+    <div class="world-content">
+
+        <!-- ESCENARIO DEL ROBOT -->
+        <div class="robot-stage reveal-child" data-reveal="1">
+            <div class="robot-platform platform-garden"></div>
+            <div class="robot-display" data-robot="beebot">
+                <div class="robot beebot" aria-label="Robot BeeBot de Inicial">
+                    <div class="bee-glow"></div>
+                    <div class="bee-antennas">
+                        <span class="antenna"><span class="antenna-tip"></span></span>
+                        <span class="antenna"><span class="antenna-tip"></span></span>
+                    </div>
+                    <div class="bee-head">
+                        <div class="bee-eyes">
+                            <span class="eye"><span class="pupil"></span></span>
+                            <span class="eye"><span class="pupil"></span></span>
+                        </div>
+                        <div class="bee-cheeks">
+                            <span></span><span></span>
+                        </div>
+                        <div class="bee-smile"></div>
+                    </div>
+                    <div class="bee-body">
+                        <div class="bee-stripes"></div>
+                        <div class="bee-wings">
+                            <span class="wing wing-left"></span>
+                            <span class="wing wing-right"></span>
+                        </div>
+                    </div>
+                    <div class="bee-shadow"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TARJETA HUD -->
+        <article class="world-card card-inicial reveal-child" data-reveal="2">
+            <div class="card-hud">
+                <span class="hud-dot"></span>
+                <span class="hud-line"></span>
+                <span class="hud-level">NIVEL 01</span>
+            </div>
+
+            <div class="card-level">
+                <span class="level-icon">🐝</span>
+                <span class="level-text">INICIAL</span>
+            </div>
+
+            <h3 class="card-title">
+                <span class="card-title-main">AVENTURAS CON</span>
+                <span class="card-title-accent">BEEBOT</span>
+            </h3>
+
+            <p class="card-desc">
+                Descubre, juega y aprende mientras ayudas a BeeBot a superar
+                diferentes desafíos.
+            </p>
+
+            <ul class="tag-list">
+                <li class="tag"><span class="tag-ico">🧠</span> Lógica</li>
+                <li class="tag"><span class="tag-ico">🧭</span> Orientación</li>
+                <li class="tag"><span class="tag-ico">🔢</span> Números</li>
+                <li class="tag"><span class="tag-ico">🎨</span> Colores</li>
+            </ul>
+
+            <a href="inicial.html" class="btn btn-world btn-inicial" data-sound="enter">
+                <span class="btn-glow"></span>
+                <span class="btn-icon">🎮</span>
+                <span class="btn-label">JUGAR AHORA</span>
+                <span class="btn-arrow">›</span>
+            </a>
+
+            <div class="card-stats">
+                <div class="stat"><span class="stat-num">12</span><span class="stat-lbl">Retos</span></div>
+                <div class="stat-sep"></div>
+                <div class="stat"><span class="stat-num">4</span><span class="stat-lbl">Categorías</span></div>
+                <div class="stat-sep"></div>
+                <div class="stat"><span class="stat-num">∞</span><span class="stat-lbl">Diversión</span></div>
+            </div>
+        </article>
+    </div>
+</section>
+
+
+<!-- ============================================================
+     TRANSICIÓN 2: Ciudad → Digital
+     ============================================================ -->
+<div class="transition transition-2" aria-hidden="true">
+    <div class="t2-sky"></div>
+    <div class="t2-skyline-back"></div>
+    <div class="t2-skyline-mid"></div>
+    <div class="t2-skyline-front"></div>
+    <div class="t2-lights"></div>
+    <div class="t2-digital"></div>
+</div>
+
+
+<!-- ============================================================
+     MUNDO 2 — PRIMARIA (RAYET)
+     ============================================================ -->
+<section id="primaria" class="world world-primaria">
+
+    <div class="world-bg city-bg" aria-hidden="true">
+
+        <!-- CAPA 1: Cielo urbano -->
+        <div class="layer layer-sky">
+            <div class="city-sun"></div>
+            <div class="cloud cloud-a"></div>
+            <div class="cloud cloud-b"></div>
+        </div>
+
+        <!-- CAPA 2: Skyline lejano -->
+        <div class="layer layer-mountains">
+            <div class="city-skyline-back"></div>
+        </div>
+
+        <!-- CAPA 3: Edificios cercanos -->
+        <div class="layer layer-trees">
+            <div class="city-skyline-front"></div>
+            <div class="road-sign sign-1">🚸</div>
+            <div class="road-sign sign-2">⬆️</div>
+            <div class="traffic-light tl-1">
+                <span class="tl-red"></span>
+                <span class="tl-yellow"></span>
+                <span class="tl-green"></span>
+            </div>
+        </div>
+
+        <!-- CAPA 4: Árboles y peatones -->
+        <div class="layer layer-deco">
+            <div class="urban-tree ut-1"></div>
+            <div class="urban-tree ut-2"></div>
+            <div class="urban-tree ut-3"></div>
+        </div>
+
+        <!-- CAPA 5: Carretera -->
+        <div class="layer layer-ground">
+            <div class="sidewalk"></div>
+            <div class="road">
+                <div class="road-lines"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="world-content">
+
+        <div class="robot-stage reveal-child" data-reveal="1">
+            <div class="robot-platform platform-road"></div>
+            <div class="robot-display" data-robot="rayet">
+                <div class="robot rayet" aria-label="Robot Rayet de Primaria">
+                    <div class="rayet-glow"></div>
+                    <div class="rayet-antenna">
+                        <span class="rayet-antenna-ball"></span>
+                    </div>
+                    <div class="rayet-cabin">
+                        <div class="rayet-eyebrows">
+                            <span></span><span></span>
+                        </div>
+                        <div class="rayet-eyes">
+                            <span class="eye"><span class="pupil"></span></span>
+                            <span class="eye"><span class="pupil"></span></span>
+                        </div>
+                        <div class="rayet-smile"></div>
+                    </div>
+                    <div class="rayet-body">
+                        <div class="rayet-light rayet-light-left"></div>
+                        <div class="rayet-light rayet-light-right"></div>
+                        <div class="rayet-detail"></div>
+                        <div class="rayet-grille">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </div>
+                    <div class="rayet-wheels">
+                        <span class="wheel wheel-fl"></span>
+                        <span class="wheel wheel-fr"></span>
+                        <span class="wheel wheel-bl"></span>
+                        <span class="wheel wheel-br"></span>
+                    </div>
+                    <div class="rayet-shadow"></div>
+                </div>
+            </div>
+        </div>
+
+        <article class="world-card card-primaria reveal-child" data-reveal="2">
+            <div class="card-hud">
+                <span class="hud-dot"></span>
+                <span class="hud-line"></span>
+                <span class="hud-level">NIVEL 02</span>
+            </div>
+
+            <div class="card-level">
+                <span class="level-icon">🚗</span>
+                <span class="level-text">PRIMARIA</span>
+            </div>
+
+            <h3 class="card-title">
+                <span class="card-title-main">MISIÓN</span>
+                <span class="card-title-accent">RAYET</span>
+            </h3>
+
+            <p class="card-desc">
+                Supera misiones, resuelve problemas y desarrolla tu pensamiento lógico.
+            </p>
+
+            <ul class="tag-list">
+                <li class="tag"><span class="tag-ico">🧠</span> Lógica</li>
+                <li class="tag"><span class="tag-ico">🔢</span> Matemática</li>
+                <li class="tag"><span class="tag-ico">🧩</span> Problemas</li>
+                <li class="tag"><span class="tag-ico">💻</span> Algoritmos</li>
+            </ul>
+
+            <a href="primaria.html" class="btn btn-world btn-primaria" data-sound="enter">
+                <span class="btn-glow"></span>
+                <span class="btn-icon">🎮</span>
+                <span class="btn-label">JUGAR AHORA</span>
+                <span class="btn-arrow">›</span>
+            </a>
+
+            <div class="card-stats">
+                <div class="stat"><span class="stat-num">18</span><span class="stat-lbl">Misiones</span></div>
+                <div class="stat-sep"></div>
+                <div class="stat"><span class="stat-num">6</span><span class="stat-lbl">Categorías</span></div>
+                <div class="stat-sep"></div>
+                <div class="stat"><span class="stat-num">⭐</span><span class="stat-lbl">Logros</span></div>
+            </div>
+        </article>
+    </div>
+</section>
+
+
+<!-- ============================================================
+     TRANSICIÓN 3: Ciudad nocturna → Cyber
+     ============================================================ -->
+<div class="transition transition-3" aria-hidden="true">
+    <div class="t3-sky"></div>
+    <div class="t3-neon-city"></div>
+    <div class="t3-grid"></div>
+    <div class="t3-neon-lines"></div>
+</div>
+
+
+<!-- ============================================================
+     MUNDO 3 — SECUNDARIA (LUDIO)
+     ============================================================ -->
+<section id="secundaria" class="world world-secundaria">
+
+    <div class="world-bg cyber-bg" aria-hidden="true">
+
+        <!-- CAPA 1: Nebulosa -->
+        <div class="layer layer-sky">
+            <div class="cyber-nebula nebula-1"></div>
+            <div class="cyber-nebula nebula-2"></div>
+        </div>
+
+        <!-- CAPA 2: Grid cyber -->
+        <div class="layer layer-mountains">
+            <div class="cyber-grid"></div>
+        </div>
+
+        <!-- CAPA 3: Circuitos y hologramas -->
+        <div class="layer layer-trees">
+            <div class="circuit-lines"></div>
+            <div class="holo holo-1"></div>
+            <div class="holo holo-2"></div>
+            <div class="holo holo-3"></div>
+        </div>
+
+        <!-- CAPA 4: Paneles digitales y partículas -->
+        <div class="layer layer-deco">
+            <div class="particles" id="cyberParticles"></div>
+            <div class="data-panel panel-1">
+                <span class="panel-header">SYS.LOG</span>
+                <span>01001</span>
+                <span>11010</span>
+            </div>
+            <div class="data-panel panel-2">
+                <span class="panel-header">◆ LINK</span>
+                <span>10110</span>
+                <span>00111</span>
+            </div>
+        </div>
+
+        <!-- CAPA 5: Plataforma -->
+        <div class="layer layer-ground">
+            <div class="cyber-floor"></div>
+        </div>
+    </div>
+
+    <div class="world-content">
+
+        <div class="robot-stage reveal-child" data-reveal="1">
+            <div class="robot-platform platform-cyber"></div>
+            <div class="robot-display" data-robot="ludio">
+                <div class="robot ludio" aria-label="Robot Ludio de Secundaria">
+                    <div class="ludio-glow"></div>
+                    <div class="ludio-antenna">
+                        <span class="ludio-pulse"></span>
+                    </div>
+                    <div class="ludio-head">
+                        <div class="ludio-screen">
+                            <div class="ludio-eyes">
+                                <span class="digit-eye">◉</span>
+                                <span class="digit-eye">◉</span>
+                            </div>
+                            <div class="ludio-scan"></div>
+                        </div>
+                        <div class="ludio-head-ears">
+                            <span class="ear ear-l"></span>
+                            <span class="ear ear-r"></span>
+                        </div>
+                    </div>
+                    <div class="ludio-body">
+                        <div class="ludio-core">
+                            <span class="core-ring"></span>
+                        </div>
+                        <div class="ludio-lines"></div>
+                    </div>
+                    <div class="ludio-arms">
+                        <span class="arm arm-left"></span>
+                        <span class="arm arm-right"></span>
+                    </div>
+                    <div class="ludio-shadow"></div>
+                </div>
+            </div>
+        </div>
+
+        <article class="world-card card-secundaria reveal-child" data-reveal="2">
+            <div class="card-hud">
+                <span class="hud-dot"></span>
+                <span class="hud-line"></span>
+                <span class="hud-level">NIVEL 03</span>
+            </div>
+
+            <div class="card-level">
+                <span class="level-icon">🤖</span>
+                <span class="level-text">SECUNDARIA</span>
+            </div>
+
+            <h3 class="card-title">
+                <span class="card-title-main">DESAFÍOS CON</span>
+                <span class="card-title-accent">LUDIO</span>
+            </h3>
+
+            <p class="card-desc">
+                Desarrolla algoritmos, programación y lógica mediante desafíos interactivos.
+            </p>
+
+            <ul class="tag-list">
+                <li class="tag"><span class="tag-ico">💻</span> Programación</li>
+                <li class="tag"><span class="tag-ico">🧠</span> Lógica</li>
+                <li class="tag"><span class="tag-ico">⚡</span> Algoritmos</li>
+                <li class="tag"><span class="tag-ico">🤖</span> Robótica</li>
+            </ul>
+
+            <a href="secundaria.html" class="btn btn-world btn-secundaria" data-sound="enter">
+                <span class="btn-glow"></span>
+                <span class="btn-icon">🎮</span>
+                <span class="btn-label">JUGAR AHORA</span>
+                <span class="btn-arrow">›</span>
+            </a>
+
+            <div class="card-stats">
+                <div class="stat"><span class="stat-num">24</span><span class="stat-lbl">Desafíos</span></div>
+                <div class="stat-sep"></div>
+                <div class="stat"><span class="stat-num">8</span><span class="stat-lbl">Módulos</span></div>
+                <div class="stat-sep"></div>
+                <div class="stat"><span class="stat-num">🏆</span><span class="stat-lbl">Rangos</span></div>
+            </div>
+        </article>
+    </div>
+</section>
+
+
+<!-- ============================================================
+     PIE DE PÁGINA
+     ============================================================ -->
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-brand">
+            <span class="footer-brand-ico">🎮</span>
+            <span class="footer-brand-txt">AVENTURA EDUCATIVA</span>
+        </div>
+        <p class="footer-msg">Aprende jugando, descubre y supera nuevos desafíos.</p>
+        <div class="footer-levels">
+            <span>🐝 Inicial</span>
+            <span class="footer-dot">•</span>
+            <span>🚗 Primaria</span>
+            <span class="footer-dot">•</span>
+            <span>🤖 Secundaria</span>
+        </div>
+        <p class="footer-copy">© <span id="year"></span> Aventura Educativa — Plataforma de videojuegos educativos.</p>
+    </div>
+</footer>
+
+
+<script src="js/main.js"></script>
+
+</body>
+</html>
