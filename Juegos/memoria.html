@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>¡Memoria de Abejita! 🐝</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --p1-main: #3498db;
+            --p1-dark: #2980b9;
+            --grid-bg: #8d6e63;
+        }
+
+        body {
+            font-family: 'Fredoka', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 10px;
+            min-height: 100vh;
+            touch-action: none; /* Evita que la pantalla haga scroll al arrastrar */
+            color: #333;
+            background-color: transparent; 
+        }
+
+        /* PAISAJE DE FONDO */
+        .decorations {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -1;
+            pointer-events: none; 
+            overflow: hidden;
+            background: linear-gradient(180deg, #74ebd5 0%, #ACB6E5 100%);
+        }
+
+        .decorations::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='104' viewBox='0 0 60 104' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 52l15-26 15 26v52l-15 26-15-26zM0 0l15 26v52L0 104V0zm60 0v104L45 78V26z' fill='%23ffffff' fill-opacity='0.15' fill-rule='evenodd'/%3E%3C/svg%3E");
+            z-index: 1;
+        }
+
+        .sun {
+            position: absolute;
+            top: 3%; right: 5%;
+            font-size: 80px;
+            z-index: 2;
+            filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.8));
+            animation: pulse-sun 3s infinite alternate;
+        }
+
+        @keyframes pulse-sun {
+            0% { transform: scale(1) rotate(0deg); }
+            100% { transform: scale(1.1) rotate(10deg); }
+        }
+
+        .grass {
+            position: absolute;
+            bottom: -5vh; left: -10vw;
+            width: 120vw; height: 30vh;
+            background: #a9dfbf;
+            border-radius: 50% 50% 0 0;
+            z-index: 2;
+            box-shadow: inset 0 15px 0 #82e0aa, 0 -30px 50px rgba(46,204,113,0.3);
+        }
+
+        /* UI y Títulos */
+        h1 {
+            color: #2c3e50;
+            margin: 5px 0 10px 0;
+            text-align: center;
+            font-size: 32px;
+            text-shadow: 2px 2px 0px #fff;
+            z-index: 10;
+        }
+
+        .prompt-box {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 12px 20px;
+            border-radius: 15px;
+            font-size: 20px;
+            font-weight: 600;
+            max-width: 600px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 4px solid #ffb74d;
+            color: #d35400;
+            z-index: 10;
+        }
+
+        #timer {
+            font-size: 30px;
+            font-weight: 900;
+            color: #e74c3c;
+            display: inline-block;
+            margin-left: 10px;
+            text-shadow: 1px 1px 0px #fff;
+        }
+
+        /* GRID GIGANTE Y CENTRAL */
+        .grid-wrapper {
+            position: relative;
+            margin-bottom: 25px;
+            padding: 15px;
+            background: #ffe0b2;
+            border-radius: 20px;
+            box-shadow: 0 10px 0 #ffb74d, 0 15px 30px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+
+        #grid {
+            display: grid;
+            /* Las celdas crecerán hasta 110px en PC, y se encogerán en móviles, manteniéndose gigantes */
+            grid-template-columns: repeat(5, clamp(60px, 17vw, 110px));
+            grid-template-rows: repeat(2, clamp(60px, 17vw, 110px));
+            gap: 10px;
+            background-color: var(--grid-bg);
+            border-radius: 15px;
+            padding: 10px;
+        }
+
+        .cell {
+            background-color: #fff9c4;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            user-select: none;
+            box-shadow: inset 0 -6px 0 rgba(0,0,0,0.1);
+            font-size: clamp(35px, 9vw, 65px); /* Emojis gigantes */
+            transition: all 0.2s;
+        }
+        
+        /* Celdas Ocultas (Con Signo de Interrogación) */
+        .cell.hidden {
+            background-color: #e0e0e0;
+            color: #9e9e9e;
+            font-size: clamp(25px, 6vw, 40px);
+            font-weight: 900;
+            box-shadow: inset 0 -6px 0 rgba(0,0,0,0.05), inset 0 0 20px rgba(0,0,0,0.05);
+        }
+        .cell.hidden::after { content: '?'; }
+
+        /* Feedback Visual GIGANTE */
+        .visited-correct {
+            background-color: #a9dfbf !important;
+            box-shadow: inset 0 0 25px #2ecc71 !important;
+            transform: scale(0.95);
+        }
+        .visited-correct::before {
+            content: '✔️';
+            position: absolute;
+            font-size: 24px;
+            top: -10px; left: -10px;
+            animation: popIn 0.3s ease-out;
+            z-index: 20;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .visited-wrong {
+            background-color: #f5b7b1 !important;
+            box-shadow: inset 0 0 25px #e74c3c !important;
+            animation: shake 0.4s;
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            50% { transform: translateX(6px); }
+            75% { transform: translateX(-6px); }
+            100% { transform: translateX(0); }
+        }
+
+        /* BANDEJA DE FICHAS (Para arrastrar) */
+        .tray-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 20px;
+            border: 4px dashed #3498db;
+            width: 95%;
+            max-width: 600px; /* Mucho más grande */
+            min-height: 120px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* FICHAS FÍSICAS (Tokens) */
+        .token {
+            width: clamp(60px, 17vw, 110px); 
+            height: clamp(60px, 17vw, 110px);
+            background: white;
+            border: 4px solid #3498db;
+            border-radius: 15px;
+            font-size: clamp(35px, 9vw, 65px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: grab;
+            box-shadow: 0 6px 0 #2980b9;
+            user-select: none;
+            touch-action: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease; 
+        }
+
+        /* ESTADO ARRASTRANDO (Flota sobre toda la pantalla) */
+        .token.dragging {
+            position: fixed !important; /* Desvincula la ficha de la caja */
+            pointer-events: none; /* Crucial: Permite que el código detecte qué hay debajo de la ficha */
+            z-index: 99999;
+            cursor: grabbing;
+            transform: scale(1.2) !important;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.4) !important;
+            transition: none; /* Sigue el dedo instantáneamente */
+            margin: 0 !important;
+        }
+
+        /* Ghost/Placeholder para que la caja no colapse cuando agarras una ficha */
+        .token-placeholder {
+            width: clamp(60px, 17vw, 110px); 
+            height: clamp(60px, 17vw, 110px);
+            background: rgba(0,0,0,0.05);
+            border: 4px dashed rgba(52, 152, 219, 0.3);
+            border-radius: 15px;
+        }
+
+        /* Botón de Inicio */
+        .global-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        button.global-btn {
+            padding: 15px 35px;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 800;
+            font-size: 22px;
+            color: white;
+            border-radius: 15px;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        button.global-btn:active { transform: translateY(6px); box-shadow: 0 0 0 transparent !important; }
+        button#start-btn { background-color: #ff9800; box-shadow: 0 8px 0 #f57c00; }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100000;
+            visibility: hidden;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .modal-overlay.active { visibility: visible; opacity: 1; }
+        .modal-box {
+            background: white;
+            padding: 30px;
+            border-radius: 25px;
+            text-align: center;
+            max-width: 80%;
+            transform: scale(0.7);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        }
+
+        .modal-overlay.active .modal-box { transform: scale(1); }
+        .modal-title { font-size: 32px; margin-bottom: 10px; color: #ff9800; }
+        .modal-msg { font-size: 20px; margin-bottom: 25px; color: #555; white-space: pre-line;}
+        .modal-btn { 
+            background: #4CAF50; border: none; font-family: 'Fredoka', sans-serif; font-weight: bold;
+            box-shadow: 0 6px 0 #388E3C; padding: 15px 30px; font-size: 20px; color: white; border-radius: 12px; cursor: pointer;
+        }
+        .modal-btn:active { transform: translateY(6px); box-shadow: none; }
+
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="decorations">
+        <div class="sun">☀️</div>
+        <div class="cloud c1">☁️</div>
+        <div class="cloud c2">☁️</div>
+        <div class="cloud c3">☁️</div>
+        <div class="grass"></div>
+    </div>
+
+    <h1>¡Memoria de Abejita! 🐝</h1>
+    
+    <div class="prompt-box" id="prompt-box">
+        Presiona "Empezar" para ver las figuras.
+    </div>
+
+    <div class="grid-wrapper">
+        <div id="grid"></div>
+    </div>
+
+    <!-- Bandeja interactiva para las fichas arrastrables -->
+    <div class="tray-container" id="tray" style="display: none;"></div>
+    
+    <div class="global-controls">
+        <button class="global-btn" onclick="startGame()" id="start-btn">▶️ ¡Empezar a Jugar!</button>
+    </div>
+
+    <div class="modal-overlay" id="modal">
+        <div class="modal-box">
+            <h2 class="modal-title" id="m-title">Título</h2>
+            <p class="modal-msg" id="m-msg">Mensaje</p>
+            <button class="modal-btn" onclick="closeModalAndReset()">¡Jugar de Nuevo!</button>
+        </div>
+    </div>
+
+    <script>
+        // Emojis grandes y bonitos
+        const emojiPool = ['🍎', '🍌', '🍉', '🍓', '🥑', '🥕', '🌽', '🍇', '🍒', '🥥', '🍍', '🥝', '🦋', '🐞', '🐢', '🐸', '🍄', '🌸', '🌞', '🐠'];
+        
+        let gridData = [];
+        let placedCount = 0;
+        let gameState = 'IDLE'; 
+
+        const gridEl = document.getElementById('grid');
+        const trayEl = document.getElementById('tray');
+        const startBtn = document.getElementById('start-btn');
+        const promptBox = document.getElementById('prompt-box');
+
+        // Variables del motor físico de Drag & Drop
+        let activeToken = null;
+        let placeholder = null; // Fantasma para ocupar el espacio en la bandeja
+        let shiftX = 0, shiftY = 0;
+
+        function initGrid() {
+            gridEl.innerHTML = '';
+            trayEl.innerHTML = '';
+            gridData = [];
+            placedCount = 0;
+            
+            let shuffledPool = [...emojiPool].sort(() => Math.random() - 0.5);
+            let selectedEmojis = shuffledPool.slice(0, 10);
+            
+            // Llenar cuadrícula Gigante (2x5)
+            for (let i = 0; i < 10; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.dataset.emoji = selectedEmojis[i];
+                cell.id = `cell-${i}`;
+                cell.innerText = selectedEmojis[i]; 
+                gridEl.appendChild(cell);
+                gridData.push(selectedEmojis[i]);
+            }
+
+            // Crear fichas físicas
+            let shuffledTokens = [...selectedEmojis].sort(() => Math.random() - 0.5);
+            shuffledTokens.forEach((emoji) => {
+                const token = document.createElement('div');
+                token.className = 'token';
+                token.innerText = emoji;
+                token.dataset.emoji = emoji;
+                
+                // Eventos universales
+                token.addEventListener('touchstart', dragStart, { passive: false });
+                token.addEventListener('mousedown', dragStart);
+
+                trayEl.appendChild(token);
+            });
+            
+            trayEl.style.display = 'none';
+        }
+
+        function startGame() {
+            if (gameState !== 'IDLE') return;
+            initGrid();
+            
+            gameState = 'MEMORIZE';
+            startBtn.style.display = 'none';
+            trayEl.style.display = 'none';
+            
+            let countdown = 5;
+            promptBox.innerHTML = `¡Memoriza las figuras! <span id="timer">${countdown}</span>`;
+            
+            const interval = setInterval(() => {
+                countdown--;
+                if (countdown > 0) {
+                    document.getElementById('timer').innerText = countdown;
+                } else {
+                    clearInterval(interval);
+                    startPlayingPhase();
+                }
+            }, 1000);
+        }
+
+        function startPlayingPhase() {
+            gameState = 'PLAYING';
+            promptBox.innerHTML = `¡Sostén y arrastra cada ficha a su lugar correcto!`;
+            
+            document.querySelectorAll('.cell').forEach(cell => {
+                cell.innerText = '';
+                cell.classList.add('hidden');
+            });
+
+            trayEl.style.display = 'flex';
+        }
+
+        /* ========================================================
+           NUEVO MOTOR DE FÍSICAS (Posicionamiento Absoluto Genuino)
+           ======================================================== */
+
+        function dragStart(e) {
+            if (gameState !== 'PLAYING') return;
+            
+            activeToken = e.target.closest('.token');
+            if (!activeToken) return;
+
+            // Prevenir scroll en móviles
+            if(e.cancelable) e.preventDefault(); 
+
+            let clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+            let clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+
+            // Calcula dónde agarraste la ficha exactamente para no centrarla forzosamente y que salte
+            let rect = activeToken.getBoundingClientRect();
+            shiftX = clientX - rect.left;
+            shiftY = clientY - rect.top;
+
+            // Crea un fantasma transparente para que las demás fichas no se muevan de golpe
+            placeholder = document.createElement('div');
+            placeholder.className = 'token-placeholder';
+            activeToken.parentNode.insertBefore(placeholder, activeToken);
+
+            // Desvincula la ficha de la caja y la ancla a la pantalla
+            activeToken.classList.add('dragging');
+            activeToken.style.left = rect.left + 'px';
+            activeToken.style.top = rect.top + 'px';
+            document.body.appendChild(activeToken); // La movemos al Body!
+        }
+
+        function drag(e) {
+            if (!activeToken) return;
+            if(e.cancelable) e.preventDefault(); 
+
+            let clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+            let clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+
+            // Actualiza la posición física real siguiendo el dedo
+            activeToken.style.left = (clientX - shiftX) + 'px';
+            activeToken.style.top = (clientY - shiftY) + 'px';
+        }
+
+        function dragEnd(e) {
+            if (!activeToken) return;
+
+            let clientX = e.type.includes('touch') ? e.changedTouches[0].clientX : e.clientX;
+            let clientY = e.type.includes('touch') ? e.changedTouches[0].clientY : e.clientY;
+
+            // Detecta la celda GIGANTE que está justo debajo de tu dedo
+            let elemBelow = document.elementFromPoint(clientX, clientY);
+            let cell = elemBelow ? elemBelow.closest('.cell') : null;
+
+            // Lógica de Validación
+            if (cell && !cell.classList.contains('filled')) {
+                if (cell.dataset.emoji === activeToken.dataset.emoji) {
+                    
+                    // ¡ACIERTO!
+                    cell.classList.remove('hidden');
+                    cell.classList.add('visited-correct', 'filled');
+                    cell.innerText = activeToken.dataset.emoji;
+                    
+                    // Destruye la ficha y el fantasma
+                    activeToken.remove(); 
+                    placeholder.remove();
+                    activeToken = null;
+                    placeholder = null;
+                    placedCount++;
+                    
+                    checkWin();
+                    return; 
+                } else {
+                    // ¡ERROR!
+                    cell.classList.add('visited-wrong');
+                    setTimeout(() => cell.classList.remove('visited-wrong'), 500);
+                }
+            }
+
+            // SI FALLA O LA SUELTA EN EL AIRE: Regresa a su lugar en la caja
+            placeholder.parentNode.insertBefore(activeToken, placeholder);
+            placeholder.remove(); // Quitamos el fantasma
+            placeholder = null;
+            
+            // Le quitamos los poderes de flotar
+            activeToken.classList.remove('dragging');
+            activeToken.style.left = '';
+            activeToken.style.top = '';
+            activeToken = null;
+        }
+
+        // Eventos universales anclados al Documento (evita perder la ficha si mueves muy rápido)
+        document.addEventListener('mousemove', drag, { passive: false });
+        document.addEventListener('touchmove', drag, { passive: false });
+        document.addEventListener('mouseup', dragEnd);
+        document.addEventListener('touchend', dragEnd);
+
+        /* ======================================================== */
+
+        function checkWin() {
+            if (placedCount === 10) {
+                setTimeout(() => {
+                    document.getElementById('m-title').innerText = "¡Súper Memoria! 🧠✨";
+                    document.getElementById('m-msg').innerText = "¡Recordaste el lugar exacto de todas las figuras gigantes!";
+                    document.getElementById('modal').classList.add('active');
+                    gameState = 'IDLE';
+                }, 300);
+            }
+        }
+
+        function closeModalAndReset() {
+            document.getElementById('modal').classList.remove('active');
+            startBtn.style.display = 'inline-block';
+            promptBox.innerHTML = `Presiona "Empezar" para ver las figuras.`;
+            initGrid(); 
+        }
+
+        // Renderizado Inicial
+        initGrid();
+
+    </script>
+</body>
+</html>
