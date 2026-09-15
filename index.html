@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="description" content="Aventura Educativa — Plataforma de videojuegos educativos para Inicial, Primaria y Secundaria">
+    <meta name="description" content="Aventura Educativa — Plataforma de videojuegos educativos para jugar con BeeBot, Rayet y Ludio">
     <meta name="theme-color" content="#0a0e27">
     <title>AVENTURA EDUCATIVA | Aprende Jugando</title>
 
@@ -39,9 +39,9 @@
 
 
 <!-- ============================================================
-     ENCABEZADO PRINCIPAL — FLOTANTE GLASSMORPHISM
+     ENCABEZADO PRINCIPAL — BARRA DESTACADA GLASSMORPHISM OSCURO
      ============================================================ -->
-<header class="site-header" id="siteHeader">
+<header class="site-header" id="siteHeader" role="banner">
     <div class="header-inner">
 
         <a href="#hero" class="brand" aria-label="Ir al inicio">
@@ -76,7 +76,7 @@
                 <span class="nav-btn-txt">Inicio</span>
             </a>
 
-            <a href="#inicial" class="nav-btn nav-inicial" data-nav="inicial">
+            <a href="#inicial" class="nav-btn nav-beebot nav-inicial" data-nav="inicial">
                 <span class="nav-btn-ico" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 22V12"/>
@@ -84,20 +84,20 @@
                         <path d="M12 12c0-4 3-7 8-7 0 5-3 7-8 7z"/>
                     </svg>
                 </span>
-                <span class="nav-btn-txt">Inicial</span>
+                <span class="nav-btn-txt">Juega con BeeBot</span>
             </a>
 
-            <a href="#primaria" class="nav-btn nav-primaria" data-nav="primaria">
+            <a href="#primaria" class="nav-btn nav-rayet nav-primaria" data-nav="primaria">
                 <span class="nav-btn-ico" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
                         <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
                     </svg>
                 </span>
-                <span class="nav-btn-txt">Primaria</span>
+                <span class="nav-btn-txt">Juega con Rayet</span>
             </a>
 
-            <a href="#secundaria" class="nav-btn nav-secundaria" data-nav="secundaria">
+            <a href="#secundaria" class="nav-btn nav-ludio nav-secundaria" data-nav="secundaria">
                 <span class="nav-btn-ico" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="4" y="4" width="16" height="16" rx="2"/>
@@ -105,7 +105,7 @@
                         <path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2"/>
                     </svg>
                 </span>
-                <span class="nav-btn-txt">Secundaria</span>
+                <span class="nav-btn-txt">Juega con Ludio</span>
             </a>
 
             <a href="#recursos" class="nav-btn nav-recursos" data-nav="recursos">
@@ -143,7 +143,7 @@
      ============================================================ -->
 <section id="hero" class="hero">
 
-    <!-- CAPA 1: cielo con degradados y aurora -->
+    <!-- CAPA DECORATIVA: cielo con aurora, estrellas, nubes e iconos -->
     <div class="hero-bg" aria-hidden="true">
         <div class="hero-aurora"></div>
         <div class="star-field" id="starField"></div>
@@ -236,27 +236,27 @@
             <span class="btn-arrow">›</span>
         </button>
 
-        <!-- Preview de los 3 robots / mundos -->
+        <!-- Preview de los 3 robots -->
         <div class="hero-worlds" aria-hidden="true">
             <div class="world-preview wp-inicial" style="--delay: .5s;">
                 <div class="wp-orb">
                     <img src="assets/robots/beebot.png" alt="" class="wp-robot-img">
                 </div>
-                <span class="wp-label">INICIAL</span>
+                <span class="wp-label">BEEBOT</span>
             </div>
 
             <div class="world-preview wp-primaria" style="--delay: .7s;">
                 <div class="wp-orb">
                     <img src="assets/robots/rayet.png" alt="" class="wp-robot-img">
                 </div>
-                <span class="wp-label">PRIMARIA</span>
+                <span class="wp-label">RAYET</span>
             </div>
 
             <div class="world-preview wp-secundaria" style="--delay: .9s;">
                 <div class="wp-orb">
                     <img src="assets/robots/ludio.png" alt="" class="wp-robot-img">
                 </div>
-                <span class="wp-label">SECUNDARIA</span>
+                <span class="wp-label">LUDIO</span>
             </div>
         </div>
 
@@ -269,7 +269,7 @@
 
 
 <!-- ============================================================
-     TRANSICIÓN 1: Jardín → Ciudad
+     TRANSICIÓN 1: Hero (noche) → Jardín BeeBot
      ============================================================ -->
 <div class="transition transition-1" aria-hidden="true">
     <div class="t1-sky"></div>
@@ -282,14 +282,16 @@
 
 
 <!-- ============================================================
-     MUNDO 1 — INICIAL (BEEBOT)
+     SECCIÓN 1 — JUEGA CON BEEBOT (#inicial)
      ============================================================ -->
 <section id="inicial" class="world world-inicial">
 
-    <!-- ESCENARIO EN CAPAS -->
+    <!-- ======================================================
+         ESCENARIO EN CAPAS (Jardín)
+         ====================================================== -->
     <div class="world-bg garden-bg" aria-hidden="true">
 
-        <!-- CAPA 1: Cielo + Sol -->
+        <!-- CAPA 1: Cielo — Sol con rayos + nubes -->
         <div class="layer layer-sky">
             <div class="sun">
                 <span class="sun-rays"></span>
@@ -299,13 +301,13 @@
             <div class="cloud cloud-c"></div>
         </div>
 
-        <!-- CAPA 2: Montañas lejanas -->
+        <!-- CAPA 2: Montañas lejanas y cercanas -->
         <div class="layer layer-mountains">
             <div class="mountains-far"></div>
             <div class="mountains-near"></div>
         </div>
 
-        <!-- CAPA 3: Árboles y vegetación -->
+        <!-- CAPA 3: Árboles y arbustos -->
         <div class="layer layer-trees">
             <div class="tree tree-1"></div>
             <div class="tree tree-2"></div>
@@ -314,7 +316,7 @@
             <div class="bush bush-2"></div>
         </div>
 
-        <!-- CAPA 4: Flores, mariposas, abejas -->
+        <!-- CAPA 4: Flores, mariposas y abejas -->
         <div class="layer layer-deco">
             <div class="flower flower-1"></div>
             <div class="flower flower-2"></div>
@@ -329,22 +331,24 @@
             <div class="bee bee-2"></div>
         </div>
 
-        <!-- CAPA 5: Camino y césped -->
+        <!-- CAPA 5: Césped y caminito -->
         <div class="layer layer-ground">
             <div class="grass-strip"></div>
             <div class="garden-path"></div>
         </div>
     </div>
 
-    <!-- CONTENIDO -->
+    <!-- ======================================================
+         CONTENIDO (Robot + Tarjeta HUD)
+         ====================================================== -->
     <div class="world-content">
 
         <!-- ESCENARIO DEL ROBOT -->
         <div class="robot-stage reveal-child" data-reveal="1">
             <div class="robot-portal portal-garden" aria-hidden="true"></div>
-            <div class="robot-platform platform-garden"></div>
+            <div class="robot-platform platform-garden" aria-hidden="true"></div>
             <div class="robot-display has-image" data-robot="beebot">
-                <img src="assets/robots/beebot.png" alt="BeeBot — Robot del mundo Inicial" class="robot-img">
+                <img src="assets/robots/beebot.png" alt="BeeBot — Robot explorador del jardín" class="robot-img">
             </div>
         </div>
 
@@ -364,7 +368,7 @@
                         <path d="M12 12c0-4 3-7 8-7 0 5-3 7-8 7z"/>
                     </svg>
                 </span>
-                <span class="level-text">INICIAL</span>
+                <span class="level-text">BEEBOT</span>
             </div>
 
             <h3 class="card-title">
@@ -426,7 +430,7 @@
                 <span class="btn-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
                 </span>
-                <span class="btn-label">JUGAR AHORA</span>
+                <span class="btn-label">JUGAR CON BEEBOT</span>
                 <span class="btn-arrow">›</span>
             </a>
 
@@ -443,7 +447,7 @@
 
 
 <!-- ============================================================
-     TRANSICIÓN 2: Ciudad → Digital
+     TRANSICIÓN 2: Jardín BeeBot → Ciudad Rayet
      ============================================================ -->
 <div class="transition transition-2" aria-hidden="true">
     <div class="t2-sky"></div>
@@ -456,13 +460,16 @@
 
 
 <!-- ============================================================
-     MUNDO 2 — PRIMARIA (RAYET)
+     SECCIÓN 2 — JUEGA CON RAYET (#primaria)
      ============================================================ -->
 <section id="primaria" class="world world-primaria">
 
+    <!-- ======================================================
+         ESCENARIO EN CAPAS (Ciudad)
+         ====================================================== -->
     <div class="world-bg city-bg" aria-hidden="true">
 
-        <!-- CAPA 1: Cielo urbano -->
+        <!-- CAPA 1: Cielo urbano — sol cálido + nubes -->
         <div class="layer layer-sky">
             <div class="city-sun"></div>
             <div class="cloud cloud-a"></div>
@@ -474,7 +481,7 @@
             <div class="city-skyline-back"></div>
         </div>
 
-        <!-- CAPA 3: Edificios cercanos -->
+        <!-- CAPA 3: Edificios cercanos + señales + semáforo -->
         <div class="layer layer-trees">
             <div class="city-skyline-front"></div>
             <div class="road-sign sign-1"></div>
@@ -486,14 +493,14 @@
             </div>
         </div>
 
-        <!-- CAPA 4: Árboles y peatones -->
+        <!-- CAPA 4: Árboles urbanos -->
         <div class="layer layer-deco">
             <div class="urban-tree ut-1"></div>
             <div class="urban-tree ut-2"></div>
             <div class="urban-tree ut-3"></div>
         </div>
 
-        <!-- CAPA 5: Carretera -->
+        <!-- CAPA 5: Acera + carretera con líneas -->
         <div class="layer layer-ground">
             <div class="sidewalk"></div>
             <div class="road">
@@ -502,13 +509,16 @@
         </div>
     </div>
 
+    <!-- ======================================================
+         CONTENIDO (Robot + Tarjeta HUD)
+         ====================================================== -->
     <div class="world-content">
 
         <div class="robot-stage reveal-child" data-reveal="1">
             <div class="robot-portal portal-road" aria-hidden="true"></div>
-            <div class="robot-platform platform-road"></div>
+            <div class="robot-platform platform-road" aria-hidden="true"></div>
             <div class="robot-display has-image" data-robot="rayet">
-                <img src="assets/robots/rayet.png" alt="Rayet — Robot del mundo Primaria" class="robot-img">
+                <img src="assets/robots/rayet.png" alt="Rayet — Robot urbano de misiones" class="robot-img">
             </div>
         </div>
 
@@ -526,7 +536,7 @@
                         <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
                     </svg>
                 </span>
-                <span class="level-text">PRIMARIA</span>
+                <span class="level-text">RAYET</span>
             </div>
 
             <h3 class="card-title">
@@ -583,7 +593,7 @@
                 <span class="btn-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
                 </span>
-                <span class="btn-label">JUGAR AHORA</span>
+                <span class="btn-label">JUGAR CON RAYET</span>
                 <span class="btn-arrow">›</span>
             </a>
 
@@ -600,7 +610,7 @@
 
 
 <!-- ============================================================
-     TRANSICIÓN 3: Ciudad nocturna → Cyber
+     TRANSICIÓN 3: Ciudad Rayet → Cyber Ludio
      ============================================================ -->
 <div class="transition transition-3" aria-hidden="true">
     <div class="t3-sky"></div>
@@ -611,24 +621,27 @@
 
 
 <!-- ============================================================
-     MUNDO 3 — SECUNDARIA (LUDIO)
+     SECCIÓN 3 — JUEGA CON LUDIO (#secundaria)
      ============================================================ -->
 <section id="secundaria" class="world world-secundaria">
 
+    <!-- ======================================================
+         ESCENARIO EN CAPAS (Cyber)
+         ====================================================== -->
     <div class="world-bg cyber-bg" aria-hidden="true">
 
-        <!-- CAPA 1: Nebulosa -->
+        <!-- CAPA 1: Nebulosas cian y violeta -->
         <div class="layer layer-sky">
             <div class="cyber-nebula nebula-1"></div>
             <div class="cyber-nebula nebula-2"></div>
         </div>
 
-        <!-- CAPA 2: Grid cyber -->
+        <!-- CAPA 2: Grid cyber pulsante -->
         <div class="layer layer-mountains">
             <div class="cyber-grid"></div>
         </div>
 
-        <!-- CAPA 3: Circuitos y hologramas -->
+        <!-- CAPA 3: Circuitos + hologramas giratorios -->
         <div class="layer layer-trees">
             <div class="circuit-lines"></div>
             <div class="holo holo-1"></div>
@@ -636,7 +649,7 @@
             <div class="holo holo-3"></div>
         </div>
 
-        <!-- CAPA 4: Paneles digitales y partículas -->
+        <!-- CAPA 4: Paneles digitales + partículas -->
         <div class="layer layer-deco">
             <div class="particles" id="cyberParticles"></div>
             <div class="data-panel panel-1">
@@ -651,19 +664,22 @@
             </div>
         </div>
 
-        <!-- CAPA 5: Plataforma -->
+        <!-- CAPA 5: Piso cyber con glow -->
         <div class="layer layer-ground">
             <div class="cyber-floor"></div>
         </div>
     </div>
 
+    <!-- ======================================================
+         CONTENIDO (Robot + Tarjeta HUD)
+         ====================================================== -->
     <div class="world-content">
 
         <div class="robot-stage reveal-child" data-reveal="1">
             <div class="robot-portal portal-cyber" aria-hidden="true"></div>
-            <div class="robot-platform platform-cyber"></div>
+            <div class="robot-platform platform-cyber" aria-hidden="true"></div>
             <div class="robot-display has-image" data-robot="ludio">
-                <img src="assets/robots/ludio.png" alt="Ludio — Robot del mundo Secundaria" class="robot-img">
+                <img src="assets/robots/ludio.png" alt="Ludio — Robot cyber de desafíos" class="robot-img">
             </div>
         </div>
 
@@ -682,7 +698,7 @@
                         <path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2"/>
                     </svg>
                 </span>
-                <span class="level-text">SECUNDARIA</span>
+                <span class="level-text">LUDIO</span>
             </div>
 
             <h3 class="card-title">
@@ -738,7 +754,7 @@
                 <span class="btn-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
                 </span>
-                <span class="btn-label">JUGAR AHORA</span>
+                <span class="btn-label">JUGAR CON LUDIO</span>
                 <span class="btn-arrow">›</span>
             </a>
 
@@ -876,7 +892,7 @@
                 </div>
                 <h3 class="about-title">Enfoque educativo</h3>
                 <p class="about-desc">
-                    Tres mundos —Inicial, Primaria y Secundaria— con retos adaptados a cada
+                    Tres mundos interactivos —BeeBot, Rayet y Ludio— con retos adaptados a cada
                     etapa, fortaleciendo lógica, creatividad y resolución de problemas.
                 </p>
             </article>
@@ -899,21 +915,21 @@
 
         </div>
 
-        <!-- Evolución visual: naturaleza → ciudad → tecnología -->
+        <!-- Evolución visual: BeeBot → Rayet → Ludio -->
         <div class="about-evolution reveal-child" data-reveal="5" aria-hidden="true">
             <div class="evo-step evo-nature">
                 <span class="evo-dot"></span>
-                <span class="evo-label">Naturaleza</span>
+                <span class="evo-label">BeeBot</span>
             </div>
             <span class="evo-line"></span>
             <div class="evo-step evo-city">
                 <span class="evo-dot"></span>
-                <span class="evo-label">Ciudad</span>
+                <span class="evo-label">Rayet</span>
             </div>
             <span class="evo-line"></span>
             <div class="evo-step evo-tech">
                 <span class="evo-dot"></span>
-                <span class="evo-label">Tecnología</span>
+                <span class="evo-label">Ludio</span>
             </div>
         </div>
 
@@ -946,11 +962,11 @@
                     Aprende jugando, descubre y supera nuevos desafíos.
                 </p>
                 <div class="footer-levels">
-                    <span>Inicial</span>
+                    <span>BeeBot</span>
                     <span class="footer-dot">•</span>
-                    <span>Primaria</span>
+                    <span>Rayet</span>
                     <span class="footer-dot">•</span>
-                    <span>Secundaria</span>
+                    <span>Ludio</span>
                 </div>
             </div>
 
@@ -960,9 +976,9 @@
                     <h4 class="footer-col-title">Navegación</h4>
                     <ul class="footer-list">
                         <li><a href="#hero">Inicio</a></li>
-                        <li><a href="#inicial">Inicial</a></li>
-                        <li><a href="#primaria">Primaria</a></li>
-                        <li><a href="#secundaria">Secundaria</a></li>
+                        <li><a href="#inicial">BeeBot</a></li>
+                        <li><a href="#primaria">Rayet</a></li>
+                        <li><a href="#secundaria">Ludio</a></li>
                         <li><a href="#recursos">Recursos</a></li>
                     </ul>
                 </div>
