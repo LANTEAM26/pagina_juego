@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Aventuras de Ludio — Portal de 20 minijuegos educativos para el nivel Secundaria">
+    <meta name="theme-color" content="#0a0e27">
+    <title>🤖 Aventuras de Ludio | Secundaria</title>
+
+    <!-- Tipografías -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Estilos -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/ludio.css">
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+</head>
+<body class="world-portal portal-secundaria">
+
+<!-- ============================================================
+     BOTÓN FLOTANTE: SONIDO
+     ============================================================ -->
+<button id="soundToggle" class="sound-toggle" aria-label="Activar o desactivar sonido" title="Sonido">
+    <span class="sound-icon sound-on">🔊</span>
+    <span class="sound-icon sound-off">🔇</span>
+</button>
+
+
+<!-- ============================================================
+     ENCABEZADO
+     ============================================================ -->
+<header class="site-header" id="siteHeader">
+    <div class="header-inner">
+
+        <a href="index.html" class="brand brand-secundaria" aria-label="Volver a la plataforma principal">
+            <div class="brand-logo brand-logo-secundaria" aria-hidden="true">
+                <span class="brand-logo-glow"></span>
+                <span class="brand-logo-emoji">🤖</span>
+            </div>
+            <div class="brand-text">
+                <h1 class="brand-name">AVENTURAS DE LUDIO</h1>
+                <p class="brand-tagline">Nivel Secundaria · Programa tu futuro</p>
+            </div>
+        </a>
+
+        <nav class="main-nav" aria-label="Navegación del portal">
+            <span class="nav-indicator" aria-hidden="true"></span>
+
+            <a href="index.html" class="nav-btn nav-inicio" data-nav="inicio">
+                <span class="nav-btn-ico">🏠</span>
+                <span class="nav-btn-txt">Inicio</span>
+            </a>
+            <a href="#juegos" class="nav-btn nav-juegos is-active" data-nav="juegos">
+                <span class="nav-btn-ico">🎮</span>
+                <span class="nav-btn-txt">Juegos</span>
+            </a>
+            <a href="#ayuda" class="nav-btn nav-ayuda" data-nav="ayuda">
+                <span class="nav-btn-ico">💡</span>
+                <span class="nav-btn-txt">Ayuda</span>
+            </a>
+            <a href="inicial.html" class="nav-btn nav-inicial" data-nav="inicial">
+                <span class="nav-btn-ico">🐝</span>
+                <span class="nav-btn-txt">Inicial</span>
+            </a>
+            <a href="primaria.html" class="nav-btn nav-primaria" data-nav="primaria">
+                <span class="nav-btn-ico">🏎️</span>
+                <span class="nav-btn-txt">Primaria</span>
+            </a>
+        </nav>
+
+        <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú" aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+    <div class="scroll-progress" id="scrollProgress"></div>
+</header>
+
+
+<!-- ============================================================
+     HERO — Mundo Cyber con Ludio como guía
+     ============================================================ -->
+<section id="hero" class="portal-hero hero-secundaria">
+
+    <!-- Fondo en capas -->
+    <div class="portal-hero-bg" aria-hidden="true">
+
+        <!-- Capa 1: Nebulosas y estrellas -->
+        <div class="layer layer-sky">
+            <div class="cyber-nebula nebula-1"></div>
+            <div class="cyber-nebula nebula-2"></div>
+            <div class="cyber-nebula nebula-3"></div>
+            <div class="star-field" id="starField"></div>
+            <div class="data-stream stream-1"></div>
+            <div class="data-stream stream-2"></div>
+        </div>
+
+        <!-- Capa 2: Grid cyber -->
+        <div class="layer layer-mountains">
+            <div class="cyber-grid"></div>
+            <div class="cyber-horizon"></div>
+        </div>
+
+        <!-- Capa 3: Circuitos y hologramas -->
+        <div class="layer layer-trees">
+            <div class="circuit-lines"></div>
+            <div class="holo holo-1"></div>
+            <div class="holo holo-2"></div>
+            <div class="holo holo-3"></div>
+            <div class="holo holo-4"></div>
+        </div>
+
+        <!-- Capa 4: Paneles digitales y partículas -->
+        <div class="layer layer-deco">
+            <div class="particles" id="cyberParticles"></div>
+            <div class="data-panel panel-1">
+                <span class="panel-header">SYS.LOG</span>
+                <span>01001</span>
+                <span>11010</span>
+            </div>
+            <div class="data-panel panel-2">
+                <span class="panel-header">LINK</span>
+                <span>10110</span>
+                <span>00111</span>
+            </div>
+            <div class="data-panel panel-3">
+                <span class="panel-header">AI.CORE</span>
+                <span>01110</span>
+                <span>10001</span>
+            </div>
+            <div class="binary-rain" id="binaryRain"></div>
+        </div>
+
+        <!-- Capa 5: Piso cyber -->
+        <div class="layer layer-ground">
+            <div class="cyber-floor"></div>
+        </div>
+    </div>
+
+    <!-- Contenido hero -->
+    <div class="portal-hero-content">
+
+        <!-- Ludio guía (lado izquierdo) — IMAGEN REAL -->
+        <div class="hero-character reveal-child" data-reveal="1">
+            <div class="character-platform platform-cyber"></div>
+            <div class="robot-display has-image" data-robot="ludio">
+                <img src="assets/robots/ludio.png"
+                     alt="Robot Ludio, guía del nivel Secundaria"
+                     class="robot-img">
+            </div>
+        </div>
+
+        <!-- Texto (lado derecho) -->
+        <div class="hero-text reveal-child" data-reveal="2">
+            <div class="hero-badge hero-badge-secundaria">
+                <span class="badge-dot"></span>
+                <span class="badge-text">Nivel Secundaria · 12 a 17 años</span>
+                <span class="badge-dot"></span>
+            </div>
+
+            <h2 class="portal-hero-title">
+                <span class="portal-hero-title-line">AVENTURAS DE</span>
+                <span class="portal-hero-title-line portal-hero-title-accent">LUDIO</span>
+            </h2>
+
+            <!-- Burbuja de diálogo de Ludio -->
+            <div class="bubble bubble-secundaria">
+                <span class="bubble-tail"></span>
+                <p class="bubble-text">
+                    <span class="glitch-text" data-text="&gt; SYSTEM READY_"> &gt; SYSTEM READY_</span>
+                    ¿Preparado para programar tu próxima misión? 🤖
+                </p>
+            </div>
+
+            <p class="portal-hero-subtitle">
+                Desafíos avanzados de lógica, ciencia y tecnología.
+            </p>
+
+            <div class="hero-actions">
+                <a href="#juegos" class="btn btn-hero-secundaria" data-scroll="#juegos">
+                    <span class="btn-glow"></span>
+                    <span class="btn-icon">⚡</span>
+                    <span class="btn-label">INICIAR PROTOCOLO</span>
+                    <span class="btn-arrow">›</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Indicador de scroll -->
+    <div class="scroll-hint" aria-hidden="true">
+        <span class="scroll-txt">Desliza para hackear</span>
+        <div class="scroll-mouse"><span class="scroll-wheel"></span></div>
+    </div>
+</section>
+
+
+<!-- ============================================================
+     ÁREA DE JUEGOS — 20 juegos organizados por categorías
+     ============================================================ -->
+<main id="juegos" class="games-area">
+
+    <!-- Encabezado -->
+    <div class="games-header reveal-child" data-reveal="1">
+        <h2 class="section-title">
+            <span class="section-title-ico">⚡</span>
+            <span class="section-title-txt">SELECCIONA MISIÓN</span>
+        </h2>
+        <p class="section-subtitle">
+            20 protocolos de aprendizaje te esperan. ¡Inicia tu carrera digital!
+        </p>
+    </div>
+
+    <!-- ============================================
+         FILTROS POR CATEGORÍA
+         ============================================ -->
+    <div class="filters filters-secundaria reveal-child" data-reveal="2" role="tablist" aria-label="Filtrar juegos por categoría">
+        <button class="filter-btn is-active" data-filter="all" role="tab" aria-selected="true">
+            <span class="filter-ico">🌐</span>
+            <span class="filter-txt">Todos</span>
+            <span class="filter-count" data-count="all">20</span>
+        </button>
+
+        <button class="filter-btn" data-filter="matematicas" role="tab" aria-selected="false">
+            <span class="filter-ico">📐</span>
+            <span class="filter-txt">Matemáticas</span>
+            <span class="filter-count" data-count="matematicas">4</span>
+        </button>
+
+        <button class="filter-btn" data-filter="programacion" role="tab" aria-selected="false">
+            <span class="filter-ico">💻</span>
+            <span class="filter-txt">Programación</span>
+            <span class="filter-count" data-count="programacion">5</span>
+        </button>
+
+        <button class="filter-btn" data-filter="ciencias" role="tab" aria-selected="false">
+            <span class="filter-ico">🧪</span>
+            <span class="filter-txt">Ciencias</span>
+            <span class="filter-count" data-count="ciencias">4</span>
+        </button>
+
+        <button class="filter-btn" data-filter="historia" role="tab" aria-selected="false">
+            <span class="filter-ico">📜</span>
+            <span class="filter-txt">Historia</span>
+            <span class="filter-count" data-count="historia">3</span>
+        </button>
+
+        <button class="filter-btn" data-filter="retos" role="tab" aria-selected="false">
+            <span class="filter-ico">🏆</span>
+            <span class="filter-txt">Retos</span>
+            <span class="filter-count" data-count="retos">4</span>
+        </button>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════════════════
+         SECCIÓN 1 · MATEMÁTICAS AVANZADAS
+         ══════════════════════════════════════════════════════════════ -->
+    <section class="games-section games-section-matematicas" data-section="matematicas" aria-labelledby="sec-matematicas-title">
+
+        <header class="games-section-head">
+            <div class="games-section-ico games-section-ico-matematicas">📐</div>
+            <div class="games-section-info">
+                <h3 class="games-section-title" id="sec-matematicas-title">Matemáticas Avanzadas</h3>
+                <p class="games-section-desc">Álgebra, geometría, estadística y cálculo a nivel preuniversitario</p>
+            </div>
+            <span class="games-section-count">
+                <span class="games-section-count-num">4</span>
+                <span class="games-section-count-txt">juegos</span>
+            </span>
+        </header>
+
+        <div class="games-grid" aria-live="polite">
+
+            <!-- 01 · Ecuaciones Cuadráticas -->
+            <article class="game-card" data-category="matematicas" data-difficulty="medio">
+                <a href="JuegosSecundaria/ecuaciones.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Ecuaciones Cuadráticas">
+                    <div class="game-card-thumb thumb-matematicas has-image">
+                        <img src="JuegosSecundaria/imagen1.png" alt="Ecuaciones Cuadráticas" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">01</span>
+                        <div class="game-difficulty difficulty-medio">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Medio</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-matematicas">📐 Matemáticas</span>
+                            <span class="game-age">12-15 años</span>
+                        </div>
+                        <h3 class="game-title">Ecuaciones Cuadráticas</h3>
+                        <p class="game-desc">Resuelve ecuaciones de segundo grado usando factorización o fórmula general.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 2 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 02 · Geometría Analítica -->
+            <article class="game-card game-card-new" data-category="matematicas" data-difficulty="medio">
+                <a href="JuegosSecundaria/geometria.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Geometría Analítica">
+                    <div class="game-card-thumb thumb-matematicas has-image">
+                        <img src="JuegosSecundaria/imagen2.png" alt="Geometría Analítica" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">02</span>
+                        <span class="game-badge-new">NUEVO</span>
+                        <div class="game-difficulty difficulty-medio">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Medio</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-matematicas">📐 Matemáticas</span>
+                            <span class="game-age">14-16 años</span>
+                        </div>
+                        <h3 class="game-title">Geometría Analítica</h3>
+                        <p class="game-desc">Calcula distancias, pendientes y ecuaciones de rectas en el plano cartesiano.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 2 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 03 · Estadística y Probabilidad -->
+            <article class="game-card game-card-new" data-category="matematicas" data-difficulty="dificil">
+                <a href="JuegosSecundaria/estadistica.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Estadística y Probabilidad">
+                    <div class="game-card-thumb thumb-matematicas has-image">
+                        <img src="JuegosSecundaria/imagen3.png" alt="Estadística y Probabilidad" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">03</span>
+                        <span class="game-badge-new">NUEVO</span>
+                        <div class="game-difficulty difficulty-dificil">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Difícil</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-matematicas">📐 Matemáticas</span>
+                            <span class="game-age">15-17 años</span>
+                        </div>
+                        <h3 class="game-title">Estadística y Probabilidad</h3>
+                        <p class="game-desc">Analiza datos, calcula medias, medianas y resuelve problemas de probabilidad.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 3 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 04 · Funciones y Gráficas -->
+            <article class="game-card game-card-new" data-category="matematicas" data-difficulty="dificil">
+                <a href="JuegosSecundaria/funciones.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Funciones y Gráficas">
+                    <div class="game-card-thumb thumb-matematicas has-image">
+                        <img src="JuegosSecundaria/imagen4.png" alt="Funciones y Gráficas" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">04</span>
+                        <span class="game-badge-new">NUEVO</span>
+                        <div class="game-difficulty difficulty-dificil">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Difícil</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-matematicas">📐 Matemáticas</span>
+                            <span class="game-age">15-17 años</span>
+                        </div>
+                        <h3 class="game-title">Funciones y Gráficas</h3>
+                        <p class="game-desc">Identifica funciones lineales, cuadráticas y sus gráficas en el plano.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 3 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+        </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════════════════
+         SECCIÓN 2 · PROGRAMACIÓN
+         ══════════════════════════════════════════════════════════════ -->
+    <section class="games-section games-section-programacion" data-section="programacion" aria-labelledby="sec-programacion-title">
+
+        <header class="games-section-head">
+            <div class="games-section-ico games-section-ico-programacion">💻</div>
+            <div class="games-section-info">
+                <h3 class="games-section-title" id="sec-programacion-title">Programación</h3>
+                <p class="games-section-desc">Algoritmos, código, lógica computacional y pensamiento estructurado</p>
+            </div>
+            <span class="games-section-count">
+                <span class="games-section-count-num">5</span>
+                <span class="games-section-count-txt">juegos</span>
+            </span>
+        </header>
+
+        <div class="games-grid" aria-live="polite">
+
+            <!-- 05 · Algoritmos Básicos -->
+            <article class="game-card" data-category="programacion" data-difficulty="medio">
+                <a href="JuegosSecundaria/algoritmos.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Algoritmos Básicos">
+                    <div class="game-card-thumb thumb-programacion has-image">
+                        <img src="JuegosSecundaria/imagen5.png" alt="Algoritmos Básicos" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">05</span>
+                        <div class="game-difficulty difficulty-medio">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Medio</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-programacion">💻 Programación</span>
+                            <span class="game-age">12-14 años</span>
+                        </div>
+                        <h3 class="game-title">Algoritmos Básicos</h3>
+                        <p class="game-desc">Diseña los pasos correctos para que un robot complete su misión.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 2 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 06 · Bucles y Condicionales -->
+            <article class="game-card game-card-new" data-category="programacion" data-difficulty="medio">
+                <a href="JuegosSecundaria/bucles.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Bucles y Condicionales">
+                    <div class="game-card-thumb thumb-programacion has-image">
+                        <img src="JuegosSecundaria/imagen6.png" alt="Bucles y Condicionales" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">06</span>
+                        <span class="game-badge-new">NUEVO</span>
+                        <div class="game-difficulty difficulty-medio">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Medio</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-programacion">💻 Programación</span>
+                            <span class="game-age">13-15 años</span>
+                        </div>
+                        <h3 class="game-title">Bucles y Condicionales</h3>
+                        <p class="game-desc">Usa if, else, while y for para resolver problemas lógicos.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 2 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 07 · Variables y Tipos de Datos -->
+            <article class="game-card game-card-new" data-category="programacion" data-difficulty="facil">
+                <a href="JuegosSecundaria/variables.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Variables y Tipos">
+                    <div class="game-card-thumb thumb-programacion has-image">
+                        <img src="JuegosSecundaria/imagen7.png" alt="Variables y Tipos de Datos" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">07</span>
+                        <span class="game-badge-new">NUEVO</span>
+                        <div class="game-difficulty difficulty-facil">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Fácil</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-programacion">💻 Programación</span>
+                            <span class="game-age">12-14 años</span>
+                        </div>
+                        <h3 class="game-title">Variables y Tipos de Datos</h3>
+                        <p class="game-desc">Aprende a declarar variables y usar enteros, strings y booleanos.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 1 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 08 · Funciones y Parámetros -->
+            <article class="game-card game-card-new" data-category="programacion" data-difficulty="dificil">
+                <a href="JuegosSecundaria/funcionescodigo.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Funciones y Parámetros">
+                    <div class="game-card-thumb thumb-programacion has-image">
+                        <img src="JuegosSecundaria/imagen8.png" alt="Funciones y Parámetros" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">08</span>
+                        <span class="game-badge-new">NUEVO</span>
+                        <div class="game-difficulty difficulty-dificil">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Difícil</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-programacion">💻 Programación</span>
+                            <span class="game-age">14-17 años</span>
+                        </div>
+                        <h3 class="game-title">Funciones y Parámetros</h3>
+                        <p class="game-desc">Crea funciones reutilizables y domina el paso de parámetros.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 3 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 09 · Depuración de Código -->
+            <article class="game-card game-card-new" data-category="programacion" data-difficulty="dificil">
+                <a href="JuegosSecundaria/debug.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Depuración de Código">
+                    <div class="game-card-thumb thumb-programacion has-image">
+                        <img src="JuegosSecundaria/imagen9.png" alt="Depuración de Código" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">09</span>
+                        <span class="game-badge-new">NUEVO</span>
+                        <div class="game-difficulty difficulty-dificil">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Difícil</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-programacion">💻 Programación</span>
+                            <span class="game-age">14-17 años</span>
+                        </div>
+                        <h3 class="game-title">Depuración de Código</h3>
+                        <p class="game-desc">Encuentra y corrige los errores en programas con bugs ocultos.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 3 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+        </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════════════════
+         SECCIÓN 3 · CIENCIAS
+         ══════════════════════════════════════════════════════════════ -->
+    <section class="games-section games-section-ciencias" data-section="ciencias" aria-labelledby="sec-ciencias-title">
+
+        <header class="games-section-head">
+            <div class="games-section-ico games-section-ico-ciencias">🧪</div>
+            <div class="games-section-info">
+                <h3 class="games-section-title" id="sec-ciencias-title">Ciencias</h3>
+                <p class="games-section-desc">Física, química, biología y astronomía a nivel avanzado</p>
+            </div>
+            <span class="games-section-count">
+                <span class="games-section-count-num">4</span>
+                <span class="games-section-count-txt">juegos</span>
+            </span>
+        </header>
+
+        <div class="games-grid" aria-live="polite">
+
+            <!-- 10 · Tabla Periódica -->
+            <article class="game-card" data-category="ciencias" data-difficulty="medio">
+                <a href="JuegosSecundaria/tablaperiodica.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Tabla Periódica">
+                    <div class="game-card-thumb thumb-ciencias has-image">
+                        <img src="JuegosSecundaria/imagen10.png" alt="Tabla Periódica" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">10</span>
+                        <div class="game-difficulty difficulty-medio">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Medio</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-ciencias">🧪 Ciencias</span>
+                            <span class="game-age">13-16 años</span>
+                        </div>
+                        <h3 class="game-title">Tabla Periódica</h3>
+                        <p class="game-desc">Identifica elementos, símbolos y grupos de la tabla periódica.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 2 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 11 · Física del Movimiento -->
+            <article class="game-card game-card-new" data-category="ciencias" data-difficulty="dificil">
+                <a href="JuegosSecundaria/fisica.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Física del Movimiento">
+                    <div class="game-card-thumb thumb-ciencias has-image">
+                        <img src="JuegosSecundaria/imagen11.png" alt="Física del Movimiento" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">11</span>
+                        <span class="game-badge-new">NUEVO</span>
+                        <div class="game-difficulty difficulty-dificil">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Difícil</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-ciencias">🧪 Ciencias</span>
+                            <span class="game-age">14-17 años</span>
+                        </div>
+                        <h3 class="game-title">Física del Movimiento</h3>
+                        <p class="game-desc">Calcula velocidad, aceleración y fuerza en escenarios reales.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 3 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 12 · Genética y ADN -->
+            <article class="game-card game-card-new" data-category="ciencias" data-difficulty="medio">
+                <a href="JuegosSecundaria/genetica.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Genética y ADN">
+                    <div class="game-card-thumb thumb-ciencias has-image">
+                        <img src="JuegosSecundaria/imagen12.png" alt="Genética y ADN" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">12</span>
+                        <span class="game-badge-new">NUEVO</span>
+                        <div class="game-difficulty difficulty-medio">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Medio</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-ciencias">🧪 Ciencias</span>
+                            <span class="game-age">14-17 años</span>
+                        </div>
+                        <h3 class="game-title">Genética y ADN</h3>
+                        <p class="game-desc">Aprende sobre herencia, cruces genéticos y estructura del ADN.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 2 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 13 · Sistema Solar Avanzado -->
+            <article class="game-card game-card-new" data-category="ciencias" data-difficulty="medio">
+                <a href="JuegosSecundaria/astronomia.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Astronomía">
+                    <div class="game-card-thumb thumb-ciencias has-image">
+                        <img src="JuegosSecundaria/imagen13.png" alt="Astronomía" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">13</span>
+                        <span class="game-badge-new">NUEVO</span>
+                        <div class="game-difficulty difficulty-medio">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Medio</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-ciencias">🧪 Ciencias</span>
+                            <span class="game-age">13-16 años</span>
+                        </div>
+                        <h3 class="game-title">Astronomía</h3>
+                        <p class="game-desc">Explora galaxias, estrellas y fenómenos del universo observable.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 2 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+        </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════════════════
+         SECCIÓN 4 · HISTORIA Y HUMANIDADES
+         ══════════════════════════════════════════════════════════════ -->
+    <section class="games-section games-section-historia" data-section="historia" aria-labelledby="sec-historia-title">
+
+        <header class="games-section-head">
+            <div class="games-section-ico games-section-ico-historia">📜</div>
+            <div class="games-section-info">
+                <h3 class="games-section-title" id="sec-historia-title">Historia y Humanidades</h3>
+                <p class="games-section-desc">Eventos históricos, geografía y cultura universal</p>
+            </div>
+            <span class="games-section-count">
+                <span class="games-section-count-num">3</span>
+                <span class="games-section-count-txt">juegos</span>
+            </span>
+        </header>
+
+        <div class="games-grid" aria-live="polite">
+
+            <!-- 14 · Línea del Tiempo -->
+            <article class="game-card" data-category="historia" data-difficulty="medio">
+                <a href="JuegosSecundaria/timeline.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Línea del Tiempo">
+                    <div class="game-card-thumb thumb-historia has-image">
+                        <img src="JuegosSecundaria/imagen14.png" alt="Línea del Tiempo" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">14</span>
+                        <div class="game-difficulty difficulty-medio">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Medio</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-historia">📜 Historia</span>
+                            <span class="game-age">13-16 años</span>
+                        </div>
+                        <h3 class="game-title">Línea del Tiempo</h3>
+                        <p class="game-desc">Ordena eventos históricos mundiales en su orden cronológico correcto.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 2 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 15 · Geografía Mundial -->
+            <article class="game-card game-card-new" data-category="historia" data-difficulty="medio">
+                <a href="JuegosSecundaria/geografia.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Geografía Mundial">
+                    <div class="game-card-thumb thumb-historia has-image">
+                        <img src="JuegosSecundaria/imagen15.png" alt="Geografía Mundial" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">15</span>
+                        <span class="game-badge-new">NUEVO</span>
+                        <div class="game-difficulty difficulty-medio">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Medio</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-historia">📜 Historia</span>
+                            <span class="game-age">13-16 años</span>
+                        </div>
+                        <h3 class="game-title">Geografía Mundial</h3>
+                        <p class="game-desc">Ubica países, capitales y continentes en el mapa interactivo.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 2 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 16 · Civilizaciones Antiguas -->
+            <article class="game-card game-card-new" data-category="historia" data-difficulty="facil">
+                <a href="JuegosSecundaria/civilizaciones.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Civilizaciones Antiguas">
+                    <div class="game-card-thumb thumb-historia has-image">
+                        <img src="JuegosSecundaria/imagen16.png" alt="Civilizaciones Antiguas" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">16</span>
+                        <span class="game-badge-new">NUEVO</span>
+                        <div class="game-difficulty difficulty-facil">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Fácil</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-historia">📜 Historia</span>
+                            <span class="game-age">13-15 años</span>
+                        </div>
+                        <h3 class="game-title">Civilizaciones Antiguas</h3>
+                        <p class="game-desc">Descubre Egipto, Roma, Grecia y Mesopotamia con sus aportes culturales.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 1 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+        </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════════════════
+         SECCIÓN 5 · RETOS FINALES
+         ══════════════════════════════════════════════════════════════ -->
+    <section class="games-section games-section-retos" data-section="retos" aria-labelledby="sec-retos-title">
+
+        <header class="games-section-head">
+            <div class="games-section-ico games-section-ico-retos">🏆</div>
+            <div class="games-section-info">
+                <h3 class="games-section-title" id="sec-retos-title">Retos Finales</h3>
+                <p class="games-section-desc">Desafíos que combinan todas las materias — solo para expertos</p>
+            </div>
+            <span class="games-section-count">
+                <span class="games-section-count-num">4</span>
+                <span class="games-section-count-txt">juegos</span>
+            </span>
+        </header>
+
+        <div class="games-grid" aria-live="polite">
+
+            <!-- 17 · Hackathon Educativo -->
+            <article class="game-card" data-category="retos" data-difficulty="dificil">
+                <a href="JuegosSecundaria/hackathon.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Hackathon Educativo">
+                    <div class="game-card-thumb thumb-retos has-image">
+                        <img src="JuegosSecundaria/imagen17.png" alt="Hackathon Educativo" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">17</span>
+                        <div class="game-difficulty difficulty-dificil">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Difícil</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-retos">🏆 Retos</span>
+                            <span class="game-age">15-17 años</span>
+                        </div>
+                        <h3 class="game-title">Hackathon Educativo</h3>
+                        <p class="game-desc">Resuelve problemas complejos de programación en tiempo limitado.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 3 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 18 · Olimpiada del Saber -->
+            <article class="game-card game-card-new" data-category="retos" data-difficulty="dificil">
+                <a href="JuegosSecundaria/olimpiada.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Olimpiada del Saber">
+                    <div class="game-card-thumb thumb-retos has-image">
+                        <img src="JuegosSecundaria/imagen18.png" alt="Olimpiada del Saber" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">18</span>
+                        <span class="game-badge-new">NUEVO</span>
+                        <div class="game-difficulty difficulty-dificil">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Difícil</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-retos">🏆 Retos</span>
+                            <span class="game-age">15-17 años</span>
+                        </div>
+                        <h3 class="game-title">Olimpiada del Saber</h3>
+                        <p class="game-desc">Preguntas de matemáticas, ciencias y programación en una sola competencia.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 3 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 19 · Laboratorio Virtual -->
+            <article class="game-card game-card-new" data-category="retos" data-difficulty="dificil">
+                <a href="JuegosSecundaria/laboratorio.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Laboratorio Virtual">
+                    <div class="game-card-thumb thumb-retos has-image">
+                        <img src="JuegosSecundaria/imagen19.png" alt="Laboratorio Virtual" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">19</span>
+                        <span class="game-badge-new">NUEVO</span>
+                        <div class="game-difficulty difficulty-dificil">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Difícil</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-retos">🏆 Retos</span>
+                            <span class="game-age">15-17 años</span>
+                        </div>
+                        <h3 class="game-title">Laboratorio Virtual</h3>
+                        <p class="game-desc">Realiza experimentos de química y física en un simulador interactivo.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 3 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 20 · Torneo Final (RETO FINAL) -->
+            <article class="game-card game-card-featured" data-category="retos" data-difficulty="dificil">
+                <a href="JuegosSecundaria/torneofinal.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Torneo Final">
+                    <div class="game-card-thumb thumb-retos has-image">
+                        <img src="JuegosSecundaria/imagen20.png" alt="Torneo Final" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">20</span>
+                        <div class="game-badge-featured">👑 TORNEO FINAL</div>
+                        <div class="game-difficulty difficulty-dificil">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Difícil</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-retos">🏆 Retos</span>
+                            <span class="game-age">16+ años</span>
+                        </div>
+                        <h3 class="game-title">Torneo Final</h3>
+                        <p class="game-desc">El desafío definitivo: 7 minijuegos seguidos. ¡Demuestra que eres un maestro!</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 3 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+        </div>
+    </section>
+
+
+    <!-- ============================================
+         MENSAJE CUANDO NO HAY RESULTADOS
+         ============================================ -->
+    <div class="games-empty" id="gamesEmpty" hidden>
+        <span class="games-empty-ico">🔍</span>
+        <p class="games-empty-txt">No hay juegos en esta categoría todavía.</p>
+        <button class="btn btn-show-all" data-filter="all">
+            <span class="btn-icon">🌐</span>
+            <span class="btn-label">VER TODOS</span>
+        </button>
+    </div>
+
+</main>
+
+
+<!-- ============================================================
+     SECCIÓN DE AYUDA / INFO PARA DOCENTES
+     ============================================================ -->
+<section id="ayuda" class="help-section help-secundaria">
+    <div class="help-inner">
+
+        <div class="help-header reveal-child" data-reveal="1">
+            <span class="help-ico">💡</span>
+            <h2 class="help-title">¿Cómo usar Aventuras de Ludio?</h2>
+            <p class="help-subtitle">Consejos para docentes y estudiantes avanzados</p>
+        </div>
+
+        <div class="help-grid">
+            <div class="help-card reveal-child" data-reveal="2">
+                <div class="help-card-ico">🎯</div>
+                <h3 class="help-card-title">Elige tu misión</h3>
+                <p class="help-card-desc">
+                    Cada tarjeta abre el juego en una nueva pestaña, así no pierdes el portal de aventuras.
+                </p>
+            </div>
+
+            <div class="help-card reveal-child" data-reveal="3">
+                <div class="help-card-ico">🎓</div>
+                <h3 class="help-card-title">Áreas avanzadas</h3>
+                <p class="help-card-desc">
+                    Filtra por matemáticas, programación, ciencias, historia o retos finales.
+                </p>
+            </div>
+
+            <div class="help-card reveal-child" data-reveal="4">
+                <div class="help-card-ico">⭐</div>
+                <h3 class="help-card-title">Dificultad progresiva</h3>
+                <p class="help-card-desc">
+                    Empieza por los juegos <strong>fáciles</strong> y avanza hacia los <strong>difíciles</strong>.
+                </p>
+            </div>
+
+            <div class="help-card reveal-child" data-reveal="5">
+                <div class="help-card-ico">🔊</div>
+                <h3 class="help-card-title">Activa el sonido</h3>
+                <p class="help-card-desc">
+                    Usa el botón de la esquina superior para activar los sonidos educativos.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ============================================================
+     PIE DE PÁGINA
+     ============================================================ -->
+<footer class="site-footer footer-secundaria">
+    <div class="footer-inner">
+
+        <div class="footer-brand">
+            <span class="footer-brand-ico">🤖</span>
+            <span class="footer-brand-txt">AVENTURAS DE LUDIO</span>
+        </div>
+
+        <p class="footer-msg">Programa tu futuro, descubre y domina los desafíos digitales.</p>
+
+        <nav class="footer-nav" aria-label="Navegación del pie">
+            <a href="index.html" class="footer-nav-link">🏠 Inicio</a>
+            <span class="footer-dot">•</span>
+            <a href="#juegos" class="footer-nav-link">🎮 Juegos</a>
+            <span class="footer-dot">•</span>
+            <a href="#ayuda" class="footer-nav-link">💡 Ayuda</a>
+            <span class="footer-dot">•</span>
+            <a href="inicial.html" class="footer-nav-link">🐝 Inicial</a>
+            <span class="footer-dot">•</span>
+            <a href="primaria.html" class="footer-nav-link">🏎️ Primaria</a>
+        </nav>
+
+        <p class="footer-copy">
+            © <span id="year"></span> Aventura Educativa — Nivel Secundaria · Ludio 🤖
+        </p>
+    </div>
+</footer>
+
+
+<!-- ============================================================
+     SCRIPT
+     ============================================================ -->
+<script src="js/ludio.js"></script>
+
+</body>
+</html>

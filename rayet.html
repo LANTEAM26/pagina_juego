@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Aventuras de Rayet — Portal de 20 minijuegos educativos para el nivel Primaria">
+    <meta name="theme-color" content="#ff8c42">
+    <title>🏎️ Aventuras de Rayet | Primaria</title>
+
+    <!-- Tipografías -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Estilos -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/rayet.css">
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏎️</text></svg>">
+</head>
+<body class="world-portal portal-primaria">
+
+<!-- ============================================================
+     BOTÓN FLOTANTE: SONIDO
+     ============================================================ -->
+<button id="soundToggle" class="sound-toggle" aria-label="Activar o desactivar sonido" title="Sonido">
+    <span class="sound-icon sound-on">🔊</span>
+    <span class="sound-icon sound-off">🔇</span>
+</button>
+
+
+<!-- ============================================================
+     ENCABEZADO
+     ============================================================ -->
+<header class="site-header" id="siteHeader">
+    <div class="header-inner">
+
+        <a href="index.html" class="brand brand-primaria" aria-label="Volver a la plataforma principal">
+            <div class="brand-logo brand-logo-primaria" aria-hidden="true">
+                <span class="brand-logo-glow"></span>
+                <span class="brand-logo-emoji">🏎️</span>
+            </div>
+            <div class="brand-text">
+                <h1 class="brand-name">AVENTURAS DE RAYET</h1>
+                <p class="brand-tagline">Nivel Primaria · Aprende a toda velocidad</p>
+            </div>
+        </a>
+
+        <nav class="main-nav" aria-label="Navegación del portal">
+            <span class="nav-indicator" aria-hidden="true"></span>
+
+            <a href="index.html" class="nav-btn nav-inicio" data-nav="inicio">
+                <span class="nav-btn-ico">🏠</span>
+                <span class="nav-btn-txt">Inicio</span>
+            </a>
+            <a href="#juegos" class="nav-btn nav-juegos is-active" data-nav="juegos">
+                <span class="nav-btn-ico">🎮</span>
+                <span class="nav-btn-txt">Juegos</span>
+            </a>
+            <a href="#ayuda" class="nav-btn nav-ayuda" data-nav="ayuda">
+                <span class="nav-btn-ico">💡</span>
+                <span class="nav-btn-txt">Ayuda</span>
+            </a>
+            <a href="inicial.html" class="nav-btn nav-inicial" data-nav="inicial">
+                <span class="nav-btn-ico">🐝</span>
+                <span class="nav-btn-txt">Inicial</span>
+            </a>
+            <a href="secundaria.html" class="nav-btn nav-secundaria" data-nav="secundaria">
+                <span class="nav-btn-ico">🤖</span>
+                <span class="nav-btn-txt">Secundaria</span>
+            </a>
+        </nav>
+
+        <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú" aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+    <div class="scroll-progress" id="scrollProgress"></div>
+</header>
+
+
+<!-- ============================================================
+     HERO — Ciudad y pista de carreras con Rayet como guía
+     ============================================================ -->
+<section id="hero" class="portal-hero hero-primaria">
+
+    <!-- Fondo en capas -->
+    <div class="portal-hero-bg" aria-hidden="true">
+
+        <!-- Capa 1: Cielo urbano -->
+        <div class="layer layer-sky">
+            <div class="sun sun-primaria"><span class="sun-rays"></span></div>
+            <div class="cloud cloud-1"></div>
+            <div class="cloud cloud-2"></div>
+            <div class="cloud cloud-3"></div>
+            <div class="speed-lines"></div>
+        </div>
+
+        <!-- Capa 2: Skyline de ciudad -->
+        <div class="layer layer-mountains">
+            <div class="city-skyline-back"></div>
+            <div class="city-skyline-front"></div>
+        </div>
+
+        <!-- Capa 3: Señales viales y semáforos -->
+        <div class="layer layer-trees">
+            <div class="road-sign sign-1"></div>
+            <div class="road-sign sign-2"></div>
+            <div class="traffic-light tl-1">
+                <span class="tl-red"></span>
+                <span class="tl-yellow"></span>
+                <span class="tl-green"></span>
+            </div>
+            <div class="urban-tree ut-1"></div>
+            <div class="urban-tree ut-2"></div>
+        </div>
+
+        <!-- Capa 4: Decoraciones viales -->
+        <div class="layer layer-deco">
+            <div class="checkered-flag flag-1"></div>
+            <div class="checkered-flag flag-2"></div>
+            <div class="speed-particle sp-1">💨</div>
+            <div class="speed-particle sp-2">💨</div>
+            <div class="speed-particle sp-3">⚡</div>
+        </div>
+
+        <!-- Capa 5: Pista de carreras -->
+        <div class="layer layer-ground">
+            <div class="sidewalk"></div>
+            <div class="road">
+                <div class="road-lines"></div>
+            </div>
+            <div class="starting-line"></div>
+        </div>
+    </div>
+
+    <!-- Contenido hero -->
+    <div class="portal-hero-content">
+
+        <!-- Rayet guía (lado izquierdo) — IMAGEN REAL -->
+        <div class="hero-character reveal-child" data-reveal="1">
+            <div class="character-platform platform-road"></div>
+            <div class="robot-display has-image" data-robot="rayet">
+                <img src="assets/robots/rayet.png"
+                     alt="Robot Rayet, guía del nivel Primaria"
+                     class="robot-img">
+            </div>
+        </div>
+
+        <!-- Texto (lado derecho) -->
+        <div class="hero-text reveal-child" data-reveal="2">
+            <div class="hero-badge hero-badge-primaria">
+                <span class="badge-dot"></span>
+                <span class="badge-text">Nivel Primaria · 6 a 11 años</span>
+                <span class="badge-dot"></span>
+            </div>
+
+            <h2 class="portal-hero-title">
+                <span class="portal-hero-title-line">AVENTURAS DE</span>
+                <span class="portal-hero-title-line portal-hero-title-accent">RAYET</span>
+            </h2>
+
+            <!-- Burbuja de diálogo de Rayet -->
+            <div class="bubble bubble-primaria">
+                <span class="bubble-tail"></span>
+                <p class="bubble-text">
+                    ¡Piloto, enciende motores! 🏎️ ¿A qué desafío te enfrentas hoy?
+                </p>
+            </div>
+
+            <p class="portal-hero-subtitle">
+                ¡Elige un juego y acelera tu aprendizaje!
+            </p>
+
+            <div class="hero-actions">
+                <a href="#juegos" class="btn btn-hero-primaria" data-scroll="#juegos">
+                    <span class="btn-glow"></span>
+                    <span class="btn-icon">🏁</span>
+                    <span class="btn-label">ARRANCAR AVENTURA</span>
+                    <span class="btn-arrow">›</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Indicador de scroll -->
+    <div class="scroll-hint" aria-hidden="true">
+        <span class="scroll-txt">Desliza para acelerar</span>
+        <div class="scroll-mouse"><span class="scroll-wheel"></span></div>
+    </div>
+</section>
+
+
+<!-- ============================================================
+     ÁREA DE JUEGOS — 20 juegos organizados por categorías
+     ============================================================ -->
+<main id="juegos" class="games-area">
+
+    <!-- Encabezado -->
+    <div class="games-header reveal-child" data-reveal="1">
+        <h2 class="section-title">
+            <span class="section-title-ico">🏁</span>
+            <span class="section-title-txt">ELIGE TU DESAFÍO</span>
+        </h2>
+        <p class="section-subtitle">
+            20 retos te esperan en la pista. ¡Toca una tarjeta para arrancar!
+        </p>
+    </div>
+
+    <!-- ============================================
+         FILTROS POR CATEGORÍA
+         ============================================ -->
+    <div class="filters filters-primaria reveal-child" data-reveal="2" role="tablist" aria-label="Filtrar juegos por categoría">
+        <button class="filter-btn is-active" data-filter="all" role="tab" aria-selected="true">
+            <span class="filter-ico">🏁</span>
+            <span class="filter-txt">Todos</span>
+            <span class="filter-count" data-count="all">20</span>
+        </button>
+
+        <button class="filter-btn" data-filter="matematicas" role="tab" aria-selected="false">
+            <span class="filter-ico">🔢</span>
+            <span class="filter-txt">Matemáticas</span>
+            <span class="filter-count" data-count="matematicas">4</span>
+        </button>
+
+        <button class="filter-btn" data-filter="lenguaje" role="tab" aria-selected="false">
+            <span class="filter-ico">📖</span>
+            <span class="filter-txt">Lenguaje</span>
+            <span class="filter-count" data-count="lenguaje">4</span>
+        </button>
+
+        <button class="filter-btn" data-filter="ciencias" role="tab" aria-selected="false">
+            <span class="filter-ico">🔬</span>
+            <span class="filter-txt">Ciencias</span>
+            <span class="filter-count" data-count="ciencias">4</span>
+        </button>
+
+        <button class="filter-btn" data-filter="logica" role="tab" aria-selected="false">
+            <span class="filter-ico">🧩</span>
+            <span class="filter-txt">Lógica</span>
+            <span class="filter-count" data-count="logica">5</span>
+        </button>
+
+        <button class="filter-btn" data-filter="retos" role="tab" aria-selected="false">
+            <span class="filter-ico">🏆</span>
+            <span class="filter-txt">Retos</span>
+            <span class="filter-count" data-count="retos">3</span>
+        </button>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════════════════
+         SECCIÓN 1 · MATEMÁTICAS
+         ══════════════════════════════════════════════════════════════ -->
+    <section class="games-section games-section-matematicas" data-section="matematicas" aria-labelledby="sec-matematicas-title">
+
+        <header class="games-section-head">
+            <div class="games-section-ico games-section-ico-matematicas">🔢</div>
+            <div class="games-section-info">
+                <h3 class="games-section-title" id="sec-matematicas-title">Matemáticas</h3>
+                <p class="games-section-desc">Suma, resta, multiplica y resuelve problemas a toda velocidad</p>
+            </div>
+            <span class="games-section-count">
+                <span class="games-section-count-num">4</span>
+                <span class="games-section-count-txt">juegos</span>
+            </span>
+        </header>
+
+        <div class="games-grid" aria-live="polite">
+
+            <!-- 01 · Carrera de Sumas -->
+            <article class="game-card" data-category="matematicas" data-difficulty="facil">
+                <a href="JuegosPrimaria/sumas.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Carrera de Sumas">
+                    <div class="game-card-thumb thumb-matematicas has-image">
+                        <img src="JuegosPrimaria/imagen1.png" alt="Carrera de Sumas" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">01</span>
+                        <div class="game-difficulty difficulty-facil">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Fácil</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-matematicas">🔢 Matemáticas</span>
+                            <span class="game-age">6-8 años</span>
+                        </div>
+                        <h3 class="game-title">Carrera de Sumas</h3>
+                        <p class="game-desc">Avanza por la pista respondiendo sumas correctas antes de que el tiempo se acabe.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 1 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 02 · Multiplica Rápido -->
+            <article class="game-card game-card-new" data-category="matematicas" data-difficulty="medio">
+                <a href="JuegosPrimaria/multiplicar.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Multiplica Rápido">
+                    <div class="game-card-thumb thumb-matematicas has-image">
+                        <img src="JuegosPrimaria/imagen2.png" alt="Multiplica Rápido" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">02</span>
+                        <span class="game-badge-new">NUEVO</span>
+                        <div class="game-difficulty difficulty-medio">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Medio</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-matematicas">🔢 Matemáticas</span>
+                            <span class="game-age">8-10 años</span>
+                        </div>
+                        <h3 class="game-title">Multiplica Rápido</h3>
+                        <p class="game-desc">Domina las tablas de multiplicar y gana carreras contra el reloj.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 2 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 03 · Fracciones en Pista -->
+            <article class="game-card game-card-new" data-category="matematicas" data-difficulty="medio">
+                <a href="JuegosPrimaria/fracciones.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Fracciones en Pista">
+                    <div class="game-card-thumb thumb-matematicas has-image">
+                        <img src="JuegosPrimaria/imagen3.png" alt="Fracciones en Pista" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">03</span>
+                        <span class="game-badge-new">NUEVO</span>
+                        <div class="game-difficulty difficulty-medio">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Medio</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-matematicas">🔢 Matemáticas</span>
+                            <span class="game-age">9-11 años</span>
+                        </div>
+                        <h3 class="game-title">Fracciones en Pista</h3>
+                        <p class="game-desc">Compite dividiendo la pista en fracciones correctas para llegar primero.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 2 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 04 · Problemas de Velocidad -->
+            <article class="game-card game-card-new" data-category="matematicas" data-difficulty="dificil">
+                <a href="JuegosPrimaria/problemas.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Problemas de Velocidad">
+                    <div class="game-card-thumb thumb-matematicas has-image">
+                        <img src="JuegosPrimaria/imagen4.png" alt="Problemas de Velocidad" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">04</span>
+                        <span class="game-badge-new">NUEVO</span>
+                        <div class="game-difficulty difficulty-dificil">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Difícil</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-matematicas">🔢 Matemáticas</span>
+                            <span class="game-age">10-11 años</span>
+                        </div>
+                        <h3 class="game-title">Problemas de Velocidad</h3>
+                        <p class="game-desc">Resuelve problemas de distancia, velocidad y tiempo como un verdadero piloto.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 3 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+        </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════════════════
+         SECCIÓN 2 · LENGUAJE
+         ══════════════════════════════════════════════════════════════ -->
+    <section class="games-section games-section-lenguaje" data-section="lenguaje" aria-labelledby="sec-lenguaje-title">
+
+        <header class="games-section-head">
+            <div class="games-section-ico games-section-ico-lenguaje">📖</div>
+            <div class="games-section-info">
+                <h3 class="games-section-title" id="sec-lenguaje-title">Lenguaje</h3>
+                <p class="games-section-desc">Lee, escribe y domina las palabras con velocidad</p>
+            </div>
+            <span class="games-section-count">
+                <span class="games-section-count-num">4</span>
+                <span class="games-section-count-txt">juegos</span>
+            </span>
+        </header>
+
+        <div class="games-grid" aria-live="polite">
+
+            <!-- 05 · Ortografía Rally -->
+            <article class="game-card" data-category="lenguaje" data-difficulty="facil">
+                <a href="JuegosPrimaria/ortografia.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Ortografía Rally">
+                    <div class="game-card-thumb thumb-lenguaje has-image">
+                        <img src="JuegosPrimaria/imagen5.png" alt="Ortografía Rally" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">05</span>
+                        <div class="game-difficulty difficulty-facil">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Fácil</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-lenguaje">📖 Lenguaje</span>
+                            <span class="game-age">6-8 años</span>
+                        </div>
+                        <h3 class="game-title">Ortografía Rally</h3>
+                        <p class="game-desc">Corrige las palabras mal escritas para que tu carro siga avanzando.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 1 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 06 · Sinónimos y Antónimos -->
+            <article class="game-card game-card-new" data-category="lenguaje" data-difficulty="facil">
+                <a href="JuegosPrimaria/sinonimos.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Sinónimos y Antónimos">
+                    <div class="game-card-thumb thumb-lenguaje has-image">
+                        <img src="JuegosPrimaria/imagen6.png" alt="Sinónimos y Antónimos" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">06</span>
+                        <span class="game-badge-new">NUEVO</span>
+                        <div class="game-difficulty difficulty-facil">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Fácil</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-lenguaje">📖 Lenguaje</span>
+                            <span class="game-age">7-9 años</span>
+                        </div>
+                        <h3 class="game-title">Sinónimos y Antónimos</h3>
+                        <p class="game-desc">Une las palabras con su sinónimo o antónimo correcto en cada curva.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 1 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 07 · Constructor de Oraciones -->
+            <article class="game-card game-card-new" data-category="lenguaje" data-difficulty="medio">
+                <a href="JuegosPrimaria/oraciones.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Constructor de Oraciones">
+                    <div class="game-card-thumb thumb-lenguaje has-image">
+                        <img src="JuegosPrimaria/imagen7.png" alt="Constructor de Oraciones" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">07</span>
+                        <span class="game-badge-new">NUEVO</span>
+                        <div class="game-difficulty difficulty-medio">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Medio</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-lenguaje">📖 Lenguaje</span>
+                            <span class="game-age">8-10 años</span>
+                        </div>
+                        <h3 class="game-title">Constructor de Oraciones</h3>
+                        <p class="game-desc">Ordena las palabras correctamente para formar oraciones completas.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 2 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 08 · Comprensión Lectora -->
+            <article class="game-card game-card-new" data-category="lenguaje" data-difficulty="dificil">
+                <a href="JuegosPrimaria/comprension.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Comprensión Lectora">
+                    <div class="game-card-thumb thumb-lenguaje has-image">
+                        <img src="JuegosPrimaria/imagen8.png" alt="Comprensión Lectora" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">08</span>
+                        <span class="game-badge-new">NUEVO</span>
+                        <div class="game-difficulty difficulty-dificil">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Difícil</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-lenguaje">📖 Lenguaje</span>
+                            <span class="game-age">9-11 años</span>
+                        </div>
+                        <h3 class="game-title">Comprensión Lectora</h3>
+                        <p class="game-desc">Lee historias cortas y responde preguntas para desbloquear el siguiente nivel.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 3 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+        </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════════════════
+         SECCIÓN 3 · CIENCIAS
+         ══════════════════════════════════════════════════════════════ -->
+    <section class="games-section games-section-ciencias" data-section="ciencias" aria-labelledby="sec-ciencias-title">
+
+        <header class="games-section-head">
+            <div class="games-section-ico games-section-ico-ciencias">🔬</div>
+            <div class="games-section-info">
+                <h3 class="games-section-title" id="sec-ciencias-title">Ciencias</h3>
+                <p class="games-section-desc">Explora el mundo natural, el cuerpo humano y el universo</p>
+            </div>
+            <span class="games-section-count">
+                <span class="games-section-count-num">4</span>
+                <span class="games-section-count-txt">juegos</span>
+            </span>
+        </header>
+
+        <div class="games-grid" aria-live="polite">
+
+            <!-- 09 · Sistema Solar -->
+            <article class="game-card" data-category="ciencias" data-difficulty="facil">
+                <a href="JuegosPrimaria/sistemasolar.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Sistema Solar">
+                    <div class="game-card-thumb thumb-ciencias has-image">
+                        <img src="JuegosPrimaria/imagen9.png" alt="Sistema Solar" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">09</span>
+                        <div class="game-difficulty difficulty-facil">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Fácil</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-ciencias">🔬 Ciencias</span>
+                            <span class="game-age">6-9 años</span>
+                        </div>
+                        <h3 class="game-title">Sistema Solar</h3>
+                        <p class="game-desc">Ordena los planetas por su distancia al Sol y aprende sus nombres.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 1 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 10 · Cuerpo Humano -->
+            <article class="game-card game-card-new" data-category="ciencias" data-difficulty="facil">
+                <a href="JuegosPrimaria/cuerpohumano.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Cuerpo Humano">
+                    <div class="game-card-thumb thumb-ciencias has-image">
+                        <img src="JuegosPrimaria/imagen10.png" alt="Cuerpo Humano" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">10</span>
+                        <span class="game-badge-new">NUEVO</span>
+                        <div class="game-difficulty difficulty-facil">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Fácil</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-ciencias">🔬 Ciencias</span>
+                            <span class="game-age">6-9 años</span>
+                        </div>
+                        <h3 class="game-title">Cuerpo Humano</h3>
+                        <p class="game-desc">Ubica los órganos principales y descubre sus funciones vitales.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 1 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 11 · Ecosistemas -->
+            <article class="game-card game-card-new" data-category="ciencias" data-difficulty="medio">
+                <a href="JuegosPrimaria/ecosistemas.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Ecosistemas">
+                    <div class="game-card-thumb thumb-ciencias has-image">
+                        <img src="JuegosPrimaria/imagen11.png" alt="Ecosistemas" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">11</span>
+                        <span class="game-badge-new">NUEVO</span>
+                        <div class="game-difficulty difficulty-medio">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Medio</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-ciencias">🔬 Ciencias</span>
+                            <span class="game-age">8-10 años</span>
+                        </div>
+                        <h3 class="game-title">Ecosistemas</h3>
+                        <p class="game-desc">Clasifica animales y plantas según su hábitat natural.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 2 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 12 · Estados del Agua -->
+            <article class="game-card game-card-new" data-category="ciencias" data-difficulty="medio">
+                <a href="JuegosPrimaria/agua.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Estados del Agua">
+                    <div class="game-card-thumb thumb-ciencias has-image">
+                        <img src="JuegosPrimaria/imagen12.png" alt="Estados del Agua" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">12</span>
+                        <span class="game-badge-new">NUEVO</span>
+                        <div class="game-difficulty difficulty-medio">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Medio</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-ciencias">🔬 Ciencias</span>
+                            <span class="game-age">8-10 años</span>
+                        </div>
+                        <h3 class="game-title">Estados del Agua</h3>
+                        <p class="game-desc">Descubre cómo el agua cambia de estado con la temperatura.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 2 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+        </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════════════════
+         SECCIÓN 4 · LÓGICA
+         ══════════════════════════════════════════════════════════════ -->
+    <section class="games-section games-section-logica" data-section="logica" aria-labelledby="sec-logica-title">
+
+        <header class="games-section-head">
+            <div class="games-section-ico games-section-ico-logica">🧩</div>
+            <div class="games-section-info">
+                <h3 class="games-section-title" id="sec-logica-title">Lógica</h3>
+                <p class="games-section-desc">Puzzles, programación y desafíos mentales de alto nivel</p>
+            </div>
+            <span class="games-section-count">
+                <span class="games-section-count-num">5</span>
+                <span class="games-section-count-txt">juegos</span>
+            </span>
+        </header>
+
+        <div class="games-grid" aria-live="polite">
+
+            <!-- 13 · Sudoku Junior -->
+            <article class="game-card" data-category="logica" data-difficulty="medio">
+                <a href="JuegosPrimaria/sudoku.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Sudoku Junior">
+                    <div class="game-card-thumb thumb-logica has-image">
+                        <img src="JuegosPrimaria/imagen13.png" alt="Sudoku Junior" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">13</span>
+                        <div class="game-difficulty difficulty-medio">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Medio</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-logica">🧠 Lógica</span>
+                            <span class="game-age">8-10 años</span>
+                        </div>
+                        <h3 class="game-title">Sudoku Junior</h3>
+                        <p class="game-desc">Completa el tablero 4x4 sin repetir números en filas ni columnas.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 2 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 14 · Patrones -->
+            <article class="game-card game-card-new" data-category="logica" data-difficulty="facil">
+                <a href="JuegosPrimaria/patrones.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Patrones">
+                    <div class="game-card-thumb thumb-logica has-image">
+                        <img src="JuegosPrimaria/imagen14.png" alt="Patrones" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">14</span>
+                        <span class="game-badge-new">NUEVO</span>
+                        <div class="game-difficulty difficulty-facil">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Fácil</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-logica">🧠 Lógica</span>
+                            <span class="game-age">6-9 años</span>
+                        </div>
+                        <h3 class="game-title">Patrones</h3>
+                        <p class="game-desc">Descubre el patrón que sigue la secuencia y continúa la serie.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 1 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 15 · Laberinto del Piloto -->
+            <article class="game-card game-card-new" data-category="logica" data-difficulty="medio">
+                <a href="JuegosPrimaria/laberinto.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Laberinto del Piloto">
+                    <div class="game-card-thumb thumb-logica has-image">
+                        <img src="JuegosPrimaria/imagen15.png" alt="Laberinto del Piloto" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">15</span>
+                        <span class="game-badge-new">NUEVO</span>
+                        <div class="game-difficulty difficulty-medio">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Medio</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-logica">🧠 Lógica</span>
+                            <span class="game-age">8-10 años</span>
+                        </div>
+                        <h3 class="game-title">Laberinto del Piloto</h3>
+                        <p class="game-desc">Guía a Rayet por el laberinto evitando chocar con los muros.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 2 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 16 · Código Secreto -->
+            <article class="game-card game-card-new" data-category="logica" data-difficulty="medio">
+                <a href="JuegosPrimaria/codigo.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Código Secreto">
+                    <div class="game-card-thumb thumb-logica has-image">
+                        <img src="JuegosPrimaria/imagen16.png" alt="Código Secreto" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">16</span>
+                        <span class="game-badge-new">NUEVO</span>
+                        <div class="game-difficulty difficulty-medio">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Medio</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-logica">🧠 Lógica</span>
+                            <span class="game-age">8-10 años</span>
+                        </div>
+                        <h3 class="game-title">Código Secreto</h3>
+                        <p class="game-desc">Descifra el código de la carrera usando las pistas que te dan.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 2 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 17 · Programación Básica -->
+            <article class="game-card game-card-new" data-category="logica" data-difficulty="dificil">
+                <a href="JuegosPrimaria/programacion.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Programación Básica">
+                    <div class="game-card-thumb thumb-logica has-image">
+                        <img src="JuegosPrimaria/imagen17.png" alt="Programación Básica" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">17</span>
+                        <span class="game-badge-new">NUEVO</span>
+                        <div class="game-difficulty difficulty-dificil">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Difícil</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-logica">🧠 Lógica</span>
+                            <span class="game-age">9-11 años</span>
+                        </div>
+                        <h3 class="game-title">Programación Básica</h3>
+                        <p class="game-desc">Aprende a programar los movimientos de Rayet con bloques simples.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 3 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+        </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════════════════
+         SECCIÓN 5 · RETOS ESPECIALES
+         ══════════════════════════════════════════════════════════════ -->
+    <section class="games-section games-section-retos" data-section="retos" aria-labelledby="sec-retos-title">
+
+        <header class="games-section-head">
+            <div class="games-section-ico games-section-ico-retos">🏆</div>
+            <div class="games-section-info">
+                <h3 class="games-section-title" id="sec-retos-title">Retos Especiales</h3>
+                <p class="games-section-desc">Desafíos que combinan varias materias — ¡solo para campeones!</p>
+            </div>
+            <span class="games-section-count">
+                <span class="games-section-count-num">3</span>
+                <span class="games-section-count-txt">juegos</span>
+            </span>
+        </header>
+
+        <div class="games-grid" aria-live="polite">
+
+            <!-- 18 · Gran Premio Matemático -->
+            <article class="game-card" data-category="retos" data-difficulty="dificil">
+                <a href="JuegosPrimaria/granpremio.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Gran Premio Matemático">
+                    <div class="game-card-thumb thumb-retos has-image">
+                        <img src="JuegosPrimaria/imagen18.png" alt="Gran Premio Matemático" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">18</span>
+                        <div class="game-difficulty difficulty-dificil">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Difícil</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-retos">🏆 Retos</span>
+                            <span class="game-age">9-11 años</span>
+                        </div>
+                        <h3 class="game-title">Gran Premio Matemático</h3>
+                        <p class="game-desc">Compite resolviendo problemas matemáticos de todas las operaciones.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 3 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 19 · Maratón del Saber -->
+            <article class="game-card game-card-new" data-category="retos" data-difficulty="dificil">
+                <a href="JuegosPrimaria/maraton.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Maratón del Saber">
+                    <div class="game-card-thumb thumb-retos has-image">
+                        <img src="JuegosPrimaria/imagen19.png" alt="Maratón del Saber" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">19</span>
+                        <span class="game-badge-new">NUEVO</span>
+                        <div class="game-difficulty difficulty-dificil">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Difícil</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-retos">🏆 Retos</span>
+                            <span class="game-age">10-11 años</span>
+                        </div>
+                        <h3 class="game-title">Maratón del Saber</h3>
+                        <p class="game-desc">Preguntas de matemáticas, lenguaje y ciencias en una sola carrera.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 3 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 20 · Campeonato Final (RETO FINAL) -->
+            <article class="game-card game-card-featured" data-category="retos" data-difficulty="dificil">
+                <a href="JuegosPrimaria/campeonato.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Campeonato Final">
+                    <div class="game-card-thumb thumb-retos has-image">
+                        <img src="JuegosPrimaria/imagen20.png" alt="Campeonato Final" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">20</span>
+                        <div class="game-badge-featured">👑 CAMPEONATO</div>
+                        <div class="game-difficulty difficulty-dificil">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Difícil</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-retos">🏆 Retos</span>
+                            <span class="game-age">11+ años</span>
+                        </div>
+                        <h3 class="game-title">Campeonato Final</h3>
+                        <p class="game-desc">El reto definitivo: 5 minijuegos seguidos. ¡Solo los mejores llegan al podio!</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 3 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+        </div>
+    </section>
+
+
+    <!-- ============================================
+         MENSAJE CUANDO NO HAY RESULTADOS
+         ============================================ -->
+    <div class="games-empty" id="gamesEmpty" hidden>
+        <span class="games-empty-ico">🔍</span>
+        <p class="games-empty-txt">No hay juegos en esta categoría todavía.</p>
+        <button class="btn btn-show-all" data-filter="all">
+            <span class="btn-icon">🏁</span>
+            <span class="btn-label">VER TODOS</span>
+        </button>
+    </div>
+
+</main>
+
+
+<!-- ============================================================
+     SECCIÓN DE AYUDA / INFO PARA DOCENTES
+     ============================================================ -->
+<section id="ayuda" class="help-section help-primaria">
+    <div class="help-inner">
+
+        <div class="help-header reveal-child" data-reveal="1">
+            <span class="help-ico">💡</span>
+            <h2 class="help-title">¿Cómo usar Aventuras de Rayet?</h2>
+            <p class="help-subtitle">Consejos para docentes y familias</p>
+        </div>
+
+        <div class="help-grid">
+            <div class="help-card reveal-child" data-reveal="2">
+                <div class="help-card-ico">🏁</div>
+                <h3 class="help-card-title">Elige tu desafío</h3>
+                <p class="help-card-desc">
+                    Cada tarjeta abre el juego en una nueva pestaña, así no pierdes la pista de aventuras.
+                </p>
+            </div>
+
+            <div class="help-card reveal-child" data-reveal="3">
+                <div class="help-card-ico">📚</div>
+                <h3 class="help-card-title">Áreas educativas</h3>
+                <p class="help-card-desc">
+                    Usa los filtros para elegir juegos de matemáticas, lenguaje, ciencias, lógica o retos.
+                </p>
+            </div>
+
+            <div class="help-card reveal-child" data-reveal="4">
+                <div class="help-card-ico">⭐</div>
+                <h3 class="help-card-title">Dificultad progresiva</h3>
+                <p class="help-card-desc">
+                    Empieza por los juegos <strong>fáciles</strong> y avanza hacia los <strong>difíciles</strong>.
+                </p>
+            </div>
+
+            <div class="help-card reveal-child" data-reveal="5">
+                <div class="help-card-ico">🔊</div>
+                <h3 class="help-card-title">Activa el sonido</h3>
+                <p class="help-card-desc">
+                    Usa el botón de la esquina superior para activar los sonidos educativos.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ============================================================
+     PIE DE PÁGINA
+     ============================================================ -->
+<footer class="site-footer footer-primaria">
+    <div class="footer-inner">
+
+        <div class="footer-brand">
+            <span class="footer-brand-ico">🏎️</span>
+            <span class="footer-brand-txt">AVENTURAS DE RAYET</span>
+        </div>
+
+        <p class="footer-msg">Aprende a toda velocidad, descubre y supera nuevos desafíos.</p>
+
+        <nav class="footer-nav" aria-label="Navegación del pie">
+            <a href="index.html" class="footer-nav-link">🏠 Inicio</a>
+            <span class="footer-dot">•</span>
+            <a href="#juegos" class="footer-nav-link">🎮 Juegos</a>
+            <span class="footer-dot">•</span>
+            <a href="#ayuda" class="footer-nav-link">💡 Ayuda</a>
+            <span class="footer-dot">•</span>
+            <a href="inicial.html" class="footer-nav-link">🐝 Inicial</a>
+            <span class="footer-dot">•</span>
+            <a href="secundaria.html" class="footer-nav-link">🤖 Secundaria</a>
+        </nav>
+
+        <p class="footer-copy">
+            © <span id="year"></span> Aventura Educativa — Nivel Primaria · Rayet 🏎️
+        </p>
+    </div>
+</footer>
+
+
+<!-- ============================================================
+     SCRIPT
+     ============================================================ -->
+<script src="js/rayet.js"></script>
+
+</body>
+</html>
