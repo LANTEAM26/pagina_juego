@@ -1,0 +1,2592 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>ROBOT BEE CONTROL 5x5</title>
+
+
+<style>
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+:root {
+
+    --bg:#070b14;
+    --panel:#111a2b;
+
+    --blue:#38bdf8;
+    --green:#22c55e;
+    --red:#ef4444;
+    --orange:#f59e0b;
+
+    --grid:#263b55;
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+
+    box-sizing:border-box;
+
+    margin:0;
+    padding:0;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+}
+
+
+/* =========================================================
+   BODY
+========================================================= */
+
+body {
+
+    min-height:100vh;
+
+    background:
+        radial-gradient(
+            circle at top,
+            #172554,
+            #020617 70%
+        );
+
+    color:white;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+
+    padding:20px;
+
+    overflow-x:hidden;
+
+    transition:
+        background .4s ease,
+        color .4s ease;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+header {
+
+    width:100%;
+    max-width:1100px;
+
+    text-align:center;
+
+    margin-bottom:18px;
+
+    position:relative;
+}
+
+
+header h1 {
+
+    color:var(--blue);
+
+    font-size:
+        clamp(1.7rem, 4vw, 2.5rem);
+
+    letter-spacing:2px;
+
+    text-shadow:
+        0 0 20px
+        rgba(56,189,248,.6);
+}
+
+
+.subtitle {
+
+    color:#94a3b8;
+
+    margin-top:6px;
+
+    font-size:14px;
+}
+
+
+/* =========================================================
+   BOTÓN CAMBIAR DISEÑO
+========================================================= */
+
+.design-btn {
+
+    margin-top:14px;
+
+    border:none;
+
+    padding:
+        10px 18px;
+
+    border-radius:14px;
+
+    background:#1e293b;
+
+    color:white;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    border:
+        2px solid #475569;
+
+    box-shadow:
+        0 4px 0 #050812;
+
+    transition:
+        .2s;
+}
+
+
+.design-btn:hover {
+
+    background:#334155;
+
+    transform:
+        translateY(-2px);
+}
+
+
+.design-btn:active {
+
+    transform:
+        translateY(3px);
+
+    box-shadow:
+        0 1px 0 #050812;
+}
+
+
+/* =========================================================
+   PANEL PRINCIPAL
+========================================================= */
+
+.main-container {
+
+    width:100%;
+
+    max-width:1100px;
+
+    display:grid;
+
+    grid-template-columns:
+        minmax(280px, 1fr)
+        minmax(400px, 1.15fr);
+
+    gap:30px;
+
+    background:
+        rgba(17,26,43,.97);
+
+    padding:28px;
+
+    border-radius:25px;
+
+    box-shadow:
+        0 25px 60px
+        rgba(0,0,0,.6);
+
+    border:
+        1px solid #26344d;
+}
+
+
+/* =========================================================
+   CONTROLES
+========================================================= */
+
+.controls-section {
+
+    min-width:0;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:18px;
+}
+
+
+/* =========================================================
+   D-PAD
+========================================================= */
+
+.d-pad {
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(3, minmax(55px,75px));
+
+    grid-template-rows:
+        repeat(3, minmax(55px,75px));
+
+    gap:11px;
+}
+
+
+.d-btn {
+
+    border:none;
+
+    border-radius:18px;
+
+    background:#1e293b;
+
+    color:white;
+
+    font-size:32px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    box-shadow:
+        0 6px 0 #050812,
+        0 10px 15px
+        rgba(0,0,0,.35);
+
+    transition:
+        .12s;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    user-select:none;
+
+    -webkit-tap-highlight-color:
+        transparent;
+}
+
+/* Estilo para las imágenes dentro de los botones del D-pad */
+.d-btn img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    pointer-events: none;
+}
+
+
+.d-btn:hover {
+
+    background:#334155;
+}
+
+
+.d-btn:active {
+
+    transform:
+        translateY(6px);
+
+    box-shadow:
+        0 0 0 #050812;
+}
+
+
+/* =========================================================
+   POSICIÓN D-PAD
+========================================================= */
+
+#btn-up {
+
+    grid-column:2;
+    grid-row:1;
+}
+
+
+#btn-left {
+
+    grid-column:1;
+    grid-row:2;
+}
+
+
+#btn-go {
+
+    grid-column:2;
+    grid-row:2;
+
+    border-radius:50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #22c55e,
+            #15803d
+        );
+
+    font-size:17px;
+
+    line-height:1.05;
+}
+
+
+#btn-right {
+
+    grid-column:3;
+    grid-row:2;
+}
+
+
+#btn-down {
+
+    grid-column:2;
+    grid-row:3;
+}
+
+
+/* =========================================================
+   BOTONES INFERIORES
+========================================================= */
+
+.action-buttons {
+
+    display:flex;
+
+    justify-content:center;
+
+    flex-wrap:wrap;
+
+    gap:15px;
+}
+
+
+.action-btn {
+
+    border:none;
+
+    padding:
+        12px 20px;
+
+    color:white;
+
+    border-radius:12px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    box-shadow:
+        0 4px 0
+        rgba(0,0,0,.5);
+
+    transition:
+        .15s;
+
+    -webkit-tap-highlight-color:
+        transparent;
+}
+
+
+.action-btn:active {
+
+    transform:
+        translateY(3px);
+
+    box-shadow:
+        0 1px 0
+        rgba(0,0,0,.5);
+}
+
+
+#btn-pause {
+
+    background:
+        linear-gradient(
+            135deg,
+            #f59e0b,
+            #b45309
+        );
+}
+
+
+#btn-clear {
+
+    background:
+        linear-gradient(
+            135deg,
+            #ef4444,
+            #b91c1c
+        );
+}
+
+
+/* =========================================================
+   SECUENCIA
+========================================================= */
+
+.sequence-container {
+
+    width:100%;
+
+    background:#070b13;
+
+    border:
+        1px solid #26344d;
+
+    border-radius:12px;
+
+    padding:10px;
+}
+
+
+.sequence-title {
+
+    color:#64748b;
+
+    font-size:11px;
+
+    text-transform:uppercase;
+
+    margin-bottom:7px;
+}
+
+
+.sequence-list {
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:5px;
+
+    max-height:65px;
+
+    overflow-y:auto;
+
+    min-height:20px;
+}
+
+
+.seq-step {
+
+    background:#1e293b;
+
+    color:var(--blue);
+
+    border-radius:6px;
+
+    padding:
+        5px 8px;
+
+    font-size:13px;
+
+    font-weight:bold;
+
+    transition:.15s;
+    
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Estilo para la imagen y el número dentro de la secuencia programada */
+.seq-step img {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+}
+
+
+.seq-step.active {
+
+    background:var(--blue);
+
+    color:#020617;
+
+    box-shadow:
+        0 0 15px
+        rgba(56,189,248,.7);
+
+    transform:
+        scale(1.15);
+}
+
+
+.system-msg {
+
+    min-height:20px;
+
+    margin-top:8px;
+
+    text-align:center;
+
+    color:var(--green);
+
+    font-size:13px;
+
+    font-weight:bold;
+}
+
+
+/* =========================================================
+   ÁREA DE LA ABEJA
+========================================================= */
+
+.bee-section {
+
+    min-width:0;
+
+    min-height:430px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:
+        radial-gradient(
+            circle,
+            #172033,
+            #050812 78%
+        );
+
+    border:
+        2px dashed #334155;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    padding:20px;
+}
+
+
+/* =========================================================
+   CUADRÍCULA 5x5
+========================================================= */
+
+.grid-area {
+
+    width:
+        min(100%, 350px);
+
+    aspect-ratio:
+        1 / 1;
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(5,1fr);
+
+    grid-template-rows:
+        repeat(5,1fr);
+
+    position:relative;
+
+    background:#0b1220;
+
+    border:
+        3px solid #3b82f6;
+
+    border-radius:12px;
+
+    box-shadow:
+        0 0 25px
+        rgba(56,189,248,.2),
+
+        inset 0 0 25px
+        rgba(0,0,0,.5);
+}
+
+
+/* =========================================================
+   CELDAS
+========================================================= */
+
+.cell {
+
+    border:
+        1px solid var(--grid);
+
+    position:relative;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(30,41,59,.7),
+            rgba(15,23,42,.7)
+        );
+}
+
+
+.cell.center {
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(34,197,94,.16),
+            rgba(15,23,42,.7)
+        );
+}
+
+
+/* =========================================================
+   ABEJA — POSICIÓN
+========================================================= */
+
+.bee-position {
+
+    position:absolute;
+
+    width:54px;
+    height:70px;
+
+    left:50%;
+    top:50%;
+
+    transform:
+        translate(-50%,-50%);
+
+    transition:
+        left .8s cubic-bezier(.25,.8,.25,1),
+        top .8s cubic-bezier(.25,.8,.25,1);
+
+    z-index:20;
+
+    pointer-events:none;
+}
+
+
+.bee-rotation {
+
+    width:100%;
+    height:100%;
+
+    position:relative;
+
+    transition:
+        transform .8s
+        cubic-bezier(.25,.8,.25,1);
+
+    transform-origin:
+        center center;
+}
+
+
+/* =========================================================
+   ABEJA
+========================================================= */
+
+.bee {
+
+    width:54px;
+    height:70px;
+
+    position:relative;
+
+    filter:
+        drop-shadow(
+            0 5px 8px
+            rgba(0,0,0,.6)
+        );
+}
+
+
+/* =========================================================
+   ALAS
+========================================================= */
+
+.wing {
+
+    position:absolute;
+
+    width:27px;
+    height:38px;
+
+    top:16px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.95),
+            rgba(125,211,252,.5)
+        );
+
+    border:
+        1.5px solid #7dd3fc;
+
+    border-radius:50%;
+
+    box-shadow:
+        inset 0 0 7px white,
+        0 0 7px
+        rgba(56,189,248,.5);
+
+    z-index:1;
+
+    animation:
+        wingFlap .2s
+        infinite alternate
+        ease-in-out;
+}
+
+
+.wing.left {
+
+    left:-22px;
+
+    transform:
+        rotate(-18deg);
+
+    transform-origin:
+        right center;
+}
+
+
+.wing.right {
+
+    right:-22px;
+
+    transform:
+        rotate(18deg);
+
+    transform-origin:
+        left center;
+}
+
+
+@keyframes wingFlap {
+
+    from {
+        opacity:.65;
+    }
+
+    to {
+        opacity:1;
+    }
+}
+
+
+/* =========================================================
+   CUERPO
+========================================================= */
+
+.bee-body {
+
+    position:absolute;
+
+    left:0;
+    top:0;
+
+    width:54px;
+    height:70px;
+
+    border-radius:27px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #facc15,
+            #d97706
+        );
+
+    border:
+        2px solid #111827;
+
+    overflow:hidden;
+
+    z-index:5;
+
+    box-shadow:
+        inset -6px -6px 12px
+        rgba(0,0,0,.4),
+
+        inset 3px 3px 8px
+        rgba(255,255,255,.5);
+}
+
+
+/* =========================================================
+   VISOR
+========================================================= */
+
+.visor {
+
+    position:absolute;
+
+    top:7px;
+
+    left:7px;
+    right:7px;
+
+    height:16px;
+
+    background:#020617;
+
+    border:
+        1px solid #334155;
+
+    border-radius:10px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-around;
+}
+
+
+.eye-led {
+
+    width:5px;
+    height:7px;
+
+    background:var(--blue);
+
+    border-radius:4px;
+
+    box-shadow:
+        0 0 5px
+        var(--blue);
+}
+
+
+/* =========================================================
+   RAYAS
+========================================================= */
+
+.bee-stripes {
+
+    position:absolute;
+
+    top:27px;
+
+    width:100%;
+
+    height:8px;
+
+    background:#111827;
+
+    box-shadow:
+        0 14px 0 #111827,
+        0 28px 0 #111827;
+}
+
+
+/* =========================================================
+   MOTOR
+========================================================= */
+
+.bee-engine {
+
+    position:absolute;
+
+    bottom:-4px;
+
+    left:50%;
+
+    transform:
+        translateX(-50%);
+
+    width:15px;
+    height:7px;
+
+    background:#334155;
+
+    border:
+        1px solid #020617;
+
+    border-radius:5px;
+}
+
+
+.bee-engine::after {
+
+    content:"";
+
+    position:absolute;
+
+    bottom:-5px;
+
+    left:50%;
+
+    transform:
+        translateX(-50%);
+
+    width:9px;
+    height:4px;
+
+    background:var(--blue);
+
+    border-radius:50%;
+
+    box-shadow:
+        0 0 6px
+        var(--blue);
+}
+
+
+/* =========================================================
+   ANTENAS
+========================================================= */
+
+.antenna {
+
+    position:absolute;
+
+    width:2px;
+    height:13px;
+
+    top:-11px;
+
+    background:#94a3b8;
+
+    z-index:15;
+}
+
+
+.antenna.left {
+
+    left:14px;
+
+    transform:
+        rotate(-15deg);
+}
+
+
+.antenna.right {
+
+    right:14px;
+
+    transform:
+        rotate(15deg);
+}
+
+
+.antenna::after {
+
+    content:"";
+
+    position:absolute;
+
+    width:5px;
+    height:5px;
+
+    top:-3px;
+    left:-1.5px;
+
+    border-radius:50%;
+
+    background:var(--blue);
+
+    box-shadow:
+        0 0 6px
+        var(--blue);
+}
+
+
+/* =========================================================
+   ABEJA HABLANDO
+========================================================= */
+
+.speaking .bee {
+
+    animation:
+        talk .2s
+        infinite alternate;
+}
+
+
+@keyframes talk {
+
+    from {
+        transform:scale(1);
+    }
+
+    to {
+        transform:scale(1.05);
+    }
+}
+
+
+/* =========================================================
+   =========================================================
+   MODO INFANTIL 🐝🌈
+   =========================================================
+========================================================= */
+
+body.cute {
+
+    --blue:#38bdf8;
+    --green:#22c55e;
+    --red:#f43f5e;
+    --orange:#f59e0b;
+
+    --grid:#4b83a8;
+
+    background:
+        linear-gradient(
+            180deg,
+            #38bdf8 0%,
+            #3b82f6 45%,
+            #2563eb 100%
+        );
+}
+
+
+/* HEADER INFANTIL */
+
+body.cute header h1 {
+
+    color:#ffffff;
+
+    text-shadow:
+        0 3px 0 #1d4ed8,
+        0 5px 12px
+        rgba(0,0,0,.25);
+
+    letter-spacing:1px;
+}
+
+
+body.cute .subtitle {
+
+    color:#e0f2fe;
+
+    font-weight:bold;
+}
+
+
+/* BOTÓN DE DISEÑO */
+
+body.cute .design-btn {
+
+    background:#fbbf24;
+
+    color:#713f12;
+
+    border:
+        3px solid #f59e0b;
+
+    box-shadow:
+        0 4px 0 #b45309;
+}
+
+
+body.cute .design-btn:hover {
+
+    background:#fcd34d;
+
+    transform:
+        translateY(-2px);
+}
+
+
+/* PANEL */
+
+body.cute .main-container {
+
+    background:
+        linear-gradient(
+            145deg,
+            #0f766e,
+            #155e75
+        );
+
+    border:
+        4px solid #67e8f9;
+
+    box-shadow:
+        0 15px 0
+        rgba(15,23,42,.25),
+
+        0 25px 50px
+        rgba(0,0,0,.25);
+}
+
+
+/* D-PAD */
+
+body.cute .d-btn {
+
+    background:
+        linear-gradient(
+            145deg,
+            #38bdf8,
+            #0284c7
+        );
+
+    color:white;
+
+    border:
+        3px solid #7dd3fc;
+
+    border-radius:22px;
+
+    box-shadow:
+        0 6px 0 #075985,
+        0 9px 15px
+        rgba(0,0,0,.25);
+}
+
+
+body.cute .d-btn:hover {
+
+    background:
+        linear-gradient(
+            145deg,
+            #60a5fa,
+            #0284c7
+        );
+
+    transform:
+        translateY(-3px);
+}
+
+
+body.cute .d-btn:active {
+
+    transform:
+        translateY(5px);
+
+    box-shadow:
+        0 1px 0 #075985;
+}
+
+
+/* GO */
+
+body.cute #btn-go {
+
+    background:
+        linear-gradient(
+            145deg,
+            #4ade80,
+            #16a34a
+        );
+
+    border:
+        4px solid #86efac;
+
+    box-shadow:
+        0 6px 0 #166534,
+        0 10px 18px
+        rgba(0,0,0,.3);
+}
+
+
+body.cute #btn-go:hover {
+
+    background:
+        linear-gradient(
+            145deg,
+            #86efac,
+            #22c55e
+        );
+}
+
+
+/* PAUSA */
+
+body.cute #btn-pause {
+
+    background:
+        linear-gradient(
+            145deg,
+            #fbbf24,
+            #f59e0b
+        );
+
+    border:
+        2px solid #fde68a;
+
+    box-shadow:
+        0 4px 0 #b45309;
+}
+
+
+/* BORRAR */
+
+body.cute #btn-clear {
+
+    background:
+        linear-gradient(
+            145deg,
+            #fb7185,
+            #e11d48
+        );
+
+    border:
+        2px solid #fda4af;
+
+    box-shadow:
+        0 4px 0 #9f1239;
+}
+
+
+/* SECUENCIA */
+
+body.cute .sequence-container {
+
+    background:#164e63;
+
+    border:
+        3px solid #67e8f9;
+
+    border-radius:18px;
+}
+
+
+body.cute .sequence-title {
+
+    color:#bae6fd;
+
+    font-size:12px;
+
+    font-weight:bold;
+}
+
+
+body.cute .seq-step {
+
+    background:#0ea5e9;
+
+    color:white;
+
+    border:
+        2px solid #7dd3fc;
+
+    border-radius:10px;
+
+    padding:
+        6px 10px;
+}
+
+
+body.cute .seq-step.active {
+
+    background:#fbbf24;
+
+    color:#713f12;
+
+    border-color:#fde68a;
+
+    box-shadow:
+        0 0 12px
+        rgba(251,191,36,.6);
+
+    transform:
+        scale(1.12);
+}
+
+
+body.cute .system-msg {
+
+    color:#bbf7d0;
+
+    font-size:14px;
+}
+
+
+/* ÁREA DE ABEJA */
+
+body.cute .bee-section {
+
+    background:
+        linear-gradient(
+            180deg,
+            #0ea5e9,
+            #0369a1
+        );
+
+    border:
+        4px dashed #7dd3fc;
+
+    border-radius:25px;
+}
+
+
+/* CUADRÍCULA */
+
+body.cute .grid-area {
+
+    background:#164e63;
+
+    border:
+        5px solid #fbbf24;
+
+    border-radius:18px;
+
+    box-shadow:
+        0 0 0 5px
+        rgba(255,255,255,.12),
+
+        0 12px 25px
+        rgba(0,0,0,.35);
+}
+
+
+/* CELDAS */
+
+body.cute .cell {
+
+    background:
+        linear-gradient(
+            135deg,
+            #155e75,
+            #164e63
+        );
+
+    border:
+        2px solid #2d7693;
+}
+
+
+body.cute .cell:nth-child(odd) {
+
+    background:
+        linear-gradient(
+            135deg,
+            #164e63,
+            #155e75
+        );
+}
+
+
+body.cute .cell.center {
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(74,222,128,.5),
+            #155e75
+        );
+
+    box-shadow:
+        inset 0 0 15px
+        rgba(74,222,128,.25);
+}
+
+
+/* ABEJA INFANTIL */
+
+body.cute .bee-body {
+
+    background:
+        linear-gradient(
+            135deg,
+            #fde047,
+            #facc15
+        );
+
+    border:
+        3px solid #713f12;
+
+    box-shadow:
+        inset -5px -5px 8px
+        rgba(146,64,14,.2),
+
+        inset 4px 4px 8px
+        rgba(255,255,255,.65),
+
+        0 5px 8px
+        rgba(0,0,0,.3);
+}
+
+
+/* ALAS */
+
+body.cute .wing {
+
+    background:
+        rgba(224,242,254,.85);
+
+    border:
+        2px solid #bae6fd;
+
+    box-shadow:
+        inset 0 0 7px white,
+
+        0 0 8px
+        rgba(125,211,252,.7);
+}
+
+
+/* VISOR */
+
+body.cute .visor {
+
+    background:#164e63;
+
+    border:
+        2px solid #075985;
+
+    height:17px;
+}
+
+
+body.cute .eye-led {
+
+    width:6px;
+    height:8px;
+
+    background:#fef08a;
+
+    box-shadow:
+        0 0 7px #fef08a;
+}
+
+
+/* ANTENAS */
+
+body.cute .antenna {
+
+    background:#fef08a;
+}
+
+
+body.cute .antenna::after {
+
+    background:#f97316;
+
+    box-shadow:
+        0 0 7px #fb923c;
+}
+
+
+/* MOTOR */
+
+body.cute .bee-engine {
+
+    background:#475569;
+
+    border:
+        2px solid #1e293b;
+}
+
+
+body.cute .bee-engine::after {
+
+    background:#4ade80;
+
+    box-shadow:
+        0 0 8px #4ade80;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width:900px) {
+
+    body {
+
+        padding:
+            15px;
+    }
+
+
+    .main-container {
+
+        grid-template-columns:
+            1fr;
+
+        max-width:
+            650px;
+    }
+
+
+    .bee-section {
+
+        min-height:
+            400px;
+    }
+
+}
+
+
+/* =========================================================
+   CELULAR
+========================================================= */
+
+@media (max-width:520px) {
+
+    body {
+
+        padding:
+            10px;
+    }
+
+
+    header {
+
+        margin-bottom:
+            12px;
+    }
+
+
+    header h1 {
+
+        font-size:
+            1.55rem;
+
+        letter-spacing:
+            1px;
+    }
+
+
+    .subtitle {
+
+        font-size:
+            12px;
+    }
+
+
+    .main-container {
+
+        padding:
+            15px;
+
+        gap:
+            20px;
+
+        border-radius:
+            18px;
+    }
+
+
+    .d-pad {
+
+        grid-template-columns:
+            repeat(3, 64px);
+
+        grid-template-rows:
+            repeat(3, 64px);
+
+        gap:
+            8px;
+    }
+
+
+    .d-btn {
+
+        font-size:
+            27px;
+
+        border-radius:
+            15px;
+    }
+
+
+    #btn-go {
+
+        font-size:
+            14px;
+    }
+
+
+    .bee-section {
+
+        min-height:
+            340px;
+
+        padding:
+            12px;
+    }
+
+
+    .grid-area {
+
+        width:
+            min(100%, 300px);
+    }
+
+
+    .action-btn {
+
+        padding:
+            10px 14px;
+
+        font-size:
+            12px;
+    }
+
+}
+
+
+/* =========================================================
+   CELULAR PEQUEÑO
+========================================================= */
+
+@media (max-width:360px) {
+
+    .d-pad {
+
+        grid-template-columns:
+            repeat(3, 55px);
+
+        grid-template-rows:
+            repeat(3, 55px);
+
+        gap:
+            7px;
+    }
+
+
+    .d-btn {
+
+        font-size:
+            24px;
+    }
+
+
+    .main-container {
+
+        padding:
+            12px;
+    }
+
+
+    .bee-section {
+
+        min-height:
+            300px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+      HEADER
+========================================================= -->
+
+<header>
+
+    <h1>
+        🐝 ROBOT BEE CONTROL
+    </h1>
+
+    <div class="subtitle">
+        Programa los movimientos de tu abeja robot
+    </div>
+
+    <button
+        class="design-btn"
+        id="design-button"
+        onclick="toggleDesign()"
+    >
+        🐝 Diseño Infantil
+    </button>
+
+</header>
+
+
+<!-- =========================================================
+      PANEL PRINCIPAL
+========================================================= -->
+
+<div class="main-container">
+
+
+<!-- =========================================================
+      CONTROLES
+========================================================= -->
+
+<div class="controls-section">
+
+
+    <div class="d-pad">
+
+
+        <button
+            class="d-btn"
+            id="btn-up"
+            onclick="manualMove('up')"
+            aria-label="Avanzar"
+        >
+            <img src="img/Arriba.png" alt="Arriba">
+        </button>
+
+
+        <button
+            class="d-btn"
+            id="btn-left"
+            onclick="manualMove('left')"
+            aria-label="Girar a la izquierda"
+        >
+            <img src="img/Izquierda.png" alt="Izquierda">
+        </button>
+
+
+        <button
+            class="d-btn"
+            id="btn-go"
+            onclick="startExecution()"
+            aria-label="Ejecutar programa"
+        >
+            ▶
+            <br>
+            GO
+        </button>
+
+
+        <button
+            class="d-btn"
+            id="btn-right"
+            onclick="manualMove('right')"
+            aria-label="Girar a la derecha"
+        >
+            <img src="img/Derecha.png" alt="Derecha">
+        </button>
+
+
+        <button
+            class="d-btn"
+            id="btn-down"
+            onclick="manualMove('down')"
+            aria-label="Retroceder"
+        >
+            <img src="img/Abajo.png" alt="Abajo">
+        </button>
+
+    </div>
+
+
+    <!-- BOTONES -->
+
+    <div class="action-buttons">
+
+        <button
+            class="action-btn"
+            id="btn-pause"
+            onclick="togglePause()"
+        >
+
+            <span id="pause-icon">
+                ⏸
+            </span>
+
+            PAUSA
+
+        </button>
+
+
+        <button
+            class="action-btn"
+            id="btn-clear"
+            onclick="clearProgram()"
+        >
+
+            ✕ BORRAR
+
+        </button>
+
+    </div>
+
+
+    <!-- SECUENCIA -->
+
+    <div class="sequence-container">
+
+        <div class="sequence-title">
+            Secuencia programada
+        </div>
+
+
+        <div
+            class="sequence-list"
+            id="sequence-list"
+        >
+        </div>
+
+
+        <div
+            class="system-msg"
+            id="system-msg"
+        >
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<!-- =========================================================
+      CUADRÍCULA + ABEJA
+========================================================= -->
+
+<div class="bee-section">
+
+
+    <div
+        class="grid-area"
+        id="grid-area"
+    >
+
+
+        <!-- 25 CELDAS -->
+
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+
+        <div class="cell"></div>
+        <div class="cell"></div>
+
+        <div class="cell center"></div>
+
+        <div class="cell"></div>
+        <div class="cell"></div>
+
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+
+
+        <!-- =================================================
+                ABEJA
+        ================================================ -->
+
+        <div
+            class="bee-position"
+            id="bee-position"
+        >
+
+
+            <div
+                class="bee-rotation"
+                id="bee-rotation"
+            >
+
+
+                <div
+                    class="bee"
+                    id="bee"
+                >
+
+
+                    <!-- ALAS -->
+
+                    <div
+                        class="wing left"
+                    ></div>
+
+                    <div
+                        class="wing right"
+                    ></div>
+
+
+                    <!-- ANTENAS -->
+
+                    <div
+                        class="antenna left"
+                    ></div>
+
+                    <div
+                        class="antenna right"
+                    ></div>
+
+
+                    <!-- CUERPO -->
+
+                    <div
+                        class="bee-body"
+                    >
+
+
+                        <div
+                            class="visor"
+                        >
+
+                            <div
+                                class="eye-led"
+                            ></div>
+
+                            <div
+                                class="eye-led"
+                            ></div>
+
+                        </div>
+
+
+                        <div
+                            class="bee-stripes"
+                        ></div>
+
+
+                        <div
+                            class="bee-engine"
+                        ></div>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+let sequence = [];
+
+let isExecuting = false;
+
+let isPaused = false;
+
+let currentStepIndex = 0;
+
+
+/*
+    Posición dentro de la cuadrícula.
+
+    0 = centro
+*/
+
+let gridX = 0;
+let gridY = 0;
+
+
+/*
+    Dirección:
+
+    0   = arriba
+    90  = derecha
+    180 = abajo
+    270 = izquierda
+*/
+
+let beeAngle = 0;
+
+
+/*
+    Tiempo de movimiento.
+*/
+
+const MOVE_TIME = 800;
+
+
+/* =========================================================
+   ELEMENTOS
+========================================================= */
+
+const grid =
+    document.getElementById(
+        "grid-area"
+    );
+
+
+const beePosition =
+    document.getElementById(
+        "bee-position"
+    );
+
+
+const beeRotation =
+    document.getElementById(
+        "bee-rotation"
+    );
+
+
+const bee =
+    document.getElementById(
+        "bee"
+    );
+
+
+/* =========================================================
+   Nombres exactos de tus imágenes dentro de la carpeta img/
+========================================================= */
+
+const stepImages = {
+    up: "img/Arriba.png",
+    down: "img/Abajo.png",
+    left: "img/Izquierda.png",
+    right: "img/Derecha.png"
+};
+
+
+/* =========================================================
+   FRASES MANUALES
+========================================================= */
+
+const manualPhrases = {
+
+    up:
+        "Avanzar",
+
+    down:
+        "Retroceder",
+
+    left:
+        "Girar a la izquierda",
+
+    right:
+        "Girar a la derecha"
+
+};
+
+
+/* =========================================================
+   FRASES DEL PROGRAMA
+========================================================= */
+
+const programPhrases = {
+
+    up:
+        "Un paso adelante.",
+
+    down:
+        "Un paso hacia atrás.",
+
+    left:
+        "Giro de noventa grados a la izquierda.",
+
+    right:
+        "Giro de noventa grados a la derecha."
+
+};
+
+
+/* =========================================================
+   VOCES
+========================================================= */
+
+let voices = [];
+
+
+function loadVoices() {
+
+    if (
+        "speechSynthesis" in window
+    ) {
+
+        voices =
+            speechSynthesis
+                .getVoices();
+
+    }
+
+}
+
+
+if (
+    "speechSynthesis" in window
+) {
+
+    speechSynthesis.onvoiceschanged =
+        loadVoices;
+
+    loadVoices();
+
+}
+
+
+/* =========================================================
+   BUSCAR VOZ ESPAÑOLA
+========================================================= */
+
+function getSpanishVoice() {
+
+    let male =
+        voices.find(v => {
+
+            const name =
+                v.name.toLowerCase();
+
+            const lang =
+                v.lang.toLowerCase();
+
+
+            return (
+
+                lang.startsWith("es") &&
+
+                (
+
+                    name.includes("male") ||
+                    name.includes("hombre") ||
+                    name.includes("jorge") ||
+                    name.includes("diego") ||
+                    name.includes("carlos") ||
+                    name.includes("pablo")
+
+                )
+
+            );
+
+        });
+
+
+    if (!male) {
+
+        male =
+            voices.find(v =>
+
+                v.lang
+                    .toLowerCase()
+                    .startsWith("es")
+
+            );
+
+    }
+
+
+    return male;
+
+}
+
+
+/* =========================================================
+   VOZ MANUAL
+========================================================= */
+
+function speakManual(text) {
+
+    if (
+        !("speechSynthesis" in window)
+    ) {
+
+        return;
+
+    }
+
+
+    speechSynthesis.cancel();
+
+
+    const utterance =
+        new SpeechSynthesisUtterance(
+            text
+        );
+
+
+    utterance.lang =
+        "es-MX";
+
+    utterance.rate =
+        0.9;
+
+    utterance.pitch =
+        0.55;
+
+    utterance.volume =
+        1;
+
+
+    const voice =
+        getSpanishVoice();
+
+
+    if (voice) {
+
+        utterance.voice =
+            voice;
+
+    }
+
+
+    utterance.onstart = () => {
+
+        bee.classList.add(
+            "speaking"
+        );
+
+    };
+
+
+    utterance.onend = () => {
+
+        bee.classList.remove(
+            "speaking"
+        );
+
+    };
+
+
+    speechSynthesis.speak(
+        utterance
+    );
+
+}
+
+
+/* =========================================================
+   VOZ PARA GO
+========================================================= */
+
+function speakProgram(text) {
+
+    return new Promise(resolve => {
+
+
+        if (
+            !("speechSynthesis" in window)
+        ) {
+
+            resolve();
+
+            return;
+
+        }
+
+
+        speechSynthesis.cancel();
+
+
+        const utterance =
+            new SpeechSynthesisUtterance(
+                text
+            );
+
+
+        utterance.lang =
+            "es-MX";
+
+        utterance.rate =
+            0.82;
+
+        utterance.pitch =
+            0.55;
+
+        utterance.volume =
+            1;
+
+
+        const voice =
+            getSpanishVoice();
+
+
+        if (voice) {
+
+            utterance.voice =
+                voice;
+
+        }
+
+
+        utterance.onstart = () => {
+
+            bee.classList.add(
+                "speaking"
+            );
+
+        };
+
+
+        utterance.onend = () => {
+
+            bee.classList.remove(
+                "speaking"
+            );
+
+            resolve();
+
+        };
+
+
+        speechSynthesis.speak(
+            utterance
+        );
+
+    });
+
+}
+
+
+/* =========================================================
+   ACTUALIZAR VISTA DE SECUENCIA CON IMAGEN Y NÚMERO
+========================================================= */
+
+function updateSequenceDisplay() {
+
+    const list = document.getElementById("sequence-list");
+    list.innerHTML = "";
+
+    sequence.forEach((step, index) => {
+
+        const div = document.createElement("div");
+        div.className = "seq-step";
+        if (index === currentStepIndex && isExecuting) {
+            div.classList.add("active");
+        }
+
+        // Imagen de la flecha acompañada con el número de orden
+        const img = document.createElement("img");
+        img.src = stepImages[step];
+        img.alt = step;
+
+        div.appendChild(img);
+        div.appendChild(document.createTextNode(" " + (index + 1)));
+
+        list.appendChild(div);
+
+    });
+
+}
+
+
+/* =========================================================
+   MOVIMIENTO MANUAL
+========================================================= */
+
+function manualMove(direction) {
+
+    if (isExecuting) return;
+
+    sequence.push(direction);
+    updateSequenceDisplay();
+    speakManual(manualPhrases[direction]);
+
+    applyDirectionEffect(direction);
+
+}
+
+
+/* =========================================================
+   EFECTO DE DIRECCIÓN
+========================================================= */
+
+function applyDirectionEffect(direction) {
+
+    if (direction === "up") {
+
+        if (beeAngle === 0) gridY = Math.max(-2, gridY - 1);
+        else if (beeAngle === 90) gridX = Math.min(2, gridX + 1);
+        else if (beeAngle === 180) gridY = Math.min(2, gridY + 1);
+        else if (beeAngle === 270) gridX = Math.max(-2, gridX - 1);
+
+    } 
+    else if (direction === "down") {
+
+        if (beeAngle === 0) gridY = Math.min(2, gridY + 1);
+        else if (beeAngle === 90) gridX = Math.max(-2, gridX - 1);
+        else if (beeAngle === 180) gridY = Math.max(-2, gridY - 1);
+        else if (beeAngle === 270) gridX = Math.min(2, gridX + 1);
+
+    } 
+    else if (direction === "left") {
+
+        beeAngle = (beeAngle - 90 + 360) % 360;
+
+    } 
+    else if (direction === "right") {
+
+        beeAngle = (beeAngle + 90) % 360;
+
+    }
+
+    updateBeeTransform();
+
+}
+
+
+/* =========================================================
+   ACTUALIZAR POSICIÓN DE LA ABEJA
+========================================================= */
+
+function updateBeeTransform() {
+
+    const percentX = 50 + (gridX * 20);
+    const percentY = 50 + (gridY * 20);
+
+    beePosition.style.left = percentX + "%";
+    beePosition.style.top = percentY + "%";
+
+    beeRotation.style.transform = "rotate(" + beeAngle + "deg)";
+
+}
+
+
+/* =========================================================
+   EJECUCIÓN DEL PROGRAMA (GO)
+========================================================= */
+
+async function startExecution() {
+
+    if (isExecuting || sequence.length === 0) return;
+
+    isExecuting = true;
+    isPaused = false;
+    currentStepIndex = 0;
+
+    gridX = 0;
+    gridY = 0;
+    beeAngle = 0;
+    updateBeeTransform();
+
+    document.getElementById("system-msg").innerText = "Ejecutando secuencia...";
+
+    while (currentStepIndex < sequence.length) {
+
+        if (isPaused) {
+
+            await new Promise(resolve => {
+                const checkInterval = setInterval(() => {
+                    if (!isPaused) {
+                        clearInterval(checkInterval);
+                        resolve();
+                    }
+                }, 100);
+            });
+
+        }
+
+        updateSequenceDisplay();
+
+        const step = sequence[currentStepIndex];
+
+        applyDirectionEffect(step);
+        await speakProgram(programPhrases[step]);
+        await new Promise(r => setTimeout(r, 300));
+
+        currentStepIndex++;
+
+    }
+
+    isExecuting = false;
+    currentStepIndex = 0;
+    updateSequenceDisplay();
+    document.getElementById("system-msg").innerText = "¡Secuencia completada!";
+
+}
+
+
+/* =========================================================
+   PAUSA
+========================================================= */
+
+function togglePause() {
+
+    if (!isExecuting) return;
+
+    isPaused = !isPaused;
+
+    const pauseIcon = document.getElementById("pause-icon");
+
+    if (isPaused) {
+
+        pauseIcon.innerText = "▶";
+        document.getElementById("system-msg").innerText = "Secuencia pausada.";
+
+    } else {
+
+        pauseIcon.innerText = "⏸";
+        document.getElementById("system-msg").innerText = "Ejecutando secuencia...";
+
+    }
+
+}
+
+
+/* =========================================================
+   BORRAR PROGRAMA
+========================================================= */
+
+function clearProgram() {
+
+    if (isExecuting) return;
+
+    sequence = [];
+    currentStepIndex = 0;
+    gridX = 0;
+    gridY = 0;
+    beeAngle = 0;
+
+    updateBeeTransform();
+    updateSequenceDisplay();
+
+    document.getElementById("system-msg").innerText = "";
+
+    if ("speechSynthesis" in window) {
+        speechSynthesis.cancel();
+    }
+
+}
+
+
+/* =========================================================
+   DISEÑO INFANTIL TOGGLE
+========================================================= */
+
+function toggleDesign() {
+
+    document.body.classList.toggle("cute");
+
+    const btn = document.getElementById("design-button");
+
+    if (document.body.classList.contains("cute")) {
+
+        btn.innerText = "💻 Diseño Clásico";
+
+    } else {
+
+        btn.innerText = "🐝 Diseño Infantil";
+
+    }
+
+}
+
+</script>
+
+</body>
+
+</html>

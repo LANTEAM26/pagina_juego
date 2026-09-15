@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROBOT BEE DANCE - CYBERPUNK VIBE (5x5 Super Disco)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #030508;
+            --panel-bg: rgba(13, 17, 28, 0.75);
+            --panel-border: rgba(236, 72, 153, 0.2);
+            --primary: #ec4899;
+            --primary-glow: rgba(236, 72, 153, 0.6);
+            --accent: #8b5cf6;
+            --cyan: #06b6d4;
+            --danger: #f43f5e;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 10% 15%, rgba(139, 92, 246, 0.15), transparent 40%),
+                radial-gradient(circle at 90% 85%, rgba(236, 72, 153, 0.12), transparent 40%),
+                linear-gradient(135deg, #030508 0%, #0b0f19 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px;
+            overflow-x: hidden;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            font-size: 2.6rem;
+            font-weight: 900;
+            letter-spacing: 4px;
+            background: linear-gradient(135deg, #fff 20%, #ec4899 60%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(236, 72, 153, 0.3);
+            margin-bottom: 8px;
+        }
+
+        .music-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .music-toggle {
+            background: rgba(236, 72, 153, 0.1);
+            border: 1px solid var(--primary);
+            color: #fbcfe8;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(8px);
+        }
+
+        .music-toggle:hover {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 0 20px var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 240px 290px minmax(500px, 1fr);
+            gap: 24px;
+            width: 100%;
+            max-width: 1350px;
+            background: var(--panel-bg);
+            backdrop-filter: blur(16px);
+            padding: 28px;
+            border-radius: 28px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--panel-border);
+        }
+
+        /* Playlist Section */
+        .playlist-section {
+            background: rgba(3, 7, 18, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 20px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .playlist-title {
+            color: var(--primary);
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .playlist-subtitle {
+            color: var(--text-muted);
+            font-size: 0.72rem;
+            margin-bottom: 16px;
+        }
+
+        .song {
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(17, 24, 39, 0.6);
+            color: var(--text-main);
+            padding: 11px 12px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .song:hover {
+            background: rgba(31, 41, 55, 0.8);
+            border-color: rgba(236, 72, 153, 0.4);
+            transform: translateX(4px);
+        }
+
+        .song.active {
+            background: linear-gradient(90deg, rgba(236, 72, 153, 0.25), rgba(139, 92, 246, 0.15));
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(236, 72, 153, 0.15);
+        }
+
+        .song-number {
+            color: var(--cyan);
+            font-weight: 800;
+            margin-right: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+        }
+
+        .song-name {
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+
+        .music-player {
+            margin-top: auto;
+            width: 100%;
+            border-radius: 10px;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+        .music-player:hover { opacity: 1; }
+
+        .playlist-info {
+            color: var(--text-muted);
+            font-size: 0.68rem;
+            line-height: 1.4;
+            margin-top: 12px;
+        }
+
+        /* Controls Section */
+        .controls-section {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .sequence-container {
+            width: 100%;
+            background: rgba(3, 7, 18, 0.6);
+            border-radius: 16px;
+            padding: 16px;
+            min-height: 110px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sequence-title {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+        }
+
+        .sequence-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+
+        .seq-step {
+            background: rgba(31, 41, 55, 0.8);
+            padding: 5px 10px;
+            border-radius: 8px;
+            color: var(--cyan);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .seq-step img {
+            width: 16px;
+            height: 16px;
+            margin-left: 4px;
+            filter: drop-shadow(0 0 2px var(--cyan));
+        }
+
+        .seq-step.active {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 0 15px var(--primary);
+            transform: scale(1.1);
+            border-color: #fff;
+        }
+        .seq-step.active img {
+            filter: brightness(0) invert(1);
+        }
+
+        .system-msg {
+            color: var(--success);
+            font-size: 0.78rem;
+            min-height: 1.1rem;
+            margin-top: auto;
+            font-weight: 600;
+        }
+
+        /* D-Pad Grid */
+        .d-pad {
+            display: grid;
+            grid-template-areas:
+                ". up ."
+                "left go right"
+                ". down .";
+            gap: 12px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .d-btn {
+            width: 80px;
+            height: 80px;
+            border: none;
+            border-radius: 22px;
+            background: rgba(31, 41, 55, 0.8);
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 6px 0 rgba(0, 0, 0, 0.5), 0 8px 16px rgba(0, 0, 0, 0.3);
+            transition: all 0.15s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .d-btn img {
+            width: 36px;
+            height: 36px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+            transition: transform 0.2s;
+        }
+
+        .d-btn:hover {
+            background: rgba(55, 65, 81, 1);
+            border-color: rgba(236, 72, 153, 0.3);
+        }
+        .d-btn:hover img {
+            transform: scale(1.15);
+        }
+
+        .d-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 rgba(0, 0, 0, 0.5), 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        #btn-up { grid-area: up; }
+        #btn-down { grid-area: down; }
+        #btn-left { grid-area: left; }
+        #btn-right { grid-area: right; }
+
+        #btn-go {
+            grid-area: go;
+            width: 88px;
+            height: 88px;
+            background: linear-gradient(135deg, var(--success), #059669);
+            box-shadow: 0 6px 0 #022c22, 0 8px 16px rgba(0, 0, 0, 0.3);
+            font-size: 1.1rem;
+            border-radius: 50%;
+            line-height: 1.1;
+            font-weight: 800;
+            color: #fff;
+        }
+        #btn-go:hover { filter: brightness(1.15); }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 12px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 14px;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.4);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .action-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        .action-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.4); }
+
+        #btn-pause { background: linear-gradient(135deg, var(--warning), #d97706); }
+        #btn-clear { background: linear-gradient(135deg, var(--danger), #dc2626); }
+
+        /* Dance Floor Section - 5x5 Grid Layout */
+        .dance-floor-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background: radial-gradient(circle, rgba(17, 24, 39, 0.8) 0%, rgba(3, 7, 18, 0.95) 90%);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            min-height: 540px;
+            padding: 24px;
+            overflow: hidden;
+            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.8);
+        }
+
+        .dance-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 78px);
+            grid-template-rows: repeat(5, 78px);
+            gap: 8px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .floor-tile {
+            background: rgba(17, 24, 39, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 14px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .floor-tile.disco-pink {
+            background: rgba(236, 72, 153, 0.55);
+            border-color: #f472b6;
+            box-shadow: 0 0 35px rgba(236, 72, 153, 0.9), inset 0 0 25px #ec4899;
+        }
+        .floor-tile.disco-cyan {
+            background: rgba(6, 182, 212, 0.55);
+            border-color: #22d3ee;
+            box-shadow: 0 0 35px rgba(6, 182, 212, 0.9), inset 0 0 25px #06b6d4;
+        }
+        .floor-tile.disco-purple {
+            background: rgba(139, 92, 246, 0.55);
+            border-color: #a78bfa;
+            box-shadow: 0 0 35px rgba(139, 92, 246, 0.9), inset 0 0 25px #8b5cf6;
+        }
+        .floor-tile.disco-yellow {
+            background: rgba(245, 158, 11, 0.55);
+            border-color: #fbbf24;
+            box-shadow: 0 0 35px rgba(245, 158, 11, 0.9), inset 0 0 25px #f59e0b;
+        }
+        .floor-tile.disco-green {
+            background: rgba(16, 185, 129, 0.55);
+            border-color: #34d399;
+            box-shadow: 0 0 35px rgba(16, 185, 129, 0.9), inset 0 0 25px #10b981;
+        }
+
+        /* Modernized Bee Design */
+        .bee-wrapper {
+            position: absolute;
+            width: 66px;
+            height: 82px;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .bee {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.7)) drop-shadow(0 0 15px rgba(236, 72, 153, 0.5));
+        }
+
+        .antenna {
+            width: 3px;
+            height: 16px;
+            background: #94a3b8;
+            position: absolute;
+            top: -12px;
+            border-radius: 2px;
+            z-index: 1;
+        }
+
+        .antenna::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            top: -4px;
+            left: -2.5px;
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        .antenna.left { left: 18px; transform: rotate(-15deg); }
+        .antenna.right { right: 18px; transform: rotate(15deg); }
+
+        .wing {
+            width: 38px;
+            height: 46px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(236, 72, 153, 0.3));
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 50% 50% 20% 50%;
+            position: absolute;
+            top: 10px;
+            z-index: -1;
+            box-shadow: 0 0 15px rgba(236, 72, 153, 0.5);
+            transform-origin: top center;
+            animation: wing-flap-left 0.07s infinite alternate ease-in-out;
+        }
+
+        .wing.left { left: -18px; }
+        .wing.right { right: -18px; transform: scaleX(-1); animation-name: wing-flap-right; }
+
+        @keyframes wing-flap-left {
+            from { transform: rotate(-25deg) scale(1); }
+            to { transform: rotate(30deg) scale(1.08); }
+        }
+
+        @keyframes wing-flap-right {
+            from { transform: scaleX(-1) rotate(-25deg) scale(1); }
+            to { transform: scaleX(-1) rotate(30deg) scale(1.08); }
+        }
+
+        .bee-body {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #fb7185 0%, #e11d48 100%);
+            border-radius: 35px;
+            position: absolute;
+            overflow: hidden;
+            box-shadow: inset -10px -10px 20px rgba(0, 0, 0, 0.6), inset 5px 5px 12px rgba(255, 255, 255, 0.5);
+            border: 2px solid #030712;
+        }
+
+        .bee-stripes {
+            position: absolute;
+            top: 32%;
+            width: 100%;
+            height: 13px;
+            background: #030712;
+            box-shadow: 0 22px 0 #030712;
+            opacity: 0.9;
+        }
+
+        .visor {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            height: 20px;
+            background: #030712;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .eye-led {
+            width: 6px;
+            height: 9px;
+            background: var(--cyan);
+            border-radius: 3px;
+            box-shadow: 0 0 8px var(--cyan);
+        }
+
+        /* Dance Animations */
+        .dancing-up { animation: move-up-dance 0.4s ease-in-out alternate infinite; }
+        @keyframes move-up-dance {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-10px) rotate(-6deg); }
+        }
+
+        .dancing-down { animation: move-down-dance 0.4s ease-in-out alternate infinite; }
+        @keyframes move-down-dance {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(10px) rotate(6deg); }
+        }
+
+        .dancing-left { animation: move-left-dance 0.3s ease-in-out alternate infinite; }
+        @keyframes move-left-dance {
+            0% { transform: rotate(-30deg) scale(1); }
+            100% { transform: rotate(-50deg) scale(1.08); }
+        }
+
+        .dancing-right { animation: move-right-dance 0.3s ease-in-out alternate infinite; }
+        @keyframes move-right-dance {
+            0% { transform: rotate(30deg) scale(1); }
+            100% { transform: rotate(50deg) scale(1.08); }
+        }
+
+        @media (max-width: 1100px) {
+            .main-container { grid-template-columns: 1fr 1fr; }
+            .dance-floor-section { grid-column: 1 / -1; }
+        }
+        @media (max-width: 640px) {
+            .main-container { grid-template-columns: 1fr; padding: 16px; }
+            header h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>ROBOT BEE DANCE</h1>
+    <div class="music-bar">
+        <button class="music-toggle" onclick="toggleMusic()">
+            <span id="music-icon">🎵</span>
+            <span id="music-text">Reproducir Música</span>
+        </button>
+    </div>
+</header>
+
+<div class="main-container">
+    <!-- PLAYLIST -->
+    <section class="playlist-section">
+        <div class="playlist-title">🎧 PLAYLIST</div>
+        <div class="playlist-subtitle">Canciones personalizadas</div>
+
+        <button class="song active" onclick="playSong(0)">
+            <span class="song-number">01</span>
+            <span class="song-name">Canción Rene</span>
+        </button>
+        <button class="song" onclick="playSong(1)">
+            <span class="song-number">02</span>
+            <span class="song-name">Canción Gold</span>
+        </button>
+        <button class="song" onclick="playSong(2)">
+            <span class="song-number">03</span>
+            <span class="song-name">CARNAVAL DE AREQUIPA</span>
+        </button>
+        <button class="song" onclick="playSong(3)">
+            <span class="song-number">04</span>
+            <span class="song-name">Canción 4</span>
+        </button>
+        <button class="song" onclick="playSong(4)">
+            <span class="song-number">05</span>
+            <span class="song-name">Canción 5</span>
+        </button>
+
+        <audio id="music-player" class="music-player" controls></audio>
+        <div class="playlist-info">💡 Asegúrate de tener la carpeta <b>img/</b> con Arriba.png, Abajo.png, Izquierda.png, Derecha.png y la carpeta <b>musica/</b> con los audios correspondientes.</div>
+    </section>
+
+    <!-- CONTROLES -->
+    <section class="controls-section">
+        <div class="sequence-container">
+            <div class="sequence-title">Pasos de Baile Programados:</div>
+            <div class="sequence-list" id="sequence-list"></div>
+            <div class="system-msg" id="system-msg"></div>
+        </div>
+
+        <div class="d-pad">
+            <button class="d-btn" id="btn-up" onclick="handleManualMove('up')">
+                <img src="img/Arriba.png" alt="Arriba">
+            </button>
+            <button class="d-btn" id="btn-left" onclick="handleManualMove('left')">
+                <img src="img/Izquierda.png" alt="Izquierda">
+            </button>
+            <button class="d-btn" id="btn-go" onclick="startExecution()">▶<br>GO</button>
+            <button class="d-btn" id="btn-right" onclick="handleManualMove('right')">
+                <img src="img/Derecha.png" alt="Derecha">
+            </button>
+            <button class="d-btn" id="btn-down" onclick="handleManualMove('down')">
+                <img src="img/Abajo.png" alt="Abajo">
+            </button>
+        </div>
+
+        <div class="action-buttons">
+            <button class="action-btn" id="btn-pause" onclick="togglePause()">
+                <span id="pause-icon">⏸</span> PAUSA
+            </button>
+            <button class="action-btn" id="btn-clear" onclick="clearProgram()">
+                ✕ BORRAR
+            </button>
+        </div>
+    </section>
+
+    <!-- ESCENARIO (5x5 Super Disco) -->
+    <section class="dance-floor-section">
+        <div class="dance-grid" id="dance-grid"></div>
+        <div class="bee-wrapper" id="bee-wrapper">
+            <div class="bee" id="bee">
+                <div class="antenna left"></div>
+                <div class="antenna right"></div>
+                <div class="wing left"></div>
+                <div class="wing right"></div>
+                <div class="bee-body">
+                    <div class="visor">
+                        <div class="eye-led"></div>
+                        <div class="eye-led"></div>
+                    </div>
+                    <div class="bee-stripes"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    // Rutas y nombres de tus archivos de audio reales
+    const songs = [
+        { name: "Canción Rene", file: "musica/Rene.mp3" },
+        { name: "Canción Gold", file: "musica/Gold.mp3" },
+        { name: "Canción CARNAVAL", file: "musica/Carnaval.mp3" },
+        { name: "Canción 4", file: "musica/rene.mp3" },
+        { name: "Canción 5", file: "musica/Carnaval.mp3" }
+    ];
+
+    let currentSong = 0;
+    let isMusicPlaying = false;
+
+    function playSong(index) {
+        currentSong = index;
+        const song = songs[index];
+        const player = document.getElementById("music-player");
+
+        player.src = song.file;
+        player.play().catch(error => {
+            console.log("El navegador espera interacción para reproducir audio.");
+        });
+
+        document.querySelectorAll(".song").forEach((button, i) => {
+            button.classList.toggle("active", i === index);
+        });
+
+        document.getElementById("music-icon").innerText = "🔊";
+        document.getElementById("music-text").innerText = song.name;
+        isMusicPlaying = true;
+    }
+
+    function toggleMusic() {
+        const player = document.getElementById("music-player");
+        if (!isMusicPlaying) {
+            if (!player.src) { player.src = songs[currentSong].file; }
+            player.play().catch(error => console.log(error));
+            isMusicPlaying = true;
+            document.getElementById("music-icon").innerText = "🔊";
+            document.getElementById("music-text").innerText = songs[currentSong].name;
+        } else {
+            player.pause();
+            isMusicPlaying = false;
+            document.getElementById("music-icon").innerText = "🎵";
+            document.getElementById("music-text").innerText = "Reproducir Música";
+        }
+    }
+
+    document.getElementById("music-player").addEventListener("ended", () => {
+        let nextSong = currentSong + 1;
+        if (nextSong >= songs.length) { nextSong = 0; }
+        playSong(nextSong);
+    });
+
+    // Voz de hombre amable, dulce y pausado
+    function speak(text) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel(); 
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'es-ES';
+            
+            utterance.rate = 0.9;  
+            utterance.pitch = 0.85; 
+
+            const voices = window.speechSynthesis.getVoices();
+            const spanishMaleVoice = voices.find(v => 
+                v.lang.startsWith('es') && (
+                    v.name.toLowerCase().includes('male') || 
+                    v.name.toLowerCase().includes('pablo') || 
+                    v.name.toLowerCase().includes('carlos') || 
+                    v.name.toLowerCase().includes('diego') || 
+                    v.name.toLowerCase().includes('jorge') || 
+                    v.name.toLowerCase().includes('alvaro') ||
+                    v.name.toLowerCase().includes('raul')
+                )
+            );
+
+            if (spanishMaleVoice) {
+                utterance.voice = spanishMaleVoice;
+            } else {
+                const anySpanishVoice = voices.find(v => v.lang.startsWith('es'));
+                if (anySpanishVoice) utterance.voice = anySpanishVoice;
+            }
+
+            window.speechSynthesis.speak(utterance);
+        }
+    }
+
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.onvoiceschanged = () => {
+            window.speechSynthesis.getVoices();
+        };
+    }
+
+    let sequence = [];
+    let isExecuting = false;
+    let isPaused = false;
+    let currentStepIndex = 0;
+    
+    let gridRow = 2;
+    let gridCol = 2;
+
+    // Nombres exactos de tus imágenes dentro de la carpeta img/
+    const stepImages = {
+        up: "img/Arriba.png",
+        down: "img/Abajo.png",
+        left: "img/Izquierda.png",
+        right: "img/Derecha.png"
+    };
+
+    const discoColors = ["disco-pink", "disco-cyan", "disco-purple", "disco-yellow", "disco-green"];
+
+    const gridContainer = document.getElementById("dance-grid");
+    const tiles = [];
+
+    // Generar cuadrícula 5x5
+    for (let r = 0; r < 5; r++) {
+        for (let c = 0; c < 5; c++) {
+            const tile = document.createElement("div");
+            tile.className = "floor-tile";
+            tile.dataset.row = r;
+            tile.dataset.col = c;
+            gridContainer.appendChild(tile);
+            tiles.push(tile);
+        }
+    }
+
+    function updateTileHighlight() {
+        tiles.forEach(tile => {
+            const r = parseInt(tile.dataset.row);
+            const c = parseInt(tile.dataset.col);
+            
+            if (r === gridRow && c === gridCol) {
+                const randomColor = discoColors[Math.floor(Math.random() * discoColors.length)];
+                tile.className = "floor-tile " + randomColor;
+            } else {
+                tile.className = "floor-tile";
+            }
+        });
+    }
+
+    function updateBeePositionOnFloor(animate = true) {
+        const beeWrapper = document.getElementById("bee-wrapper");
+        const stepSize = 86; 
+        const offsetX = (gridCol - 2) * stepSize;
+        const offsetY = (gridRow - 2) * stepSize;
+
+        if (!animate) {
+            beeWrapper.style.transition = "none";
+        } else {
+            beeWrapper.style.transition = "all 0.4s cubic-bezier(0.34,1.56,0.64,1)";
+        }
+
+        beeWrapper.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+        updateTileHighlight();
+    }
+
+    updateBeePositionOnFloor(false);
+
+    function setSystemMessage(msg) {
+        document.getElementById("system-msg").innerText = msg;
+    }
+
+    function renderSequence() {
+        const list = document.getElementById("sequence-list");
+        list.innerHTML = "";
+        sequence.forEach((step, index) => {
+            const el = document.createElement("div");
+            el.className = "seq-step";
+            el.id = `step-${index}`;
+            el.innerHTML = `${index + 1} <img src="${stepImages[step]}" alt="${step}">`;
+            list.appendChild(el);
+        });
+    }
+
+    function highlightStep(index) {
+        document.querySelectorAll(".seq-step").forEach(el => el.classList.remove("active"));
+        if (index >= 0) {
+            const activeEl = document.getElementById(`step-${index}`);
+            if (activeEl) { activeEl.classList.add("active"); }
+        }
+    }
+
+    function executeDanceMove(direction, callback, isPrograming = false) {
+        const beeDiv = document.getElementById("bee");
+        beeDiv.className = "bee";
+
+        if (direction === "up" && gridRow > 0) {
+            gridRow--;
+            beeDiv.classList.add("dancing-up");
+        } else if (direction === "down" && gridRow < 4) {
+            gridRow++;
+            beeDiv.classList.add("dancing-down");
+        } else if (direction === "left" && gridCol > 0) {
+            gridCol--;
+            beeDiv.classList.add("dancing-left");
+        } else if (direction === "right" && gridCol < 4) {
+            gridCol++;
+            beeDiv.classList.add("dancing-right");
+        }
+
+        updateBeePositionOnFloor(true);
+
+        if (isPrograming) {
+            const textMap = { up: "Arriba", down: "Abajo", left: "Izquierda", right: "Derecha" };
+            speak(textMap[direction]);
+        }
+
+        setTimeout(() => {
+            beeDiv.className = "bee";
+            if (callback) callback();
+        }, 400);
+    }
+
+    function handleManualMove(dir) {
+        if (isExecuting) return;
+        sequence.push(dir);
+        renderSequence();
+        setSystemMessage(`Paso añadido a la secuencia.`);
+        executeDanceMove(dir, null, true);
+    }
+
+    function startExecution() {
+        if (sequence.length === 0 || isExecuting) return;
+        
+        const player = document.getElementById("music-player");
+        if (!player.src) { player.src = songs[currentSong].file; }
+        
+        player.currentTime = 35; // Inicia la música en el segundo 35 como configuraste
+
+        player.play().catch(e => console.log("Audio play error:", e));
+        isMusicPlaying = true;
+        document.getElementById("music-icon").innerText = "🔊";
+        document.getElementById("music-text").innerText = songs[currentSong].name;
+
+        isExecuting = true;
+        isPaused = false;
+        currentStepIndex = 0;
+        setSystemMessage("Ejecutando secuencia y música desde el segundo 35...");
+        runNextStep();
+    }
+
+    function runNextStep() {
+        if (!isExecuting || isPaused) return;
+
+        if (currentStepIndex >= sequence.length) {
+            isExecuting = false;
+            highlightStep(-1);
+            setSystemMessage("¡Baile completado con éxito!");
+            return;
+        }
+
+        highlightStep(currentStepIndex);
+        const dir = sequence[currentStepIndex];
+        currentStepIndex++;
+
+        executeDanceMove(dir, () => {
+            setTimeout(runNextStep, 200);
+        }, false);
+    }
+
+    function togglePause() {
+        if (!isExecuting) return;
+        isPaused = !isPaused;
+        const icon = document.getElementById("pause-icon");
+        const player = document.getElementById("music-player");
+        
+        if (isPaused) {
+            icon.innerText = "▶";
+            player.pause();
+            isMusicPlaying = false;
+            document.getElementById("music-icon").innerText = "🎵";
+            document.getElementById("music-text").innerText = "Reproducir Música";
+            setSystemMessage("Secuencia y música pausadas.");
+        } else {
+            icon.innerText = "⏸";
+            player.play().catch(e => {});
+            isMusicPlaying = true;
+            document.getElementById("music-icon").innerText = "🔊";
+            document.getElementById("music-text").innerText = songs[currentSong].name;
+            setSystemMessage("Reanudando baile...");
+            runNextStep();
+        }
+    }
+
+    function clearProgram() {
+        sequence = [];
+        isExecuting = false;
+        isPaused = false;
+        currentStepIndex = 0;
+        renderSequence();
+        highlightStep(-1);
+        setSystemMessage("Secuencia borrada.");
+        gridRow = 2;
+        gridCol = 2;
+        updateBeePositionOnFloor(true);
+    }
+</script>
+
+</body>
+</html>
