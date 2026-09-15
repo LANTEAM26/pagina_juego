@@ -5,416 +5,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>¡Escribe tu Nombre! 🐝</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
-    
     <style>
-        :root {
-            --p1-main: #3498db;
-            --p1-dark: #2980b9;
-            --p1-light: #d6eaf8;
-            --grid-bg: #8d6e63;
-        }
+        :root { --p1-main: #3498db; --p1-dark: #2980b9; --p1-light: #d6eaf8; --grid-bg: #8d6e63; }
+        body { font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; align-items: center; margin: 0; padding: 10px; min-height: 100vh; touch-action: none; color: #333; background-color: transparent; }
+        .decorations { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -1; pointer-events: none; overflow: hidden; background: linear-gradient(180deg, #74ebd5 0%, #ACB6E5 100%); }
+        .decorations::before { content: ''; position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg width='60' height='104' viewBox='0 0 60 104' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 52l15-26 15 26v52l-15 26-15-26zM0 0l15 26v52L0 104V0zm60 0v104L45 78V26z' fill='%23ffffff' fill-opacity='0.15' fill-rule='evenodd'/%3E%3C/svg%3E"); z-index: 1; }
+        .sun { position: absolute; top: 3%; right: 5%; font-size: 70px; z-index: 2; filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.8)); animation: pulse-sun 3s infinite alternate; }
+        @keyframes pulse-sun { 0% { transform: scale(1) rotate(0deg); } 100% { transform: scale(1.1) rotate(10deg); } }
+        .grass { position: absolute; bottom: -5vh; left: -10vw; width: 120vw; height: 25vh; background: #a9dfbf; border-radius: 50% 50% 0 0; z-index: 2; box-shadow: inset 0 15px 0 #82e0aa, 0 -30px 50px rgba(46,204,113,0.3); }
+        
+        h1 { color: #2c3e50; margin: 0px 0 5px 0; text-align: center; font-size: 26px; text-shadow: 2px 2px 0px #fff; position: relative; }
+        .prompt-box { text-align: center; background: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 15px; font-size: 16px; font-weight: 600; max-width: 550px; width: 90%; margin-bottom: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; border: 3px solid #ffb74d; }
+        .word-display-container { margin-top: 10px; background: #fff3e0; padding: 12px; border-radius: 15px; min-height: 65px; border: 3px dashed #ffb74d; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; box-shadow: inset 0 4px 8px rgba(0,0,0,0.05); }
+        .word-display-container:empty::before { content: '¡Tu nombre aparecerá aquí!'; color: #d35400; opacity: 0.5; font-size: 18px; }
+        .letter-tile { color: #000000; font-size: 40px; font-weight: 900; width: 55px; height: 60px; display: flex; justify-content: center; align-items: center; border-radius: 12px; border: 3px solid #000000; box-shadow: 0 5px 0 #000000; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
-        body {
-            font-family: 'Fredoka', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 0;
-            padding: 10px;
-            min-height: 100vh;
-            touch-action: none; 
-            color: #333;
-            background-color: transparent; 
-        }
+        .grid-wrapper { position: relative; margin-bottom: 15px; padding: 10px; background: #ffe0b2; border-radius: 15px; box-shadow: 0 8px 0 #ffb74d, 0 15px 25px rgba(0,0,0,0.25); }
+        #grid { display: grid; grid-template-columns: repeat(5, 55px); grid-template-rows: repeat(6, 55px); gap: 5px; background-color: var(--grid-bg); border-radius: 10px; padding: 6px; }
+        #drawing-canvas { position: absolute; top: 10px; left: 10px; z-index: 10; cursor: crosshair; border-radius: 10px; }
+        .cell { background-color: #fff9c4; border-radius: 8px; display: flex; justify-content: center; align-items: center; position: relative; user-select: none; box-shadow: inset 0 -4px 0 rgba(0,0,0,0.1); font-size: 26px; font-weight: 700; color: #5d4037; transition: all 0.2s; }
+        .writing-pulse { background-color: #f1c40f !important; color: white; box-shadow: inset 0 0 15px #f39c12 !important; transform: scale(0.9); }
 
-        /* PAISAJE DE FONDO */
-        .decorations {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            z-index: -1;
-            pointer-events: none; 
-            overflow: hidden;
-            background: linear-gradient(180deg, #74ebd5 0%, #ACB6E5 100%);
-        }
-
-        .decorations::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='104' viewBox='0 0 60 104' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 52l15-26 15 26v52l-15 26-15-26zM0 0l15 26v52L0 104V0zm60 0v104L45 78V26z' fill='%23ffffff' fill-opacity='0.15' fill-rule='evenodd'/%3E%3C/svg%3E");
-            z-index: 1;
-        }
-
-        .sun {
-            position: absolute;
-            top: 3%; right: 5%;
-            font-size: 70px;
-            z-index: 2;
-            filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.8));
-            animation: pulse-sun 3s infinite alternate;
-        }
-
-        @keyframes pulse-sun {
-            0% { transform: scale(1) rotate(0deg); }
-            100% { transform: scale(1.1) rotate(10deg); }
-        }
-
-        .grass {
-            position: absolute;
-            bottom: -5vh; left: -10vw;
-            width: 120vw; height: 25vh;
-            background: #a9dfbf;
-            border-radius: 50% 50% 0 0;
-            z-index: 2;
-            box-shadow: inset 0 15px 0 #82e0aa, 0 -30px 50px rgba(46,204,113,0.3);
-        }
-
-        .flower-bg {
-            position: absolute;
-            font-size: 35px;
-            bottom: 15vh;
-            z-index: 3;
-            transform-origin: bottom center;
-            animation: sway 2.5s ease-in-out infinite alternate;
-        }
-        .f1 { left: 12%; animation-delay: 0s; font-size: 45px; }
-        .f2 { left: 28%; animation-delay: 1s; bottom: 12vh; font-size: 30px;}
-        .f3 { right: 25%; animation-delay: 0.5s; bottom: 18vh; font-size: 40px; }
-        .f4 { right: 8%; animation-delay: 1.5s; font-size: 50px;}
-
-        @keyframes sway {
-            0% { transform: rotate(-12deg); }
-            100% { transform: rotate(12deg); }
-        }
-
-        /* UI y Estructura del juego */
-        h1 {
-            color: #2c3e50;
-            margin: 0px 0 5px 0;
-            text-align: center;
-            font-size: 26px;
-            text-shadow: 2px 2px 0px #fff;
-            position: relative;
-        }
-
-        .prompt-box {
-            text-align: center;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 15px;
-            border-radius: 15px;
-            font-size: 16px;
-            font-weight: 600;
-            max-width: 550px;
-            width: 90%;
-            margin-bottom: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            position: relative;
-            border: 3px solid #ffb74d;
-        }
-
-        /* Zona donde se forma el nombre */
-        .word-display-container {
-            margin-top: 10px;
-            background: #fff3e0;
-            padding: 12px;
-            border-radius: 15px;
-            min-height: 65px;
-            border: 3px dashed #ffb74d;
-            display: flex;
-            flex-wrap: wrap; 
-            gap: 10px; /* Espacio entre cada letra */
-            justify-content: center;
-            align-items: center;
-            box-shadow: inset 0 4px 8px rgba(0,0,0,0.05);
-        }
-
-        .word-display-container:empty::before {
-            content: '¡Tu nombre aparecerá aquí!';
-            color: #d35400;
-            opacity: 0.5;
-            font-size: 18px;
-        }
-
-        /* Fichas individuales súper llamativas */
-        .letter-tile {
-            /* Colores */
-            color: #000000; /* Letras negras limpias */
-            
-            /* Forma y Tamaño */
-            font-size: 40px; 
-            font-weight: 900;
-            width: 55px; 
-            height: 60px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 12px;
-            
-            /* Borde y Sombras de la Ficha */
-            border: 3px solid #000000; /* Borde negro estilo caricatura */
-            box-shadow: 0 5px 0 #000000; /* Sombra negra sólida (3D) */
-            
-            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .grid-wrapper {
-            position: relative;
-            margin-bottom: 15px;
-            padding: 10px;
-            background: #ffe0b2;
-            border-radius: 15px;
-            box-shadow: 0 8px 0 #ffb74d, 0 15px 25px rgba(0,0,0,0.25);
-        }
-
-        /* GRID: 5 Columnas x 6 Filas */
-        #grid {
-            display: grid;
-            grid-template-columns: repeat(5, 55px);
-            grid-template-rows: repeat(6, 55px);
-            gap: 5px;
-            background-color: var(--grid-bg);
-            border-radius: 10px;
-            padding: 6px;
-        }
-
-        #drawing-canvas {
-            position: absolute;
-            top: 10px; left: 10px;
-            z-index: 10;
-            cursor: crosshair;
-            border-radius: 10px;
-        }
-
-        .cell {
-            background-color: #fff9c4;
-            border-radius: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            user-select: none;
-            box-shadow: inset 0 -4px 0 rgba(0,0,0,0.1);
-            font-size: 26px;
-            font-weight: 700;
-            color: #5d4037;
-            transition: all 0.2s;
-        }
-
-        /* Animación cuando la abeja escribe la letra en el tablero */
-        .writing-pulse {
-            background-color: #f1c40f !important;
-            color: white;
-            box-shadow: inset 0 0 15px #f39c12 !important;
-            transform: scale(0.9);
-        }
-
-        .bee-container {
-            position: absolute;
-            z-index: 15;
-            width: 45px; height: 45px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .bee-orientation {
-            transition: transform 0.2s ease;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .bee-sprite {
-            font-size: 35px;
-            animation: float 2s ease-in-out infinite;
-            filter: drop-shadow(0 0 8px var(--p1-main));
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-4px); }
-        }
-
-        /* Controles */
-        .panels-container {
-            display: flex;
-            justify-content: center;
-            width: 100%; 
-            max-width: 450px;
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .panel {
-            box-sizing: border-box; 
-            background: rgba(255, 255, 255, 0.95);
-            padding: 12px;
-            border-radius: 18px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-            width: 95%; 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            border: 4px solid var(--p1-main);
-        }
-
+        .bee-container { position: absolute; z-index: 15; width: 45px; height: 45px; display: flex; justify-content: center; align-items: center; }
+        .bee-orientation { transition: transform 0.2s ease; display: flex; justify-content: center; align-items: center; }
+        .bee-sprite { display: flex; justify-content: center; align-items: center; animation: float 2s ease-in-out infinite; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
+        
+        .panels-container { display: flex; justify-content: center; width: 100%; max-width: 450px; margin-bottom: 20px; position: relative; }
+        .panel { box-sizing: border-box; background: rgba(255, 255, 255, 0.95); padding: 12px; border-radius: 18px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); width: 95%; display: flex; flex-direction: column; align-items: center; border: 4px solid var(--p1-main); }
         .panel h3 { margin: 0 0 8px 0; font-size: 16px; color: var(--p1-dark); }
+        .btn-group { display: flex; gap: 6px; justify-content: space-between; width: 100%; margin-bottom: 8px; }
+        button { font-family: 'Fredoka', sans-serif; font-weight: 700; border: none; border-radius: 10px; cursor: pointer; transition: all 0.1s; user-select: none; }
+        button:active { transform: translateY(4px); box-shadow: 0 0px 0 transparent !important; }
+        .cmd-btn { padding: 10px 2px; font-size: 13px; color: white; flex: 1; background-color: var(--p1-main); box-shadow: 0 5px 0 var(--p1-dark); white-space: nowrap; }
+        .write-btn { background-color: #9b59b6; box-shadow: 0 5px 0 #8e44ad; flex: 1.5; }
+        .undo-btn { background-color: #e74c3c; box-shadow: 0 5px 0 #c0392b; flex: 0.8; }
+        .seq-container { display: flex; flex-wrap: wrap; gap: 5px; min-height: 45px; background: rgba(255,255,255,0.7); padding: 8px; border-radius: 10px; width: 95%; border: 2px dashed rgba(0,0,0,0.1); }
+        .cmd-block { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 6px; color: white; font-weight: bold; font-size: 16px; box-shadow: 0 3px 0 rgba(0,0,0,0.2); animation: popIn 0.2s ease-out; background: var(--p1-main); }
+        .cmd-block.write-block { background: #9b59b6; }
+        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
 
-        .btn-group {
-            display: flex;
-            gap: 6px;
-            justify-content: space-between;
-            width: 100%;
-            margin-bottom: 8px;
-        }
-
-        button {
-            font-family: 'Fredoka', sans-serif;
-            font-weight: 700;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.1s;
-            user-select: none;
-        }
-
-        button:active {
-            transform: translateY(4px);
-            box-shadow: 0 0px 0 transparent !important;
-        }
-
-        button.cmd-btn {
-            padding: 10px 2px;
-            font-size: 13px; 
-            color: white;
-            flex: 1;
-            background-color: var(--p1-main); 
-            box-shadow: 0 5px 0 var(--p1-dark);
-            white-space: nowrap;
-        }
-
-        button.write-btn {
-            background-color: #9b59b6;
-            box-shadow: 0 5px 0 #8e44ad;
-            flex: 1.5;
-        }
-
-        button.undo-btn {
-            background-color: #e74c3c;
-            box-shadow: 0 5px 0 #c0392b;
-            flex: 0.8;
-        }
-
-        .seq-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            min-height: 45px;
-            background: rgba(255,255,255,0.7);
-            padding: 8px;
-            border-radius: 10px;
-            width: 95%;
-            border: 2px dashed rgba(0,0,0,0.1);
-        }
-
-        .cmd-block {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 30px; height: 30px;
-            border-radius: 6px;
-            color: white;
-            font-weight: bold;
-            font-size: 16px;
-            box-shadow: 0 3px 0 rgba(0,0,0,0.2);
-            animation: popIn 0.2s ease-out;
-            background: var(--p1-main);
-        }
-        
-        .cmd-block.write-block {
-            background: #9b59b6;
-        }
-
-        @keyframes popIn {
-            0% { transform: scale(0); }
-            100% { transform: scale(1); }
-        }
-
-        .global-controls {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        button.global-btn {
-            padding: 12px 20px;
-            font-size: 18px;
-            color: white;
-            border-radius: 15px;
-        }
-        
-        button#go-btn { background-color: #ff9800; box-shadow: 0 5px 0 #f57c00; }
-        button.reset-btn { background-color: #e74c3c; box-shadow: 0 5px 0 #c0392b; }
-
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.6);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            visibility: hidden;
-            opacity: 0;
-            transition: all 0.3s;
-        }
-
-        .modal-overlay.active { visibility: visible; opacity: 1; }
-        .modal-box {
-            background: white;
-            padding: 25px;
-            border-radius: 20px;
-            text-align: center;
-            max-width: 80%;
-            transform: scale(0.7);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        .modal-overlay.active .modal-box { transform: scale(1); }
-        .modal-title { font-size: 24px; margin-bottom: 10px; color: #ff9800; }
-        .modal-msg { font-size: 18px; margin-bottom: 20px; color: #555; white-space: pre-line;}
-        .modal-btn { background: #4CAF50; box-shadow: 0 5px 0 #388E3C; padding: 10px 20px; font-size: 16px; color: white; }
+        .global-controls { display: flex; gap: 15px; margin-bottom: 20px; position: relative; }
+        .global-btn { padding: 12px 20px; font-size: 18px; color: white; border-radius: 15px; }
+        #go-btn { background-color: #ff9800; box-shadow: 0 5px 0 #f57c00; }
+        .reset-btn { background-color: #e74c3c; box-shadow: 0 5px 0 #c0392b; }
     </style>
 </head>
 <body>
-
-    <div class="decorations">
-        <div class="sun">☀️</div>
-        <div class="cloud c1">☁️</div>
-        <div class="cloud c2">☁️</div>
-        <div class="cloud c3">☁️</div>
-        <div class="grass"></div>
-        <div class="flower-bg f1">🌻</div>
-        <div class="flower-bg f2">🌸</div>
-        <div class="flower-bg f3">🌷</div>
-        <div class="flower-bg f4">🌼</div>
-    </div>
-
+    <div class="decorations"><div class="sun">☀️</div><div class="grass"></div></div>
     <h1>¡Escribe tu Nombre! 🐝</h1>
     <div class="prompt-box">
         ¡Navega por el teclado y presiona las letras!
-        <!-- Contenedor donde se insertarán las fichas GIGANTES -->
         <div class="word-display-container" id="word-display"></div>
         <div style="font-size: 12px; font-weight: normal; margin-top: 5px; color:#555;">(Viaja a una letra, usa el botón ✏️ y presiona VOLAR)</div>
     </div>
-
     <div class="grid-wrapper">
-        <div id="grid"></div>
-        <canvas id="drawing-canvas"></canvas>
+        <div id="grid"></div><canvas id="drawing-canvas"></canvas>
     </div>
-
     <div class="panels-container">
         <div class="panel">
             <h3>🐝 Programar Abeja</h3>
@@ -430,261 +76,88 @@
             <div class="seq-container" id="seq"></div>
         </div>
     </div>
-    
     <div class="global-controls">
         <button class="global-btn" onclick="executeCommands()" id="go-btn">🚀 ¡VOLAR!</button>
         <button class="global-btn reset-btn" onclick="resetGame()">🔄 Limpiar Todo</button>
     </div>
 
-    <div class="modal-overlay" id="modal">
-        <div class="modal-box">
-            <h2 class="modal-title" id="m-title">Título</h2>
-            <p class="modal-msg" id="m-msg">Mensaje</p>
-            <button class="modal-btn" onclick="closeModal()">¡Qué divertido!</button>
-        </div>
-    </div>
-
     <script>
-        const gridSizeX = 5;
-        const gridSizeY = 6;
-        let isExecuting = false;
-        
-        let bee = { pos: {x: 0, y: 0}, dir: 0, commands: [] }; 
-        let formedWord = "";
-        
-        // 30 Casillas: Alfabeto completo
-        const alphabetGrid = [
-            'A', 'B', 'C', 'D', 'E',
-            'F', 'G', 'H', 'I', 'J',
-            'K', 'L', 'M', 'N', 'Ñ',
-            'O', 'P', 'Q', 'R', 'S',
-            'T', 'U', 'V', 'W', 'X',
-            'Y', 'Z', 'A', 'E', 'O'
-        ];
-
-        const gridEl = document.getElementById('grid');
-        const canvas = document.getElementById('drawing-canvas');
-        const ctx = canvas.getContext('2d');
-        
-        let isDrawing = false;
-        let startX = 0, startY = 0;
+        const gridSizeX = 5; const gridSizeY = 6; let isExecuting = false;
+        let bee = { pos: {x: 0, y: 0}, dir: 0, commands: [] }; let formedWord = "";
+        const alphabetGrid = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','Ñ','O','P','Q','R','S','T','U','V','W','X','Y','Z','A','E','O'];
+        const gridEl = document.getElementById('grid'); const canvas = document.getElementById('drawing-canvas'); const ctx = canvas.getContext('2d');
+        let isDrawing = false; let startX, startY;
 
         function initGrid() {
-            gridEl.innerHTML = '';
-            let index = 0;
+            gridEl.innerHTML = ''; let index = 0;
             for (let y = 0; y < gridSizeY; y++) {
                 for (let x = 0; x < gridSizeX; x++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'cell';
-                    cell.id = `cell-${x}-${y}`;
-                    cell.innerText = alphabetGrid[index];
-                    gridEl.appendChild(cell);
-                    index++;
+                    const cell = document.createElement('div'); cell.className = 'cell'; cell.id = `cell-${x}-${y}`; cell.innerText = alphabetGrid[index];
+                    gridEl.appendChild(cell); index++;
                 }
             }
-            
-            setTimeout(() => {
-                canvas.width = gridEl.offsetWidth;
-                canvas.height = gridEl.offsetHeight;
-                ctx.lineWidth = 8;
-                ctx.lineCap = 'round';
-                ctx.lineJoin = 'round';
-                ctx.setLineDash([12, 15]); 
-                ctx.strokeStyle = 'rgba(255, 152, 0, 0.8)'; 
-            }, 50);
+            setTimeout(() => { canvas.width = gridEl.offsetWidth; canvas.height = gridEl.offsetHeight; ctx.lineWidth = 8; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.setLineDash([12, 15]); ctx.strokeStyle = 'rgba(255, 152, 0, 0.8)'; }, 50);
         }
 
-        // LÓGICA DE DIBUJO
-        function getCursorPos(clientX, clientY) {
-            const rect = canvas.getBoundingClientRect();
-            return { x: clientX - rect.left, y: clientY - rect.top };
-        }
+        function getCursorPos(cX, cY) { const r = canvas.getBoundingClientRect(); return { x: cX - r.left, y: cY - r.top }; }
+        function startDraw(e) { if (isExecuting) return; isDrawing = true; let cX = e.touches?e.touches[0].clientX:e.clientX; let cY = e.touches?e.touches[0].clientY:e.clientY; const p = getCursorPos(cX, cY); ctx.beginPath(); ctx.moveTo(p.x, p.y); if(e.cancelable) e.preventDefault(); }
+        function draw(e) { if (!isDrawing || isExecuting) return; let cX = e.touches?e.touches[0].clientX:e.clientX; let cY = e.touches?e.touches[0].clientY:e.clientY; const p = getCursorPos(cX, cY); ctx.lineTo(p.x, p.y); ctx.stroke(); if(e.cancelable) e.preventDefault(); }
+        canvas.addEventListener('mousedown', startDraw); canvas.addEventListener('mousemove', draw); window.addEventListener('mouseup', ()=>isDrawing=false);
+        canvas.addEventListener('touchstart', startDraw, {passive:false}); canvas.addEventListener('touchmove', draw, {passive:false}); window.addEventListener('touchend', ()=>isDrawing=false);
 
-        function startDraw(e) {
-            if (isExecuting) return;
-            isDrawing = true;
-            let clientX = e.clientX, clientY = e.clientY;
-            if (e.touches && e.touches.length > 0) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; }
-            
-            startX = clientX; startY = clientY;
-            const pos = getCursorPos(clientX, clientY);
-            ctx.beginPath();
-            ctx.moveTo(pos.x, pos.y);
-            if(e.cancelable) e.preventDefault();
-        }
-
-        function draw(e) {
-            if (!isDrawing || isExecuting) return;
-            let clientX = e.clientX, clientY = e.clientY;
-            if (e.touches && e.touches.length > 0) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; }
-            const pos = getCursorPos(clientX, clientY);
-            ctx.lineTo(pos.x, pos.y);
-            ctx.stroke();
-            if(e.cancelable) e.preventDefault();
-        }
-
-        function stopDraw() { isDrawing = false; }
-
-        canvas.addEventListener('mousedown', startDraw);
-        canvas.addEventListener('mousemove', draw);
-        window.addEventListener('mouseup', stopDraw);
-        canvas.addEventListener('touchstart', startDraw, { passive: false });
-        canvas.addEventListener('touchmove', draw, { passive: false });
-        window.addEventListener('touchend', stopDraw);
-
-
-        function getTransform(dir) {
-            if (dir === 0) return 'scaleX(-1)';      
-            if (dir === 1) return 'rotate(-90deg)';  
-            if (dir === 2) return 'scaleX(1)';       
-            if (dir === 3) return 'rotate(90deg)';   
-            return 'scaleX(1)';
+        // NUEVA ORIENTACIÓN HACIA ARRIBA
+        function getTransform(dir) { 
+            if (dir === 0) return 'rotate(90deg)';
+            if (dir === 1) return 'rotate(180deg)';
+            if (dir === 2) return 'rotate(-90deg)';
+            if (dir === 3) return 'rotate(0deg)';
         }
 
         function drawBee() {
             document.querySelectorAll('.bee-container').forEach(b => b.remove());
-
             const cell = document.getElementById(`cell-${bee.pos.x}-${bee.pos.y}`);
-            const container = document.createElement('div');
-            container.className = `bee-container`;
-            
-            const orientation = document.createElement('div');
-            orientation.className = 'bee-orientation';
-            orientation.style.transform = getTransform(bee.dir);
-            
-            const sprite = document.createElement('div');
-            sprite.className = 'bee-sprite';
-            sprite.innerText = '🐝';
-            
-            orientation.appendChild(sprite);
-            container.appendChild(orientation);
-            cell.appendChild(container);
+            const container = document.createElement('div'); container.className = `bee-container`;
+            const orient = document.createElement('div'); orient.className = 'bee-orientation'; orient.style.transform = getTransform(bee.dir);
+            const sprite = document.createElement('div'); sprite.className = 'bee-sprite'; 
+            sprite.innerHTML = '<img src="../assets/robots/BeebotEmoji.png" alt="BeeBot" style="width: 48px; height: 48px; object-fit: contain; pointer-events: none;">';
+            orient.appendChild(sprite); container.appendChild(orient); cell.appendChild(container);
         }
 
-        function addCommand(cmd) {
-            if(isExecuting) return;
-            bee.commands.push(cmd);
-            updateSequenceUI();
-        }
-
-        function undoCommand() {
-            if(isExecuting || bee.commands.length === 0) return;
-            bee.commands.pop();
-            updateSequenceUI();
-        }
-
+        function addCommand(cmd) { if(isExecuting) return; bee.commands.push(cmd); updateSequenceUI(); }
+        function undoCommand() { if(isExecuting || bee.commands.length === 0) return; bee.commands.pop(); updateSequenceUI(); }
         function updateSequenceUI() {
-            const symbols = { 'F': '⬆️', 'R': '↻', 'L': '↺', 'W': '✏️' };
-            const container = document.getElementById(`seq`);
-            container.innerHTML = ''; 
-            
-            bee.commands.forEach(cmd => {
-                const span = document.createElement('span');
-                span.className = 'cmd-block' + (cmd === 'W' ? ' write-block' : '');
-                span.innerText = symbols[cmd];
-                container.appendChild(span);
-            });
+            const sym = { 'F': '⬆️', 'R': '↻', 'L': '↺', 'W': '✏️' }; const container = document.getElementById(`seq`); container.innerHTML = ''; 
+            bee.commands.forEach(cmd => { const span = document.createElement('span'); span.className = 'cmd-block' + (cmd === 'W' ? ' write-block' : ''); span.innerText = sym[cmd]; container.appendChild(span); });
         }
 
         function writeLetter() {
-            const cell = document.getElementById(`cell-${bee.pos.x}-${bee.pos.y}`);
-            const letter = cell.innerText;
-            
-            // Animación visual en el tablero
-            cell.classList.add('writing-pulse');
-            setTimeout(() => cell.classList.remove('writing-pulse'), 300);
-
-            // Crear Ficha Colorida Aleatoria
-            const display = document.getElementById('word-display');
-            const tile = document.createElement('div');
-            tile.className = 'letter-tile';
-            tile.innerText = letter;
-            
-            // Elegir color aleatorio estilo bloques de juguete
+            const cell = document.getElementById(`cell-${bee.pos.x}-${bee.pos.y}`); const letter = cell.innerText;
+            cell.classList.add('writing-pulse'); setTimeout(() => cell.classList.remove('writing-pulse'), 300);
+            const display = document.getElementById('word-display'); const tile = document.createElement('div'); tile.className = 'letter-tile'; tile.innerText = letter;
             const colors = ['#FF5722', '#4CAF50', '#03A9F4', '#FFC107', '#9C27B0', '#E91E63', '#00BCD4'];
             tile.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            
-            display.appendChild(tile);
-            formedWord += letter;
+            display.appendChild(tile); formedWord += letter;
         }
 
         function executeCommands() {
-            if (bee.commands.length === 0 || isExecuting) return;
-            
-            isExecuting = true;
-            document.getElementById('go-btn').style.opacity = "0.5";
-
+            if (bee.commands.length === 0 || isExecuting) return; isExecuting = true; document.getElementById('go-btn').style.opacity = "0.5";
             let step = 0;
             const interval = setInterval(() => {
-                // Al terminar de leer las instrucciones
                 if (step >= bee.commands.length) {
-                    clearInterval(interval);
-                    
-                    // Reactivamos sin mostrar Pop-up (Flujo continuo)
-                    document.getElementById('go-btn').style.opacity = "1";
-                    isExecuting = false;
-                    
-                    // Borramos la secuencia y el dibujo para continuar al instante
-                    bee.commands = [];
-                    updateSequenceUI();
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    
-                    return;
+                    clearInterval(interval); document.getElementById('go-btn').style.opacity = "1"; isExecuting = false;
+                    bee.commands = []; updateSequenceUI(); ctx.clearRect(0, 0, canvas.width, canvas.height); return;
                 }
-
                 const cmd = bee.commands[step];
                 if (cmd === 'F') {
-                    let newX = bee.pos.x;
-                    let newY = bee.pos.y;
-                    if (bee.dir === 0) newX++;      
-                    else if (bee.dir === 1) newY++; 
-                    else if (bee.dir === 2) newX--; 
-                    else if (bee.dir === 3) newY--; 
-
-                    if (newX >= 0 && newX < gridSizeX && newY >= 0 && newY < gridSizeY) {
-                        bee.pos.x = newX;
-                        bee.pos.y = newY;
-                    }
-                } else if (cmd === 'R') {
-                    bee.dir = (bee.dir + 1) % 4; 
-                } else if (cmd === 'L') {
-                    bee.dir = (bee.dir + 3) % 4; 
-                } else if (cmd === 'W') {
-                    writeLetter();
-                }
-                
-                drawBee();
-                step++;
+                    let nx = bee.pos.x, ny = bee.pos.y;
+                    if (bee.dir === 0) nx++; else if (bee.dir === 1) ny++; else if (bee.dir === 2) nx--; else if (bee.dir === 3) ny--; 
+                    if (nx >= 0 && nx < gridSizeX && ny >= 0 && ny < gridSizeY) { bee.pos.x = nx; bee.pos.y = ny; }
+                } else if (cmd === 'R') bee.dir = (bee.dir + 1) % 4; else if (cmd === 'L') bee.dir = (bee.dir + 3) % 4; else if (cmd === 'W') writeLetter();
+                drawBee(); step++;
             }, 600); 
         }
 
-        function showModal(title, msg) {
-            document.getElementById('m-title').innerText = title;
-            document.getElementById('m-msg').innerText = msg;
-            document.getElementById('modal').classList.add('active');
-        }
-
-        function closeModal() {
-            document.getElementById('modal').classList.remove('active');
-        }
-
-        function resetGame() {
-            // Reinicia todo desde cero
-            bee = { pos: {x: 0, y: 0}, dir: 0, commands: [] };
-            formedWord = "";
-            document.getElementById('word-display').innerHTML = ""; // Vacía las fichas
-            isExecuting = false;
-            
-            updateSequenceUI();
-            
-            document.getElementById('go-btn').style.opacity = "1";
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            initGrid();
-            drawBee();
-        }
-
-        // Arrancar juego al abrir
+        function resetGame() { bee = { pos: {x: 0, y: 0}, dir: 0, commands: [] }; formedWord = ""; document.getElementById('word-display').innerHTML = ""; isExecuting = false; updateSequenceUI(); document.getElementById('go-btn').style.opacity = "1"; ctx.clearRect(0, 0, canvas.width, canvas.height); initGrid(); drawBee(); }
         resetGame();
     </script>
 </body>
