@@ -3,18 +3,9 @@
    Utilidades compartidas por los 3 portales:
    inicial.html · primaria.html · secundaria.html
    ------------------------------------------------------------
-   Incluye:
-   - Utilidades ($ / $$ / store / isTouch)
-   - Sistema de sonido (Web Audio API)
-   - Botón de sonido flotante
-   - Header con progreso y ocultado elegante
-   - Menú móvil
-   - Scroll suave
-   - Ripple + feedback de botones
-   - Reveal escalonado con IntersectionObserver
-   - Indicador de sección activa
-   - Accesibilidad por teclado
-   - API global (window.AventuraEducativa)
+   Versión 3.0 — Incluye soporte para los 20 juegos del portal
+   Inicial (filtros, contadores dinámicos, reveal de tarjetas
+   y mensaje de "sin resultados").
    ============================================================ */
 
 'use strict';
@@ -52,9 +43,7 @@ const store = {
 /* ============================================================
    2. SISTEMA DE SONIDO
    ------------------------------------------------------------
-   Genera tonos con Web Audio API. Preparado para reemplazar
-   por audios reales desde assets/audio/ sin tocar el código
-   de las páginas.
+   Genera tonos con Web Audio API.
    ============================================================ */
 const Sound = (() => {
     let enabled = store.get('ae_sound_enabled', true);
@@ -70,7 +59,6 @@ const Sound = (() => {
         return ctx;
     }
 
-    /** Reproduce un tono simple */
     function tone(freq = 440, duration = 0.12, type = 'sine', volume = 0.14) {
         if (!enabled) return;
         const c = getCtx();
@@ -86,33 +74,26 @@ const Sound = (() => {
         osc.stop(c.currentTime + duration);
     }
 
-    /** Click de botón */
-    function click() { tone(660, 0.06, 'square', 0.08); }
+    function click()   { tone(660, 0.06, 'square', 0.08); }
+    function hover()   { tone(880, 0.03, 'sine', 0.03); }
 
-    /** Hover suave */
-    function hover() { tone(880, 0.03, 'sine', 0.03); }
-
-    /** Entrada a un mundo */
     function enterWorld() {
         tone(523, 0.10, 'triangle', 0.15);
         setTimeout(() => tone(659, 0.10, 'triangle', 0.15), 90);
         setTimeout(() => tone(784, 0.18, 'triangle', 0.15), 180);
     }
 
-    /** Selección de un juego */
     function select() {
         tone(880, 0.08, 'triangle', 0.15);
         setTimeout(() => tone(1174, 0.14, 'triangle', 0.15), 80);
     }
 
-    /** Éxito */
     function success() {
         tone(659, 0.10, 'sine', 0.16);
         setTimeout(() => tone(880, 0.10, 'sine', 0.16), 100);
         setTimeout(() => tone(1174, 0.20, 'sine', 0.16), 200);
     }
 
-    /** Error */
     function error() {
         tone(220, 0.16, 'sawtooth', 0.12);
         setTimeout(() => tone(180, 0.20, 'sawtooth', 0.12), 140);
@@ -129,7 +110,7 @@ const Sound = (() => {
     };
 })();
 
-// Exponer Sound globalmente (para inicial.js / primaria.js / secundaria.js)
+// Exponer Sound globalmente
 window.AE_Sound = Sound;
 
 
@@ -228,6 +209,8 @@ window.AE_Sound = Sound;
 
 /* ============================================================
    6. SCROLL SUAVE
+   ------------------------------------------------------------
+   No intercepta enlaces con target="_blank" (los juegos).
    ============================================================ */
 (function initSmoothScroll() {
     const header = $('#siteHeader');
@@ -255,6 +238,9 @@ window.AE_Sound = Sound;
 
     // Enlaces internos con href="#..."
     $$('a[href^="#"]').forEach(a => {
+        // No interceptar si abre en nueva pestaña
+        if (a.target === '_blank') return;
+
         a.addEventListener('click', (e) => {
             const href = a.getAttribute('href');
             if (!href || href === '#') return;
@@ -266,7 +252,6 @@ window.AE_Sound = Sound;
         });
     });
 
-    // Exponer para uso externo
     window.AE_scrollTo = scrollTo;
 })();
 
@@ -317,7 +302,6 @@ window.AE_Sound = Sound;
             createRipple(btn, e);
         });
 
-        // Hover suave solo en dispositivos con puntero
         if (!isTouch) {
             btn.addEventListener('mouseenter', () => Sound.hover());
         }
@@ -327,6 +311,9 @@ window.AE_Sound = Sound;
 
 /* ============================================================
    8. REVEAL ESCALONADO
+   ------------------------------------------------------------
+   Los elementos con .reveal-child aparecen progresivamente
+   cuando entran al viewport.
    ============================================================ */
 (function initRevealOnScroll() {
     const revealers = $$('.reveal-child');
@@ -357,7 +344,6 @@ window.AE_Sound = Sound;
     const navLinks  = $$('.nav-btn');
     if (!nav || !indicator || !navLinks.length) return;
 
-    // Secciones internas que pueden ser observadas (si existen en la página)
     const sectionIds = ['hero', 'juegos', 'ayuda'];
     const sections = sectionIds
         .map(id => document.getElementById(id))
@@ -382,7 +368,6 @@ window.AE_Sound = Sound;
         }
     }
 
-    // Si la página tiene secciones internas (#hero, #juegos, #ayuda), observarlas
     if (sections.length) {
         const io = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -396,7 +381,6 @@ window.AE_Sound = Sound;
         });
         sections.forEach(sec => io.observe(sec));
     } else {
-        // Fallback: marcar el que tenga is-active en HTML
         const current = navLinks.find(l => l.classList.contains('is-active'));
         if (current) setActive(current);
     }
@@ -429,7 +413,7 @@ window.AE_Sound = Sound;
    11. REEMPLAZO AUTOMÁTICO DE ROBOTS POR IMÁGENES REALES
    ------------------------------------------------------------
    Si existe assets/robots/<nombre>.png se muestra la imagen
-   y se oculta el robot CSS. Si no existe, se conserva el CSS.
+   y se oculta el robot CSS.
    ============================================================ */
 (function initRobotImages() {
     const displays = $$('.robot-display[data-robot]');
@@ -454,17 +438,157 @@ window.AE_Sound = Sound;
 
 
 /* ============================================================
-   12. API GLOBAL
+   12. PORTAL DE JUEGOS — FILTROS, CONTADORES Y REVEAL
+   ------------------------------------------------------------
+   Funciona solo si existen los elementos:
+     • .games-grid #gamesGrid
+     • .filters .filter-btn[data-filter]
+     • #gamesEmpty
+   Es decir, únicamente en los portales (inicial/primaria/etc.).
+   ============================================================ */
+(function initGamesPortal() {
+    const grid = $('#gamesGrid');
+    if (!grid) return; // No estamos en un portal con juegos
+
+    const cards       = $$('.game-card', grid);
+    const filterBtns  = $$('.filter-btn');
+    const emptyBox    = $('#gamesEmpty');
+    const counters    = $$('.filter-count');
+
+    /* -------------------------------------------------------
+       12.1 CONTAR JUEGOS POR CATEGORÍA
+       ------------------------------------------------------- */
+    function countByCategory() {
+        const total = cards.length;
+        const counts = { all: total };
+        cards.forEach(card => {
+            const cat = card.dataset.category || 'otros';
+            counts[cat] = (counts[cat] || 0) + 1;
+        });
+        return counts;
+    }
+
+    /* -------------------------------------------------------
+       12.2 ACTUALIZAR LOS CONTADORES DE LOS BOTONES
+       ------------------------------------------------------- */
+    function updateCounters() {
+        const counts = countByCategory();
+        counters.forEach(counter => {
+            const key = counter.dataset.count;
+            if (!key) return;
+            counter.textContent = counts[key] ?? 0;
+        });
+    }
+
+    /* -------------------------------------------------------
+       12.3 APLICAR FILTRO
+       ------------------------------------------------------- */
+    function applyFilter(filter) {
+        let visible = 0;
+
+        cards.forEach(card => {
+            const category = card.dataset.category || '';
+            const show = filter === 'all' || category === filter;
+
+            card.classList.toggle('is-filtered-out', !show);
+            if (show) visible++;
+        });
+
+        // Mostrar/ocultar mensaje de "sin resultados"
+        if (emptyBox) emptyBox.hidden = visible !== 0;
+
+        // Actualizar estado activo de los botones
+        filterBtns.forEach(btn => {
+            const isActive = btn.dataset.filter === filter;
+            btn.classList.toggle('is-active', isActive);
+            btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        });
+    }
+
+    /* -------------------------------------------------------
+       12.4 REVEAL DE TARJETAS (entrada progresiva)
+       ------------------------------------------------------- */
+    function revealCards() {
+        // Marca todas las tarjetas con la clase base
+        cards.forEach((card, i) => {
+            card.classList.add('reveal-card');
+            // Pequeño delay escalonado según posición
+            card.style.transitionDelay = `${(i % 8) * 0.05}s`;
+        });
+
+        if (!('IntersectionObserver' in window)) {
+            // Fallback: mostrar todas directamente
+            cards.forEach(c => c.classList.add('is-visible'));
+            return;
+        }
+
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    io.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.10,
+            rootMargin: '0px 0px -60px 0px'
+        });
+
+        cards.forEach(card => io.observe(card));
+    }
+
+    /* -------------------------------------------------------
+       12.5 EVENTOS DE LOS FILTROS
+       ------------------------------------------------------- */
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const filter = btn.dataset.filter || 'all';
+            Sound.click();
+            applyFilter(filter);
+        });
+    });
+
+    /* -------------------------------------------------------
+       12.6 BOTÓN "VER TODOS" DEL ESTADO VACÍO
+       ------------------------------------------------------- */
+    const btnShowAll = $('.btn-show-all');
+    if (btnShowAll) {
+        btnShowAll.addEventListener('click', () => {
+            Sound.click();
+            applyFilter('all');
+        });
+    }
+
+    /* -------------------------------------------------------
+       12.7 SONIDO AL ENTRAR A UN JUEGO
+       ------------------------------------------------------- */
+    $$('.game-card-link', grid).forEach(link => {
+        link.addEventListener('click', () => {
+            Sound.select();
+        });
+    });
+
+    /* -------------------------------------------------------
+       12.8 INICIALIZACIÓN
+       ------------------------------------------------------- */
+    updateCounters();
+    revealCards();
+    applyFilter('all');
+})();
+
+
+/* ============================================================
+   13. API GLOBAL
    ============================================================ */
 window.AventuraEducativa = {
     sound: Sound,
     scrollTo: window.AE_scrollTo,
-    version: '2.0'
+    version: '3.0'
 };
 
 
 /* ============================================================
-   13. LOG DE BIENVENIDA
+   14. LOG DE BIENVENIDA
    ============================================================ */
 console.log(
     '%c🎮 AVENTURA EDUCATIVA %c Portal cargado — ' + document.title,

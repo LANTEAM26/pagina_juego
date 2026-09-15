@@ -2,6 +2,9 @@
    AVENTURA EDUCATIVA — PORTAL INICIAL (BEEBOT)
    Hoja de estilos específica del nivel Inicial.
    Reutiliza variables y componentes base definidos en styles.css
+   ------------------------------------------------------------
+   Actualización: soporte para 20 juegos con imágenes reales
+   (Juegos/imagenN.png) y grid adaptativo.
    ============================================================ */
 
 /* ------------------------------------------------------------
@@ -714,7 +717,7 @@
 .filter-btn[data-filter="naturaleza"].is-active { background: linear-gradient(135deg, #86c76a, #4b8a3b); color: #fff; }
 
 /* ============================================================
-   6. CUADRÍCULA DE JUEGOS
+   6. CUADRÍCULA DE JUEGOS — 20 tarjetas
    ============================================================ */
 
 .games-grid {
@@ -807,7 +810,10 @@
         radial-gradient(circle at 30% 30%, rgba(255,255,255,.35) 0%, transparent 55%),
         radial-gradient(circle at 70% 70%, rgba(255,255,255,.2) 0%, transparent 55%);
     pointer-events: none;
+    z-index: 1;
 }
+
+/* Emoji por defecto (cuando NO hay imagen) */
 .game-thumb-emoji {
     position: relative;
     z-index: 1;
@@ -825,7 +831,29 @@
     50%     { transform: translateY(-8px) rotate(-3deg); }
 }
 
-/* Colores por categoría */
+/* --- Imagen real del juego --- */
+.game-thumb-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    z-index: 0;
+    transition: transform var(--t-mid);
+    user-select: none;
+    -webkit-user-drag: none;
+}
+.game-card:hover .game-thumb-img {
+    transform: scale(1.06);
+}
+
+/* Cuando la tarjeta tiene imagen real → ocultar emoji */
+.game-card-thumb.has-image .game-thumb-emoji {
+    display: none;
+}
+
+/* Colores por categoría (fallback si no hay imagen) */
 .thumb-logica {
     background: linear-gradient(135deg, #7ed957 0%, #4ec0e0 100%);
     box-shadow: inset 0 -60px 80px rgba(0,0,0,.1);
@@ -857,7 +885,7 @@
     gap: 6px;
     padding: 6px 12px;
     border-radius: var(--r-full);
-    background: rgba(255,255,255,.9);
+    background: rgba(255,255,255,.92);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     box-shadow: 0 4px 12px rgba(15,23,42,.15);
@@ -1266,16 +1294,21 @@
    12. RESPONSIVE
    ============================================================ */
 
-/* --- Grandes pantallas (1920x1080) --- */
+/* --- Grandes pantallas (1920x1080) — 5 columnas --- */
 @media (min-width: 1700px) {
     .portal-hero-content { max-width: 1620px; gap: 80px; }
-    .games-grid { grid-template-columns: repeat(4, 1fr); gap: 32px; }
+    .games-grid { grid-template-columns: repeat(5, 1fr); gap: 26px; }
     .game-card-thumb { aspect-ratio: 16/10; }
 }
 
-/* --- Laptops medianas --- */
-@media (max-width: 1400px) {
-    .games-grid { grid-template-columns: repeat(3, 1fr); }
+/* --- Pantallas muy grandes (1400-1700) — 4 columnas --- */
+@media (min-width: 1400px) and (max-width: 1699px) {
+    .games-grid { grid-template-columns: repeat(4, 1fr); gap: 26px; }
+}
+
+/* --- Laptops medianas (1100-1399) — 3 columnas --- */
+@media (min-width: 1101px) and (max-width: 1399px) {
+    .games-grid { grid-template-columns: repeat(3, 1fr); gap: 24px; }
 }
 
 /* --- Tablets horizontales / laptops pequeñas --- */
@@ -1401,7 +1434,6 @@
    Asegura targets táctiles grandes y feedback claro.
    ============================================================ */
 @media (hover: none) {
-    /* No depender de hover: estados equivalentes con :active */
     .game-card:active {
         transform: translateY(-4px) scale(1.01);
         box-shadow: 0 20px 44px rgba(15,23,42,.15);
@@ -1445,18 +1477,3 @@
    ============================================================ */
 
 .portal-inicial .is-hidden { display: none !important; }
-
-/* Cuando existen imágenes reales en las tarjetas, oculta el emoji */
-.game-card-thumb.has-image .game-thumb-emoji { display: none; }
-.game-card-thumb .game-thumb-img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform var(--t-mid);
-}
-.game-card:hover .game-card-thumb .game-thumb-img { transform: scale(1.06); }
-
-/* Cuando existen imágenes reales en el robot del hero, oculta el CSS */
-.robot-display.has-image .robot { display: none; }

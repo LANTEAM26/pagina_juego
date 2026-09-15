@@ -1,11 +1,14 @@
 /* ============================================================
    AVENTURA EDUCATIVA — SCRIPT PRINCIPAL
-   Versión 2.0 — Rediseño profesional
+   Versión 4.0 — Plataforma profesional de videojuegos educativos
+   ------------------------------------------------------------
    Conserva el 100% de la funcionalidad anterior y añade:
-   - Indicador de sección activa con pill animada
-   - Reveal escalonado con IntersectionObserver
-   - Detección de header "scrolled"
-   - Efectos ripple mejorados
+   - Nav indicator compatible con 6 ítems (Inicio / Inicial /
+     Primaria / Secundaria / Recursos / Ayuda)
+   - Detección de las nuevas secciones #recursos y #sobre-nosotros
+   - Verificación de los robots PNG reales (sin duplicar)
+   - Reveal escalonado hasta 5 niveles
+   - Respeta enlaces target="_blank" (Temporizador / Tabla)
    ============================================================ */
 
 'use strict';
@@ -182,6 +185,10 @@ const Sound = (() => {
 
 /* ============================================================
    6. SCROLL SUAVE
+   ------------------------------------------------------------
+   - Botón "COMENZAR AVENTURA" → #inicial
+   - Enlaces internos con offset del header
+   - NO intercepta enlaces con target="_blank" (Temporizador / Tabla)
    ============================================================ */
 (function initSmoothScroll() {
     const header = $('#siteHeader');
@@ -203,6 +210,9 @@ const Sound = (() => {
     }
 
     $$('a[href^="#"]').forEach(a => {
+        // No interceptar enlaces externos (ej: temporizador.html, tabla-competencia.html)
+        if (a.target === '_blank') return;
+
         a.addEventListener('click', (e) => {
             const href = a.getAttribute('href');
             if (!href || href === '#') return;
@@ -262,6 +272,7 @@ const Sound = (() => {
         });
     });
 
+    // Sonido al entrar a cualquier mundo o recurso
     $$('[data-sound="enter"]').forEach(a => {
         a.addEventListener('click', () => Sound.enterWorld());
     });
@@ -301,7 +312,7 @@ const Sound = (() => {
     const container = $('#cyberParticles');
     if (!container) return;
 
-    // Inyectar keyframes una sola vez (con dirección aleatoria fija)
+    // Inyectar keyframes una sola vez
     if (!document.getElementById('cyberFloatKeyframes')) {
         const style = document.createElement('style');
         style.id = 'cyberFloatKeyframes';
@@ -348,7 +359,7 @@ const Sound = (() => {
    10. REVEAL ESCALONADO DE SECCIONES
    ------------------------------------------------------------
    Los hijos con [data-reveal] aparecen progresivamente cuando
-   su sección entra al viewport.
+   su sección entra al viewport. Soporta hasta 5 niveles.
    ============================================================ */
 (function initRevealOnScroll() {
     const revealers = $$('.reveal-child');
@@ -362,7 +373,7 @@ const Sound = (() => {
             }
         });
     }, {
-        threshold: 0.15,
+        threshold: 0.12,
         rootMargin: '0px 0px -80px 0px'
     });
 
@@ -372,11 +383,14 @@ const Sound = (() => {
 
 /* ============================================================
    11. NAV INDICADOR DE SECCIÓN ACTIVA (pill deslizante)
+   ------------------------------------------------------------
+   6 secciones soportadas:
+   #hero, #inicial, #primaria, #secundaria, #recursos, #sobre-nosotros
    ============================================================ */
 (function initActiveNav() {
     const nav       = $('.main-nav');
     const indicator = $('.nav-indicator');
-    const sections  = ['#hero', '#inicial', '#primaria', '#secundaria']
+    const sections  = ['#hero', '#inicial', '#primaria', '#secundaria', '#recursos', '#sobre-nosotros']
         .map(id => $(id))
         .filter(Boolean);
     const navLinks  = $$('.nav-btn');
@@ -460,28 +474,33 @@ const Sound = (() => {
 
 
 /* ============================================================
-   13. REEMPLAZO AUTOMÁTICO DE ROBOTS POR IMÁGENES REALES
+   13. VERIFICACIÓN DE ROBOTS (PNG reales)
    ------------------------------------------------------------
-   Si existe assets/robots/<nombre>.png, se muestra la imagen y
-   se oculta el robot CSS. Si no existe, se conserva el CSS.
+   Los robots vienen en el HTML como <img src="assets/robots/*.png">.
+   Aquí solo verificamos que carguen correctamente y aseguramos
+   la clase .has-image. Si la imagen NO existe, se avisa por
+   consola con la ruta esperada. No duplicamos imágenes.
    ============================================================ */
-(function initRobotImages() {
+(function verifyRobotImages() {
     const displays = $$('.robot-display[data-robot]');
     if (!displays.length) return;
 
     displays.forEach(display => {
+        const img = display.querySelector('.robot-img');
+        if (!img) return;
+
         const robotName = display.dataset.robot;
-        const src = `assets/robots/${robotName}.png`;
-        const img = new Image();
-        img.onload = () => {
+
+        img.addEventListener('load', () => {
             display.classList.add('has-image');
-            const el = document.createElement('img');
-            el.className = 'robot-img';
-            el.src = src;
-            el.alt = `Robot ${robotName}`;
-            display.appendChild(el);
-        };
-        img.src = src;
+        });
+
+        img.addEventListener('error', () => {
+            console.warn(
+                `[Aventura Educativa] No se encontró el robot "${robotName}". ` +
+                `Asegúrate de colocar el archivo en: assets/robots/${robotName}.png`
+            );
+        });
     });
 })();
 
@@ -524,7 +543,7 @@ window.AventuraEducativa = {
    16. LOG DE BIENVENIDA
    ============================================================ */
 console.log(
-    '%c🎮 AVENTURA EDUCATIVA %c Versión 2.0 — Diseño renovado. ¡Listo para jugar!',
+    '%c AVENTURA EDUCATIVA %c Versión 4.0 — Plataforma profesional. ¡Listo para jugar!',
     'background: linear-gradient(90deg,#00e5ff,#b14aed); color:#fff; padding:6px 10px; border-radius:8px; font-weight:900;',
     'color:#6b7280; font-weight:600; padding:4px;'
 );

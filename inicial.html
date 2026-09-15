@@ -217,7 +217,7 @@
             <span class="section-title-txt">ELIGE TU JUEGO</span>
         </h2>
         <p class="section-subtitle">
-            12 aventuras te esperan. ¡Toca una tarjeta para comenzar!
+            20 aventuras te esperan. ¡Toca una tarjeta para comenzar!
         </p>
     </div>
 
@@ -228,7 +228,7 @@
         <button class="filter-btn is-active" data-filter="all" role="tab" aria-selected="true">
             <span class="filter-ico">🌈</span>
             <span class="filter-txt">Todos</span>
-            <span class="filter-count" data-count="all">12</span>
+            <span class="filter-count" data-count="all">20</span>
         </button>
 
         <button class="filter-btn" data-filter="numeros" role="tab" aria-selected="false">
@@ -262,31 +262,40 @@
         </button>
     </div>
 
-    <!-- ============================================
-         CUADRÍCULA DE JUEGOS (generada por JS)
+    <!-- ══════════════════════════════════════════════════════════════
+         AQUÍ COMIENZAN LOS JUEGOS
          --------------------------------------------------------------
-         Cada tarjeta se genera dinámicamente desde el array
-         de games definido en js/inicial.js.
-         ============================================ -->
+         20 tarjetas de juego listas para enlazar.
+
+         Cada tarjeta contiene:
+           • href  → archivo del juego dentro de la carpeta "Juegos/"
+           • img   → imagen del juego (Juegos/imagenN.png)
+           • título, descripción, categoría y dificultad
+
+         Para personalizar:
+           1) Cambia el "href" por el archivo real del juego
+           2) Cambia el "src" de la imagen
+           3) Cambia el nombre, la descripción y la categoría
+           4) Todas las tarjetas abren en NUEVA PESTAÑA
+              (target="_blank" rel="noopener noreferrer")
+
+         Categorías disponibles (data-category):
+           logica · numeros · colores · letras · naturaleza
+
+         Dificultades (data-difficulty):
+           facil · medio · dificil
+         ══════════════════════════════════════════════════════════════ -->
     <div class="games-grid" id="gamesGrid" aria-live="polite">
 
-        <!-- ====================================================
-             TARJETAS DE JUEGO
-             ----------------------------------------------------
-             Las siguientes tarjetas son SOLO DE EJEMPLO para que
-             el HTML sea visible sin JS. El script las reemplazará
-             automáticamente por las generadas desde el array.
-             ==================================================== -->
-
-        <!-- Juego 1: Camino de BeeBot -->
+        <!-- ─────────── JUEGO 1 ─────────── -->
         <article class="game-card" data-category="logica" data-difficulty="facil">
-            <a href="games/inicial/camino-beebot.html"
+            <a href="Juegos/juego1.html"
                class="game-card-link"
                target="_blank"
                rel="noopener noreferrer"
-               aria-label="Abrir juego: Camino de BeeBot">
-                <div class="game-card-thumb thumb-logica">
-                    <span class="game-thumb-emoji">🐝</span>
+               aria-label="Abrir juego 1">
+                <div class="game-card-thumb thumb-logica has-image">
+                    <img src="Juegos/imagen1.png" alt="Juego 1" class="game-thumb-img" loading="lazy">
                     <span class="game-thumb-bg"></span>
                     <div class="game-difficulty difficulty-facil">
                         <span class="diff-dot"></span>
@@ -295,8 +304,8 @@
                 </div>
                 <div class="game-card-body">
                     <span class="game-category-tag tag-logica">🧠 Lógica</span>
-                    <h3 class="game-title">Camino de BeeBot</h3>
-                    <p class="game-desc">Aprende direcciones y desplazamientos.</p>
+                    <h3 class="game-title">Juego 1</h3>
+                    <p class="game-desc">Descripción breve del juego 1.</p>
                     <span class="game-play">
                         <span class="game-play-ico">▶</span>
                         <span class="game-play-txt">Jugar</span>
@@ -305,195 +314,524 @@
             </a>
         </article>
 
-        <!-- Juego 2: Números Mágicos -->
+        <!-- ─────────── JUEGO 2 ─────────── -->
         <article class="game-card" data-category="numeros" data-difficulty="facil">
-            <a href="games/inicial/numeros-magicos.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego: Números Mágicos">
-                <div class="game-card-thumb thumb-numeros">
-                    <span class="game-thumb-emoji">🔢</span>
+            <a href="Juegos/juego2.html"
+               class="game-card-link"
+               target="_blank"
+               rel="noopener noreferrer"
+               aria-label="Abrir juego 2">
+                <div class="game-card-thumb thumb-numeros has-image">
+                    <img src="Juegos/imagen2.png" alt="Juego 2" class="game-thumb-img" loading="lazy">
                     <span class="game-thumb-bg"></span>
-                    <div class="game-difficulty difficulty-facil"><span class="diff-dot"></span><span class="diff-txt">Fácil</span></div>
+                    <div class="game-difficulty difficulty-facil">
+                        <span class="diff-dot"></span>
+                        <span class="diff-txt">Fácil</span>
+                    </div>
                 </div>
                 <div class="game-card-body">
                     <span class="game-category-tag tag-numeros">🔢 Números</span>
-                    <h3 class="game-title">Números Mágicos</h3>
-                    <p class="game-desc">Reconocimiento y conteo de números.</p>
-                    <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
+                    <h3 class="game-title">Juego 2</h3>
+                    <p class="game-desc">Descripción breve del juego 2.</p>
+                    <span class="game-play">
+                        <span class="game-play-ico">▶</span>
+                        <span class="game-play-txt">Jugar</span>
+                    </span>
                 </div>
             </a>
         </article>
 
-        <!-- Juego 3: Mundo de Colores -->
+        <!-- ─────────── JUEGO 3 ─────────── -->
         <article class="game-card" data-category="colores" data-difficulty="facil">
-            <a href="games/inicial/mundo-colores.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego: Mundo de Colores">
-                <div class="game-card-thumb thumb-colores">
-                    <span class="game-thumb-emoji">🎨</span>
+            <a href="Juegos/juego3.html"
+               class="game-card-link"
+               target="_blank"
+               rel="noopener noreferrer"
+               aria-label="Abrir juego 3">
+                <div class="game-card-thumb thumb-colores has-image">
+                    <img src="Juegos/imagen3.png" alt="Juego 3" class="game-thumb-img" loading="lazy">
                     <span class="game-thumb-bg"></span>
-                    <div class="game-difficulty difficulty-facil"><span class="diff-dot"></span><span class="diff-txt">Fácil</span></div>
+                    <div class="game-difficulty difficulty-facil">
+                        <span class="diff-dot"></span>
+                        <span class="diff-txt">Fácil</span>
+                    </div>
                 </div>
                 <div class="game-card-body">
                     <span class="game-category-tag tag-colores">🎨 Colores</span>
-                    <h3 class="game-title">Mundo de Colores</h3>
-                    <p class="game-desc">Identificación y asociación de colores.</p>
-                    <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
+                    <h3 class="game-title">Juego 3</h3>
+                    <p class="game-desc">Descripción breve del juego 3.</p>
+                    <span class="game-play">
+                        <span class="game-play-ico">▶</span>
+                        <span class="game-play-txt">Jugar</span>
+                    </span>
                 </div>
             </a>
         </article>
 
-        <!-- Juego 4: Formas Divertidas -->
+        <!-- ─────────── JUEGO 4 ─────────── -->
+        <article class="game-card" data-category="letras" data-difficulty="facil">
+            <a href="Juegos/juego4.html"
+               class="game-card-link"
+               target="_blank"
+               rel="noopener noreferrer"
+               aria-label="Abrir juego 4">
+                <div class="game-card-thumb thumb-letras has-image">
+                    <img src="Juegos/imagen4.png" alt="Juego 4" class="game-thumb-img" loading="lazy">
+                    <span class="game-thumb-bg"></span>
+                    <div class="game-difficulty difficulty-facil">
+                        <span class="diff-dot"></span>
+                        <span class="diff-txt">Fácil</span>
+                    </div>
+                </div>
+                <div class="game-card-body">
+                    <span class="game-category-tag tag-letras">🔤 Letras</span>
+                    <h3 class="game-title">Juego 4</h3>
+                    <p class="game-desc">Descripción breve del juego 4.</p>
+                    <span class="game-play">
+                        <span class="game-play-ico">▶</span>
+                        <span class="game-play-txt">Jugar</span>
+                    </span>
+                </div>
+            </a>
+        </article>
+
+        <!-- ─────────── JUEGO 5 ─────────── -->
+        <article class="game-card" data-category="naturaleza" data-difficulty="facil">
+            <a href="Juegos/juego5.html"
+               class="game-card-link"
+               target="_blank"
+               rel="noopener noreferrer"
+               aria-label="Abrir juego 5">
+                <div class="game-card-thumb thumb-naturaleza has-image">
+                    <img src="Juegos/imagen5.png" alt="Juego 5" class="game-thumb-img" loading="lazy">
+                    <span class="game-thumb-bg"></span>
+                    <div class="game-difficulty difficulty-facil">
+                        <span class="diff-dot"></span>
+                        <span class="diff-txt">Fácil</span>
+                    </div>
+                </div>
+                <div class="game-card-body">
+                    <span class="game-category-tag tag-naturaleza">🌱 Naturaleza</span>
+                    <h3 class="game-title">Juego 5</h3>
+                    <p class="game-desc">Descripción breve del juego 5.</p>
+                    <span class="game-play">
+                        <span class="game-play-ico">▶</span>
+                        <span class="game-play-txt">Jugar</span>
+                    </span>
+                </div>
+            </a>
+        </article>
+
+        <!-- ─────────── JUEGO 6 ─────────── -->
         <article class="game-card" data-category="logica" data-difficulty="facil">
-            <a href="games/inicial/formas-divertidas.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego: Formas Divertidas">
-                <div class="game-card-thumb thumb-logica">
-                    <span class="game-thumb-emoji">🔷</span>
+            <a href="Juegos/juego6.html"
+               class="game-card-link"
+               target="_blank"
+               rel="noopener noreferrer"
+               aria-label="Abrir juego 6">
+                <div class="game-card-thumb thumb-logica has-image">
+                    <img src="Juegos/imagen6.png" alt="Juego 6" class="game-thumb-img" loading="lazy">
                     <span class="game-thumb-bg"></span>
-                    <div class="game-difficulty difficulty-facil"><span class="diff-dot"></span><span class="diff-txt">Fácil</span></div>
+                    <div class="game-difficulty difficulty-facil">
+                        <span class="diff-dot"></span>
+                        <span class="diff-txt">Fácil</span>
+                    </div>
                 </div>
                 <div class="game-card-body">
-                    <span class="game-category-tag tag-logica">🧩 Lógica</span>
-                    <h3 class="game-title">Formas Divertidas</h3>
-                    <p class="game-desc">Reconocimiento de figuras geométricas.</p>
-                    <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
+                    <span class="game-category-tag tag-logica">🧠 Lógica</span>
+                    <h3 class="game-title">Juego 6</h3>
+                    <p class="game-desc">Descripción breve del juego 6.</p>
+                    <span class="game-play">
+                        <span class="game-play-ico">▶</span>
+                        <span class="game-play-txt">Jugar</span>
+                    </span>
                 </div>
             </a>
         </article>
 
-        <!-- Juego 5: Aventura de las Letras -->
-        <article class="game-card" data-category="letras" data-difficulty="facil">
-            <a href="games/inicial/aventura-letras.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego: La Aventura de las Letras">
-                <div class="game-card-thumb thumb-letras">
-                    <span class="game-thumb-emoji">🔤</span>
+        <!-- ─────────── JUEGO 7 ─────────── -->
+        <article class="game-card" data-category="numeros" data-difficulty="medio">
+            <a href="Juegos/juego7.html"
+               class="game-card-link"
+               target="_blank"
+               rel="noopener noreferrer"
+               aria-label="Abrir juego 7">
+                <div class="game-card-thumb thumb-numeros has-image">
+                    <img src="Juegos/imagen7.png" alt="Juego 7" class="game-thumb-img" loading="lazy">
                     <span class="game-thumb-bg"></span>
-                    <div class="game-difficulty difficulty-facil"><span class="diff-dot"></span><span class="diff-txt">Fácil</span></div>
+                    <div class="game-difficulty difficulty-medio">
+                        <span class="diff-dot"></span>
+                        <span class="diff-txt">Medio</span>
+                    </div>
                 </div>
                 <div class="game-card-body">
-                    <span class="game-category-tag tag-letras">🔤 Letras</span>
-                    <h3 class="game-title">Aventura de las Letras</h3>
-                    <p class="game-desc">Reconocimiento de letras y sonidos.</p>
-                    <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
+                    <span class="game-category-tag tag-numeros">🔢 Números</span>
+                    <h3 class="game-title">Juego 7</h3>
+                    <p class="game-desc">Descripción breve del juego 7.</p>
+                    <span class="game-play">
+                        <span class="game-play-ico">▶</span>
+                        <span class="game-play-txt">Jugar</span>
+                    </span>
                 </div>
             </a>
         </article>
 
-        <!-- Juego 6: Amigos Animales -->
-        <article class="game-card" data-category="naturaleza" data-difficulty="facil">
-            <a href="games/inicial/amigos-animales.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego: Amigos Animales">
-                <div class="game-card-thumb thumb-naturaleza">
-                    <span class="game-thumb-emoji">🐾</span>
+        <!-- ─────────── JUEGO 8 ─────────── -->
+        <article class="game-card" data-category="colores" data-difficulty="medio">
+            <a href="Juegos/juego8.html"
+               class="game-card-link"
+               target="_blank"
+               rel="noopener noreferrer"
+               aria-label="Abrir juego 8">
+                <div class="game-card-thumb thumb-colores has-image">
+                    <img src="Juegos/imagen8.png" alt="Juego 8" class="game-thumb-img" loading="lazy">
                     <span class="game-thumb-bg"></span>
-                    <div class="game-difficulty difficulty-facil"><span class="diff-dot"></span><span class="diff-txt">Fácil</span></div>
+                    <div class="game-difficulty difficulty-medio">
+                        <span class="diff-dot"></span>
+                        <span class="diff-txt">Medio</span>
+                    </div>
                 </div>
                 <div class="game-card-body">
-                    <span class="game-category-tag tag-naturaleza">🌱 Naturaleza</span>
-                    <h3 class="game-title">Amigos Animales</h3>
-                    <p class="game-desc">Identificación y asociación de animales.</p>
-                    <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
+                    <span class="game-category-tag tag-colores">🎨 Colores</span>
+                    <h3 class="game-title">Juego 8</h3>
+                    <p class="game-desc">Descripción breve del juego 8.</p>
+                    <span class="game-play">
+                        <span class="game-play-ico">▶</span>
+                        <span class="game-play-txt">Jugar</span>
+                    </span>
                 </div>
             </a>
         </article>
 
-        <!-- Juego 7: Puzzle Mágico -->
-        <article class="game-card" data-category="logica" data-difficulty="medio">
-            <a href="games/inicial/puzzle-magico.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego: Puzzle Mágico">
-                <div class="game-card-thumb thumb-logica">
-                    <span class="game-thumb-emoji">🧩</span>
+        <!-- ─────────── JUEGO 9 ─────────── -->
+        <article class="game-card" data-category="letras" data-difficulty="medio">
+            <a href="Juegos/juego9.html"
+               class="game-card-link"
+               target="_blank"
+               rel="noopener noreferrer"
+               aria-label="Abrir juego 9">
+                <div class="game-card-thumb thumb-letras has-image">
+                    <img src="Juegos/imagen9.png" alt="Juego 9" class="game-thumb-img" loading="lazy">
                     <span class="game-thumb-bg"></span>
-                    <div class="game-difficulty difficulty-medio"><span class="diff-dot"></span><span class="diff-txt">Medio</span></div>
-                </div>
-                <div class="game-card-body">
-                    <span class="game-category-tag tag-logica">🧩 Lógica</span>
-                    <h3 class="game-title">Puzzle Mágico</h3>
-                    <p class="game-desc">Rompecabezas visual con imágenes.</p>
-                    <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
-                </div>
-            </a>
-        </article>
-
-        <!-- Juego 8: Memoria de BeeBot -->
-        <article class="game-card" data-category="logica" data-difficulty="medio">
-            <a href="games/inicial/memoria-beebot.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego: Memoria de BeeBot">
-                <div class="game-card-thumb thumb-logica">
-                    <span class="game-thumb-emoji">🧠</span>
-                    <span class="game-thumb-bg"></span>
-                    <div class="game-difficulty difficulty-medio"><span class="diff-dot"></span><span class="diff-txt">Medio</span></div>
-                </div>
-                <div class="game-card-body">
-                    <span class="game-category-tag tag-logica">🧩 Lógica</span>
-                    <h3 class="game-title">Memoria de BeeBot</h3>
-                    <p class="game-desc">Encuentra las parejas de cartas.</p>
-                    <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
-                </div>
-            </a>
-        </article>
-
-        <!-- Juego 9: El Jardín -->
-        <article class="game-card" data-category="naturaleza" data-difficulty="facil">
-            <a href="games/inicial/el-jardin.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego: El Jardín">
-                <div class="game-card-thumb thumb-naturaleza">
-                    <span class="game-thumb-emoji">🌱</span>
-                    <span class="game-thumb-bg"></span>
-                    <div class="game-difficulty difficulty-facil"><span class="diff-dot"></span><span class="diff-txt">Fácil</span></div>
-                </div>
-                <div class="game-card-body">
-                    <span class="game-category-tag tag-naturaleza">🌱 Naturaleza</span>
-                    <h3 class="game-title">El Jardín</h3>
-                    <p class="game-desc">Clasifica plantas, flores y frutos.</p>
-                    <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
-                </div>
-            </a>
-        </article>
-
-        <!-- Juego 10: Sonidos Divertidos -->
-        <article class="game-card" data-category="letras" data-difficulty="facil">
-            <a href="games/inicial/sonidos-divertidos.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego: Sonidos Divertidos">
-                <div class="game-card-thumb thumb-letras">
-                    <span class="game-thumb-emoji">🎵</span>
-                    <span class="game-thumb-bg"></span>
-                    <div class="game-difficulty difficulty-facil"><span class="diff-dot"></span><span class="diff-txt">Fácil</span></div>
+                    <div class="game-difficulty difficulty-medio">
+                        <span class="diff-dot"></span>
+                        <span class="diff-txt">Medio</span>
+                    </div>
                 </div>
                 <div class="game-card-body">
                     <span class="game-category-tag tag-letras">🔤 Letras</span>
-                    <h3 class="game-title">Sonidos Divertidos</h3>
-                    <p class="game-desc">Asocia sonidos con su imagen.</p>
-                    <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
+                    <h3 class="game-title">Juego 9</h3>
+                    <p class="game-desc">Descripción breve del juego 9.</p>
+                    <span class="game-play">
+                        <span class="game-play-ico">▶</span>
+                        <span class="game-play-txt">Jugar</span>
+                    </span>
                 </div>
             </a>
         </article>
 
-        <!-- Juego 11: Caminos y Direcciones -->
-        <article class="game-card" data-category="logica" data-difficulty="medio">
-            <a href="games/inicial/caminos-direcciones.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego: Caminos y Direcciones">
-                <div class="game-card-thumb thumb-logica">
-                    <span class="game-thumb-emoji">🚦</span>
+        <!-- ─────────── JUEGO 10 ─────────── -->
+        <article class="game-card" data-category="naturaleza" data-difficulty="medio">
+            <a href="Juegos/juego10.html"
+               class="game-card-link"
+               target="_blank"
+               rel="noopener noreferrer"
+               aria-label="Abrir juego 10">
+                <div class="game-card-thumb thumb-naturaleza has-image">
+                    <img src="Juegos/imagen10.png" alt="Juego 10" class="game-thumb-img" loading="lazy">
                     <span class="game-thumb-bg"></span>
-                    <div class="game-difficulty difficulty-medio"><span class="diff-dot"></span><span class="diff-txt">Medio</span></div>
+                    <div class="game-difficulty difficulty-medio">
+                        <span class="diff-dot"></span>
+                        <span class="diff-txt">Medio</span>
+                    </div>
                 </div>
                 <div class="game-card-body">
-                    <span class="game-category-tag tag-logica">🧩 Lógica</span>
-                    <h3 class="game-title">Caminos y Direcciones</h3>
-                    <p class="game-desc">Sigue secuencias y aprende direcciones.</p>
-                    <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
+                    <span class="game-category-tag tag-naturaleza">🌱 Naturaleza</span>
+                    <h3 class="game-title">Juego 10</h3>
+                    <p class="game-desc">Descripción breve del juego 10.</p>
+                    <span class="game-play">
+                        <span class="game-play-ico">▶</span>
+                        <span class="game-play-txt">Jugar</span>
+                    </span>
                 </div>
             </a>
         </article>
 
-        <!-- Juego 12: Gran Reto de BeeBot -->
+        <!-- ─────────── JUEGO 11 ─────────── -->
+        <article class="game-card" data-category="logica" data-difficulty="medio">
+            <a href="Juegos/juego11.html"
+               class="game-card-link"
+               target="_blank"
+               rel="noopener noreferrer"
+               aria-label="Abrir juego 11">
+                <div class="game-card-thumb thumb-logica has-image">
+                    <img src="Juegos/imagen11.png" alt="Juego 11" class="game-thumb-img" loading="lazy">
+                    <span class="game-thumb-bg"></span>
+                    <div class="game-difficulty difficulty-medio">
+                        <span class="diff-dot"></span>
+                        <span class="diff-txt">Medio</span>
+                    </div>
+                </div>
+                <div class="game-card-body">
+                    <span class="game-category-tag tag-logica">🧠 Lógica</span>
+                    <h3 class="game-title">Juego 11</h3>
+                    <p class="game-desc">Descripción breve del juego 11.</p>
+                    <span class="game-play">
+                        <span class="game-play-ico">▶</span>
+                        <span class="game-play-txt">Jugar</span>
+                    </span>
+                </div>
+            </a>
+        </article>
+
+        <!-- ─────────── JUEGO 12 ─────────── -->
+        <article class="game-card" data-category="numeros" data-difficulty="medio">
+            <a href="Juegos/juego12.html"
+               class="game-card-link"
+               target="_blank"
+               rel="noopener noreferrer"
+               aria-label="Abrir juego 12">
+                <div class="game-card-thumb thumb-numeros has-image">
+                    <img src="Juegos/imagen12.png" alt="Juego 12" class="game-thumb-img" loading="lazy">
+                    <span class="game-thumb-bg"></span>
+                    <div class="game-difficulty difficulty-medio">
+                        <span class="diff-dot"></span>
+                        <span class="diff-txt">Medio</span>
+                    </div>
+                </div>
+                <div class="game-card-body">
+                    <span class="game-category-tag tag-numeros">🔢 Números</span>
+                    <h3 class="game-title">Juego 12</h3>
+                    <p class="game-desc">Descripción breve del juego 12.</p>
+                    <span class="game-play">
+                        <span class="game-play-ico">▶</span>
+                        <span class="game-play-txt">Jugar</span>
+                    </span>
+                </div>
+            </a>
+        </article>
+
+        <!-- ─────────── JUEGO 13 ─────────── -->
+        <article class="game-card" data-category="colores" data-difficulty="dificil">
+            <a href="Juegos/juego13.html"
+               class="game-card-link"
+               target="_blank"
+               rel="noopener noreferrer"
+               aria-label="Abrir juego 13">
+                <div class="game-card-thumb thumb-colores has-image">
+                    <img src="Juegos/imagen13.png" alt="Juego 13" class="game-thumb-img" loading="lazy">
+                    <span class="game-thumb-bg"></span>
+                    <div class="game-difficulty difficulty-dificil">
+                        <span class="diff-dot"></span>
+                        <span class="diff-txt">Difícil</span>
+                    </div>
+                </div>
+                <div class="game-card-body">
+                    <span class="game-category-tag tag-colores">🎨 Colores</span>
+                    <h3 class="game-title">Juego 13</h3>
+                    <p class="game-desc">Descripción breve del juego 13.</p>
+                    <span class="game-play">
+                        <span class="game-play-ico">▶</span>
+                        <span class="game-play-txt">Jugar</span>
+                    </span>
+                </div>
+            </a>
+        </article>
+
+        <!-- ─────────── JUEGO 14 ─────────── -->
+        <article class="game-card" data-category="letras" data-difficulty="dificil">
+            <a href="Juegos/juego14.html"
+               class="game-card-link"
+               target="_blank"
+               rel="noopener noreferrer"
+               aria-label="Abrir juego 14">
+                <div class="game-card-thumb thumb-letras has-image">
+                    <img src="Juegos/imagen14.png" alt="Juego 14" class="game-thumb-img" loading="lazy">
+                    <span class="game-thumb-bg"></span>
+                    <div class="game-difficulty difficulty-dificil">
+                        <span class="diff-dot"></span>
+                        <span class="diff-txt">Difícil</span>
+                    </div>
+                </div>
+                <div class="game-card-body">
+                    <span class="game-category-tag tag-letras">🔤 Letras</span>
+                    <h3 class="game-title">Juego 14</h3>
+                    <p class="game-desc">Descripción breve del juego 14.</p>
+                    <span class="game-play">
+                        <span class="game-play-ico">▶</span>
+                        <span class="game-play-txt">Jugar</span>
+                    </span>
+                </div>
+            </a>
+        </article>
+
+        <!-- ─────────── JUEGO 15 ─────────── -->
+        <article class="game-card" data-category="naturaleza" data-difficulty="dificil">
+            <a href="Juegos/juego15.html"
+               class="game-card-link"
+               target="_blank"
+               rel="noopener noreferrer"
+               aria-label="Abrir juego 15">
+                <div class="game-card-thumb thumb-naturaleza has-image">
+                    <img src="Juegos/imagen15.png" alt="Juego 15" class="game-thumb-img" loading="lazy">
+                    <span class="game-thumb-bg"></span>
+                    <div class="game-difficulty difficulty-dificil">
+                        <span class="diff-dot"></span>
+                        <span class="diff-txt">Difícil</span>
+                    </div>
+                </div>
+                <div class="game-card-body">
+                    <span class="game-category-tag tag-naturaleza">🌱 Naturaleza</span>
+                    <h3 class="game-title">Juego 15</h3>
+                    <p class="game-desc">Descripción breve del juego 15.</p>
+                    <span class="game-play">
+                        <span class="game-play-ico">▶</span>
+                        <span class="game-play-txt">Jugar</span>
+                    </span>
+                </div>
+            </a>
+        </article>
+
+        <!-- ─────────── JUEGO 16 ─────────── -->
+        <article class="game-card" data-category="logica" data-difficulty="dificil">
+            <a href="Juegos/juego16.html"
+               class="game-card-link"
+               target="_blank"
+               rel="noopener noreferrer"
+               aria-label="Abrir juego 16">
+                <div class="game-card-thumb thumb-logica has-image">
+                    <img src="Juegos/imagen16.png" alt="Juego 16" class="game-thumb-img" loading="lazy">
+                    <span class="game-thumb-bg"></span>
+                    <div class="game-difficulty difficulty-dificil">
+                        <span class="diff-dot"></span>
+                        <span class="diff-txt">Difícil</span>
+                    </div>
+                </div>
+                <div class="game-card-body">
+                    <span class="game-category-tag tag-logica">🧠 Lógica</span>
+                    <h3 class="game-title">Juego 16</h3>
+                    <p class="game-desc">Descripción breve del juego 16.</p>
+                    <span class="game-play">
+                        <span class="game-play-ico">▶</span>
+                        <span class="game-play-txt">Jugar</span>
+                    </span>
+                </div>
+            </a>
+        </article>
+
+        <!-- ─────────── JUEGO 17 ─────────── -->
+        <article class="game-card" data-category="numeros" data-difficulty="dificil">
+            <a href="Juegos/juego17.html"
+               class="game-card-link"
+               target="_blank"
+               rel="noopener noreferrer"
+               aria-label="Abrir juego 17">
+                <div class="game-card-thumb thumb-numeros has-image">
+                    <img src="Juegos/imagen17.png" alt="Juego 17" class="game-thumb-img" loading="lazy">
+                    <span class="game-thumb-bg"></span>
+                    <div class="game-difficulty difficulty-dificil">
+                        <span class="diff-dot"></span>
+                        <span class="diff-txt">Difícil</span>
+                    </div>
+                </div>
+                <div class="game-card-body">
+                    <span class="game-category-tag tag-numeros">🔢 Números</span>
+                    <h3 class="game-title">Juego 17</h3>
+                    <p class="game-desc">Descripción breve del juego 17.</p>
+                    <span class="game-play">
+                        <span class="game-play-ico">▶</span>
+                        <span class="game-play-txt">Jugar</span>
+                    </span>
+                </div>
+            </a>
+        </article>
+
+        <!-- ─────────── JUEGO 18 ─────────── -->
+        <article class="game-card" data-category="colores" data-difficulty="dificil">
+            <a href="Juegos/juego18.html"
+               class="game-card-link"
+               target="_blank"
+               rel="noopener noreferrer"
+               aria-label="Abrir juego 18">
+                <div class="game-card-thumb thumb-colores has-image">
+                    <img src="Juegos/imagen18.png" alt="Juego 18" class="game-thumb-img" loading="lazy">
+                    <span class="game-thumb-bg"></span>
+                    <div class="game-difficulty difficulty-dificil">
+                        <span class="diff-dot"></span>
+                        <span class="diff-txt">Difícil</span>
+                    </div>
+                </div>
+                <div class="game-card-body">
+                    <span class="game-category-tag tag-colores">🎨 Colores</span>
+                    <h3 class="game-title">Juego 18</h3>
+                    <p class="game-desc">Descripción breve del juego 18.</p>
+                    <span class="game-play">
+                        <span class="game-play-ico">▶</span>
+                        <span class="game-play-txt">Jugar</span>
+                    </span>
+                </div>
+            </a>
+        </article>
+
+        <!-- ─────────── JUEGO 19 ─────────── -->
+        <article class="game-card" data-category="letras" data-difficulty="dificil">
+            <a href="Juegos/juego19.html"
+               class="game-card-link"
+               target="_blank"
+               rel="noopener noreferrer"
+               aria-label="Abrir juego 19">
+                <div class="game-card-thumb thumb-letras has-image">
+                    <img src="Juegos/imagen19.png" alt="Juego 19" class="game-thumb-img" loading="lazy">
+                    <span class="game-thumb-bg"></span>
+                    <div class="game-difficulty difficulty-dificil">
+                        <span class="diff-dot"></span>
+                        <span class="diff-txt">Difícil</span>
+                    </div>
+                </div>
+                <div class="game-card-body">
+                    <span class="game-category-tag tag-letras">🔤 Letras</span>
+                    <h3 class="game-title">Juego 19</h3>
+                    <p class="game-desc">Descripción breve del juego 19.</p>
+                    <span class="game-play">
+                        <span class="game-play-ico">▶</span>
+                        <span class="game-play-txt">Jugar</span>
+                    </span>
+                </div>
+            </a>
+        </article>
+
+        <!-- ─────────── JUEGO 20 (Destacado / Reto Final) ─────────── -->
         <article class="game-card game-card-featured" data-category="logica" data-difficulty="dificil">
-            <a href="games/inicial/gran-reto-beebot.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego: Gran Reto de BeeBot">
-                <div class="game-card-thumb thumb-logica">
-                    <span class="game-thumb-emoji">⭐</span>
+            <a href="Juegos/juego20.html"
+               class="game-card-link"
+               target="_blank"
+               rel="noopener noreferrer"
+               aria-label="Abrir juego 20, reto final">
+                <div class="game-card-thumb thumb-logica has-image">
+                    <img src="Juegos/imagen20.png" alt="Juego 20" class="game-thumb-img" loading="lazy">
                     <span class="game-thumb-bg"></span>
                     <div class="game-badge-featured">✨ RETO FINAL</div>
-                    <div class="game-difficulty difficulty-dificil"><span class="diff-dot"></span><span class="diff-txt">Difícil</span></div>
+                    <div class="game-difficulty difficulty-dificil">
+                        <span class="diff-dot"></span>
+                        <span class="diff-txt">Difícil</span>
+                    </div>
                 </div>
                 <div class="game-card-body">
-                    <span class="game-category-tag tag-logica">🧩 Lógica</span>
-                    <h3 class="game-title">Gran Reto de BeeBot</h3>
-                    <p class="game-desc">Mezcla de todas las habilidades. ¡Demuestra lo que sabes!</p>
-                    <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
+                    <span class="game-category-tag tag-logica">🧠 Lógica</span>
+                    <h3 class="game-title">Juego 20</h3>
+                    <p class="game-desc">Descripción breve del juego 20. Reto final.</p>
+                    <span class="game-play">
+                        <span class="game-play-ico">▶</span>
+                        <span class="game-play-txt">Jugar</span>
+                    </span>
                 </div>
             </a>
         </article>
 
     </div>
+    <!-- ══════════════════════════════════════════════════════════════
+         AQUÍ TERMINAN LOS JUEGOS
+         ══════════════════════════════════════════════════════════════ -->
 
     <!-- Mensaje cuando no hay resultados -->
     <div class="games-empty" id="gamesEmpty" hidden>
@@ -590,10 +928,9 @@
 
 
 <!-- ============================================================
-     SCRIPTS
+     SCRIPT ÚNICO (todo el comportamiento en common.js)
      ============================================================ -->
 <script src="js/common.js"></script>
-<script src="js/inicial.js"></script>
 
 </body>
 </html>

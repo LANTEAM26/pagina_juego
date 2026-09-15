@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bee-Bot - Orientación Espacial</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Segoe UI', cursive, sans-serif;
+            background: linear-gradient(145deg, #f9e3b3 0%, #f5c6a0 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 40px;
+            padding: 30px;
+            max-width: 750px;
+            width: 100%;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            border: 4px solid #ffb74d;
+        }
+
+        /* TOP BAR - Más grande y colorida */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 8px 15px;
+            border-bottom: 4px solid #ffe0b2;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 8px;
+            background: #fff8e1;
+            border-radius: 20px 20px 0 0;
+            padding: 12px 15px;
+        }
+
+        .top-bar .info-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #4e342e;
+            background: #fff3e0;
+            padding: 6px 14px;
+            border-radius: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .top-bar .info-item .label {
+            color: #8d6e63;
+            font-weight: 400;
+            font-size: 16px;
+        }
+
+        .top-bar .info-item .value {
+            color: #4e342e;
+            font-size: 22px;
+            font-weight: 800;
+            min-width: 30px;
+        }
+
+        .top-bar .info-item .value.win { color: #2e7d32; }
+        .top-bar .info-item .value.lose { color: #c62828; }
+
+        /* DIRECTION HINT - Más grande y llamativo */
+        .direction-hint {
+            text-align: center;
+            padding: 20px 16px;
+            background: #fff3e0;
+            border-radius: 30px;
+            margin-bottom: 20px;
+            border: 4px solid #ffb74d;
+            box-shadow: 0 4px 0 #e65100;
+            position: relative;
+        }
+
+        .direction-hint .label {
+            font-size: 20px;
+            color: #e65100;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .direction-hint .direction-text {
+            font-size: 48px;
+            font-weight: 900;
+            color: #bf360c;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .direction-hint .direction-text .arrow-icon {
+            font-size: 50px;
+        }
+
+        /* Botón de repetir voz */
+        .btn-speak {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #ff8a65;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #bf360c;
+            transition: all 0.1s ease;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-speak:hover {
+            transform: translateY(-55%) scale(1.05);
+        }
+
+        .btn-speak:active {
+            transform: translateY(-45%) scale(0.95);
+            box-shadow: 0 2px 0 #bf360c;
+        }
+
+        /* BEE-BOT - Más grande */
+        .bee-bot-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: #e8f5e9;
+            border-radius: 30px;
+            margin-bottom: 20px;
+            min-height: 150px;
+            border: 4px solid #a5d6a7;
+            transition: background 0.4s, border-color 0.4s;
+        }
+
+        .bee-bot-container.correct {
+            background: #c8e6c9;
+            border-color: #66bb6a;
+        }
+
+        .bee-bot {
+            width: 130px;
+            height: 130px;
+            background: #ffd54f;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 70px;
+            box-shadow: 0 8px 25px rgba(255, 213, 79, 0.6);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s;
+            position: relative;
+            border: 4px solid #f9a825;
+        }
+
+        .bee-bot .direction-arrow {
+            font-size: 70px;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s;
+            display: inline-block;
+        }
+
+        .bee-bot .direction-arrow.idle {
+            animation: beeIdle 2s ease-in-out infinite;
+        }
+
+        @keyframes beeIdle {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.08); }
+        }
+
+        .bee-bot .direction-arrow.up { transform: rotate(0deg) scale(1.3); }
+        .bee-bot .direction-arrow.down { transform: rotate(180deg) scale(1.3); }
+        .bee-bot .direction-arrow.left { transform: rotate(-90deg) scale(1.3); }
+        .bee-bot .direction-arrow.right { transform: rotate(90deg) scale(1.3); }
+
+        .bee-bot-label {
+            text-align: center;
+            font-size: 18px;
+            color: #4e342e;
+            font-weight: 700;
+            margin-top: 6px;
+        }
+
+        /* PLAY AREA - 4 columnas con tamaño grande */
+        .play-area {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            padding: 18px;
+            background: #f5f5f5;
+            border-radius: 24px;
+            margin-bottom: 20px;
+            min-height: 220px;
+            border: 4px solid #cfd8dc;
+        }
+
+        .direction-item {
+            background: white;
+            border: 4px solid #b0bec5;
+            border-radius: 20px;
+            padding: 18px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+            transition: all 0.25s ease;
+            user-select: none;
+            min-height: 110px;
+            position: relative;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+        }
+
+        .direction-item:hover:not(.disabled) {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border-color: #78909c;
+        }
+
+        .direction-item:active:not(.disabled) {
+            cursor: grabbing;
+            transform: scale(0.95);
+        }
+
+        .direction-item .icon {
+            font-size: 52px;
+            margin-bottom: 6px;
+            line-height: 1;
+        }
+
+        .direction-item .name {
+            font-size: 20px;
+            font-weight: 800;
+            color: #37474f;
+            text-transform: capitalize;
+            letter-spacing: 0.5px;
+        }
+
+        .direction-item.correct {
+            border-color: #43a047;
+            background: #e8f5e9;
+            box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.3);
+        }
+
+        .direction-item.correct .name {
+            color: #2e7d32;
+        }
+
+        .direction-item.wrong {
+            border-color: #e53935;
+            background: #ffebee;
+            animation: shake 0.4s ease;
+        }
+
+        .direction-item.wrong .name {
+            color: #c62828;
+        }
+
+        .direction-item.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+            transform: scale(0.95);
+        }
+
+        .direction-item.dragging {
+            opacity: 0.5;
+            transform: scale(0.9);
+        }
+
+        .direction-item .feedback-badge {
+            position: absolute;
+            top: -14px;
+            right: -14px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            transform: scale(0.5);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .direction-item .feedback-badge.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .direction-item .feedback-badge.success {
+            background: #43a047;
+        }
+
+        .direction-item .feedback-badge.error {
+            background: #e53935;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-10px); }
+            40% { transform: translateX(10px); }
+            60% { transform: translateX(-6px); }
+            80% { transform: translateX(6px); }
+        }
+
+        /* DROP ZONE - Más grande */
+        .drop-zone {
+            padding: 20px;
+            background: #e3f2fd;
+            border: 5px dashed #1e88e5;
+            border-radius: 20px;
+            text-align: center;
+            color: #0d47a1;
+            font-weight: 700;
+            font-size: 20px;
+            transition: all 0.3s ease;
+            min-height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .drop-zone.drag-over {
+            background: #bbdefb;
+            border-color: #0d47a1;
+            transform: scale(1.03);
+            box-shadow: 0 0 30px rgba(30, 136, 229, 0.4);
+        }
+
+        .drop-zone .drop-text {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 22px;
+        }
+
+        .drop-zone .drop-text .icon {
+            font-size: 36px;
+        }
+
+        /* ROUND INFO */
+        .round-info {
+            text-align: center;
+            padding: 12px 0 4px;
+            font-size: 18px;
+            color: #8d6e63;
+            font-weight: 600;
+        }
+
+        .round-info strong {
+            color: #4e342e;
+        }
+
+        /* MODALS - Más coloridas */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            padding: 45px 35px 40px;
+            border-radius: 50px;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
+            animation: modalIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 6px solid #ffb74d;
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.7) translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .modal .modal-icon {
+            font-size: 90px;
+            margin-bottom: 10px;
+        }
+
+        .modal .modal-title {
+            font-size: 36px;
+            font-weight: 900;
+            margin-bottom: 10px;
+        }
+
+        .modal .modal-title.win {
+            color: #2e7d32;
+        }
+
+        .modal .modal-title.lose {
+            color: #c62828;
+        }
+
+        .modal .modal-score {
+            font-size: 22px;
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .modal .modal-score strong {
+            color: #333;
+            font-size: 30px;
+        }
+
+        .btn {
+            padding: 16px 50px;
+            border: none;
+            border-radius: 50px;
+            font-size: 22px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: #1e88e5;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(30, 136, 229, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 rgba(0,0,0,0.2);
+        }
+
+        .btn-success {
+            background: #43a047;
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn-success:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 rgba(0,0,0,0.2);
+        }
+
+        .btn-danger {
+            background: #e53935;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(229, 57, 53, 0.4);
+        }
+
+        .btn-danger:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 rgba(0,0,0,0.2);
+        }
+
+        /* Responsive */
+        @media (max-width: 700px) {
+            .game-container {
+                padding: 18px;
+            }
+
+            .play-area {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 10px;
+                padding: 12px;
+            }
+
+            .direction-item {
+                min-height: 80px;
+                padding: 12px 6px;
+                border-radius: 16px;
+            }
+
+            .direction-item .icon {
+                font-size: 36px;
+            }
+
+            .direction-item .name {
+                font-size: 15px;
+            }
+
+            .bee-bot {
+                width: 100px;
+                height: 100px;
+                font-size: 50px;
+            }
+
+            .bee-bot .direction-arrow {
+                font-size: 50px;
+            }
+
+            .direction-hint .direction-text {
+                font-size: 34px;
+            }
+
+            .direction-hint .direction-text .arrow-icon {
+                font-size: 36px;
+            }
+
+            .btn-speak {
+                width: 44px;
+                height: 44px;
+                font-size: 22px;
+                right: 10px;
+            }
+
+            .top-bar .info-item {
+                font-size: 14px;
+                padding: 4px 10px;
+            }
+
+            .top-bar .info-item .value {
+                font-size: 18px;
+            }
+
+            .modal {
+                padding: 30px 20px;
+            }
+
+            .modal .modal-title {
+                font-size: 28px;
+            }
+
+            .drop-zone {
+                font-size: 16px;
+                padding: 14px;
+                min-height: 65px;
+            }
+
+            .drop-zone .drop-text {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 450px) {
+            .play-area {
+                gap: 6px;
+                padding: 8px;
+            }
+
+            .direction-item {
+                min-height: 65px;
+                padding: 8px 4px;
+                border-radius: 12px;
+            }
+
+            .direction-item .icon {
+                font-size: 28px;
+            }
+
+            .direction-item .name {
+                font-size: 12px;
+            }
+
+            .bee-bot {
+                width: 75px;
+                height: 75px;
+                font-size: 38px;
+            }
+
+            .bee-bot .direction-arrow {
+                font-size: 38px;
+            }
+
+            .direction-hint .direction-text {
+                font-size: 26px;
+            }
+
+            .direction-hint .direction-text .arrow-icon {
+                font-size: 28px;
+            }
+
+            .btn-speak {
+                width: 36px;
+                height: 36px;
+                font-size: 18px;
+                right: 6px;
+            }
+
+            .top-bar .info-item {
+                font-size: 12px;
+                padding: 3px 8px;
+            }
+
+            .top-bar .info-item .value {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- TOP BAR -->
+        <div class="top-bar">
+            <div class="info-item">
+                <span class="label">🏆 Ronda</span>
+                <span class="value" id="roundDisplay">1/5</span>
+            </div>
+            <div class="info-item">
+                <span class="label">⭐ Puntos</span>
+                <span class="value" id="scoreDisplay">0</span>
+            </div>
+            <div class="info-item">
+                <span class="label">❌ Fallos</span>
+                <span class="value" id="mistakesDisplay">0/3</span>
+            </div>
+            <div class="info-item">
+                <span class="label">⏱️ Tiempo</span>
+                <span class="value" id="timerDisplay">0.0s</span>
+            </div>
+        </div>
+
+        <!-- DIRECTION HINT con botón de voz -->
+        <div class="direction-hint">
+            <span class="label">🧭 ARRASTRA LA DIRECCIÓN CORRECTA</span>
+            <div class="direction-text" id="directionHint">
+                <span class="arrow-icon">⬆️</span> adelante
+            </div>
+            <button class="btn-speak" id="speakBtn" aria-label="Escuchar dirección">🔊</button>
+        </div>
+
+        <!-- BEE-BOT -->
+        <div class="bee-bot-container" id="beeBotContainer">
+            <div class="bee-bot" id="beeBot">
+                <span class="direction-arrow idle" id="beeBotArrow">🐝</span>
+            </div>
+        </div>
+        <div class="bee-bot-label">🐝 Bee-Bot</div>
+
+        <!-- PLAY AREA -->
+        <div class="play-area" id="playArea"></div>
+
+        <!-- DROP ZONE -->
+        <div class="drop-zone" id="dropZone">
+            <div class="drop-text">
+                <span class="icon">📥</span>
+                <span>¡Suelta aquí la dirección!</span>
+            </div>
+        </div>
+
+        <div class="round-info">
+            Ronda <strong id="currentRoundNum">1</strong> de <strong id="totalRoundsNum">5</strong>
+            — Arrastra la dirección que se indica
+        </div>
+    </div>
+
+    <!-- MODAL WIN -->
+    <div class="modal-overlay" id="winModal">
+        <div class="modal">
+            <div class="modal-icon">🏆</div>
+            <div class="modal-title win">¡Excelente!</div>
+            <div class="modal-score">
+                Puntuación final: <strong id="winScore">0</strong>
+            </div>
+            <button class="btn btn-success" onclick="resetGame()">🔄 Jugar de nuevo</button>
+        </div>
+    </div>
+
+    <!-- MODAL GAME OVER -->
+    <div class="modal-overlay" id="loseModal">
+        <div class="modal">
+            <div class="modal-icon">😅</div>
+            <div class="modal-title lose">¡Oh no!</div>
+            <div class="modal-score">
+                Has cometido demasiados fallos.<br>
+                Puntuación: <strong id="loseScore">0</strong>
+            </div>
+            <button class="btn btn-danger" onclick="resetGame()">🔄 Intentar de nuevo</button>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // DATOS: 4 DIRECCIONES
+        // ============================================================
+        const DIRECTIONS = [
+            { id: 'adelante', name: 'adelante', icon: '⬆️', sprite: 'up' },
+            { id: 'atras',    name: 'atrás',    icon: '⬇️', sprite: 'down' },
+            { id: 'izquierda',name: 'izquierda',icon: '⬅️', sprite: 'left' },
+            { id: 'derecha',  name: 'derecha',  icon: '➡️', sprite: 'right' }
+        ];
+
+        // ============================================================
+        // SÍNTESIS DE VOZ
+        // ============================================================
+        function speakText(text, callback) {
+            if (!window.speechSynthesis) {
+                if (callback) callback();
+                return;
+            }
+            // Detener cualquier voz anterior
+            window.speechSynthesis.cancel();
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'es-ES';
+            utterance.rate = 0.9;  // Un poco más lento para niños
+            utterance.pitch = 1.1; // Tono más alegre
+            utterance.volume = 1;
+
+            // Intentar seleccionar una voz en español si está disponible
+            const voices = window.speechSynthesis.getVoices();
+            const spanishVoice = voices.find(v => v.lang.startsWith('es'));
+            if (spanishVoice) utterance.voice = spanishVoice;
+
+            if (callback) {
+                utterance.onend = callback;
+            }
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // ============================================================
+        // ESTADO DEL JUEGO
+        // ============================================================
+        let state = {
+            currentRound: 0,
+            totalRounds: 5,
+            score: 0,
+            mistakes: 0,
+            maxMistakes: 3,
+            currentTarget: null,
+            usedTargets: [],
+            roundStartTime: 0,
+            isRoundActive: false,
+            timerInterval: null,
+            feedbackTimeout: null,
+            isSpeaking: false
+        };
+
+        // ============================================================
+        // REFERENCIAS DOM
+        // ============================================================
+        const dom = {
+            playArea: document.getElementById('playArea'),
+            dropZone: document.getElementById('dropZone'),
+            directionHint: document.getElementById('directionHint'),
+            beeBotArrow: document.getElementById('beeBotArrow'),
+            beeBotContainer: document.getElementById('beeBotContainer'),
+            roundDisplay: document.getElementById('roundDisplay'),
+            scoreDisplay: document.getElementById('scoreDisplay'),
+            mistakesDisplay: document.getElementById('mistakesDisplay'),
+            timerDisplay: document.getElementById('timerDisplay'),
+            currentRoundNum: document.getElementById('currentRoundNum'),
+            totalRoundsNum: document.getElementById('totalRoundsNum'),
+            winModal: document.getElementById('winModal'),
+            loseModal: document.getElementById('loseModal'),
+            winScore: document.getElementById('winScore'),
+            loseScore: document.getElementById('loseScore'),
+            speakBtn: document.getElementById('speakBtn')
+        };
+
+        // ============================================================
+        // INICIALIZACIÓN
+        // ============================================================
+        function initGame() {
+            state.currentRound = 0;
+            state.score = 0;
+            state.mistakes = 0;
+            state.usedTargets = [];
+            state.isRoundActive = false;
+
+            dom.totalRoundsNum.textContent = state.totalRounds;
+            updateUI();
+            startRound();
+        }
+
+        function startRound() {
+            state.currentRound++;
+            state.isRoundActive = true;
+            state.roundStartTime = Date.now();
+
+            dom.currentRoundNum.textContent = state.currentRound;
+            dom.roundDisplay.textContent = `${state.currentRound}/${state.totalRounds}`;
+
+            // Elegir dirección aleatoria
+            state.currentTarget = getRandomDirection();
+            updateDirectionHint(state.currentTarget);
+            renderDirections();
+
+            // Resetear Bee-Bot
+            setBeeBotDirection('idle');
+            dom.beeBotContainer.classList.remove('correct');
+
+            // Iniciar temporizador
+            if (state.timerInterval) clearInterval(state.timerInterval);
+            state.timerInterval = setInterval(updateTimer, 100);
+
+            // Resetear drop zone
+            dom.dropZone.classList.remove('drag-over');
+            dom.dropZone.style.borderColor = '#1e88e5';
+            dom.dropZone.style.background = '#e3f2fd';
+            dom.dropZone.querySelector('.drop-text').innerHTML = `
+                <span class="icon">📥</span>
+                <span>¡Suelta aquí la dirección!</span>
+            `;
+
+            // 🔊 LEER LA DIRECCIÓN EN VOZ ALTA
+            const directionName = state.currentTarget.name;
+            speakText(`Busca la dirección: ${directionName}`);
+        }
+
+        function getRandomDirection() {
+            if (state.usedTargets.length >= DIRECTIONS.length) {
+                state.usedTargets = [];
+            }
+            const available = DIRECTIONS.filter(d => !state.usedTargets.includes(d.id));
+            const selected = available[Math.floor(Math.random() * available.length)];
+            state.usedTargets.push(selected.id);
+            return selected;
+        }
+
+        function updateDirectionHint(direction) {
+            dom.directionHint.innerHTML = `
+                <span class="arrow-icon">${direction.icon}</span> ${direction.name}
+            `;
+            // Actualizar el botón de voz para que use la nueva dirección
+            dom.speakBtn.onclick = () => {
+                speakText(`Busca la dirección: ${direction.name}`);
+            };
+        }
+
+        // ============================================================
+        // RENDERIZAR DIRECCIONES
+        // ============================================================
+        function renderDirections() {
+            dom.playArea.innerHTML = '';
+            const shuffled = [...DIRECTIONS].sort(() => Math.random() - 0.5);
+
+            shuffled.forEach(dir => {
+                const item = document.createElement('div');
+                item.className = 'direction-item';
+                item.dataset.directionId = dir.id;
+                item.draggable = true;
+
+                if (dir.id === state.currentTarget.id) {
+                    item.dataset.isCorrect = 'true';
+                }
+
+                item.innerHTML = `
+                    <span class="icon">${dir.icon}</span>
+                    <span class="name">${dir.name}</span>
+                    <span class="feedback-badge"></span>
+                `;
+
+                item.addEventListener('dragstart', (e) => onDragStart(e, item, dir));
+                item.addEventListener('dragend', (e) => onDragEnd(e, item));
+                item.addEventListener('dragover', (e) => e.preventDefault());
+
+                dom.playArea.appendChild(item);
+            });
+        }
+
+        // ============================================================
+        // DRAG & DROP
+        // ============================================================
+        function onDragStart(e, element, direction) {
+            if (!state.isRoundActive || element.classList.contains('disabled')) {
+                e.preventDefault();
+                return;
+            }
+
+            element.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', direction.id);
+
+            const ghost = element.cloneNode(true);
+            ghost.style.position = 'absolute';
+            ghost.style.top = '-1000px';
+            ghost.style.opacity = '0.7';
+            ghost.style.transform = 'scale(0.9)';
+            document.body.appendChild(ghost);
+            e.dataTransfer.setDragImage(ghost, 50, 50);
+            setTimeout(() => document.body.removeChild(ghost), 0);
+        }
+
+        function onDragEnd(e, element) {
+            element.classList.remove('dragging');
+            dom.dropZone.classList.remove('drag-over');
+        }
+
+        // ============================================================
+        // DROP ZONE
+        // ============================================================
+        dom.dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            dom.dropZone.classList.add('drag-over');
+        });
+
+        dom.dropZone.addEventListener('dragleave', () => {
+            dom.dropZone.classList.remove('drag-over');
+        });
+
+        dom.dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dom.dropZone.classList.remove('drag-over');
+
+            if (!state.isRoundActive) return;
+
+            const directionId = e.dataTransfer.getData('text/plain');
+            const direction = DIRECTIONS.find(d => d.id === directionId);
+            if (!direction) return;
+
+            const itemElement = dom.playArea.querySelector(`[data-direction-id="${directionId}"]`);
+            if (!itemElement || itemElement.classList.contains('disabled')) return;
+
+            const isCorrect = (direction.id === state.currentTarget.id);
+
+            // Feedback visual en el item
+            const badge = itemElement.querySelector('.feedback-badge');
+            if (isCorrect) {
+                itemElement.classList.add('correct');
+                badge.textContent = '✅';
+                badge.className = 'feedback-badge show success';
+            } else {
+                itemElement.classList.add('wrong');
+                badge.textContent = '❌';
+                badge.className = 'feedback-badge show error';
+                itemElement.style.animation = 'none';
+                requestAnimationFrame(() => {
+                    itemElement.style.animation = 'shake 0.4s ease';
+                });
+            }
+
+            itemElement.classList.add('disabled');
+            itemElement.draggable = false;
+
+            setTimeout(() => {
+                if (isCorrect) {
+                    handleCorrect(direction);
+                } else {
+                    handleWrong(direction);
+                }
+            }, 600);
+        });
+
+        // ============================================================
+        // MANEJADORES DE RESULTADOS
+        // ============================================================
+        function handleCorrect(direction) {
+            const elapsed = (Date.now() - state.roundStartTime) / 1000;
+            let points = 0;
+            if (elapsed < 2) points = 100;
+            else if (elapsed < 5) points = 70;
+            else points = 50;
+
+            state.score += points;
+
+            setBeeBotDirection(direction.sprite);
+            dom.beeBotContainer.classList.add('correct');
+
+            showDropFeedback(`✅ ¡Correcto! +${points} puntos`, 'success');
+            speakText(`¡Muy bien! ${direction.name}`);
+
+            state.isRoundActive = false;
+            clearInterval(state.timerInterval);
+            updateUI();
+
+            if (state.currentRound >= state.totalRounds) {
+                setTimeout(() => showWinModal(), 800);
+            } else {
+                setTimeout(() => startRound(), 1000);
+            }
+        }
+
+        function handleWrong(direction) {
+            state.mistakes++;
+            showDropFeedback(`❌ ¡Incorrecto! Era "${state.currentTarget.name}"`, 'error');
+            speakText(`No era ${direction.name}. Vuelve a intentarlo.`);
+            updateUI();
+
+            if (state.mistakes >= state.maxMistakes) {
+                state.isRoundActive = false;
+                clearInterval(state.timerInterval);
+                setTimeout(() => showLoseModal(), 800);
+            } else {
+                // Rehabilitar items (excepto el correcto si ya se acertó antes)
+                const allItems = dom.playArea.querySelectorAll('.direction-item');
+                allItems.forEach(item => {
+                    if (!item.classList.contains('correct')) {
+                        item.classList.remove('wrong', 'disabled');
+                        item.draggable = true;
+                        const badge = item.querySelector('.feedback-badge');
+                        badge.className = 'feedback-badge';
+                        badge.textContent = '';
+                        item.style.animation = '';
+                    }
+                });
+            }
+        }
+
+        // ============================================================
+        // BEE-BOT
+        // ============================================================
+        function setBeeBotDirection(direction) {
+            const arrow = dom.beeBotArrow;
+            arrow.className = 'direction-arrow';
+
+            switch(direction) {
+                case 'up':
+                    arrow.textContent = '⬆️';
+                    arrow.classList.add('up');
+                    break;
+                case 'down':
+                    arrow.textContent = '⬇️';
+                    arrow.classList.add('down');
+                    break;
+                case 'left':
+                    arrow.textContent = '⬅️';
+                    arrow.classList.add('left');
+                    break;
+                case 'right':
+                    arrow.textContent = '➡️';
+                    arrow.classList.add('right');
+                    break;
+                default:
+                    arrow.textContent = '🐝';
+                    arrow.classList.add('idle');
+                    break;
+            }
+        }
+
+        // ============================================================
+        // UI UPDATES
+        // ============================================================
+        function updateUI() {
+            dom.scoreDisplay.textContent = state.score;
+            dom.mistakesDisplay.textContent = `${state.mistakes}/${state.maxMistakes}`;
+            dom.mistakesDisplay.className = 'value' + (state.mistakes >= state.maxMistakes ? ' lose' : '');
+            dom.roundDisplay.textContent = `${state.currentRound}/${state.totalRounds}`;
+        }
+
+        function updateTimer() {
+            if (!state.isRoundActive) return;
+            const elapsed = (Date.now() - state.roundStartTime) / 1000;
+            dom.timerDisplay.textContent = elapsed.toFixed(1) + 's';
+        }
+
+        function showDropFeedback(message, type) {
+            const dropText = dom.dropZone.querySelector('.drop-text');
+            const icon = type === 'success' ? '✅' : '❌';
+            const color = type === 'success' ? '#43a047' : '#e53935';
+            dropText.innerHTML = `<span style="font-size:28px">${icon}</span> <span>${message}</span>`;
+            dom.dropZone.style.borderColor = color;
+            dom.dropZone.style.background = type === 'success' ? '#e8f5e9' : '#ffebee';
+
+            if (state.feedbackTimeout) clearTimeout(state.feedbackTimeout);
+            state.feedbackTimeout = setTimeout(() => {
+                dropText.innerHTML = `
+                    <span class="icon">📥</span>
+                    <span>¡Suelta aquí la dirección!</span>
+                `;
+                dom.dropZone.style.borderColor = '#1e88e5';
+                dom.dropZone.style.background = '#e3f2fd';
+            }, 2000);
+        }
+
+        // ============================================================
+        // MODALS
+        // ============================================================
+        function showWinModal() {
+            dom.winScore.textContent = state.score;
+            dom.winModal.classList.add('show');
+            speakText('¡Felicidades! Has ganado el juego.');
+        }
+
+        function showLoseModal() {
+            dom.loseScore.textContent = state.score;
+            dom.loseModal.classList.add('show');
+            speakText('¡Oh no! Has perdido. Vuelve a intentarlo.');
+        }
+
+        function resetGame() {
+            dom.winModal.classList.remove('show');
+            dom.loseModal.classList.remove('show');
+            if (state.timerInterval) clearInterval(state.timerInterval);
+            if (state.feedbackTimeout) clearTimeout(state.feedbackTimeout);
+            window.speechSynthesis.cancel();
+            initGame();
+        }
+
+        // ============================================================
+        // SOPORTE PARA TOUCH (móviles)
+        // ============================================================
+        let touchItem = null;
+        let touchGhost = null;
+
+        document.addEventListener('touchstart', (e) => {
+            const item = e.target.closest('.direction-item');
+            if (!item || !state.isRoundActive || item.classList.contains('disabled')) return;
+
+            touchItem = item;
+            const rect = item.getBoundingClientRect();
+            const touch = e.touches[0];
+
+            touchGhost = item.cloneNode(true);
+            touchGhost.style.position = 'fixed';
+            touchGhost.style.width = rect.width + 'px';
+            touchGhost.style.pointerEvents = 'none';
+            touchGhost.style.opacity = '0.8';
+            touchGhost.style.transform = 'scale(0.92)';
+            touchGhost.style.zIndex = '1000';
+            touchGhost.style.borderRadius = '20px';
+            touchGhost.style.boxShadow = '0 15px 40px rgba(0,0,0,0.25)';
+            document.body.appendChild(touchGhost);
+
+            item.classList.add('dragging');
+            dom.dropZone.classList.add('drag-over');
+
+            moveTouchGhost(touch);
+        }, { passive: true });
+
+        document.addEventListener('touchmove', (e) => {
+            if (!touchGhost) return;
+            e.preventDefault();
+            moveTouchGhost(e.touches[0]);
+        }, { passive: false });
+
+        document.addEventListener('touchend', (e) => {
+            if (!touchItem || !touchGhost) return;
+
+            const dropRect = dom.dropZone.getBoundingClientRect();
+            const touch = e.changedTouches[0];
+
+            touchItem.classList.remove('dragging');
+            dom.dropZone.classList.remove('drag-over');
+
+            if (touchGhost.parentNode) document.body.removeChild(touchGhost);
+            touchGhost = null;
+
+            if (touch.clientX >= dropRect.left && touch.clientX <= dropRect.right &&
+                touch.clientY >= dropRect.top && touch.clientY <= dropRect.bottom) {
+                const directionId = touchItem.dataset.directionId;
+                const dropEvent = new DragEvent('drop', {
+                    dataTransfer: { getData: () => directionId }
+                });
+                dom.dropZone.dispatchEvent(dropEvent);
+            }
+
+            touchItem = null;
+        }, { passive: true });
+
+        function moveTouchGhost(touch) {
+            if (!touchGhost) return;
+            touchGhost.style.left = (touch.clientX - 60) + 'px';
+            touchGhost.style.top = (touch.clientY - 60) + 'px';
+        }
+
+        // ============================================================
+        // CARGA DE VOCES (necesario para algunos navegadores)
+        // ============================================================
+        if (window.speechSynthesis) {
+            // Forzar carga de voces
+            window.speechSynthesis.getVoices();
+            window.speechSynthesis.onvoiceschanged = () => {
+                window.speechSynthesis.getVoices();
+            };
+        }
+
+        // ============================================================
+        // INICIO
+        // ============================================================
+        initGame();
+        console.log('🐝 Bee-Bot - Orientación Espacial con Voz');
+        console.log('Presiona el botón 🔊 para repetir la instrucción.');
+    </script>
+</body>
+</html>

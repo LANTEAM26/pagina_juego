@@ -14,7 +14,7 @@
 
     <link rel="stylesheet" href="css/styles.css">
 
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23b14aed'/><path d='M25 35h50M25 50h50M25 65h50' stroke='white' stroke-width='6' stroke-linecap='round'/></svg>">
 </head>
 <body>
 
@@ -22,8 +22,19 @@
      BOTÓN FLOTANTE: SONIDO
      ============================================================ -->
 <button id="soundToggle" class="sound-toggle" aria-label="Activar o desactivar sonido" title="Sonido">
-    <span class="sound-icon sound-on">🔊</span>
-    <span class="sound-icon sound-off">🔇</span>
+    <span class="sound-icon sound-on" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+        </svg>
+    </span>
+    <span class="sound-icon sound-off" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <line x1="23" y1="9" x2="17" y2="15"/>
+            <line x1="17" y1="9" x2="23" y2="15"/>
+        </svg>
+    </span>
 </button>
 
 
@@ -36,7 +47,15 @@
         <a href="#hero" class="brand" aria-label="Ir al inicio">
             <div class="brand-logo" aria-hidden="true">
                 <span class="brand-logo-glow"></span>
-                <span class="brand-logo-emoji">🎮</span>
+                <span class="brand-logo-emoji">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="6" y1="11" x2="10" y2="11"/>
+                        <line x1="8" y1="9" x2="8" y2="13"/>
+                        <line x1="15" y1="12" x2="15.01" y2="12"/>
+                        <line x1="18" y1="10" x2="18.01" y2="10"/>
+                        <path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/>
+                    </svg>
+                </span>
             </div>
             <div class="brand-text">
                 <h1 class="brand-name">AVENTURA EDUCATIVA</h1>
@@ -46,21 +65,68 @@
 
         <nav class="main-nav" aria-label="Navegación principal">
             <span class="nav-indicator" aria-hidden="true"></span>
-            <a href="#hero"       class="nav-btn nav-inicio"     data-nav="hero">
-                <span class="nav-btn-ico">🏠</span>
+
+            <a href="#hero" class="nav-btn nav-inicio" data-nav="hero">
+                <span class="nav-btn-ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                </span>
                 <span class="nav-btn-txt">Inicio</span>
             </a>
-            <a href="#inicial"    class="nav-btn nav-inicial"    data-nav="inicial">
-                <span class="nav-btn-ico">🐝</span>
+
+            <a href="#inicial" class="nav-btn nav-inicial" data-nav="inicial">
+                <span class="nav-btn-ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22V12"/>
+                        <path d="M12 12C12 8 9 5 4 5c0 5 3 7 8 7z"/>
+                        <path d="M12 12c0-4 3-7 8-7 0 5-3 7-8 7z"/>
+                    </svg>
+                </span>
                 <span class="nav-btn-txt">Inicial</span>
             </a>
-            <a href="#primaria"   class="nav-btn nav-primaria"   data-nav="primaria">
-                <span class="nav-btn-ico">🚗</span>
+
+            <a href="#primaria" class="nav-btn nav-primaria" data-nav="primaria">
+                <span class="nav-btn-ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                    </svg>
+                </span>
                 <span class="nav-btn-txt">Primaria</span>
             </a>
+
             <a href="#secundaria" class="nav-btn nav-secundaria" data-nav="secundaria">
-                <span class="nav-btn-ico">🤖</span>
+                <span class="nav-btn-ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="4" y="4" width="16" height="16" rx="2"/>
+                        <rect x="9" y="9" width="6" height="6"/>
+                        <path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2"/>
+                    </svg>
+                </span>
                 <span class="nav-btn-txt">Secundaria</span>
+            </a>
+
+            <a href="#recursos" class="nav-btn nav-recursos" data-nav="recursos">
+                <span class="nav-btn-ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                    </svg>
+                </span>
+                <span class="nav-btn-txt">Recursos</span>
+            </a>
+
+            <a href="#sobre-nosotros" class="nav-btn nav-ayuda" data-nav="sobre-nosotros">
+                <span class="nav-btn-ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                </span>
+                <span class="nav-btn-txt">Ayuda</span>
             </a>
         </nav>
 
@@ -87,14 +153,51 @@
         <div class="cloud cloud-2"></div>
         <div class="cloud cloud-3"></div>
 
-        <!-- Iconos educativos flotantes -->
-        <div class="float-icon" style="--x: 6%;  --y: 22%; --d: 7s;  --s: 2.4rem;">📚</div>
-        <div class="float-icon" style="--x: 92%; --y: 18%; --d: 8s;  --s: 2.2rem;">✏️</div>
-        <div class="float-icon" style="--x: 12%; --y: 78%; --d: 6s;  --s: 2.6rem;">🎨</div>
-        <div class="float-icon" style="--x: 88%; --y: 74%; --d: 9s;  --s: 2.4rem;">🔢</div>
-        <div class="float-icon" style="--x: 50%; --y: 5%;  --d: 7.5s;--s: 2rem;">⭐</div>
-        <div class="float-icon" style="--x: 22%; --y: 40%; --d: 6.5s;--s: 1.9rem;">🧩</div>
-        <div class="float-icon" style="--x: 78%; --y: 42%; --d: 7.2s;--s: 2rem;">💡</div>
+        <!-- Iconos educativos flotantes (SVG) -->
+        <div class="float-icon" style="--x: 6%;  --y: 22%; --d: 7s;  --s: 2.4rem;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+            </svg>
+        </div>
+        <div class="float-icon" style="--x: 92%; --y: 18%; --d: 8s;  --s: 2.2rem;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 20h9"/>
+                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+            </svg>
+        </div>
+        <div class="float-icon" style="--x: 12%; --y: 78%; --d: 6s;  --s: 2.6rem;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
+                <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/>
+                <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/>
+                <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/>
+                <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>
+            </svg>
+        </div>
+        <div class="float-icon" style="--x: 88%; --y: 74%; --d: 9s;  --s: 2.4rem;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="4" y1="9" x2="20" y2="9"/>
+                <line x1="4" y1="15" x2="20" y2="15"/>
+                <line x1="10" y1="3" x2="8" y2="21"/>
+                <line x1="16" y1="3" x2="14" y2="21"/>
+            </svg>
+        </div>
+        <div class="float-icon" style="--x: 50%; --y: 5%;  --d: 7.5s;--s: 2rem;">
+            <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+        </div>
+        <div class="float-icon" style="--x: 22%; --y: 40%; --d: 6.5s;--s: 1.9rem;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19.439 7.85c-.049.322.059.648.289.878l1.568 1.568c.47.47.706 1.087.706 1.704s-.235 1.233-.706 1.704l-1.611 1.611a.98.98 0 0 1-.837.276c-.47-.07-.802-.48-.968-.925a2.501 2.501 0 1 0-3.214 3.214c.446.166.855.497.925.968a.979.979 0 0 1-.276.837l-1.61 1.61a2.404 2.404 0 0 1-1.705.707 2.402 2.402 0 0 1-1.704-.706l-1.568-1.568a1.026 1.026 0 0 0-.877-.29c-.493.074-.84.504-1.02.968a2.5 2.5 0 1 1-3.237-3.237c.464-.18.894-.527.967-1.02a1.026 1.026 0 0 0-.289-.877l-1.568-1.568A2.402 2.402 0 0 1 1.998 12c0-.617.236-1.234.706-1.704L4.23 8.77c.24-.24.581-.353.917-.303.515.077.877.528 1.073 1.01a2.5 2.5 0 1 0 3.259-3.259c-.482-.196-.933-.558-1.01-1.073-.05-.336.062-.676.303-.917l1.525-1.525A2.402 2.402 0 0 1 12 1.998c.617 0 1.234.236 1.704.706l1.568 1.568c.23.23.556.338.877.29.493-.074.84-.504 1.02-.968a2.5 2.5 0 1 1 3.237 3.237c-.464.18-.894.527-.967 1.02z"/>
+            </svg>
+        </div>
+        <div class="float-icon" style="--x: 78%; --y: 42%; --d: 7.2s;--s: 2rem;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.2 1 2V18h6v-1.3c0-.8.4-1.5 1-2A7 7 0 0 0 12 2z"/>
+            </svg>
+        </div>
     </div>
 
     <!-- Contenido central -->
@@ -121,7 +224,14 @@
 
         <button class="btn btn-hero" id="btnStart" data-target="#inicial">
             <span class="btn-glow"></span>
-            <span class="btn-icon">🚀</span>
+            <span class="btn-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/>
+                    <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/>
+                    <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/>
+                    <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/>
+                </svg>
+            </span>
             <span class="btn-label">COMENZAR AVENTURA</span>
             <span class="btn-arrow">›</span>
         </button>
@@ -130,37 +240,21 @@
         <div class="hero-worlds" aria-hidden="true">
             <div class="world-preview wp-inicial" style="--delay: .5s;">
                 <div class="wp-orb">
-                    <div class="mini-robot mini-beebot">
-                        <div class="mini-antenna"><span></span></div>
-                        <div class="mini-face">
-                            <span class="mini-eye"></span>
-                            <span class="mini-eye"></span>
-                        </div>
-                    </div>
+                    <img src="assets/robots/beebot.png" alt="" class="wp-robot-img">
                 </div>
                 <span class="wp-label">INICIAL</span>
             </div>
 
             <div class="world-preview wp-primaria" style="--delay: .7s;">
                 <div class="wp-orb">
-                    <div class="mini-robot mini-rayet">
-                        <div class="mini-cabin">
-                            <span class="mini-eye"></span>
-                            <span class="mini-eye"></span>
-                        </div>
-                    </div>
+                    <img src="assets/robots/rayet.png" alt="" class="wp-robot-img">
                 </div>
                 <span class="wp-label">PRIMARIA</span>
             </div>
 
             <div class="world-preview wp-secundaria" style="--delay: .9s;">
                 <div class="wp-orb">
-                    <div class="mini-robot mini-ludio">
-                        <div class="mini-screen">
-                            <span class="mini-dot"></span>
-                            <span class="mini-dot"></span>
-                        </div>
-                    </div>
+                    <img src="assets/robots/ludio.png" alt="" class="wp-robot-img">
                 </div>
                 <span class="wp-label">SECUNDARIA</span>
             </div>
@@ -222,17 +316,17 @@
 
         <!-- CAPA 4: Flores, mariposas, abejas -->
         <div class="layer layer-deco">
-            <div class="flower flower-1">🌷</div>
-            <div class="flower flower-2">🌻</div>
-            <div class="flower flower-3">🌼</div>
-            <div class="flower flower-4">🌸</div>
-            <div class="flower flower-5">🌺</div>
-            <div class="flower flower-6">🌷</div>
-            <div class="butterfly bf-1">🦋</div>
-            <div class="butterfly bf-2">🦋</div>
-            <div class="butterfly bf-3">🦋</div>
-            <div class="bee bee-1">🐝</div>
-            <div class="bee bee-2">🐝</div>
+            <div class="flower flower-1"></div>
+            <div class="flower flower-2"></div>
+            <div class="flower flower-3"></div>
+            <div class="flower flower-4"></div>
+            <div class="flower flower-5"></div>
+            <div class="flower flower-6"></div>
+            <div class="butterfly bf-1"></div>
+            <div class="butterfly bf-2"></div>
+            <div class="butterfly bf-3"></div>
+            <div class="bee bee-1"></div>
+            <div class="bee bee-2"></div>
         </div>
 
         <!-- CAPA 5: Camino y césped -->
@@ -247,33 +341,10 @@
 
         <!-- ESCENARIO DEL ROBOT -->
         <div class="robot-stage reveal-child" data-reveal="1">
+            <div class="robot-portal portal-garden" aria-hidden="true"></div>
             <div class="robot-platform platform-garden"></div>
-            <div class="robot-display" data-robot="beebot">
-                <div class="robot beebot" aria-label="Robot BeeBot de Inicial">
-                    <div class="bee-glow"></div>
-                    <div class="bee-antennas">
-                        <span class="antenna"><span class="antenna-tip"></span></span>
-                        <span class="antenna"><span class="antenna-tip"></span></span>
-                    </div>
-                    <div class="bee-head">
-                        <div class="bee-eyes">
-                            <span class="eye"><span class="pupil"></span></span>
-                            <span class="eye"><span class="pupil"></span></span>
-                        </div>
-                        <div class="bee-cheeks">
-                            <span></span><span></span>
-                        </div>
-                        <div class="bee-smile"></div>
-                    </div>
-                    <div class="bee-body">
-                        <div class="bee-stripes"></div>
-                        <div class="bee-wings">
-                            <span class="wing wing-left"></span>
-                            <span class="wing wing-right"></span>
-                        </div>
-                    </div>
-                    <div class="bee-shadow"></div>
-                </div>
+            <div class="robot-display has-image" data-robot="beebot">
+                <img src="assets/robots/beebot.png" alt="BeeBot — Robot del mundo Inicial" class="robot-img">
             </div>
         </div>
 
@@ -286,7 +357,13 @@
             </div>
 
             <div class="card-level">
-                <span class="level-icon">🐝</span>
+                <span class="level-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22V12"/>
+                        <path d="M12 12C12 8 9 5 4 5c0 5 3 7 8 7z"/>
+                        <path d="M12 12c0-4 3-7 8-7 0 5-3 7-8 7z"/>
+                    </svg>
+                </span>
                 <span class="level-text">INICIAL</span>
             </div>
 
@@ -301,15 +378,54 @@
             </p>
 
             <ul class="tag-list">
-                <li class="tag"><span class="tag-ico">🧠</span> Lógica</li>
-                <li class="tag"><span class="tag-ico">🧭</span> Orientación</li>
-                <li class="tag"><span class="tag-ico">🔢</span> Números</li>
-                <li class="tag"><span class="tag-ico">🎨</span> Colores</li>
+                <li class="tag">
+                    <span class="tag-ico" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2z"/>
+                            <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2z"/>
+                        </svg>
+                    </span>
+                    Lógica
+                </li>
+                <li class="tag">
+                    <span class="tag-ico" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
+                        </svg>
+                    </span>
+                    Orientación
+                </li>
+                <li class="tag">
+                    <span class="tag-ico" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="4" y1="9" x2="20" y2="9"/>
+                            <line x1="4" y1="15" x2="20" y2="15"/>
+                            <line x1="10" y1="3" x2="8" y2="21"/>
+                            <line x1="16" y1="3" x2="14" y2="21"/>
+                        </svg>
+                    </span>
+                    Números
+                </li>
+                <li class="tag">
+                    <span class="tag-ico" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
+                            <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/>
+                            <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/>
+                            <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/>
+                            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>
+                        </svg>
+                    </span>
+                    Colores
+                </li>
             </ul>
 
             <a href="inicial.html" class="btn btn-world btn-inicial" data-sound="enter">
                 <span class="btn-glow"></span>
-                <span class="btn-icon">🎮</span>
+                <span class="btn-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+                </span>
                 <span class="btn-label">JUGAR AHORA</span>
                 <span class="btn-arrow">›</span>
             </a>
@@ -361,8 +477,8 @@
         <!-- CAPA 3: Edificios cercanos -->
         <div class="layer layer-trees">
             <div class="city-skyline-front"></div>
-            <div class="road-sign sign-1">🚸</div>
-            <div class="road-sign sign-2">⬆️</div>
+            <div class="road-sign sign-1"></div>
+            <div class="road-sign sign-2"></div>
             <div class="traffic-light tl-1">
                 <span class="tl-red"></span>
                 <span class="tl-yellow"></span>
@@ -389,39 +505,10 @@
     <div class="world-content">
 
         <div class="robot-stage reveal-child" data-reveal="1">
+            <div class="robot-portal portal-road" aria-hidden="true"></div>
             <div class="robot-platform platform-road"></div>
-            <div class="robot-display" data-robot="rayet">
-                <div class="robot rayet" aria-label="Robot Rayet de Primaria">
-                    <div class="rayet-glow"></div>
-                    <div class="rayet-antenna">
-                        <span class="rayet-antenna-ball"></span>
-                    </div>
-                    <div class="rayet-cabin">
-                        <div class="rayet-eyebrows">
-                            <span></span><span></span>
-                        </div>
-                        <div class="rayet-eyes">
-                            <span class="eye"><span class="pupil"></span></span>
-                            <span class="eye"><span class="pupil"></span></span>
-                        </div>
-                        <div class="rayet-smile"></div>
-                    </div>
-                    <div class="rayet-body">
-                        <div class="rayet-light rayet-light-left"></div>
-                        <div class="rayet-light rayet-light-right"></div>
-                        <div class="rayet-detail"></div>
-                        <div class="rayet-grille">
-                            <span></span><span></span><span></span>
-                        </div>
-                    </div>
-                    <div class="rayet-wheels">
-                        <span class="wheel wheel-fl"></span>
-                        <span class="wheel wheel-fr"></span>
-                        <span class="wheel wheel-bl"></span>
-                        <span class="wheel wheel-br"></span>
-                    </div>
-                    <div class="rayet-shadow"></div>
-                </div>
+            <div class="robot-display has-image" data-robot="rayet">
+                <img src="assets/robots/rayet.png" alt="Rayet — Robot del mundo Primaria" class="robot-img">
             </div>
         </div>
 
@@ -433,7 +520,12 @@
             </div>
 
             <div class="card-level">
-                <span class="level-icon">🚗</span>
+                <span class="level-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                    </svg>
+                </span>
                 <span class="level-text">PRIMARIA</span>
             </div>
 
@@ -447,15 +539,50 @@
             </p>
 
             <ul class="tag-list">
-                <li class="tag"><span class="tag-ico">🧠</span> Lógica</li>
-                <li class="tag"><span class="tag-ico">🔢</span> Matemática</li>
-                <li class="tag"><span class="tag-ico">🧩</span> Problemas</li>
-                <li class="tag"><span class="tag-ico">💻</span> Algoritmos</li>
+                <li class="tag">
+                    <span class="tag-ico" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2z"/>
+                            <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2z"/>
+                        </svg>
+                    </span>
+                    Lógica
+                </li>
+                <li class="tag">
+                    <span class="tag-ico" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="4" y1="9" x2="20" y2="9"/>
+                            <line x1="4" y1="15" x2="20" y2="15"/>
+                            <line x1="10" y1="3" x2="8" y2="21"/>
+                            <line x1="16" y1="3" x2="14" y2="21"/>
+                        </svg>
+                    </span>
+                    Matemática
+                </li>
+                <li class="tag">
+                    <span class="tag-ico" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19.439 7.85c-.049.322.059.648.289.878l1.568 1.568c.47.47.706 1.087.706 1.704s-.235 1.233-.706 1.704l-1.611 1.611a.98.98 0 0 1-.837.276c-.47-.07-.802-.48-.968-.925a2.501 2.501 0 1 0-3.214 3.214c.446.166.855.497.925.968a.979.979 0 0 1-.276.837l-1.61 1.61a2.404 2.404 0 0 1-1.705.707 2.402 2.402 0 0 1-1.704-.706l-1.568-1.568a1.026 1.026 0 0 0-.877-.29c-.493.074-.84.504-1.02.968a2.5 2.5 0 1 1-3.237-3.237c.464-.18.894-.527.967-1.02a1.026 1.026 0 0 0-.289-.877l-1.568-1.568A2.402 2.402 0 0 1 1.998 12c0-.617.236-1.234.706-1.704L4.23 8.77c.24-.24.581-.353.917-.303.515.077.877.528 1.073 1.01a2.5 2.5 0 1 0 3.259-3.259c-.482-.196-.933-.558-1.01-1.073-.05-.336.062-.676.303-.917l1.525-1.525A2.402 2.402 0 0 1 12 1.998c.617 0 1.234.236 1.704.706l1.568 1.568c.23.23.556.338.877.29.493-.074.84-.504 1.02-.968a2.5 2.5 0 1 1 3.237 3.237c-.464.18-.894.527-.967 1.02z"/>
+                        </svg>
+                    </span>
+                    Problemas
+                </li>
+                <li class="tag">
+                    <span class="tag-ico" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="16 18 22 12 16 6"/>
+                            <polyline points="8 6 2 12 8 18"/>
+                        </svg>
+                    </span>
+                    Algoritmos
+                </li>
             </ul>
 
             <a href="primaria.html" class="btn btn-world btn-primaria" data-sound="enter">
                 <span class="btn-glow"></span>
-                <span class="btn-icon">🎮</span>
+                <span class="btn-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+                </span>
                 <span class="btn-label">JUGAR AHORA</span>
                 <span class="btn-arrow">›</span>
             </a>
@@ -465,7 +592,7 @@
                 <div class="stat-sep"></div>
                 <div class="stat"><span class="stat-num">6</span><span class="stat-lbl">Categorías</span></div>
                 <div class="stat-sep"></div>
-                <div class="stat"><span class="stat-num">⭐</span><span class="stat-lbl">Logros</span></div>
+                <div class="stat"><span class="stat-num">★</span><span class="stat-lbl">Logros</span></div>
             </div>
         </article>
     </div>
@@ -518,7 +645,7 @@
                 <span>11010</span>
             </div>
             <div class="data-panel panel-2">
-                <span class="panel-header">◆ LINK</span>
+                <span class="panel-header">LINK</span>
                 <span>10110</span>
                 <span>00111</span>
             </div>
@@ -533,38 +660,10 @@
     <div class="world-content">
 
         <div class="robot-stage reveal-child" data-reveal="1">
+            <div class="robot-portal portal-cyber" aria-hidden="true"></div>
             <div class="robot-platform platform-cyber"></div>
-            <div class="robot-display" data-robot="ludio">
-                <div class="robot ludio" aria-label="Robot Ludio de Secundaria">
-                    <div class="ludio-glow"></div>
-                    <div class="ludio-antenna">
-                        <span class="ludio-pulse"></span>
-                    </div>
-                    <div class="ludio-head">
-                        <div class="ludio-screen">
-                            <div class="ludio-eyes">
-                                <span class="digit-eye">◉</span>
-                                <span class="digit-eye">◉</span>
-                            </div>
-                            <div class="ludio-scan"></div>
-                        </div>
-                        <div class="ludio-head-ears">
-                            <span class="ear ear-l"></span>
-                            <span class="ear ear-r"></span>
-                        </div>
-                    </div>
-                    <div class="ludio-body">
-                        <div class="ludio-core">
-                            <span class="core-ring"></span>
-                        </div>
-                        <div class="ludio-lines"></div>
-                    </div>
-                    <div class="ludio-arms">
-                        <span class="arm arm-left"></span>
-                        <span class="arm arm-right"></span>
-                    </div>
-                    <div class="ludio-shadow"></div>
-                </div>
+            <div class="robot-display has-image" data-robot="ludio">
+                <img src="assets/robots/ludio.png" alt="Ludio — Robot del mundo Secundaria" class="robot-img">
             </div>
         </div>
 
@@ -576,7 +675,13 @@
             </div>
 
             <div class="card-level">
-                <span class="level-icon">🤖</span>
+                <span class="level-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="4" y="4" width="16" height="16" rx="2"/>
+                        <rect x="9" y="9" width="6" height="6"/>
+                        <path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2"/>
+                    </svg>
+                </span>
                 <span class="level-text">SECUNDARIA</span>
             </div>
 
@@ -590,15 +695,49 @@
             </p>
 
             <ul class="tag-list">
-                <li class="tag"><span class="tag-ico">💻</span> Programación</li>
-                <li class="tag"><span class="tag-ico">🧠</span> Lógica</li>
-                <li class="tag"><span class="tag-ico">⚡</span> Algoritmos</li>
-                <li class="tag"><span class="tag-ico">🤖</span> Robótica</li>
+                <li class="tag">
+                    <span class="tag-ico" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="16 18 22 12 16 6"/>
+                            <polyline points="8 6 2 12 8 18"/>
+                        </svg>
+                    </span>
+                    Programación
+                </li>
+                <li class="tag">
+                    <span class="tag-ico" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2z"/>
+                            <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2z"/>
+                        </svg>
+                    </span>
+                    Lógica
+                </li>
+                <li class="tag">
+                    <span class="tag-ico" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                        </svg>
+                    </span>
+                    Algoritmos
+                </li>
+                <li class="tag">
+                    <span class="tag-ico" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="4" y="4" width="16" height="16" rx="2"/>
+                            <rect x="9" y="9" width="6" height="6"/>
+                            <path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2"/>
+                        </svg>
+                    </span>
+                    Robótica
+                </li>
             </ul>
 
             <a href="secundaria.html" class="btn btn-world btn-secundaria" data-sound="enter">
                 <span class="btn-glow"></span>
-                <span class="btn-icon">🎮</span>
+                <span class="btn-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+                </span>
                 <span class="btn-label">JUGAR AHORA</span>
                 <span class="btn-arrow">›</span>
             </a>
@@ -608,7 +747,7 @@
                 <div class="stat-sep"></div>
                 <div class="stat"><span class="stat-num">8</span><span class="stat-lbl">Módulos</span></div>
                 <div class="stat-sep"></div>
-                <div class="stat"><span class="stat-num">🏆</span><span class="stat-lbl">Rangos</span></div>
+                <div class="stat"><span class="stat-num">★</span><span class="stat-lbl">Rangos</span></div>
             </div>
         </article>
     </div>
@@ -616,23 +755,257 @@
 
 
 <!-- ============================================================
-     PIE DE PÁGINA
+     RECURSOS PARA EL PROFESOR
+     ============================================================ -->
+<section id="recursos" class="recursos">
+    <div class="recursos-inner">
+
+        <header class="section-head reveal-child" data-reveal="1">
+            <span class="section-eyebrow">Recursos para el profesor</span>
+            <h2 class="section-title">Herramientas para el aula</h2>
+            <p class="section-subtitle">
+                Complementa tus actividades con recursos pensados para gestionar el tiempo
+                y organizar dinámicas dentro del salón de clases.
+            </p>
+        </header>
+
+        <div class="recursos-grid">
+
+            <!-- TARJETA: TEMPORIZADOR -->
+            <article class="resource-card reveal-child" data-reveal="2">
+                <div class="resource-icon-wrap">
+                    <div class="resource-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="13" r="8"/>
+                            <path d="M12 9v4l2.5 2.5"/>
+                            <path d="M9 2h6"/>
+                            <path d="M12 2v3"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <h3 class="resource-title">Temporizador</h3>
+                <p class="resource-desc">
+                    Herramienta para gestionar el tiempo de las actividades dentro del aula.
+                </p>
+
+                <a href="temporizador.html"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="btn btn-resource"
+                   data-sound="enter">
+                    <span class="btn-glow"></span>
+                    <span class="btn-label">Abrir temporizador</span>
+                    <span class="btn-arrow">›</span>
+                </a>
+            </article>
+
+            <!-- TARJETA: TABLA DE COMPETENCIA -->
+            <article class="resource-card reveal-child" data-reveal="3">
+                <div class="resource-icon-wrap">
+                    <div class="resource-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M8 21h8"/>
+                            <path d="M12 17v4"/>
+                            <path d="M7 4h10v5a5 5 0 0 1-10 0z"/>
+                            <path d="M17 5h3v2a3 3 0 0 1-3 3"/>
+                            <path d="M7 5H4v2a3 3 0 0 0 3 3"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <h3 class="resource-title">Tabla de competencia</h3>
+                <p class="resource-desc">
+                    Herramienta para organizar actividades y dinámicas en el aula.
+                </p>
+
+                <a href="tabla-competencia.html"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="btn btn-resource btn-resource-alt"
+                   data-sound="enter">
+                    <span class="btn-glow"></span>
+                    <span class="btn-label">Abrir tabla</span>
+                    <span class="btn-arrow">›</span>
+                </a>
+            </article>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- ============================================================
+     SOBRE NOSOTROS
+     ============================================================ -->
+<section id="sobre-nosotros" class="about">
+    <div class="about-inner">
+
+        <header class="section-head reveal-child" data-reveal="1">
+            <span class="section-eyebrow">Sobre nosotros</span>
+            <h2 class="section-title">Aprender jugando, crecer explorando</h2>
+            <p class="section-subtitle">
+                Aventura Educativa es una plataforma que transforma el aprendizaje en una
+                experiencia interactiva a través de videojuegos y desafíos por niveles.
+            </p>
+        </header>
+
+        <div class="about-grid">
+
+            <article class="about-card reveal-child" data-reveal="2">
+                <div class="about-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <circle cx="12" cy="12" r="6"/>
+                        <circle cx="12" cy="12" r="2"/>
+                    </svg>
+                </div>
+                <h3 class="about-title">Nuestro propósito</h3>
+                <p class="about-desc">
+                    Convertir el aprendizaje en una aventura: cada estudiante descubre,
+                    experimenta y construye conocimiento mientras se divierte.
+                </p>
+            </article>
+
+            <article class="about-card reveal-child" data-reveal="3">
+                <div class="about-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                    </svg>
+                </div>
+                <h3 class="about-title">Enfoque educativo</h3>
+                <p class="about-desc">
+                    Tres mundos —Inicial, Primaria y Secundaria— con retos adaptados a cada
+                    etapa, fortaleciendo lógica, creatividad y resolución de problemas.
+                </p>
+            </article>
+
+            <article class="about-card reveal-child" data-reveal="4">
+                <div class="about-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                </div>
+                <h3 class="about-title">Apoyo al docente</h3>
+                <p class="about-desc">
+                    Recursos complementarios para el aula que facilitan la organización
+                    de dinámicas y el acompañamiento pedagógico.
+                </p>
+            </article>
+
+        </div>
+
+        <!-- Evolución visual: naturaleza → ciudad → tecnología -->
+        <div class="about-evolution reveal-child" data-reveal="5" aria-hidden="true">
+            <div class="evo-step evo-nature">
+                <span class="evo-dot"></span>
+                <span class="evo-label">Naturaleza</span>
+            </div>
+            <span class="evo-line"></span>
+            <div class="evo-step evo-city">
+                <span class="evo-dot"></span>
+                <span class="evo-label">Ciudad</span>
+            </div>
+            <span class="evo-line"></span>
+            <div class="evo-step evo-tech">
+                <span class="evo-dot"></span>
+                <span class="evo-label">Tecnología</span>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- ============================================================
+     PIE DE PÁGINA PROFESIONAL
      ============================================================ -->
 <footer class="site-footer">
     <div class="footer-inner">
-        <div class="footer-brand">
-            <span class="footer-brand-ico">🎮</span>
-            <span class="footer-brand-txt">AVENTURA EDUCATIVA</span>
+
+        <div class="footer-top">
+
+            <div class="footer-brand-col">
+                <div class="footer-brand">
+                    <span class="footer-brand-logo" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="6" y1="11" x2="10" y2="11"/>
+                            <line x1="8" y1="9" x2="8" y2="13"/>
+                            <line x1="15" y1="12" x2="15.01" y2="12"/>
+                            <line x1="18" y1="10" x2="18.01" y2="10"/>
+                            <path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/>
+                        </svg>
+                    </span>
+                    <span class="footer-brand-txt">AVENTURA EDUCATIVA</span>
+                </div>
+                <p class="footer-msg">
+                    Aprende jugando, descubre y supera nuevos desafíos.
+                </p>
+                <div class="footer-levels">
+                    <span>Inicial</span>
+                    <span class="footer-dot">•</span>
+                    <span>Primaria</span>
+                    <span class="footer-dot">•</span>
+                    <span>Secundaria</span>
+                </div>
+            </div>
+
+            <nav class="footer-nav" aria-label="Navegación del pie de página">
+
+                <div class="footer-col">
+                    <h4 class="footer-col-title">Navegación</h4>
+                    <ul class="footer-list">
+                        <li><a href="#hero">Inicio</a></li>
+                        <li><a href="#inicial">Inicial</a></li>
+                        <li><a href="#primaria">Primaria</a></li>
+                        <li><a href="#secundaria">Secundaria</a></li>
+                        <li><a href="#recursos">Recursos</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4 class="footer-col-title">Información</h4>
+                    <ul class="footer-list">
+                        <li><a href="#sobre-nosotros">Sobre nosotros</a></li>
+                        <li><a href="#sobre-nosotros">Derechos de autor</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4 class="footer-col-title">Herramientas</h4>
+                    <ul class="footer-list">
+                        <li>
+                            <a href="temporizador.html"
+                               target="_blank"
+                               rel="noopener noreferrer">
+                                Temporizador
+                            </a>
+                        </li>
+                        <li>
+                            <a href="tabla-competencia.html"
+                               target="_blank"
+                               rel="noopener noreferrer">
+                                Tabla de competencia
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+            </nav>
+
         </div>
-        <p class="footer-msg">Aprende jugando, descubre y supera nuevos desafíos.</p>
-        <div class="footer-levels">
-            <span>🐝 Inicial</span>
-            <span class="footer-dot">•</span>
-            <span>🚗 Primaria</span>
-            <span class="footer-dot">•</span>
-            <span>🤖 Secundaria</span>
+
+        <div class="footer-bottom">
+            <p class="footer-copy">
+                © <span id="year"></span> Aventura Educativa — Plataforma de videojuegos educativos.
+                Todos los derechos reservados.
+            </p>
         </div>
-        <p class="footer-copy">© <span id="year"></span> Aventura Educativa — Plataforma de videojuegos educativos.</p>
+
     </div>
 </footer>
 
