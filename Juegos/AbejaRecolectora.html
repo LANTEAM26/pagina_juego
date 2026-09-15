@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>¡La Abeja Recolectora! 🐝</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --p1-main: #f1c40f; --p1-dark: #f39c12; --p1-light: #fef9e7; --grid-bg: #8d6e63; }
+        body { font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; align-items: center; margin: 0; padding: 10px; min-height: 100vh; touch-action: none; color: #333; background-color: transparent; }
+        
+        .decorations { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -1; pointer-events: none; overflow: hidden; background: linear-gradient(180deg, #aed6f1 0%, #d4e6f1 100%); }
+        .decorations::before { content: ''; position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg width='60' height='104' viewBox='0 0 60 104' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 52l15-26 15 26v52l-15 26-15-26zM0 0l15 26v52L0 104V0zm60 0v104L45 78V26z' fill='%23ffffff' fill-opacity='0.15' fill-rule='evenodd'/%3E%3C/svg%3E"); z-index: 1; }
+        .sun { position: absolute; top: 3%; right: 5%; font-size: 70px; z-index: 2; filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.8)); animation: pulse-sun 3s infinite alternate; }
+        @keyframes pulse-sun { 0% { transform: scale(1) rotate(0deg); } 100% { transform: scale(1.1) rotate(10deg); } }
+        .grass { position: absolute; bottom: -5vh; left: -10vw; width: 120vw; height: 25vh; background: #a9dfbf; border-radius: 50% 50% 0 0; z-index: 2; box-shadow: inset 0 15px 0 #82e0aa, 0 -30px 50px rgba(46,204,113,0.3); }
+        
+        h1 { color: #d35400; margin: 0px 0 5px 0; text-align: center; font-size: 26px; text-shadow: 2px 2px 0px #fff; position: relative; }
+        .prompt-box { text-align: center; background: rgba(255, 255, 255, 0.95); padding: 10px 20px; border-radius: 15px; font-size: 15px; font-weight: 600; max-width: 550px; margin-bottom: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; border: 3px solid #f39c12; }
+        
+        .grid-wrapper { position: relative; margin-bottom: 15px; padding: 10px; background: #fef9e7; border-radius: 15px; box-shadow: 0 8px 0 #f39c12, 0 15px 25px rgba(0,0,0,0.25); }
+        
+        /* Grid Ampliado a 5x5 */
+        #grid { display: grid; grid-template-columns: repeat(5, 60px); grid-template-rows: repeat(5, 60px); gap: 5px; background-color: var(--grid-bg); border-radius: 10px; padding: 6px; }
+        #drawing-canvas { position: absolute; top: 10px; left: 10px; z-index: 10; cursor: crosshair; border-radius: 10px; }
+        
+        .cell { background-color: #fff9c4; border-radius: 8px; display: flex; justify-content: center; align-items: center; position: relative; user-select: none; box-shadow: inset 0 -4px 0 rgba(0,0,0,0.1); font-size: 30px;}
+        .cell[data-start="true"] { background-color: #e2f1f8; box-shadow: inset 0 -4px 0 rgba(0,0,0,0.05); }
+
+        /* Estilos de las Colmenas donde se colorea el fondo de la celda */
+        .hive-Rojo { background-color: #fadbd8 !important; box-shadow: inset 0 -4px 0 #e74c3c !important;}
+        .hive-Amarillo { background-color: #fcf3cf !important; box-shadow: inset 0 -4px 0 #f1c40f !important;}
+        .hive-Azul { background-color: #d6eaf8 !important; box-shadow: inset 0 -4px 0 #3498db !important;}
+
+        .nectar-item { animation: bounce 1s infinite alternate; display: inline-block; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2)); }
+        @keyframes bounce { 0% { transform: translateY(0); } 100% { transform: translateY(-5px); } }
+
+        .visited-correct { background-color: #a9dfbf !important; box-shadow: inset 0 0 15px #2ecc71 !important; transform: scale(0.9); transition: all 0.3s;}
+
+        .bee-container { position: absolute; z-index: 15; width: 55px; height: 55px; display: flex; justify-content: center; align-items: center; }
+        .bee-orientation { transition: transform 0.2s ease; display: flex; justify-content: center; align-items: center; position: relative;}
+        .bee-sprite { display: flex; justify-content: center; align-items: center; animation: float 2s ease-in-out infinite; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-5px); } }
+        
+        /* El nectar que lleva la abeja flotando encima de ella */
+        .bee-carrying { position: absolute; top: -15px; right: -15px; font-size: 22px; z-index: 20; background: rgba(255,255,255,0.8); border-radius: 50%; padding: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); animation: popIn 0.3s; }
+
+        .panels-container { display: flex; justify-content: center; width: 100%; max-width: 450px; margin-bottom: 20px; position: relative; }
+        .panel { box-sizing: border-box; background: rgba(255, 255, 255, 0.95); padding: 12px; border-radius: 18px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); width: 95%; display: flex; flex-direction: column; align-items: center; border: 4px solid var(--p1-main); }
+        .panel h3 { margin: 0 0 8px 0; font-size: 16px; color: var(--p1-dark); }
+        .btn-group { display: flex; gap: 6px; justify-content: space-between; width: 100%; margin-bottom: 10px; }
+        button { font-family: 'Fredoka', sans-serif; font-weight: 700; border: none; border-radius: 10px; cursor: pointer; transition: all 0.1s; user-select: none; }
+        button:active { transform: translateY(4px); box-shadow: 0 0px 0 transparent !important; }
+        .cmd-btn { padding: 10px 2px; font-size: 13px; color: white; flex: 1; background-color: var(--p1-main); box-shadow: 0 5px 0 var(--p1-dark); white-space: nowrap; }
+        .undo-btn { background-color: #e74c3c; box-shadow: 0 5px 0 #c0392b; flex: 0.8; }
+        .seq-container { display: flex; flex-wrap: wrap; gap: 5px; min-height: 45px; background: rgba(255,255,255,0.7); padding: 8px; border-radius: 10px; width: 95%; border: 2px dashed rgba(0,0,0,0.1); }
+        .cmd-block { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 6px; color: white; font-weight: bold; font-size: 16px; box-shadow: 0 3px 0 rgba(0,0,0,0.2); background: var(--p1-main); animation: popIn 0.2s ease-out; }
+        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+
+        .global-controls { display: flex; gap: 15px; margin-bottom: 20px; position: relative; }
+        .global-btn { padding: 12px 20px; font-size: 18px; color: white; border-radius: 15px; }
+        #go-btn { background-color: #ff9800; box-shadow: 0 5px 0 #f57c00; }
+        .reset-btn { background-color: #95a5a6; box-shadow: 0 5px 0 #7f8c8d; }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 100; visibility: hidden; opacity: 0; transition: all 0.3s; }
+        .modal-overlay.active { visibility: visible; opacity: 1; }
+        .modal-box { background: white; padding: 25px; border-radius: 20px; text-align: center; max-width: 80%; transform: scale(0.7); transition: 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .modal-overlay.active .modal-box { transform: scale(1); }
+        .modal-title { font-size: 24px; margin-bottom: 10px; color: #ff9800; }
+        .modal-msg { font-size: 16px; margin-bottom: 20px; color: #555; white-space: pre-line;}
+        .modal-btn { background: #4CAF50; box-shadow: 0 5px 0 #388E3C; padding: 10px 20px; font-size: 16px; color: white; }
+    </style>
+</head>
+<body>
+    <div class="decorations">
+        <div class="sun">☀️</div><div class="grass"></div>
+    </div>
+
+    <h1>¡Abeja Recolectora! 🐝</h1>
+    <div class="prompt-box">
+        Lleva el néctar a su colmena correspondiente.<br>
+        <span style="color:#e74c3c; font-size:12px;">¡Recuerda que solo puedes llevar un néctar a la vez!</span>
+    </div>
+
+    <div class="grid-wrapper">
+        <div id="grid"></div><canvas id="drawing-canvas"></canvas>
+    </div>
+
+    <div class="panels-container">
+        <div class="panel">
+            <h3>🐝 Programar Rutas</h3>
+            <div class="btn-group">
+                <button class="cmd-btn" onclick="addCommand('L')">↺ Giro Izq</button>
+                <button class="cmd-btn" onclick="addCommand('F')">⬆️ Avanza</button>
+                <button class="cmd-btn" onclick="addCommand('R')">↻ Giro Der</button>
+                <button class="cmd-btn undo-btn" onclick="undoCommand()">🔙 Borrar</button>
+            </div>
+            <div class="seq-container" id="seq"></div>
+        </div>
+    </div>
+    
+    <div class="global-controls">
+        <button class="global-btn" onclick="executeCommands()" id="go-btn">🚀 ¡VOLAR!</button>
+        <button class="global-btn reset-btn" onclick="resetGame()">🔄 Empezar de Cero</button>
+    </div>
+
+    <div class="modal-overlay" id="modal">
+        <div class="modal-box">
+            <h2 class="modal-title" id="m-title">Título</h2><p class="modal-msg" id="m-msg">Mensaje</p>
+            <button class="modal-btn" onclick="closeModal()">¡Entendido!</button>
+        </div>
+    </div>
+
+    <script>
+        const gridSize = 5; 
+        let isExecuting = false;
+        let stopExecution = false;
+
+        let bee = { pos: {x: 0, y: 0}, dir: 0, commands: [] }; 
+        
+        let nectars = {}; 
+        let carryingColor = null;
+        let nectarsCollected = 0;
+        let totalNectars = 3;
+
+        const gridEl = document.getElementById('grid'); 
+        const canvas = document.getElementById('drawing-canvas'); 
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false; let startX, startY;
+
+        function getEmojiForColor(color) {
+            if(color === 'Rojo') return '🌺';
+            if(color === 'Amarillo') return '🌻';
+            if(color === 'Azul') return '🪻';
+            return '';
+        }
+
+        function generateLevel() {
+            nectars = {};
+            carryingColor = null;
+            nectarsCollected = 0;
+            stopExecution = false;
+
+            let coords = [];
+            // Recopilar coordenadas válidas (excluyendo Inicio y Esquinas de Colmenas)
+            for (let y = 0; y < gridSize; y++) {
+                for (let x = 0; x < gridSize; x++) {
+                    if ((x===0 && y===0) || (x===4 && y===0) || (x===0 && y===4) || (x===4 && y===4)) continue;
+                    coords.push({x, y});
+                }
+            }
+            // Spawn Aleatorio
+            coords.sort(() => Math.random() - 0.5);
+            nectars[`${coords[0].x},${coords[0].y}`] = 'Rojo';
+            nectars[`${coords[1].x},${coords[1].y}`] = 'Amarillo';
+            nectars[`${coords[2].x},${coords[2].y}`] = 'Azul';
+        }
+
+        function initGrid() {
+            gridEl.innerHTML = '';
+            for (let y = 0; y < gridSize; y++) {
+                for (let x = 0; x < gridSize; x++) {
+                    const cell = document.createElement('div'); 
+                    cell.className = 'cell'; 
+                    cell.id = `cell-${x}-${y}`;
+                    
+                    if (x === 0 && y === 0) cell.dataset.start = "true";
+                    
+                    // Colmenas en las esquinas restantes
+                    if (x === 4 && y === 0) createHive(cell, 'Rojo');
+                    if (x === 0 && y === 4) createHive(cell, 'Amarillo');
+                    if (x === 4 && y === 4) createHive(cell, 'Azul');
+
+                    // Néctares Aleatorios
+                    let nColor = nectars[`${x},${y}`];
+                    if (nColor) {
+                        cell.dataset.nectarColor = nColor;
+                        cell.innerHTML = `<span class="nectar-item">${getEmojiForColor(nColor)}</span>`;
+                    }
+                    
+                    gridEl.appendChild(cell);
+                }
+            }
+            setTimeout(() => {
+                canvas.width = gridEl.offsetWidth; canvas.height = gridEl.offsetHeight;
+                ctx.lineWidth = 6; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.setLineDash([10, 15]); ctx.strokeStyle = 'rgba(241, 196, 15, 0.8)'; 
+            }, 50);
+        }
+
+        function createHive(cell, color) {
+            cell.classList.add(`hive-${color}`);
+            cell.dataset.hiveColor = color;
+            // Asset de la colmena integrado (el fondo de la celda da el color)
+            cell.innerHTML = '<img src="../assets/robots/Colmena.png" alt="Colmena" style="width: 85%; height: 85%; object-fit: contain; z-index: 5;">';
+        }
+
+        function getCursorPos(cX, cY) { const r = canvas.getBoundingClientRect(); return { x: cX - r.left, y: cY - r.top }; }
+        function startDraw(e) { if (isExecuting) return; isDrawing = true; let cX = e.touches?e.touches[0].clientX:e.clientX; let cY = e.touches?e.touches[0].clientY:e.clientY; const p = getCursorPos(cX, cY); ctx.beginPath(); ctx.moveTo(p.x, p.y); if(e.cancelable) e.preventDefault(); }
+        function draw(e) { if (!isDrawing || isExecuting) return; let cX = e.touches?e.touches[0].clientX:e.clientX; let cY = e.touches?e.touches[0].clientY:e.clientY; const p = getCursorPos(cX, cY); ctx.lineTo(p.x, p.y); ctx.stroke(); if(e.cancelable) e.preventDefault(); }
+        canvas.addEventListener('mousedown', startDraw); canvas.addEventListener('mousemove', draw); window.addEventListener('mouseup', ()=>isDrawing=false);
+        canvas.addEventListener('touchstart', startDraw, {passive:false}); canvas.addEventListener('touchmove', draw, {passive:false}); window.addEventListener('touchend', ()=>isDrawing=false);
+
+        // ROTACIÓN UNIVERSAL (Sprite mirando hacia ARRIBA por defecto)
+        function getTransform(dir) { 
+            if (dir === 0) return 'rotate(90deg)';   // Derecha
+            if (dir === 1) return 'rotate(180deg)';  // Abajo
+            if (dir === 2) return 'rotate(-90deg)';  // Izquierda
+            if (dir === 3) return 'rotate(0deg)';    // Arriba
+        }
+
+        function drawBee() {
+            document.querySelectorAll('.bee-container').forEach(b => b.remove());
+            const cell = document.getElementById(`cell-${bee.pos.x}-${bee.pos.y}`);
+            
+            const container = document.createElement('div'); 
+            container.className = 'bee-container';
+            
+            const orient = document.createElement('div'); 
+            orient.className = 'bee-orientation'; 
+            orient.style.transform = getTransform(bee.dir);
+            
+            const sprite = document.createElement('div'); 
+            sprite.className = 'bee-sprite'; 
+            sprite.innerHTML = '<img src="../assets/robots/BeebotEmoji.png" alt="BeeBot" style="width: 48px; height: 48px; object-fit: contain; pointer-events: none;">';
+            
+            // Si la abeja lleva un néctar, se lo mostramos flotando
+            if (carryingColor) {
+                const item = document.createElement('div'); 
+                item.className = 'bee-carrying'; 
+                item.innerText = getEmojiForColor(carryingColor);
+                orient.appendChild(item);
+            }
+
+            orient.appendChild(sprite); 
+            container.appendChild(orient); 
+            cell.appendChild(container);
+        }
+
+        function addCommand(cmd) { if(isExecuting) return; bee.commands.push(cmd); updateUI(); }
+        function undoCommand() { if(isExecuting || bee.commands.length===0) return; bee.commands.pop(); updateUI(); }
+        function updateUI() {
+            const sym = { 'F': '⬆️', 'R': '↻', 'L': '↺' }; const seq = document.getElementById('seq'); seq.innerHTML = ''; 
+            bee.commands.forEach(c => { const s = document.createElement('span'); s.className = 'cmd-block'; s.innerText = sym[c]; seq.appendChild(s); });
+        }
+
+        // LÓGICA DE CARGA Y DESCARGA
+        function visitCell(x, y) {
+            let cell = document.getElementById(`cell-${x}-${y}`);
+
+            // 1. Revisa si hay un néctar en el suelo
+            if (cell.dataset.nectarColor) {
+                let nColor = cell.dataset.nectarColor;
+                if (!carryingColor) {
+                    // Lo recoge
+                    carryingColor = nColor;
+                    cell.removeAttribute('data-nectar-color');
+                    cell.innerHTML = ''; // Limpia la celda
+                } else {
+                    // ¡Error! Ya lleva uno
+                    showModal("¡Abeja Llena! 🛑", `Beebot ya tiene un Néctar ${carryingColor}, deposítalo en el panal del color correcto.`);
+                    stopExecution = true;
+                    return;
+                }
+            }
+
+            // 2. Revisa si llegó a una colmena
+            if (cell.dataset.hiveColor) {
+                let hColor = cell.dataset.hiveColor;
+                if (carryingColor) {
+                    if (carryingColor === hColor) {
+                        // ¡Correcto! Lo deposita
+                        carryingColor = null;
+                        nectarsCollected++;
+                        cell.classList.add('visited-correct');
+                        setTimeout(() => cell.classList.remove('visited-correct'), 500);
+                    } else {
+                        // ¡Error! Colmena equivocada
+                        showModal("¡Colmena Equivocada! 😟", `Beebot tiene un Néctar ${carryingColor}. ¡Esa es la colmena de color ${hColor}!`);
+                        stopExecution = true;
+                        return;
+                    }
+                }
+            }
+        }
+
+        function executeCommands() {
+            if (bee.commands.length === 0 || isExecuting) return; 
+            
+            isExecuting = true; 
+            stopExecution = false;
+            document.getElementById('go-btn').style.opacity = "0.5";
+            
+            visitCell(bee.pos.x, bee.pos.y);
+            if (stopExecution) {
+                resetExecutionState();
+                return;
+            }
+
+            let step = 0;
+            const interval = setInterval(() => {
+                if (step >= bee.commands.length || stopExecution) { 
+                    clearInterval(interval); 
+                    if(!stopExecution) checkWin(); 
+                    else resetExecutionState();
+                    return; 
+                }
+                
+                const cmd = bee.commands[step];
+                if (cmd === 'F') {
+                    let nx = bee.pos.x, ny = bee.pos.y;
+                    if (bee.dir===0) nx++; else if (bee.dir===1) ny++; else if (bee.dir===2) nx--; else ny--; 
+                    
+                    if (nx>=0 && nx<gridSize && ny>=0 && ny<gridSize) { 
+                        bee.pos.x = nx; 
+                        bee.pos.y = ny; 
+                        visitCell(nx, ny); 
+                    }
+                } else if (cmd === 'R') bee.dir = (bee.dir+1)%4; 
+                else if (cmd === 'L') bee.dir = (bee.dir+3)%4;
+                
+                drawBee(); 
+                if(!stopExecution) step++;
+            }, 600); 
+        }
+
+        function resetExecutionState() {
+            document.getElementById('go-btn').style.opacity = "1"; 
+            isExecuting = false;
+            bee.commands = [];
+            updateUI();
+            ctx.clearRect(0,0,canvas.width,canvas.height); 
+        }
+
+        function showModal(t, m) { document.getElementById('m-title').innerText = t; document.getElementById('m-msg').innerText = m; document.getElementById('modal').classList.add('active'); }
+        function closeModal() { document.getElementById('modal').classList.remove('active'); }
+        
+        function checkWin() {
+            setTimeout(() => {
+                if (nectarsCollected === totalNectars) {
+                    showModal("¡Misión Cumplida! 🍯", "¡Clasificaste todas las flores en sus colmenas correctamente!");
+                } else if (carryingColor) {
+                    // Si terminó los comandos y se quedó cargando una flor
+                    showModal("¡Viaje a medias! 🐝", `Todavía llevas un Néctar ${carryingColor}. Programa tu camino a la colmena correspondiente.`);
+                } else {
+                    // Si terminó los comandos y no recogió todo
+                    showModal("¡Falta néctar! 🌻", "Aún quedan flores en el jardín. ¡Sigue programando tu ruta!");
+                }
+                resetExecutionState();
+            }, 400);
+        }
+
+        function resetGame() { 
+            bee = { pos:{x:0,y:0}, dir:0, commands:[] }; 
+            generateLevel(); 
+            resetExecutionState();
+            initGrid(); 
+            drawBee(); 
+        }
+        
+        // Iniciar
+        resetGame();
+    </script>
+</body>
+</html>

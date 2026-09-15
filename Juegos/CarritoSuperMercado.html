@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>¡Día de Supermercado! 🛒</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --p1-main: #3498db; --p1-dark: #2980b9; --grid-bg: #8d6e63; }
+        body { font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; align-items: center; margin: 0; padding: 10px; min-height: 100vh; touch-action: none; color: #333; background-color: transparent; }
+        
+        /* Fondo Adaptado (Interior de Supermercado simple) */
+        .decorations { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -1; pointer-events: none; overflow: hidden; background: linear-gradient(180deg, #d4e6f1 0%, #aed6f1 100%); }
+        .decorations::before { content: ''; position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h40v40H0V0zm20 20h20v20H20V20zM0 20h20v20H0V20zM20 0h20v20H20V0z' fill='%23ffffff' fill-opacity='0.2' fill-rule='evenodd'/%3E%3C/svg%3E"); z-index: 1; }
+        
+        h1 { color: #2c3e50; margin: 0px 0 5px 0; text-align: center; font-size: 26px; text-shadow: 2px 2px 0px #fff; position: relative; z-index: 10;}
+        .prompt-box { text-align: center; background: rgba(255, 255, 255, 0.95); padding: 10px 20px; border-radius: 15px; font-size: 16px; font-weight: 600; max-width: 550px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; border: 3px solid #ffb74d; z-index: 10;}
+        .target-item { font-size: 35px; margin: 5px; display: inline-block; animation: bounce 1s infinite alternate; }
+        @keyframes bounce { 0% { transform: translateY(0); } 100% { transform: translateY(-8px); } }
+
+        .grid-wrapper { position: relative; margin-bottom: 15px; padding: 10px; background: #e5e8e8; border-radius: 15px; box-shadow: 0 8px 0 #95a5a6, 0 15px 25px rgba(0,0,0,0.25); z-index: 10;}
+        #grid { display: grid; grid-template-columns: repeat(4, 75px); grid-template-rows: repeat(4, 75px); gap: 6px; background-color: #7f8c8d; border-radius: 10px; padding: 6px; }
+        #drawing-canvas { position: absolute; top: 10px; left: 10px; z-index: 10; cursor: crosshair; border-radius: 10px; }
+        
+        .cell { background-color: #f4f6f7; border-radius: 8px; display: flex; justify-content: center; align-items: center; position: relative; user-select: none; box-shadow: inset 0 -4px 0 rgba(0,0,0,0.1); font-size: 35px;}
+        .cell[data-start="true"] { background-color: #d1f2eb; box-shadow: inset 0 -4px 0 rgba(0,0,0,0.05); }
+
+        /* Estantes (Aisles) */
+        .zone-frutas { background-color: #a9dfbf !important; box-shadow: inset 0 -4px 0 #27ae60 !important; }
+        .zone-lacteos { background-color: #aed6f1 !important; box-shadow: inset 0 -4px 0 #2980b9 !important; }
+        .zone-panaderia { background-color: #f5cba7 !important; box-shadow: inset 0 -4px 0 #e67e22 !important; }
+
+        .bee-container { position: absolute; z-index: 15; width: 55px; height: 55px; display: flex; justify-content: center; align-items: center; }
+        .bee-orientation { transition: transform 0.2s ease; display: flex; justify-content: center; align-items: center; position: relative;}
+        .bee-sprite { display: flex; justify-content: center; align-items: center; animation: float 2s ease-in-out infinite; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
+        
+        /* El Carrito de compras adjunto al sprite */
+        .bee-cart { position: absolute; bottom: -10px; right: -15px; font-size: 28px; z-index: 20; transform: scaleX(-1); }
+        .bee-item { position: absolute; top: -10px; right: -5px; font-size: 18px; z-index: 25; }
+
+        .panels-container { display: flex; justify-content: center; width: 100%; max-width: 450px; margin-bottom: 20px; position: relative; z-index: 10;}
+        .panel { box-sizing: border-box; background: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 18px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); width: 95%; display: flex; flex-direction: column; align-items: center; border: 4px solid var(--p1-main); }
+        .panel h3 { margin: 0 0 10px 0; font-size: 18px; color: var(--p1-dark); }
+        .btn-group { display: flex; gap: 6px; justify-content: space-between; width: 100%; margin-bottom: 15px; }
+        button { font-family: 'Fredoka', sans-serif; font-weight: 700; border: none; border-radius: 10px; cursor: pointer; transition: all 0.1s; user-select: none; }
+        button:active { transform: translateY(4px); box-shadow: 0 0px 0 transparent !important; }
+        .cmd-btn { padding: 10px 2px; font-size: 13px; color: white; flex: 1; background-color: var(--p1-main); box-shadow: 0 5px 0 var(--p1-dark); white-space: nowrap; }
+        .undo-btn { background-color: #e74c3c; box-shadow: 0 5px 0 #c0392b; flex: 0.8; }
+        .seq-container { display: flex; flex-wrap: wrap; gap: 5px; min-height: 45px; background: rgba(255,255,255,0.7); padding: 8px; border-radius: 10px; width: 95%; border: 2px dashed rgba(0,0,0,0.1); }
+        .cmd-block { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; color: white; font-weight: bold; font-size: 18px; box-shadow: 0 3px 0 rgba(0,0,0,0.2); background: var(--p1-main); animation: popIn 0.2s ease-out; }
+        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+
+        .global-controls { display: flex; gap: 15px; margin-bottom: 20px; position: relative; z-index: 10;}
+        .global-btn { padding: 12px 20px; font-size: 18px; color: white; border-radius: 15px; }
+        #go-btn { background-color: #ff9800; box-shadow: 0 5px 0 #f57c00; }
+        .reset-btn { background-color: #95a5a6; box-shadow: 0 5px 0 #7f8c8d; }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 100; visibility: hidden; opacity: 0; transition: all 0.3s; }
+        .modal-overlay.active { visibility: visible; opacity: 1; }
+        .modal-box { background: white; padding: 25px; border-radius: 20px; text-align: center; max-width: 80%; transform: scale(0.7); transition: 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .modal-overlay.active .modal-box { transform: scale(1); }
+        .modal-title { font-size: 24px; margin-bottom: 10px; color: #ff9800; }
+        .modal-msg { font-size: 16px; margin-bottom: 20px; color: #555; white-space: pre-line;}
+        .modal-btn { background: #4CAF50; box-shadow: 0 5px 0 #388E3C; padding: 10px 20px; font-size: 16px; color: white; }
+    </style>
+</head>
+<body>
+    <div class="decorations"></div>
+
+    <h1>¡Día de Supermercado! 🛒</h1>
+    <div class="prompt-box">
+        Lleva este producto a su pasillo correspondiente:
+        <div class="target-item" id="carrying-item">🍎</div>
+        <div style="font-size: 12px;">(Verde = Frutas | Celeste = Lácteos | Naranja = Panadería)</div>
+    </div>
+
+    <div class="grid-wrapper">
+        <div id="grid"></div><canvas id="drawing-canvas"></canvas>
+    </div>
+
+    <div class="panels-container">
+        <div class="panel">
+            <h3>🐝 Programar Carrito</h3>
+            <div class="btn-group">
+                <button class="cmd-btn" onclick="addCommand('L')">↺ Giro Izq</button>
+                <button class="cmd-btn" onclick="addCommand('F')">⬆️ Avanza</button>
+                <button class="cmd-btn" onclick="addCommand('R')">↻ Giro Der</button>
+                <button class="cmd-btn undo-btn" onclick="undoCommand()">🔙 Borrar</button>
+            </div>
+            <div class="seq-container" id="seq"></div>
+        </div>
+    </div>
+    
+    <div class="global-controls">
+        <button class="global-btn" onclick="executeCommands()" id="go-btn">🚀 ¡COMPRAR!</button>
+        <button class="global-btn reset-btn" onclick="resetGame()">🔄 Otro Nivel</button>
+    </div>
+
+    <div class="modal-overlay" id="modal">
+        <div class="modal-box">
+            <h2 class="modal-title" id="m-title">Título</h2><p class="modal-msg" id="m-msg">Mensaje</p>
+            <button class="modal-btn" onclick="closeModal()">¡Entendido!</button>
+        </div>
+    </div>
+
+    <script>
+        const gridSize = 4; let isExecuting = false;
+        let bee = { pos: {x: 0, y: 0}, dir: 0, commands: [] }; 
+        
+        // Categorías del Supermercado
+        const items = { 
+            'frutas': ['🍎', '🍌', '🍉', '🍇'], 
+            'lacteos': ['🥛', '🧀', '🧈', '🍦'], 
+            'panaderia': ['🥖', '🥐', '🥨', '🍞'] 
+        };
+        
+        let currentItem = ''; let targetZone = '';
+        let zonePositions = {};
+
+        const gridEl = document.getElementById('grid'); const canvas = document.getElementById('drawing-canvas'); const ctx = canvas.getContext('2d');
+        let isDrawing = false; let startX, startY;
+
+        function generateLevel() {
+            let categories = Object.keys(items);
+            targetZone = categories[Math.floor(Math.random() * categories.length)];
+            let typeItems = items[targetZone];
+            currentItem = typeItems[Math.floor(Math.random() * typeItems.length)];
+            document.getElementById('carrying-item').innerText = currentItem;
+
+            let coords = [];
+            for(let y=0; y<gridSize; y++) for(let x=0; x<gridSize; x++) if(x!==0 || y!==0) coords.push({x,y});
+            coords.sort(() => Math.random() - 0.5);
+            
+            zonePositions = {};
+            zonePositions[`${coords[0].x},${coords[0].y}`] = 'frutas';
+            zonePositions[`${coords[1].x},${coords[1].y}`] = 'lacteos';
+            zonePositions[`${coords[2].x},${coords[2].y}`] = 'panaderia';
+        }
+
+        function initGrid() {
+            gridEl.innerHTML = '';
+            for (let y = 0; y < gridSize; y++) {
+                for (let x = 0; x < gridSize; x++) {
+                    const cell = document.createElement('div'); cell.className = 'cell'; cell.id = `cell-${x}-${y}`;
+                    if (x===0 && y===0) cell.dataset.start = "true";
+                    
+                    let zone = zonePositions[`${x},${y}`];
+                    if (zone) {
+                        cell.classList.add(`zone-${zone}`);
+                        cell.innerText = '🏪'; // Emoji de estante o tienda
+                        cell.dataset.zone = zone;
+                    }
+                    gridEl.appendChild(cell);
+                }
+            }
+            setTimeout(() => {
+                canvas.width = gridEl.offsetWidth; canvas.height = gridEl.offsetHeight;
+                ctx.lineWidth = 8; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.setLineDash([12, 15]); ctx.strokeStyle = 'rgba(52, 152, 219, 0.8)'; 
+            }, 50);
+        }
+
+        function getCursorPos(cX, cY) { const r = canvas.getBoundingClientRect(); return { x: cX - r.left, y: cY - r.top }; }
+        function startDraw(e) { if (isExecuting) return; isDrawing = true; let cX = e.touches?e.touches[0].clientX:e.clientX; let cY = e.touches?e.touches[0].clientY:e.clientY; const p = getCursorPos(cX, cY); ctx.beginPath(); ctx.moveTo(p.x, p.y); if(e.cancelable) e.preventDefault(); }
+        function draw(e) { if (!isDrawing || isExecuting) return; let cX = e.touches?e.touches[0].clientX:e.clientX; let cY = e.touches?e.touches[0].clientY:e.clientY; const p = getCursorPos(cX, cY); ctx.lineTo(p.x, p.y); ctx.stroke(); if(e.cancelable) e.preventDefault(); }
+        canvas.addEventListener('mousedown', startDraw); canvas.addEventListener('mousemove', draw); window.addEventListener('mouseup', ()=>isDrawing=false);
+        canvas.addEventListener('touchstart', startDraw, {passive:false}); canvas.addEventListener('touchmove', draw, {passive:false}); window.addEventListener('touchend', ()=>isDrawing=false);
+
+        // LÓGICA DE ROTACIÓN UNIVERSAL (Mirando hacia ARRIBA por defecto)
+        function getTransform(dir) { 
+            if (dir === 0) return 'rotate(90deg)';   // Derecha
+            if (dir === 1) return 'rotate(180deg)';  // Abajo
+            if (dir === 2) return 'rotate(-90deg)';  // Izquierda
+            if (dir === 3) return 'rotate(0deg)';    // Arriba
+        }
+
+        function drawBee() {
+            document.querySelectorAll('.bee-container').forEach(b => b.remove());
+            const cell = document.getElementById(`cell-${bee.pos.x}-${bee.pos.y}`);
+            const container = document.createElement('div'); container.className = 'bee-container';
+            const orient = document.createElement('div'); orient.className = 'bee-orientation'; orient.style.transform = getTransform(bee.dir);
+            const sprite = document.createElement('div'); sprite.className = 'bee-sprite'; 
+            
+            // Imagen Custom
+            sprite.innerHTML = '<img src="../assets/robots/BeebotEmoji.png" alt="BeeBot" style="width: 48px; height: 48px; object-fit: contain; pointer-events: none;">';
+            
+            const cart = document.createElement('div'); cart.className = 'bee-cart'; cart.innerText = '🛒';
+            const item = document.createElement('div'); item.className = 'bee-item'; item.innerText = currentItem;
+            
+            orient.appendChild(sprite); orient.appendChild(cart); orient.appendChild(item); container.appendChild(orient); cell.appendChild(container);
+        }
+
+        function addCommand(cmd) { if(isExecuting) return; bee.commands.push(cmd); updateUI(); }
+        function undoCommand() { if(isExecuting || bee.commands.length===0) return; bee.commands.pop(); updateUI(); }
+        function updateUI() {
+            const sym = { 'F': '⬆️', 'R': '↻', 'L': '↺' }; const seq = document.getElementById('seq'); seq.innerHTML = ''; 
+            bee.commands.forEach(c => { const s = document.createElement('span'); s.className = 'cmd-block'; s.innerText = sym[c]; seq.appendChild(s); });
+        }
+
+        function executeCommands() {
+            if (bee.commands.length === 0 || isExecuting) return; isExecuting = true; document.getElementById('go-btn').style.opacity = "0.5";
+            let step = 0;
+            const interval = setInterval(() => {
+                if (step >= bee.commands.length) { clearInterval(interval); setTimeout(() => checkWin(), 400); return; }
+                const cmd = bee.commands[step];
+                if (cmd === 'F') {
+                    let nx = bee.pos.x, ny = bee.pos.y;
+                    if (bee.dir===0) nx++; else if (bee.dir===1) ny++; else if (bee.dir===2) nx--; else ny--; 
+                    if (nx>=0 && nx<gridSize && ny>=0 && ny<gridSize) { bee.pos.x = nx; bee.pos.y = ny; }
+                } else if (cmd === 'R') bee.dir = (bee.dir+1)%4; else if (cmd === 'L') bee.dir = (bee.dir+3)%4;
+                drawBee(); step++;
+            }, 600); 
+        }
+
+        function showModal(t, m) { document.getElementById('m-title').innerText = t; document.getElementById('m-msg').innerText = m; document.getElementById('modal').classList.add('active'); }
+        function closeModal() { document.getElementById('modal').classList.remove('active'); }
+        
+        function checkWin() {
+            let cell = document.getElementById(`cell-${bee.pos.x}-${bee.pos.y}`);
+            if (cell.dataset.zone) {
+                if (cell.dataset.zone === targetZone) {
+                    showModal("¡Orden Perfecto! ✅", "¡Dejaste el producto en su pasillo correcto!");
+                    currentItem = ""; drawBee(); 
+                } else {
+                    showModal("¡Pasillo Equivocado! 🛒", "Dejaste el producto en la sección equivocada. ¡Intenta de nuevo!");
+                }
+            } else {
+                showModal("¡Aún no llegas! 🤔", "El carrito no llegó a ningún pasillo. ¡Sigue intentando!");
+            }
+            document.getElementById('go-btn').style.opacity = "1"; isExecuting = false;
+        }
+
+        function resetGame() { bee = { pos:{x:0,y:0}, dir:0, commands:[] }; isExecuting=false; generateLevel(); updateUI(); document.getElementById('go-btn').style.opacity="1"; ctx.clearRect(0,0,canvas.width,canvas.height); initGrid(); drawBee(); }
+        resetGame();
+    </script>
+</body>
+</html>
