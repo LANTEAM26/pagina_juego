@@ -31,333 +31,76 @@
         }
 
         /* PAISAJE DE FONDO */
-        .decorations {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            z-index: -1;
-            pointer-events: none; 
-            overflow: hidden;
-            background: linear-gradient(180deg, #74ebd5 0%, #ACB6E5 100%);
-        }
+        .decorations { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -1; pointer-events: none; overflow: hidden; background: linear-gradient(180deg, #74ebd5 0%, #ACB6E5 100%); }
+        .decorations::before { content: ''; position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg width='60' height='104' viewBox='0 0 60 104' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 52l15-26 15 26v52l-15 26-15-26zM0 0l15 26v52L0 104V0zm60 0v104L45 78V26z' fill='%23ffffff' fill-opacity='0.15' fill-rule='evenodd'/%3E%3C/svg%3E"); z-index: 1; }
+        .sun { position: absolute; top: 3%; right: 5%; font-size: 70px; z-index: 2; filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.8)); animation: pulse-sun 3s infinite alternate; }
+        @keyframes pulse-sun { 0% { transform: scale(1) rotate(0deg); } 100% { transform: scale(1.1) rotate(10deg); } }
+        .cloud { position: absolute; font-size: 60px; opacity: 0.8; z-index: 2; filter: drop-shadow(0 5px 15px rgba(255,255,255,0.5)); }
+        .c1 { top: 8%; left: -20%; animation: drift 35s linear infinite; } .c2 { top: 20%; left: -20%; animation: drift 45s linear infinite 15s; font-size: 45px;} .c3 { top: 5%; left: -20%; animation: drift 55s linear infinite 25s; font-size: 80px;}
+        @keyframes drift { 0% { transform: translateX(-20vw); } 100% { transform: translateX(120vw); } }
+        .grass { position: absolute; bottom: -5vh; left: -10vw; width: 120vw; height: 25vh; background: #a9dfbf; border-radius: 50% 50% 0 0; z-index: 2; box-shadow: inset 0 15px 0 #82e0aa, 0 -30px 50px rgba(46,204,113,0.3); }
 
-        .decorations::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='104' viewBox='0 0 60 104' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 52l15-26 15 26v52l-15 26-15-26zM0 0l15 26v52L0 104V0zm60 0v104L45 78V26z' fill='%23ffffff' fill-opacity='0.15' fill-rule='evenodd'/%3E%3C/svg%3E");
-            z-index: 1;
-        }
+        .flower { position: absolute; font-size: 35px; bottom: 15vh; z-index: 3; transform-origin: bottom center; animation: sway 2.5s ease-in-out infinite alternate; }
+        .f1 { left: 12%; animation-delay: 0s; font-size: 45px; } .f2 { left: 28%; animation-delay: 1s; bottom: 12vh; font-size: 30px;} .f3 { right: 25%; animation-delay: 0.5s; bottom: 18vh; font-size: 40px; } .f4 { right: 8%; animation-delay: 1.5s; font-size: 50px;}
+        @keyframes sway { 0% { transform: rotate(-12deg); } 100% { transform: rotate(12deg); } }
 
-        .sun {
-            position: absolute;
-            top: 3%; right: 5%;
-            font-size: 70px;
-            z-index: 2;
-            filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.8));
-            animation: pulse-sun 3s infinite alternate;
-        }
+        h1 { color: #2c3e50; margin: 5px 0; text-align: center; font-size: 28px; text-shadow: 2px 2px 0px #fff; position: relative; }
+        p.instrucciones { text-align: center; background: rgba(255, 255, 255, 0.85); padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 600; max-width: 550px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; }
 
-        @keyframes pulse-sun {
-            0% { transform: scale(1) rotate(0deg); }
-            100% { transform: scale(1.1) rotate(10deg); }
-        }
+        .grid-wrapper { position: relative; margin-bottom: 15px; padding: 10px; background: #ffe0b2; border-radius: 15px; box-shadow: 0 8px 0 #ffb74d, 0 15px 25px rgba(0,0,0,0.25); }
+        #grid { display: grid; grid-template-columns: repeat(4, 70px); grid-template-rows: repeat(4, 70px); gap: 6px; background-color: var(--grid-bg); border-radius: 10px; padding: 6px; }
+        #drawing-canvas { position: absolute; top: 10px; left: 10px; z-index: 10; cursor: crosshair; border-radius: 10px; }
 
-        .cloud {
-            position: absolute;
-            font-size: 60px;
-            opacity: 0.8;
-            z-index: 2;
-            filter: drop-shadow(0 5px 15px rgba(255,255,255,0.5));
-        }
-        
-        .c1 { top: 8%; left: -20%; animation: drift 35s linear infinite; }
-        .c2 { top: 20%; left: -20%; animation: drift 45s linear infinite 15s; font-size: 45px;}
-        .c3 { top: 5%; left: -20%; animation: drift 55s linear infinite 25s; font-size: 80px;}
-
-        @keyframes drift {
-            0% { transform: translateX(-20vw); }
-            100% { transform: translateX(120vw); }
-        }
-
-        .grass {
-            position: absolute;
-            bottom: -5vh; left: -10vw;
-            width: 120vw; height: 25vh;
-            background: #a9dfbf;
-            border-radius: 50% 50% 0 0;
-            z-index: 2;
-            box-shadow: inset 0 15px 0 #82e0aa, 0 -30px 50px rgba(46,204,113,0.3);
-        }
-
-        .flower {
-            position: absolute;
-            font-size: 35px;
-            bottom: 15vh;
-            z-index: 3;
-            transform-origin: bottom center;
-            animation: sway 2.5s ease-in-out infinite alternate;
-        }
-        .f1 { left: 12%; animation-delay: 0s; font-size: 45px; }
-        .f2 { left: 28%; animation-delay: 1s; bottom: 12vh; font-size: 30px;}
-        .f3 { right: 25%; animation-delay: 0.5s; bottom: 18vh; font-size: 40px; }
-        .f4 { right: 8%; animation-delay: 1.5s; font-size: 50px;}
-
-        @keyframes sway {
-            0% { transform: rotate(-12deg); }
-            100% { transform: rotate(12deg); }
-        }
-
-        h1 {
-            color: #2c3e50;
-            margin: 5px 0;
-            text-align: center;
-            font-size: 28px;
-            text-shadow: 2px 2px 0px #fff;
-            position: relative;
-        }
-
-        p.instrucciones {
-            text-align: center;
-            background: rgba(255, 255, 255, 0.85);
-            padding: 8px 12px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            max-width: 550px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            position: relative;
-        }
-
-        .grid-wrapper {
-            position: relative;
-            margin-bottom: 15px;
-            padding: 10px;
-            background: #ffe0b2;
-            border-radius: 15px;
-            box-shadow: 0 8px 0 #ffb74d, 0 15px 25px rgba(0,0,0,0.25);
-        }
-
-        #grid {
-            display: grid;
-            grid-template-columns: repeat(4, 70px);
-            grid-template-rows: repeat(4, 70px);
-            gap: 6px;
-            background-color: var(--grid-bg);
-            border-radius: 10px;
-            padding: 6px;
-        }
-
-        #drawing-canvas {
-            position: absolute;
-            top: 10px; left: 10px;
-            z-index: 10;
-            cursor: crosshair;
-            border-radius: 10px;
-        }
-
-        .cell {
-            background-color: #fff9c4;
-            border-radius: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            user-select: none;
-            box-shadow: inset 0 -4px 0 rgba(0,0,0,0.1);
-        }
+        .cell { background-color: #fff9c4; border-radius: 8px; display: flex; justify-content: center; align-items: center; position: relative; user-select: none; box-shadow: inset 0 -4px 0 rgba(0,0,0,0.1); }
 
         .blue, .green { animation: pulse 1.5s infinite alternate; }
-        .blue::after, .green::after {
-            content: '💧';
-            font-size: 32px;
-            position: absolute;
-        }
+        .blue::after, .green::after { content: '💧'; font-size: 32px; position: absolute; }
         .blue { background-color: #aed6f1; box-shadow: inset 0 0 15px var(--p1-main); }
         .green::after { content: '🍃'; }
         .green { background-color: #a9dfbf; box-shadow: inset 0 0 15px var(--p2-main); }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            100% { transform: scale(0.92); }
-        }
+        @keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(0.92); } }
 
-        .bee-container {
-            position: absolute;
-            z-index: 5;
-            width: 55px; height: 55px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+        .bee-container { position: absolute; z-index: 5; width: 55px; height: 55px; display: flex; justify-content: center; align-items: center; }
+        .bee-orientation { transition: transform 0.2s ease; display: flex; justify-content: center; align-items: center; }
+        .bee-sprite { display: flex; justify-content: center; align-items: center; animation: float 2s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-5px); } }
 
-        .bee-orientation {
-            transition: transform 0.2s ease;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .bee-sprite {
-            font-size: 40px;
-            animation: float 2s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-5px); }
-        }
-
-        .bee1 .bee-sprite { filter: drop-shadow(0 0 8px var(--p1-main)); }
-        .bee2 .bee-sprite { filter: drop-shadow(0 0 8px var(--p2-main)); }
-
-        .panels-container {
-            display: flex;
-            flex-direction: row !important;
-            flex-wrap: nowrap !important; 
-            justify-content: space-between; 
-            width: 98%; 
-            max-width: 900px; 
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .panel {
-            box-sizing: border-box; 
-            background: rgba(255, 255, 255, 0.95);
-            padding: 10px;
-            border-radius: 18px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-            width: 40%; 
-            max-width: 320px; 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
+        .panels-container { display: flex; flex-direction: row !important; flex-wrap: nowrap !important; justify-content: space-between; width: 98%; max-width: 900px; margin-bottom: 20px; position: relative; }
+        .panel { box-sizing: border-box; background: rgba(255, 255, 255, 0.95); padding: 10px; border-radius: 18px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); width: 49%; max-width: 400px; display: flex; flex-direction: column; align-items: center; }
         .panel.player1 { border: 4px solid var(--p1-main); }
         .panel.player2 { border: 4px solid var(--p2-main); }
 
-        .panel h3 { 
-            margin: 0 0 8px 0; 
-            font-size: 16px; 
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            white-space: nowrap;
-        }
+        .panel h3 { margin: 0 0 8px 0; font-size: 16px; display: flex; align-items: center; gap: 5px; white-space: nowrap; }
         .player1 h3 { color: var(--p1-dark); }
         .player2 h3 { color: var(--p2-dark); }
 
-        .btn-group {
-            display: flex;
-            gap: 4px;
-            justify-content: space-between;
-            width: 100%;
-            margin-bottom: 10px;
-        }
-
-        button {
-            font-family: 'Fredoka', sans-serif;
-            font-weight: 700;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.1s;
-            user-select: none;
-        }
-
-        button:active {
-            transform: translateY(4px);
-            box-shadow: 0 0px 0 transparent !important;
-        }
-
-        button.cmd-btn {
-            padding: 8px 2px;
-            font-size: 13px; 
-            color: white;
-            flex: 1;
-            white-space: nowrap;
-        }
+        .btn-group { display: flex; gap: 4px; justify-content: space-between; width: 100%; margin-bottom: 10px; }
+        button { font-family: 'Fredoka', sans-serif; font-weight: 700; border: none; border-radius: 10px; cursor: pointer; transition: all 0.1s; user-select: none; }
+        button:active { transform: translateY(4px); box-shadow: 0 0px 0 transparent !important; }
+        button.cmd-btn { padding: 8px 2px; font-size: 11px; color: white; flex: 1; white-space: nowrap; }
         
         .player1 button.cmd-btn { background-color: var(--p1-main); box-shadow: 0 4px 0 var(--p1-dark); }
         .player2 button.cmd-btn { background-color: var(--p2-main); box-shadow: 0 4px 0 var(--p2-dark); }
+        
+        /* Botón de Borrar */
+        .undo-btn { background-color: #e74c3c !important; box-shadow: 0 4px 0 #c0392b !important; }
 
-        .seq-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-            min-height: 40px;
-            background: rgba(255,255,255,0.7);
-            padding: 6px;
-            border-radius: 10px;
-            width: 90%;
-            border: 2px dashed rgba(0,0,0,0.1);
-        }
-
-        .cmd-block {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 30px; height: 30px;
-            border-radius: 6px;
-            color: white;
-            font-weight: bold;
-            font-size: 16px;
-            box-shadow: 0 3px 0 rgba(0,0,0,0.2);
-            animation: popIn 0.2s ease-out;
-        }
-
-        @keyframes popIn {
-            0% { transform: scale(0); }
-            100% { transform: scale(1); }
-        }
+        .seq-container { display: flex; flex-wrap: wrap; gap: 4px; min-height: 40px; background: rgba(255,255,255,0.7); padding: 6px; border-radius: 10px; width: 90%; border: 2px dashed rgba(0,0,0,0.1); }
+        .cmd-block { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 6px; color: white; font-weight: bold; font-size: 14px; box-shadow: 0 3px 0 rgba(0,0,0,0.2); animation: popIn 0.2s ease-out; }
+        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
 
         .player1 .cmd-block { background: var(--p1-main); }
         .player2 .cmd-block { background: var(--p2-main); }
 
-        .global-controls {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        button.global-btn {
-            padding: 12px 20px;
-            font-size: 18px;
-            color: white;
-            border-radius: 15px;
-        }
-        
+        .global-controls { display: flex; gap: 15px; margin-bottom: 20px; position: relative; }
+        button.global-btn { padding: 12px 20px; font-size: 18px; color: white; border-radius: 15px; }
         button#go-btn { background-color: #ff9800; box-shadow: 0 5px 0 #f57c00; }
         button.reset-btn { background-color: #e74c3c; box-shadow: 0 5px 0 #c0392b; }
 
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.6);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            visibility: hidden;
-            opacity: 0;
-            transition: all 0.3s;
-        }
-
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 100; visibility: hidden; opacity: 0; transition: all 0.3s; }
         .modal-overlay.active { visibility: visible; opacity: 1; }
-        .modal-box {
-            background: white;
-            padding: 25px;
-            border-radius: 20px;
-            text-align: center;
-            max-width: 80%;
-            transform: scale(0.7);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
+        .modal-box { background: white; padding: 25px; border-radius: 20px; text-align: center; max-width: 80%; transform: scale(0.7); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .modal-overlay.active .modal-box { transform: scale(1); }
         .modal-title { font-size: 24px; margin-bottom: 10px; color: #ff9800; }
         .modal-msg { font-size: 16px; margin-bottom: 20px; color: #555; white-space: pre-line;}
@@ -367,15 +110,8 @@
 <body>
 
     <div class="decorations">
-        <div class="sun">☀️</div>
-        <div class="cloud c1">☁️</div>
-        <div class="cloud c2">☁️</div>
-        <div class="cloud c3">☁️</div>
-        <div class="grass"></div>
-        <div class="flower f1">🌻</div>
-        <div class="flower f2">🌸</div>
-        <div class="flower f3">🌷</div>
-        <div class="flower f4">🌼</div>
+        <div class="sun">☀️</div><div class="cloud c1">☁️</div><div class="cloud c2">☁️</div><div class="cloud c3">☁️</div>
+        <div class="grass"></div><div class="flower f1">🌻</div><div class="flower f2">🌸</div><div class="flower f3">🌷</div><div class="flower f4">🌼</div>
     </div>
 
     <h1>¡Carrera de Abejitas! 🐝</h1>
@@ -386,24 +122,27 @@
         <canvas id="drawing-canvas"></canvas>
     </div>
 
-    <!-- Controles -->
     <div class="panels-container">
+        <!-- Panel Azul -->
         <div class="panel player1">
             <h3>🐝 Azul</h3>
             <div class="btn-group">
-                <button class="cmd-btn" onclick="addCommand(1, 'L')">↺ Giro Izq</button>
+                <button class="cmd-btn" onclick="addCommand(1, 'L')">↺ Izq</button>
                 <button class="cmd-btn" onclick="addCommand(1, 'F')">⬆️ Avanza</button>
-                <button class="cmd-btn" onclick="addCommand(1, 'R')">↻ Giro Der</button>
+                <button class="cmd-btn" onclick="addCommand(1, 'R')">↻ Der</button>
+                <button class="cmd-btn undo-btn" onclick="undoCommand(1)">🔙 Borrar</button>
             </div>
             <div class="seq-container" id="seq1"></div>
         </div>
 
+        <!-- Panel Verde -->
         <div class="panel player2">
             <h3>🐝 Verde</h3>
             <div class="btn-group">
-                <button class="cmd-btn" onclick="addCommand(2, 'L')">↺ Giro Izq</button>
+                <button class="cmd-btn" onclick="addCommand(2, 'L')">↺ Izq</button>
                 <button class="cmd-btn" onclick="addCommand(2, 'F')">⬆️ Avanza</button>
-                <button class="cmd-btn" onclick="addCommand(2, 'R')">↻ Giro Der</button>
+                <button class="cmd-btn" onclick="addCommand(2, 'R')">↻ Der</button>
+                <button class="cmd-btn undo-btn" onclick="undoCommand(2)">🔙 Borrar</button>
             </div>
             <div class="seq-container" id="seq2"></div>
         </div>
@@ -411,269 +150,151 @@
     
     <div class="global-controls">
         <button class="global-btn" onclick="executeCommands()" id="go-btn">🚀 ¡VOLAR!</button>
-        <button class="global-btn reset-btn" onclick="resetGame()">🔄 Reset</button>
+        <button class="global-btn reset-btn" onclick="resetGame()">🔄 Resetear Nivel</button>
     </div>
 
     <div class="modal-overlay" id="modal">
         <div class="modal-box">
-            <h2 class="modal-title" id="m-title">Título</h2>
-            <p class="modal-msg" id="m-msg">Mensaje</p>
+            <h2 class="modal-title" id="m-title">Título</h2><p class="modal-msg" id="m-msg">Mensaje</p>
             <button class="modal-btn" onclick="closeModal()">¡Genial!</button>
         </div>
     </div>
 
     <script>
-        const gridSize = 4;
-        let isExecuting = false;
-
-        let bees = {
-            1: { pos: {x: 0, y: 0}, dir: 0, commands: [] }, 
-            2: { pos: {x: 3, y: 3}, dir: 2, commands: [] }  
-        };
-
-        const gridEl = document.getElementById('grid');
-        const canvas = document.getElementById('drawing-canvas');
-        const ctx = canvas.getContext('2d');
+        const gridSize = 4; let isExecuting = false;
+        let bees = { 1: { pos: {x: 0, y: 0}, dir: 0, commands: [] }, 2: { pos: {x: 3, y: 3}, dir: 2, commands: [] } };
+        const gridEl = document.getElementById('grid'); const canvas = document.getElementById('drawing-canvas'); const ctx = canvas.getContext('2d');
         let isDrawing = false;
 
         function initGrid() {
             gridEl.innerHTML = '';
             for (let y = 0; y < gridSize; y++) {
                 for (let x = 0; x < gridSize; x++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'cell';
-                    cell.dataset.x = x;
-                    cell.dataset.y = y;
-                    cell.id = `cell-${x}-${y}`;
+                    const cell = document.createElement('div'); cell.className = 'cell'; cell.dataset.x = x; cell.dataset.y = y; cell.id = `cell-${x}-${y}`;
                     gridEl.appendChild(cell);
                 }
             }
-            setTimeout(() => {
-                canvas.width = gridEl.offsetWidth;
-                canvas.height = gridEl.offsetHeight;
-                ctx.lineWidth = 8;
-                ctx.lineCap = 'round';
-                ctx.lineJoin = 'round';
-                ctx.setLineDash([12, 15]); 
-                ctx.strokeStyle = 'rgba(255, 152, 0, 0.7)'; 
-            }, 50);
+            setTimeout(() => { canvas.width = gridEl.offsetWidth; canvas.height = gridEl.offsetHeight; ctx.lineWidth = 8; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.setLineDash([12, 15]); ctx.strokeStyle = 'rgba(255, 152, 0, 0.7)'; }, 50);
         }
 
-        function getCursorPos(e) {
-            const rect = canvas.getBoundingClientRect();
-            let clientX = e.clientX;
-            let clientY = e.clientY;
-            if (e.touches && e.touches.length > 0) {
-                clientX = e.touches[0].clientX;
-                clientY = e.touches[0].clientY;
-            }
-            return { x: clientX - rect.left, y: clientY - rect.top };
-        }
-
-        function startDraw(e) {
-            if (isExecuting) return;
-            isDrawing = true;
-            const pos = getCursorPos(e);
-            ctx.beginPath();
-            ctx.moveTo(pos.x, pos.y);
-            e.preventDefault();
-        }
-
-        function draw(e) {
-            if (!isDrawing || isExecuting) return;
-            const pos = getCursorPos(e);
-            ctx.lineTo(pos.x, pos.y);
-            ctx.stroke();
-            e.preventDefault();
-        }
+        function getCursorPos(e) { const rect = canvas.getBoundingClientRect(); let clientX = e.clientX; let clientY = e.clientY; if (e.touches && e.touches.length > 0) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; } return { x: clientX - rect.left, y: clientY - rect.top }; }
+        function startDraw(e) { if (isExecuting) return; isDrawing = true; const pos = getCursorPos(e); ctx.beginPath(); ctx.moveTo(pos.x, pos.y); e.preventDefault(); }
+        function draw(e) { if (!isDrawing || isExecuting) return; const pos = getCursorPos(e); ctx.lineTo(pos.x, pos.y); ctx.stroke(); e.preventDefault(); }
         function stopDraw() { isDrawing = false; }
 
-        canvas.addEventListener('mousedown', startDraw);
-        canvas.addEventListener('mousemove', draw);
-        window.addEventListener('mouseup', stopDraw);
-        canvas.addEventListener('touchstart', startDraw, { passive: false });
-        canvas.addEventListener('touchmove', draw, { passive: false });
-        window.addEventListener('touchend', stopDraw);
+        canvas.addEventListener('mousedown', startDraw); canvas.addEventListener('mousemove', draw); window.addEventListener('mouseup', stopDraw);
+        canvas.addEventListener('touchstart', startDraw, { passive: false }); canvas.addEventListener('touchmove', draw, { passive: false }); window.addEventListener('touchend', stopDraw);
 
         function spawnSquares() {
             let p1 = 0;
-            while (p1 < 3) {
-                let rx = Math.floor(Math.random() * 4);
-                let ry = Math.floor(Math.random() * 2);
-                const cell = document.getElementById(`cell-${rx}-${ry}`);
-                if ((rx !== 0 || ry !== 0) && !cell.classList.contains('blue')) {
-                    cell.classList.add('blue');
-                    p1++;
-                }
+            while (p1 < 3) { let rx = Math.floor(Math.random() * 4); let ry = Math.floor(Math.random() * 2); const cell = document.getElementById(`cell-${rx}-${ry}`);
+                if ((rx !== 0 || ry !== 0) && !cell.classList.contains('blue')) { cell.classList.add('blue'); p1++; }
             }
             let p2 = 0;
-            while (p2 < 3) {
-                let rx = Math.floor(Math.random() * 4);
-                let ry = Math.floor(Math.random() * 2) + 2; 
-                const cell = document.getElementById(`cell-${rx}-${ry}`);
-                if ((rx !== 3 || ry !== 3) && !cell.classList.contains('green')) {
-                    cell.classList.add('green');
-                    p2++;
-                }
+            while (p2 < 3) { let rx = Math.floor(Math.random() * 4); let ry = Math.floor(Math.random() * 2) + 2; const cell = document.getElementById(`cell-${rx}-${ry}`);
+                if ((rx !== 3 || ry !== 3) && !cell.classList.contains('green')) { cell.classList.add('green'); p2++; }
             }
         }
 
-        function getTransform(dir) {
-            if (dir === 0) return 'scaleX(-1)';      
-            if (dir === 1) return 'rotate(-90deg)';  
-            if (dir === 2) return 'scaleX(1)';       
-            if (dir === 3) return 'rotate(90deg)';   
-            return 'scaleX(1)';
+        // LÓGICA DE ROTACIÓN UNIVERSAL (Mirando a la derecha/arriba)
+        function getTransform(dir) { 
+            if (dir === 0) return 'rotate(90deg)';   // Avanza a la DERECHA
+            if (dir === 1) return 'rotate(180deg)';  // Avanza hacia ABAJO
+            if (dir === 2) return 'rotate(-90deg)';  // Avanza a la IZQUIERDA
+            if (dir === 3) return 'rotate(0deg)';    // Avanza hacia ARRIBA
         }
 
         function drawBees() {
             document.querySelectorAll('.bee-container').forEach(b => b.remove());
-
             function createBee(playerNum) {
                 const b = bees[playerNum];
                 const cell = document.getElementById(`cell-${b.pos.x}-${b.pos.y}`);
+                const container = document.createElement('div'); container.className = `bee-container bee${playerNum}`;
+                const orientation = document.createElement('div'); orientation.className = 'bee-orientation'; orientation.style.transform = getTransform(b.dir);
+                const sprite = document.createElement('div'); sprite.className = 'bee-sprite';
                 
-                const container = document.createElement('div');
-                container.className = `bee-container bee${playerNum}`;
+                // Aplicamos el sprite personalizado
+                let filterColor = playerNum === 2 ? 'filter: hue-rotate(120deg) brightness(1.1);' : '';
+                sprite.innerHTML = `<img src="../assets/robots/BeebotEmoji.png" alt="Bee" style="width: 48px; height: 48px; object-fit: contain; pointer-events: none; ${filterColor}">`;
                 
-                const orientation = document.createElement('div');
-                orientation.className = 'bee-orientation';
-                orientation.style.transform = getTransform(b.dir);
-                
-                const sprite = document.createElement('div');
-                sprite.className = 'bee-sprite';
-                sprite.innerText = '🐝';
-                
-                orientation.appendChild(sprite);
-                container.appendChild(orientation);
-                cell.appendChild(container);
-                
-                if (cell.classList.contains(playerNum === 1 ? 'blue' : 'green')) {
-                    cell.classList.remove(playerNum === 1 ? 'blue' : 'green');
-                }
+                orientation.appendChild(sprite); container.appendChild(orientation); cell.appendChild(container);
+                if (cell.classList.contains(playerNum === 1 ? 'blue' : 'green')) cell.classList.remove(playerNum === 1 ? 'blue' : 'green');
                 return container;
             }
 
-            const beeContainer1 = createBee(1);
-            const beeContainer2 = createBee(2);
-
+            const beeContainer1 = createBee(1); const beeContainer2 = createBee(2);
             if(bees[1].pos.x === bees[2].pos.x && bees[1].pos.y === bees[2].pos.y) {
-                beeContainer1.style.marginTop = '-12px';
-                beeContainer1.style.marginLeft = '-12px';
-                beeContainer2.style.marginTop = '12px';
-                beeContainer2.style.marginLeft = '12px';
+                beeContainer1.style.marginTop = '-12px'; beeContainer1.style.marginLeft = '-12px';
+                beeContainer2.style.marginTop = '12px'; beeContainer2.style.marginLeft = '12px';
             }
         }
 
-        function addCommand(player, cmd) {
-            if(isExecuting) return;
-            bees[player].commands.push(cmd);
+        // AGREGADA FUNCIÓN UNDO (Borrar)
+        function undoCommand(player) {
+            if (isExecuting || bees[player].commands.length === 0) return;
+            bees[player].commands.pop();
             updateSequenceUI(player);
         }
 
+        function addCommand(player, cmd) { if(isExecuting) return; bees[player].commands.push(cmd); updateSequenceUI(player); }
         function updateSequenceUI(player) {
-            const symbols = { 'F': '⬆️', 'R': '↻', 'L': '↺' };
-            const container = document.getElementById(`seq${player}`);
-            container.innerHTML = ''; 
-            
-            bees[player].commands.forEach(cmd => {
-                const span = document.createElement('span');
-                span.className = 'cmd-block';
-                span.innerText = symbols[cmd];
-                container.appendChild(span);
-            });
+            const symbols = { 'F': '⬆️', 'R': '↻', 'L': '↺' }; const container = document.getElementById(`seq${player}`); container.innerHTML = ''; 
+            bees[player].commands.forEach(cmd => { const span = document.createElement('span'); span.className = 'cmd-block'; span.innerText = symbols[cmd]; container.appendChild(span); });
         }
 
         function processMove(player, cmd) {
             let b = bees[player];
             if (cmd === 'F') {
-                let newX = b.pos.x;
-                let newY = b.pos.y;
-                if (b.dir === 0) newX++;      
-                else if (b.dir === 1) newY++; 
-                else if (b.dir === 2) newX--; 
-                else if (b.dir === 3) newY--; 
-
-                if (newX >= 0 && newX < gridSize && newY >= 0 && newY < gridSize) {
-                    b.pos.x = newX;
-                    b.pos.y = newY;
-                }
-            } else if (cmd === 'R') {
-                b.dir = (b.dir + 1) % 4; 
-            } else if (cmd === 'L') {
-                b.dir = (b.dir + 3) % 4; 
-            }
+                let newX = b.pos.x, newY = b.pos.y;
+                if (b.dir === 0) newX++; else if (b.dir === 1) newY++; else if (b.dir === 2) newX--; else if (b.dir === 3) newY--; 
+                if (newX >= 0 && newX < gridSize && newY >= 0 && newY < gridSize) { b.pos.x = newX; b.pos.y = newY; }
+            } else if (cmd === 'R') b.dir = (b.dir + 1) % 4; else if (cmd === 'L') b.dir = (b.dir + 3) % 4; 
         }
 
         function executeCommands() {
             if ((bees[1].commands.length === 0 && bees[2].commands.length === 0) || isExecuting) return;
-            isExecuting = true;
-            document.getElementById('go-btn').style.opacity = "0.5";
-            
-            let step = 0;
-            const maxSteps = Math.max(bees[1].commands.length, bees[2].commands.length);
-
+            isExecuting = true; document.getElementById('go-btn').style.opacity = "0.5";
+            let step = 0; const maxSteps = Math.max(bees[1].commands.length, bees[2].commands.length);
             const interval = setInterval(() => {
-                if (step >= maxSteps) {
-                    clearInterval(interval);
-                    checkWin();
-                    return;
-                }
+                if (step >= maxSteps) { clearInterval(interval); checkWin(); return; }
                 if (step < bees[1].commands.length) processMove(1, bees[1].commands[step]);
                 if (step < bees[2].commands.length) processMove(2, bees[2].commands[step]);
-                
-                drawBees();
-                step++;
+                drawBees(); step++;
             }, 600); 
         }
 
-        function showModal(title, msg) {
-            document.getElementById('m-title').innerText = title;
-            document.getElementById('m-msg').innerText = msg;
-            document.getElementById('modal').classList.add('active');
-        }
+        function showModal(title, msg) { document.getElementById('m-title').innerText = title; document.getElementById('m-msg').innerText = msg; document.getElementById('modal').classList.add('active'); }
+        function closeModal() { document.getElementById('modal').classList.remove('active'); }
 
-        function closeModal() {
-            document.getElementById('modal').classList.remove('active');
-        }
-
+        // LÓGICA DE VICTORIA MEJORADA (Muestra quién ganó individualmente)
         function checkWin() {
-            const bluesLeft = document.querySelectorAll('.blue').length;
+            const bluesLeft = document.querySelectorAll('.blue').length; 
             const greensLeft = document.querySelectorAll('.green').length;
             
             setTimeout(() => {
                 if (bluesLeft === 0 && greensLeft === 0) {
-                    showModal("¡Felicidades! 🎉", "¡Ambas abejas se comieron todo el néctar!");
+                    showModal("¡Empate! 🎉", "¡Ambos equipos recolectaron todo al mismo tiempo!");
+                } else if (bluesLeft === 0) {
+                    showModal("¡Equipo Azul Gana! 💙", "¡La abeja azul fue más rápida y se comió todo su néctar!");
+                } else if (greensLeft === 0) {
+                    showModal("¡Equipo Verde Gana! 💚", "¡La abeja verde se comió todas sus hojitas primero!");
                 } else {
-                    let msg = "¡Faltó comida por recoger!\n\n";
-                    if (bluesLeft > 0) msg += `🔹 La Abeja Azul dejó ${bluesLeft} gotas de néctar.\n`;
-                    if (greensLeft > 0) msg += `🔸 La Abeja Verde dejó ${greensLeft} hojitas.`;
+                    let msg = "¡Nadie logró terminar el nivel!\n\n";
+                    if (bluesLeft > 0) msg += `🔹 Azul dejó ${bluesLeft} gotas de néctar.\n`;
+                    if (greensLeft > 0) msg += `🔸 Verde dejó ${greensLeft} hojitas.`;
                     showModal("¡Sigan intentando! 💪", msg);
                 }
-                document.getElementById('go-btn').style.opacity = "1";
-                isExecuting = false;
+                document.getElementById('go-btn').style.opacity = "1"; isExecuting = false;
             }, 400);
         }
 
         function resetGame() {
-            bees[1] = { pos: {x: 0, y: 0}, dir: 0, commands: [] };
-            bees[2] = { pos: {x: 3, y: 3}, dir: 2, commands: [] };
-            isExecuting = false;
-            
-            updateSequenceUI(1);
-            updateSequenceUI(2);
-            document.getElementById('go-btn').style.opacity = "1";
-            
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            initGrid();
-            spawnSquares();
-            drawBees();
+            bees[1] = { pos: {x: 0, y: 0}, dir: 0, commands: [] }; bees[2] = { pos: {x: 3, y: 3}, dir: 2, commands: [] }; isExecuting = false;
+            updateSequenceUI(1); updateSequenceUI(2); document.getElementById('go-btn').style.opacity = "1"; ctx.clearRect(0, 0, canvas.width, canvas.height);
+            initGrid(); spawnSquares(); drawBees();
         }
 
-        initGrid();
-        spawnSquares();
-        drawBees();
+        initGrid(); spawnSquares(); drawBees();
     </script>
 </body>
 </html>

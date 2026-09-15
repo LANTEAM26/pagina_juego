@@ -7,369 +7,60 @@
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
-        :root {
-            --p1-main: #3498db;
-            --p1-dark: #2980b9;
-            --p1-light: #d6eaf8;
-            --grid-bg: #8d6e63;
-        }
-
-        body {
-            font-family: 'Fredoka', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 0;
-            padding: 10px;
-            min-height: 100vh;
-            touch-action: none; 
-            color: #333;
-            background-color: transparent; 
-        }
-
-        /* PAISAJE DE FONDO */
-        .decorations {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            z-index: -1;
-            pointer-events: none; 
-            overflow: hidden;
-            background: linear-gradient(180deg, #74ebd5 0%, #ACB6E5 100%);
-        }
-
-        .decorations::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='104' viewBox='0 0 60 104' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 52l15-26 15 26v52l-15 26-15-26zM0 0l15 26v52L0 104V0zm60 0v104L45 78V26z' fill='%23ffffff' fill-opacity='0.15' fill-rule='evenodd'/%3E%3C/svg%3E");
-            z-index: 1;
-        }
-
-        .sun {
-            position: absolute;
-            top: 3%; right: 5%;
-            font-size: 70px;
-            z-index: 2;
-            filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.8));
-            animation: pulse-sun 3s infinite alternate;
-        }
-
-        @keyframes pulse-sun {
-            0% { transform: scale(1) rotate(0deg); }
-            100% { transform: scale(1.1) rotate(10deg); }
-        }
-
-        .cloud {
-            position: absolute;
-            font-size: 60px;
-            opacity: 0.8;
-            z-index: 2;
-            filter: drop-shadow(0 5px 15px rgba(255,255,255,0.5));
-        }
+        :root { --p1-main: #3498db; --p1-dark: #2980b9; --p1-light: #d6eaf8; --grid-bg: #8d6e63; }
+        body { font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; align-items: center; margin: 0; padding: 10px; min-height: 100vh; touch-action: none; color: #333; background-color: transparent; }
         
-        .c1 { top: 8%; left: -20%; animation: drift 35s linear infinite; }
-        .c2 { top: 20%; left: -20%; animation: drift 45s linear infinite 15s; font-size: 45px;}
-        .c3 { top: 5%; left: -20%; animation: drift 55s linear infinite 25s; font-size: 80px;}
+        .decorations { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -1; pointer-events: none; overflow: hidden; background: linear-gradient(180deg, #74ebd5 0%, #ACB6E5 100%); }
+        .decorations::before { content: ''; position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg width='60' height='104' viewBox='0 0 60 104' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 52l15-26 15 26v52l-15 26-15-26zM0 0l15 26v52L0 104V0zm60 0v104L45 78V26z' fill='%23ffffff' fill-opacity='0.15' fill-rule='evenodd'/%3E%3C/svg%3E"); z-index: 1; }
+        .sun { position: absolute; top: 3%; right: 5%; font-size: 70px; z-index: 2; filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.8)); animation: pulse-sun 3s infinite alternate; }
+        @keyframes pulse-sun { 0% { transform: scale(1) rotate(0deg); } 100% { transform: scale(1.1) rotate(10deg); } }
+        .cloud { position: absolute; font-size: 60px; opacity: 0.8; z-index: 2; filter: drop-shadow(0 5px 15px rgba(255,255,255,0.5)); }
+        .c1 { top: 8%; left: -20%; animation: drift 35s linear infinite; } .c2 { top: 20%; left: -20%; animation: drift 45s linear infinite 15s; font-size: 45px;} .c3 { top: 5%; left: -20%; animation: drift 55s linear infinite 25s; font-size: 80px;}
+        @keyframes drift { 0% { transform: translateX(-20vw); } 100% { transform: translateX(120vw); } }
+        .grass { position: absolute; bottom: -5vh; left: -10vw; width: 120vw; height: 25vh; background: #a9dfbf; border-radius: 50% 50% 0 0; z-index: 2; box-shadow: inset 0 15px 0 #82e0aa, 0 -30px 50px rgba(46,204,113,0.3); }
 
-        @keyframes drift {
-            0% { transform: translateX(-20vw); }
-            100% { transform: translateX(120vw); }
-        }
+        h1 { color: #2c3e50; margin: 0px 0 5px 0; text-align: center; font-size: 26px; text-shadow: 2px 2px 0px #fff; position: relative; }
 
-        .grass {
-            position: absolute;
-            bottom: -5vh; left: -10vw;
-            width: 120vw; height: 25vh;
-            background: #a9dfbf;
-            border-radius: 50% 50% 0 0;
-            z-index: 2;
-            box-shadow: inset 0 15px 0 #82e0aa, 0 -30px 50px rgba(46,204,113,0.3);
-        }
+        .prompt-box { text-align: center; background: rgba(255, 255, 255, 0.95); padding: 10px 20px; border-radius: 15px; font-size: 15px; font-weight: 600; max-width: 550px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; border: 3px solid #ffb74d; }
+        #target-word-display { font-size: 24px; color: #e67e22; display: block; margin-top: 5px; letter-spacing: 1px; }
+        .first-letter { color: #e74c3c; font-size: 1.3em; text-decoration: underline; }
 
-        .flower {
-            position: absolute;
-            font-size: 35px;
-            bottom: 15vh;
-            z-index: 3;
-            transform-origin: bottom center;
-            animation: sway 2.5s ease-in-out infinite alternate;
-        }
-        .f1 { left: 12%; animation-delay: 0s; font-size: 45px; }
-        .f2 { left: 28%; animation-delay: 1s; bottom: 12vh; font-size: 30px;}
-        .f3 { right: 25%; animation-delay: 0.5s; bottom: 18vh; font-size: 40px; }
-        .f4 { right: 8%; animation-delay: 1.5s; font-size: 50px;}
+        .grid-wrapper { position: relative; margin-bottom: 15px; padding: 10px; background: #ffe0b2; border-radius: 15px; box-shadow: 0 8px 0 #ffb74d, 0 15px 25px rgba(0,0,0,0.25); }
+        #grid { display: grid; grid-template-columns: repeat(4, 75px); grid-template-rows: repeat(4, 75px); gap: 6px; background-color: var(--grid-bg); border-radius: 10px; padding: 6px; }
+        #drawing-canvas { position: absolute; top: 10px; left: 10px; z-index: 10; cursor: crosshair; border-radius: 10px; }
 
-        @keyframes sway {
-            0% { transform: rotate(-12deg); }
-            100% { transform: rotate(12deg); }
-        }
+        .cell { background-color: #fff9c4; border-radius: 8px; display: flex; justify-content: center; align-items: center; position: relative; user-select: none; box-shadow: inset 0 -4px 0 rgba(0,0,0,0.1); font-size: 13px; font-weight: bold; color: #5d4037; text-align: center; padding: 2px; word-wrap: break-word; transition: all 0.2s; }
+        .cell[data-start="true"] { background-color: #e2f1f8; box-shadow: inset 0 -4px 0 rgba(0,0,0,0.05); }
+        .manual-selected { background-color: #ffe082 !important; color: #d84315; box-shadow: inset 0 0 10px #ffca28, inset 0 -4px 0 rgba(0,0,0,0.1); border: 2px solid #ffb300; transform: scale(0.95); }
+        .visited-correct { background-color: #a9dfbf !important; color: #1e8449; box-shadow: inset 0 0 15px #2ecc71 !important; border: none; transform: scale(1); }
+        .visited-correct::before { content: '💧'; position: absolute; font-size: 20px; top: -5px; right: -5px; animation: popIn 0.3s ease-out; }
 
-        h1 {
-            color: #2c3e50;
-            margin: 0px 0 5px 0;
-            text-align: center;
-            font-size: 26px;
-            text-shadow: 2px 2px 0px #fff;
-            position: relative;
-        }
-
-        .prompt-box {
-            text-align: center;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 10px 20px;
-            border-radius: 15px;
-            font-size: 15px;
-            font-weight: 600;
-            max-width: 550px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            position: relative;
-            border: 3px solid #ffb74d;
-        }
-
-        #target-word-display {
-            font-size: 24px;
-            color: #e67e22;
-            display: block;
-            margin-top: 5px;
-            letter-spacing: 1px;
-        }
-
-        .first-letter {
-            color: #e74c3c;
-            font-size: 1.3em;
-            text-decoration: underline;
-        }
-
-        .grid-wrapper {
-            position: relative;
-            margin-bottom: 15px;
-            padding: 10px;
-            background: #ffe0b2;
-            border-radius: 15px;
-            box-shadow: 0 8px 0 #ffb74d, 0 15px 25px rgba(0,0,0,0.25);
-        }
-
-        #grid {
-            display: grid;
-            grid-template-columns: repeat(4, 75px);
-            grid-template-rows: repeat(4, 75px);
-            gap: 6px;
-            background-color: var(--grid-bg);
-            border-radius: 10px;
-            padding: 6px;
-        }
-
-        #drawing-canvas {
-            position: absolute;
-            top: 10px; left: 10px;
-            z-index: 10;
-            cursor: crosshair;
-            border-radius: 10px;
-        }
-
-        .cell {
-            background-color: #fff9c4;
-            border-radius: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            user-select: none;
-            box-shadow: inset 0 -4px 0 rgba(0,0,0,0.1);
-            font-size: 13px;
-            font-weight: bold;
-            color: #5d4037;
-            text-align: center;
-            padding: 2px;
-            word-wrap: break-word;
-            transition: all 0.2s;
-        }
+        .bee-container { position: absolute; z-index: 15; width: 55px; height: 55px; display: flex; justify-content: center; align-items: center; }
+        .bee-orientation { transition: transform 0.2s ease; display: flex; justify-content: center; align-items: center; }
         
-        .cell[data-start="true"] {
-            background-color: #e2f1f8;
-            box-shadow: inset 0 -4px 0 rgba(0,0,0,0.05);
-        }
+        /* Animación ajustada para el sprite */
+        .bee-sprite { display: flex; justify-content: center; align-items: center; animation: float 2s ease-in-out infinite; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-5px); } }
 
-        .manual-selected {
-            background-color: #ffe082 !important;
-            color: #d84315;
-            box-shadow: inset 0 0 10px #ffca28, inset 0 -4px 0 rgba(0,0,0,0.1);
-            border: 2px solid #ffb300;
-            transform: scale(0.95);
-        }
-
-        .visited-correct {
-            background-color: #a9dfbf !important;
-            color: #1e8449;
-            box-shadow: inset 0 0 15px #2ecc71 !important;
-            border: none;
-            transform: scale(1);
-        }
-        .visited-correct::before {
-            content: '💧';
-            position: absolute;
-            font-size: 20px;
-            top: -5px; right: -5px;
-            animation: popIn 0.3s ease-out;
-        }
-
-        .bee-container {
-            position: absolute;
-            z-index: 15;
-            width: 55px; height: 55px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .bee-orientation {
-            transition: transform 0.2s ease;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .bee-sprite {
-            font-size: 40px;
-            animation: float 2s ease-in-out infinite;
-            filter: drop-shadow(0 0 8px var(--p1-main));
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-5px); }
-        }
-
-        .panels-container {
-            display: flex;
-            justify-content: center;
-            width: 100%; 
-            max-width: 450px;
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .panel {
-            box-sizing: border-box; 
-            background: rgba(255, 255, 255, 0.95);
-            padding: 15px;
-            border-radius: 18px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-            width: 90%; 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            border: 4px solid var(--p1-main);
-        }
-
+        .panels-container { display: flex; justify-content: center; width: 100%; max-width: 450px; margin-bottom: 20px; position: relative; }
+        .panel { box-sizing: border-box; background: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 18px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); width: 90%; display: flex; flex-direction: column; align-items: center; border: 4px solid var(--p1-main); }
         .panel h3 { margin: 0 0 12px 0; font-size: 18px; color: var(--p1-dark); }
+        .btn-group { display: flex; gap: 8px; justify-content: space-between; width: 100%; margin-bottom: 15px; }
+        button { font-family: 'Fredoka', sans-serif; font-weight: 700; border: none; border-radius: 10px; cursor: pointer; transition: all 0.1s; user-select: none; }
+        button:active { transform: translateY(4px); box-shadow: 0 0px 0 transparent !important; }
+        .cmd-btn { padding: 10px 5px; font-size: 14px; color: white; flex: 1; background-color: var(--p1-main); box-shadow: 0 5px 0 var(--p1-dark); }
+        .seq-container { display: flex; flex-wrap: wrap; gap: 5px; min-height: 45px; background: rgba(255,255,255,0.7); padding: 8px; border-radius: 10px; width: 95%; border: 2px dashed rgba(0,0,0,0.1); }
+        .cmd-block { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; color: white; font-weight: bold; font-size: 18px; box-shadow: 0 3px 0 rgba(0,0,0,0.2); animation: popIn 0.2s ease-out; background: var(--p1-main); }
+        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
 
-        .btn-group {
-            display: flex;
-            gap: 8px;
-            justify-content: space-between;
-            width: 100%;
-            margin-bottom: 15px;
-        }
+        .global-controls { display: flex; gap: 15px; margin-bottom: 20px; position: relative; }
+        .global-btn { padding: 12px 20px; font-size: 18px; color: white; border-radius: 15px; }
+        #go-btn { background-color: #ff9800; box-shadow: 0 5px 0 #f57c00; }
+        .reset-btn { background-color: #e74c3c; box-shadow: 0 5px 0 #c0392b; }
 
-        button {
-            font-family: 'Fredoka', sans-serif;
-            font-weight: 700;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.1s;
-            user-select: none;
-        }
-
-        button:active {
-            transform: translateY(4px);
-            box-shadow: 0 0px 0 transparent !important;
-        }
-
-        button.cmd-btn {
-            padding: 10px 5px;
-            font-size: 14px; 
-            color: white;
-            flex: 1;
-            background-color: var(--p1-main); 
-            box-shadow: 0 5px 0 var(--p1-dark);
-        }
-
-        .seq-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            min-height: 45px;
-            background: rgba(255,255,255,0.7);
-            padding: 8px;
-            border-radius: 10px;
-            width: 95%;
-            border: 2px dashed rgba(0,0,0,0.1);
-        }
-
-        .cmd-block {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 32px; height: 32px;
-            border-radius: 6px;
-            color: white;
-            font-weight: bold;
-            font-size: 18px;
-            box-shadow: 0 3px 0 rgba(0,0,0,0.2);
-            animation: popIn 0.2s ease-out;
-            background: var(--p1-main);
-        }
-
-        @keyframes popIn {
-            0% { transform: scale(0); }
-            100% { transform: scale(1); }
-        }
-
-        .global-controls {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        button.global-btn {
-            padding: 12px 20px;
-            font-size: 18px;
-            color: white;
-            border-radius: 15px;
-        }
-        
-        button#go-btn { background-color: #ff9800; box-shadow: 0 5px 0 #f57c00; }
-        button.reset-btn { background-color: #e74c3c; box-shadow: 0 5px 0 #c0392b; }
-
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.6);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            visibility: hidden;
-            opacity: 0;
-            transition: all 0.3s;
-        }
-
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 100; visibility: hidden; opacity: 0; transition: all 0.3s; }
         .modal-overlay.active { visibility: visible; opacity: 1; }
-        .modal-box {
-            background: white;
-            padding: 25px;
-            border-radius: 20px;
-            text-align: center;
-            max-width: 80%;
-            transform: scale(0.7);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
+        .modal-box { background: white; padding: 25px; border-radius: 20px; text-align: center; max-width: 80%; transform: scale(0.7); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .modal-overlay.active .modal-box { transform: scale(1); }
         .modal-title { font-size: 24px; margin-bottom: 10px; color: #ff9800; }
         .modal-msg { font-size: 16px; margin-bottom: 20px; color: #555; white-space: pre-line;}
@@ -379,15 +70,8 @@
 <body>
 
     <div class="decorations">
-        <div class="sun">☀️</div>
-        <div class="cloud c1">☁️</div>
-        <div class="cloud c2">☁️</div>
-        <div class="cloud c3">☁️</div>
+        <div class="sun">☀️</div><div class="cloud c1">☁️</div><div class="cloud c2">☁️</div><div class="cloud c3">☁️</div>
         <div class="grass"></div>
-        <div class="flower f1">🌻</div>
-        <div class="flower f2">🌸</div>
-        <div class="flower f3">🌷</div>
-        <div class="flower f4">🌼</div>
     </div>
 
     <h1>¡Atrapa Palabras! 🐝</h1>
@@ -429,69 +113,42 @@
 
     <script>
         const wordDictionary = {
-            'A': ['Avión', 'Árbol', 'Abeja', 'Agua', 'Araña'],
-            'B': ['Barco', 'Bota', 'Boca', 'Bola', 'Búho'],
-            'C': ['Casa', 'Coche', 'Cama', 'Copa', 'Cubo'],
-            'D': ['Dado', 'Dedo', 'Dona', 'Dulce', 'Diente'],
-            'E': ['Elefante', 'Estrella', 'Erizo', 'Escoba', 'Espejo'],
-            'F': ['Flor', 'Fuego', 'Foca', 'Foco', 'Fresa'],
-            'G': ['Gato', 'Gota', 'Goma', 'Gorro', 'Gallo'],
-            'H': ['Hielo', 'Hada', 'Hoja', 'Huevo', 'Hueso'],
-            'I': ['Isla', 'Imán', 'Iguana', 'Iglesia', 'Insecto'],
-            'J': ['Jirafa', 'Jugo', 'Joya', 'Jabón', 'Jaula'],
-            'L': ['Luna', 'Lobo', 'Loro', 'Lápiz', 'Libro'],
-            'M': ['Mano', 'Mesa', 'Mono', 'Mapa', 'Miel'],
-            'N': ['Nido', 'Nube', 'Nieve', 'Naranja', 'Nuez'],
-            'O': ['Oso', 'Ojo', 'Olla', 'Oveja', 'Oreja'],
-            'P': ['Pato', 'Perro', 'Pelo', 'Pera', 'Pez'],
-            'R': ['Rana', 'Ratón', 'Rosa', 'Reloj', 'Rueda'],
-            'S': ['Sol', 'Sapo', 'Sopa', 'Silla', 'Seta'],
-            'T': ['Taza', 'Tren', 'Tigre', 'Toro', 'Tomate'],
-            'V': ['Vaca', 'Vaso', 'Vela', 'Viento', 'Vaso'],
-            'Z': ['Zapato', 'Zorro', 'Zeta', 'Zanahoria', 'Zumo']
+            'A': ['Avión', 'Árbol', 'Abeja', 'Agua', 'Araña'], 'B': ['Barco', 'Bota', 'Boca', 'Bola', 'Búho'],
+            'C': ['Casa', 'Coche', 'Cama', 'Copa', 'Cubo'], 'D': ['Dado', 'Dedo', 'Dona', 'Dulce', 'Diente'],
+            'E': ['Elefante', 'Estrella', 'Erizo', 'Escoba', 'Espejo'], 'F': ['Flor', 'Fuego', 'Foca', 'Foco', 'Fresa'],
+            'G': ['Gato', 'Gota', 'Goma', 'Gorro', 'Gallo'], 'H': ['Hielo', 'Hada', 'Hoja', 'Huevo', 'Hueso'],
+            'I': ['Isla', 'Imán', 'Iguana', 'Iglesia', 'Insecto'], 'J': ['Jirafa', 'Jugo', 'Joya', 'Jabón', 'Jaula'],
+            'L': ['Luna', 'Lobo', 'Loro', 'Lápiz', 'Libro'], 'M': ['Mano', 'Mesa', 'Mono', 'Mapa', 'Miel'],
+            'N': ['Nido', 'Nube', 'Nieve', 'Naranja', 'Nuez'], 'O': ['Oso', 'Ojo', 'Olla', 'Oveja', 'Oreja'],
+            'P': ['Pato', 'Perro', 'Pelo', 'Pera', 'Pez'], 'R': ['Rana', 'Ratón', 'Rosa', 'Reloj', 'Rueda'],
+            'S': ['Sol', 'Sapo', 'Sopa', 'Silla', 'Seta'], 'T': ['Taza', 'Tren', 'Tigre', 'Toro', 'Tomate'],
+            'V': ['Vaca', 'Vaso', 'Vela', 'Viento', 'Vaso'], 'Z': ['Zapato', 'Zorro', 'Zeta', 'Zanahoria', 'Zumo']
         };
 
-        const gridSize = 4;
-        const totalCorrectWords = 4; 
-        
-        let isExecuting = false;
-        let bee = { pos: {x: 0, y: 0}, dir: 0, commands: [] }; 
-        let gridData = [];
-
-        const gridEl = document.getElementById('grid');
-        const canvas = document.getElementById('drawing-canvas');
-        const ctx = canvas.getContext('2d');
-        
-        let isDrawing = false;
-        let isDragging = false;
-        let startX = 0;
-        let startY = 0;
+        const gridSize = 4; const totalCorrectWords = 4; 
+        let isExecuting = false; let bee = { pos: {x: 0, y: 0}, dir: 0, commands: [] }; let gridData = [];
+        const gridEl = document.getElementById('grid'); const canvas = document.getElementById('drawing-canvas'); const ctx = canvas.getContext('2d');
+        let isDrawing = false; let isDragging = false; let startX = 0; let startY = 0;
 
         function generateLevel() {
             const letters = Object.keys(wordDictionary);
             const targetLetter = letters[Math.floor(Math.random() * letters.length)];
             const allTargetWords = wordDictionary[targetLetter];
-            
             const promptWord = allTargetWords[Math.floor(Math.random() * allTargetWords.length)];
             
-            document.getElementById('target-word-display').innerHTML = 
-                `<span class="first-letter">${promptWord.charAt(0)}</span>${promptWord.slice(1)}`;
+            document.getElementById('target-word-display').innerHTML = `<span class="first-letter">${promptWord.charAt(0)}</span>${promptWord.slice(1)}`;
 
-            let pool = [...allTargetWords];
-            let correctWords = [];
+            let pool = [...allTargetWords]; let correctWords = [];
             for(let i=0; i < totalCorrectWords; i++) {
                 if(pool.length === 0) pool = [...allTargetWords];
                 let idx = Math.floor(Math.random() * pool.length);
-                correctWords.push(pool[idx]);
-                pool.splice(idx, 1);
+                correctWords.push(pool[idx]); pool.splice(idx, 1);
             }
 
             let incorrectWords = [];
             for(let i=0; i < 11; i++) {
                 let rLetter = letters[Math.floor(Math.random() * letters.length)];
-                while(rLetter === targetLetter) {
-                    rLetter = letters[Math.floor(Math.random() * letters.length)];
-                }
+                while(rLetter === targetLetter) rLetter = letters[Math.floor(Math.random() * letters.length)];
                 let arr = wordDictionary[rLetter];
                 incorrectWords.push(arr[Math.floor(Math.random() * arr.length)]);
             }
@@ -499,15 +156,12 @@
             let restOfWords = [ ...correctWords, ...incorrectWords ];
             restOfWords.sort(() => Math.random() - 0.5); 
 
-            gridData = [];
-            let restIndex = 0;
-            
+            gridData = []; let restIndex = 0;
             for (let y = 0; y < gridSize; y++) {
                 gridData[y] = [];
                 for (let x = 0; x < gridSize; x++) {
-                    if (x === 0 && y === 0) {
-                        gridData[y][x] = { word: "", correct: false, isStart: true };
-                    } else {
+                    if (x === 0 && y === 0) gridData[y][x] = { word: "", correct: false, isStart: true };
+                    else {
                         let word = restOfWords[restIndex];
                         gridData[y][x] = { word: word, correct: correctWords.includes(word), isStart: false };
                         restIndex++;
@@ -520,252 +174,99 @@
             gridEl.innerHTML = '';
             for (let y = 0; y < gridSize; y++) {
                 for (let x = 0; x < gridSize; x++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'cell';
-                    cell.dataset.x = x;
-                    cell.dataset.y = y;
-                    cell.id = `cell-${x}-${y}`;
-                    
-                    let data = gridData[y][x];
-                    cell.innerText = data.word;
-                    cell.dataset.correct = data.correct;
-                    cell.dataset.start = data.isStart;
-
+                    const cell = document.createElement('div'); cell.className = 'cell'; cell.dataset.x = x; cell.dataset.y = y; cell.id = `cell-${x}-${y}`;
+                    let data = gridData[y][x]; cell.innerText = data.word; cell.dataset.correct = data.correct; cell.dataset.start = data.isStart;
                     gridEl.appendChild(cell);
                 }
             }
             setTimeout(() => {
-                canvas.width = gridEl.offsetWidth;
-                canvas.height = gridEl.offsetHeight;
-                ctx.lineWidth = 8;
-                ctx.lineCap = 'round';
-                ctx.lineJoin = 'round';
-                ctx.setLineDash([12, 15]); 
-                ctx.strokeStyle = 'rgba(255, 152, 0, 0.8)'; 
+                canvas.width = gridEl.offsetWidth; canvas.height = gridEl.offsetHeight;
+                ctx.lineWidth = 8; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.setLineDash([12, 15]); ctx.strokeStyle = 'rgba(255, 152, 0, 0.8)'; 
             }, 50);
         }
 
-        function getCursorPos(clientX, clientY) {
-            const rect = canvas.getBoundingClientRect();
-            return { x: clientX - rect.left, y: clientY - rect.top };
-        }
-
-        function startDraw(e) {
-            if (isExecuting) return;
-            isDrawing = true;
-            isDragging = false; 
-
-            let clientX = e.clientX;
-            let clientY = e.clientY;
-            if (e.touches && e.touches.length > 0) {
-                clientX = e.touches[0].clientX;
-                clientY = e.touches[0].clientY;
-            }
-            
-            startX = clientX;
-            startY = clientY;
-
-            const pos = getCursorPos(clientX, clientY);
-            ctx.beginPath();
-            ctx.moveTo(pos.x, pos.y);
-            
-            if(e.cancelable) e.preventDefault();
-        }
-
-        function draw(e) {
-            if (!isDrawing || isExecuting) return;
-
-            let clientX = e.clientX;
-            let clientY = e.clientY;
-            if (e.touches && e.touches.length > 0) {
-                clientX = e.touches[0].clientX;
-                clientY = e.touches[0].clientY;
-            }
-
-            if (Math.abs(clientX - startX) > 5 || Math.abs(clientY - startY) > 5) {
-                isDragging = true;
-            }
-
-            const pos = getCursorPos(clientX, clientY);
-            ctx.lineTo(pos.x, pos.y);
-            ctx.stroke();
-            
-            if(e.cancelable) e.preventDefault();
-        }
-
+        function getCursorPos(clientX, clientY) { const rect = canvas.getBoundingClientRect(); return { x: clientX - rect.left, y: clientY - rect.top }; }
+        function startDraw(e) { if (isExecuting) return; isDrawing = true; isDragging = false; let cX = e.clientX; let cY = e.clientY; if (e.touches && e.touches.length > 0) { cX = e.touches[0].clientX; cY = e.touches[0].clientY; } startX = cX; startY = cY; const pos = getCursorPos(cX, cY); ctx.beginPath(); ctx.moveTo(pos.x, pos.y); if(e.cancelable) e.preventDefault(); }
+        function draw(e) { if (!isDrawing || isExecuting) return; let cX = e.clientX; let cY = e.clientY; if (e.touches && e.touches.length > 0) { cX = e.touches[0].clientX; cY = e.touches[0].clientY; } if (Math.abs(cX - startX) > 5 || Math.abs(cY - startY) > 5) { isDragging = true; } const pos = getCursorPos(cX, cY); ctx.lineTo(pos.x, pos.y); ctx.stroke(); if(e.cancelable) e.preventDefault(); }
         function stopDraw(e) { 
-            if (!isDrawing) return;
-            isDrawing = false; 
-            
+            if (!isDrawing) return; isDrawing = false; 
             if (!isDragging && e && !isExecuting) {
-                let clientX = e.clientX;
-                let clientY = e.clientY;
-                if (e.changedTouches && e.changedTouches.length > 0) {
-                    clientX = e.changedTouches[0].clientX;
-                    clientY = e.changedTouches[0].clientY;
-                }
-                
-                if (clientX && clientY) {
-                    canvas.style.pointerEvents = 'none';
-                    let target = document.elementFromPoint(clientX, clientY);
-                    canvas.style.pointerEvents = 'auto';
-                    
-                    if (target) {
-                        let cell = target.closest('.cell');
-                        if (cell && cell.dataset.start !== "true") {
-                            cell.classList.toggle('manual-selected');
-                        }
-                    }
+                let cX = e.clientX; let cY = e.clientY;
+                if (e.changedTouches && e.changedTouches.length > 0) { cX = e.changedTouches[0].clientX; cY = e.changedTouches[0].clientY; }
+                if (cX && cY) {
+                    canvas.style.pointerEvents = 'none'; let target = document.elementFromPoint(cX, cY); canvas.style.pointerEvents = 'auto';
+                    if (target) { let cell = target.closest('.cell'); if (cell && cell.dataset.start !== "true") cell.classList.toggle('manual-selected'); }
                 }
             }
         }
 
-        canvas.addEventListener('mousedown', startDraw);
-        canvas.addEventListener('mousemove', draw);
-        window.addEventListener('mouseup', stopDraw);
-        canvas.addEventListener('touchstart', startDraw, { passive: false });
-        canvas.addEventListener('touchmove', draw, { passive: false });
-        window.addEventListener('touchend', stopDraw);
+        canvas.addEventListener('mousedown', startDraw); canvas.addEventListener('mousemove', draw); window.addEventListener('mouseup', stopDraw);
+        canvas.addEventListener('touchstart', startDraw, { passive: false }); canvas.addEventListener('touchmove', draw, { passive: false }); window.addEventListener('touchend', stopDraw);
 
-
-        function getTransform(dir) {
-            if (dir === 0) return 'scaleX(-1)';      
-            if (dir === 1) return 'rotate(-90deg)';  
-            if (dir === 2) return 'scaleX(1)';       
-            if (dir === 3) return 'rotate(90deg)';   
-            return 'scaleX(1)';
+        // NUEVA LÓGICA DE ROTACIÓN (Para un sprite que mira hacia ARRIBA por defecto)
+        function getTransform(dir) { 
+            if (dir === 0) return 'rotate(90deg)';   // Avanza a la DERECHA
+            if (dir === 1) return 'rotate(180deg)';  // Avanza hacia ABAJO
+            if (dir === 2) return 'rotate(-90deg)';  // Avanza a la IZQUIERDA
+            if (dir === 3) return 'rotate(0deg)';    // Avanza hacia ARRIBA
         }
 
         function drawBee() {
             document.querySelectorAll('.bee-container').forEach(b => b.remove());
-
             const cell = document.getElementById(`cell-${bee.pos.x}-${bee.pos.y}`);
-            const container = document.createElement('div');
-            container.className = `bee-container`;
+            const container = document.createElement('div'); container.className = `bee-container`;
+            const orientation = document.createElement('div'); orientation.className = 'bee-orientation'; orientation.style.transform = getTransform(bee.dir);
+            const sprite = document.createElement('div'); sprite.className = 'bee-sprite';
             
-            const orientation = document.createElement('div');
-            orientation.className = 'bee-orientation';
-            orientation.style.transform = getTransform(bee.dir);
+            // Integrando el nuevo sprite personalizado
+            sprite.innerHTML = '<img src="../assets/robots/BeebotEmoji.png" alt="BeeBot" style="width: 48px; height: 48px; object-fit: contain; pointer-events: none;">';
             
-            const sprite = document.createElement('div');
-            sprite.className = 'bee-sprite';
-            sprite.innerText = '🐝';
-            
-            orientation.appendChild(sprite);
-            container.appendChild(orientation);
-            cell.appendChild(container);
+            orientation.appendChild(sprite); container.appendChild(orientation); cell.appendChild(container);
         }
 
         function visitCell(x, y) {
             const cell = document.getElementById(`cell-${x}-${y}`);
-            
             if (cell.dataset.start === "true") return;
-
             cell.classList.remove('manual-selected');
-
             if (cell.classList.contains('visited-correct')) return;
-
-            if (cell.dataset.correct === "true") {
-                cell.classList.add('visited-correct');
-            }
+            if (cell.dataset.correct === "true") cell.classList.add('visited-correct');
         }
 
-        function addCommand(cmd) {
-            if(isExecuting) return;
-            bee.commands.push(cmd);
-            updateSequenceUI();
-        }
-
+        function addCommand(cmd) { if(isExecuting) return; bee.commands.push(cmd); updateSequenceUI(); }
         function updateSequenceUI() {
-            const symbols = { 'F': '⬆️', 'R': '↻', 'L': '↺' };
-            const container = document.getElementById(`seq`);
-            container.innerHTML = ''; 
-            
-            bee.commands.forEach(cmd => {
-                const span = document.createElement('span');
-                span.className = 'cmd-block';
-                span.innerText = symbols[cmd];
-                container.appendChild(span);
-            });
+            const symbols = { 'F': '⬆️', 'R': '↻', 'L': '↺' }; const container = document.getElementById(`seq`); container.innerHTML = ''; 
+            bee.commands.forEach(cmd => { const span = document.createElement('span'); span.className = 'cmd-block'; span.innerText = symbols[cmd]; container.appendChild(span); });
         }
 
         function executeCommands() {
-            if (bee.commands.length === 0 || isExecuting) return;
-            isExecuting = true;
-            document.getElementById('go-btn').style.opacity = "0.5";
-            
+            if (bee.commands.length === 0 || isExecuting) return; isExecuting = true; document.getElementById('go-btn').style.opacity = "0.5";
             visitCell(bee.pos.x, bee.pos.y);
-
             let step = 0;
             const interval = setInterval(() => {
-                if (step >= bee.commands.length) {
-                    clearInterval(interval);
-                    checkWin();
-                    return;
-                }
-
+                if (step >= bee.commands.length) { clearInterval(interval); checkWin(); return; }
                 const cmd = bee.commands[step];
                 if (cmd === 'F') {
-                    let newX = bee.pos.x;
-                    let newY = bee.pos.y;
-                    if (bee.dir === 0) newX++;      
-                    else if (bee.dir === 1) newY++; 
-                    else if (bee.dir === 2) newX--; 
-                    else if (bee.dir === 3) newY--; 
-
-                    if (newX >= 0 && newX < gridSize && newY >= 0 && newY < gridSize) {
-                        bee.pos.x = newX;
-                        bee.pos.y = newY;
-                        visitCell(bee.pos.x, bee.pos.y);
-                    }
-                } else if (cmd === 'R') {
-                    bee.dir = (bee.dir + 1) % 4; 
-                } else if (cmd === 'L') {
-                    bee.dir = (bee.dir + 3) % 4; 
-                }
-                
-                drawBee();
-                step++;
+                    let newX = bee.pos.x, newY = bee.pos.y;
+                    if (bee.dir === 0) newX++; else if (bee.dir === 1) newY++; else if (bee.dir === 2) newX--; else if (bee.dir === 3) newY--; 
+                    if (newX >= 0 && newX < gridSize && newY >= 0 && newY < gridSize) { bee.pos.x = newX; bee.pos.y = newY; visitCell(bee.pos.x, bee.pos.y); }
+                } else if (cmd === 'R') bee.dir = (bee.dir + 1) % 4; else if (cmd === 'L') bee.dir = (bee.dir + 3) % 4; 
+                drawBee(); step++;
             }, 600); 
         }
 
-        function showModal(title, msg) {
-            document.getElementById('m-title').innerText = title;
-            document.getElementById('m-msg').innerText = msg;
-            document.getElementById('modal').classList.add('active');
-        }
-
-        function closeModal() {
-            document.getElementById('modal').classList.remove('active');
-        }
+        function showModal(title, msg) { document.getElementById('m-title').innerText = title; document.getElementById('m-msg').innerText = msg; document.getElementById('modal').classList.add('active'); }
+        function closeModal() { document.getElementById('modal').classList.remove('active'); }
 
         function checkWin() {
             const visitedCorrect = document.querySelectorAll('.visited-correct').length;
-            
             setTimeout(() => {
-                if (visitedCorrect === totalCorrectWords) {
-                    showModal("¡Felicidades! 🎉", "¡Encontraste todas las palabras correctas!");
-                } else {
-                    showModal("¡Faltan palabras! 🤔", `Atrapaste ${visitedCorrect} de ${totalCorrectWords} palabras correctas.\n¡Sigue buscando!`);
-                }
-                document.getElementById('go-btn').style.opacity = "1";
-                isExecuting = false;
+                if (visitedCorrect === totalCorrectWords) showModal("¡Felicidades! 🎉", "¡Encontraste todas las palabras correctas!");
+                else showModal("¡Faltan palabras! 🤔", `Atrapaste ${visitedCorrect} de ${totalCorrectWords} palabras correctas.\n¡Sigue buscando!`);
+                document.getElementById('go-btn').style.opacity = "1"; isExecuting = false;
             }, 400);
         }
 
-        function resetGame() {
-            bee = { pos: {x: 0, y: 0}, dir: 0, commands: [] };
-            isExecuting = false;
-            
-            updateSequenceUI();
-            document.getElementById('go-btn').style.opacity = "1";
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            generateLevel();
-            initGrid();
-            drawBee();
-        }
-
+        function resetGame() { bee = { pos: {x: 0, y: 0}, dir: 0, commands: [] }; isExecuting = false; updateSequenceUI(); document.getElementById('go-btn').style.opacity = "1"; ctx.clearRect(0, 0, canvas.width, canvas.height); generateLevel(); initGrid(); drawBee(); }
         resetGame();
     </script>
 </body>

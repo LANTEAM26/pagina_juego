@@ -5,402 +5,61 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>¡Cuenta en Orden! 🐝</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
-    
     <style>
-        :root {
-            --p1-main: #3498db;
-            --p1-dark: #2980b9;
-            --p1-light: #d6eaf8;
-            --grid-bg: #8d6e63;
-        }
-
-        body {
-            font-family: 'Fredoka', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 0;
-            padding: 10px;
-            min-height: 100vh;
-            touch-action: none; 
-            color: #333;
-            background-color: transparent; 
-        }
-
-        /* PAISAJE DE FONDO */
-        .decorations {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            z-index: -1;
-            pointer-events: none; 
-            overflow: hidden;
-            background: linear-gradient(180deg, #74ebd5 0%, #ACB6E5 100%);
-        }
-
-        .decorations::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='104' viewBox='0 0 60 104' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 52l15-26 15 26v52l-15 26-15-26zM0 0l15 26v52L0 104V0zm60 0v104L45 78V26z' fill='%23ffffff' fill-opacity='0.15' fill-rule='evenodd'/%3E%3C/svg%3E");
-            z-index: 1;
-        }
-
-        .sun {
-            position: absolute;
-            top: 3%; right: 5%;
-            font-size: 70px;
-            z-index: 2;
-            filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.8));
-            animation: pulse-sun 3s infinite alternate;
-        }
-
-        @keyframes pulse-sun {
-            0% { transform: scale(1) rotate(0deg); }
-            100% { transform: scale(1.1) rotate(10deg); }
-        }
-
-        .grass {
-            position: absolute;
-            bottom: -5vh; left: -10vw;
-            width: 120vw; height: 25vh;
-            background: #a9dfbf;
-            border-radius: 50% 50% 0 0;
-            z-index: 2;
-            box-shadow: inset 0 15px 0 #82e0aa, 0 -30px 50px rgba(46,204,113,0.3);
-        }
-
-        .flower-bg {
-            position: absolute;
-            font-size: 35px;
-            bottom: 15vh;
-            z-index: 3;
-            transform-origin: bottom center;
-            animation: sway 2.5s ease-in-out infinite alternate;
-        }
-        .f1 { left: 12%; animation-delay: 0s; font-size: 45px; }
-        .f2 { left: 28%; animation-delay: 1s; bottom: 12vh; font-size: 30px;}
-        .f3 { right: 25%; animation-delay: 0.5s; bottom: 18vh; font-size: 40px; }
-        .f4 { right: 8%; animation-delay: 1.5s; font-size: 50px;}
-
-        @keyframes sway {
-            0% { transform: rotate(-12deg); }
-            100% { transform: rotate(12deg); }
-        }
-
-        /* UI y Estructura del juego */
-        h1 {
-            color: #2c3e50;
-            margin: 0px 0 5px 0;
-            text-align: center;
-            font-size: 26px;
-            text-shadow: 2px 2px 0px #fff;
-            position: relative;
-        }
-
-        .prompt-box {
-            text-align: center;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 10px 20px;
-            border-radius: 15px;
-            font-size: 15px;
-            font-weight: 600;
-            max-width: 550px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            position: relative;
-            border: 3px solid #ffb74d;
-        }
-
-        .highlight-text {
-            color: #e74c3c;
-            font-size: 18px;
-            text-decoration: underline;
-        }
-
-        .grid-wrapper {
-            position: relative;
-            margin-bottom: 15px;
-            padding: 10px;
-            background: #ffe0b2;
-            border-radius: 15px;
-            box-shadow: 0 8px 0 #ffb74d, 0 15px 25px rgba(0,0,0,0.25);
-        }
-
-        #grid {
-            display: grid;
-            grid-template-columns: repeat(4, 75px);
-            grid-template-rows: repeat(4, 75px);
-            gap: 6px;
-            background-color: var(--grid-bg);
-            border-radius: 10px;
-            padding: 6px;
-        }
-
-        #drawing-canvas {
-            position: absolute;
-            top: 10px; left: 10px;
-            z-index: 10;
-            cursor: crosshair;
-            border-radius: 10px;
-        }
-
-        .cell {
-            background-color: #fff9c4;
-            border-radius: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            user-select: none;
-            box-shadow: inset 0 -4px 0 rgba(0,0,0,0.1);
-            font-family: 'Fredoka', sans-serif;
-            transition: all 0.2s;
-        }
+        :root { --p1-main: #3498db; --p1-dark: #2980b9; --p1-light: #d6eaf8; --grid-bg: #8d6e63; }
+        body { font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; align-items: center; margin: 0; padding: 10px; min-height: 100vh; touch-action: none; color: #333; background-color: transparent; }
+        .decorations { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -1; pointer-events: none; overflow: hidden; background: linear-gradient(180deg, #74ebd5 0%, #ACB6E5 100%); }
+        .decorations::before { content: ''; position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg width='60' height='104' viewBox='0 0 60 104' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 52l15-26 15 26v52l-15 26-15-26zM0 0l15 26v52L0 104V0zm60 0v104L45 78V26z' fill='%23ffffff' fill-opacity='0.15' fill-rule='evenodd'/%3E%3C/svg%3E"); z-index: 1; }
+        .sun { position: absolute; top: 3%; right: 5%; font-size: 70px; z-index: 2; filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.8)); animation: pulse-sun 3s infinite alternate; }
+        @keyframes pulse-sun { 0% { transform: scale(1) rotate(0deg); } 100% { transform: scale(1.1) rotate(10deg); } }
+        .grass { position: absolute; bottom: -5vh; left: -10vw; width: 120vw; height: 25vh; background: #a9dfbf; border-radius: 50% 50% 0 0; z-index: 2; box-shadow: inset 0 15px 0 #82e0aa, 0 -30px 50px rgba(46,204,113,0.3); }
         
-        .cell[data-start="true"] {
-            background-color: #e2f1f8;
-            box-shadow: inset 0 -4px 0 rgba(0,0,0,0.05);
-        }
+        h1 { color: #2c3e50; margin: 0px 0 5px 0; text-align: center; font-size: 26px; text-shadow: 2px 2px 0px #fff; position: relative; }
+        .prompt-box { text-align: center; background: rgba(255, 255, 255, 0.95); padding: 10px 20px; border-radius: 15px; font-size: 15px; font-weight: 600; max-width: 550px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; border: 3px solid #ffb74d; }
+        .highlight-text { color: #e74c3c; font-size: 18px; text-decoration: underline; }
 
-        /* Diseño de los números 1-5 */
-        .nectar-cell {
-            background-color: #aed6f1 !important;
-            color: #2980b9;
-            font-size: 32px;
-            font-weight: 700;
-            box-shadow: inset 0 0 15px #3498db !important;
-        }
-        .nectar-cell::after {
-            content: '💧';
-            position: absolute;
-            font-size: 16px;
-            top: 4px; right: 4px;
-        }
+        .grid-wrapper { position: relative; margin-bottom: 15px; padding: 10px; background: #ffe0b2; border-radius: 15px; box-shadow: 0 8px 0 #ffb74d, 0 15px 25px rgba(0,0,0,0.25); }
+        #grid { display: grid; grid-template-columns: repeat(4, 75px); grid-template-rows: repeat(4, 75px); gap: 6px; background-color: var(--grid-bg); border-radius: 10px; padding: 6px; }
+        #drawing-canvas { position: absolute; top: 10px; left: 10px; z-index: 10; cursor: crosshair; border-radius: 10px; }
+        .cell { background-color: #fff9c4; border-radius: 8px; display: flex; justify-content: center; align-items: center; position: relative; user-select: none; box-shadow: inset 0 -4px 0 rgba(0,0,0,0.1); font-family: 'Fredoka', sans-serif; transition: all 0.2s; }
+        .cell[data-start="true"] { background-color: #e2f1f8; box-shadow: inset 0 -4px 0 rgba(0,0,0,0.05); }
 
-        /* Diseño del objetivo Final (6) */
-        .target-cell {
-            background-color: #fcf3cf !important;
-            color: #d35400;
-            font-size: 36px;
-            font-weight: 700;
-            box-shadow: inset 0 0 15px #f1c40f !important;
-        }
-        .target-cell::after {
-            content: '🌺';
-            font-size: 25px;
-            position: absolute;
-            top: -10px; right: -10px;
-            animation: pulse-flower 1.5s infinite alternate;
-        }
+        .nectar-cell { background-color: #aed6f1 !important; color: #2980b9; font-size: 32px; font-weight: 700; box-shadow: inset 0 0 15px #3498db !important; }
+        .nectar-cell::after { content: '💧'; position: absolute; font-size: 16px; top: 4px; right: 4px; }
+        .target-cell { background-color: #fcf3cf !important; color: #d35400; font-size: 36px; font-weight: 700; box-shadow: inset 0 0 15px #f1c40f !important; }
+        .target-cell::after { content: '🌺'; font-size: 25px; position: absolute; top: -10px; right: -10px; animation: pulse-flower 1.5s infinite alternate; }
+        @keyframes pulse-flower { 0% { transform: scale(1); } 100% { transform: scale(1.15); } }
 
-        @keyframes pulse-flower {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.15); }
-        }
+        .visited-correct { background-color: #a9dfbf !important; color: #1e8449 !important; box-shadow: inset 0 0 15px #2ecc71 !important; transform: scale(0.95); }
+        .visited-correct::before { content: '✔️'; position: absolute; font-size: 20px; top: -5px; left: -5px; animation: popIn 0.3s ease-out; z-index: 20; }
+        .visited-wrong { background-color: #f5b7b1 !important; color: #c0392b !important; box-shadow: inset 0 0 15px #e74c3c !important; animation: shake 0.4s; }
+        .visited-wrong::before { content: '❌'; position: absolute; font-size: 16px; top: -5px; right: -5px; z-index: 20; }
+        @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-4px); } 50% { transform: translateX(4px); } 75% { transform: translateX(-4px); } 100% { transform: translateX(0); } }
 
-        /* Al recolectar el número correcto en ORDEN */
-        .visited-correct {
-            background-color: #a9dfbf !important;
-            color: #1e8449 !important;
-            box-shadow: inset 0 0 15px #2ecc71 !important;
-            transform: scale(0.95);
-        }
-        .visited-correct::before {
-            content: '✔️';
-            position: absolute;
-            font-size: 20px;
-            top: -5px; left: -5px;
-            animation: popIn 0.3s ease-out;
-            z-index: 20;
-        }
-
-        /* Al recolectar un número que NO TOCABA (Salto de orden) */
-        .visited-wrong {
-            background-color: #f5b7b1 !important;
-            color: #c0392b !important;
-            box-shadow: inset 0 0 15px #e74c3c !important;
-            animation: shake 0.4s;
-        }
-        .visited-wrong::before {
-            content: '❌';
-            position: absolute;
-            font-size: 16px;
-            top: -5px; right: -5px;
-            z-index: 20;
-        }
-
-        @keyframes shake {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(-4px); }
-            50% { transform: translateX(4px); }
-            75% { transform: translateX(-4px); }
-            100% { transform: translateX(0); }
-        }
-
-        .bee-container {
-            position: absolute;
-            z-index: 15;
-            width: 55px; height: 55px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .bee-orientation {
-            transition: transform 0.2s ease;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .bee-sprite {
-            font-size: 40px;
-            animation: float 2s ease-in-out infinite;
-            filter: drop-shadow(0 0 8px var(--p1-main));
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-5px); }
-        }
-
-        /* Controles */
-        .panels-container {
-            display: flex;
-            justify-content: center;
-            width: 100%; 
-            max-width: 450px;
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .panel {
-            box-sizing: border-box; 
-            background: rgba(255, 255, 255, 0.95);
-            padding: 15px;
-            border-radius: 18px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-            width: 95%; 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            border: 4px solid var(--p1-main);
-        }
-
+        .bee-container { position: absolute; z-index: 15; width: 55px; height: 55px; display: flex; justify-content: center; align-items: center; }
+        .bee-orientation { transition: transform 0.2s ease; display: flex; justify-content: center; align-items: center; }
+        .bee-sprite { display: flex; justify-content: center; align-items: center; animation: float 2s ease-in-out infinite; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
+        
+        .panels-container { display: flex; justify-content: center; width: 100%; max-width: 450px; margin-bottom: 20px; position: relative; }
+        .panel { box-sizing: border-box; background: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 18px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); width: 95%; display: flex; flex-direction: column; align-items: center; border: 4px solid var(--p1-main); }
         .panel h3 { margin: 0 0 10px 0; font-size: 18px; color: var(--p1-dark); }
+        .btn-group { display: flex; gap: 6px; justify-content: space-between; width: 100%; margin-bottom: 15px; }
+        button { font-family: 'Fredoka', sans-serif; font-weight: 700; border: none; border-radius: 10px; cursor: pointer; transition: all 0.1s; user-select: none; }
+        button:active { transform: translateY(4px); box-shadow: 0 0px 0 transparent !important; }
+        .cmd-btn { padding: 10px 2px; font-size: 13px; color: white; flex: 1; background-color: var(--p1-main); box-shadow: 0 5px 0 var(--p1-dark); white-space: nowrap; }
+        .undo-btn { background-color: #e74c3c; box-shadow: 0 5px 0 #c0392b; flex: 0.8; }
+        .seq-container { display: flex; flex-wrap: wrap; gap: 5px; min-height: 45px; background: rgba(255,255,255,0.7); padding: 8px; border-radius: 10px; width: 95%; border: 2px dashed rgba(0,0,0,0.1); }
+        .cmd-block { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; color: white; font-weight: bold; font-size: 18px; box-shadow: 0 3px 0 rgba(0,0,0,0.2); animation: popIn 0.2s ease-out; background: var(--p1-main); }
+        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
 
-        .btn-group {
-            display: flex;
-            gap: 6px;
-            justify-content: space-between;
-            width: 100%;
-            margin-bottom: 15px;
-        }
+        .global-controls { display: flex; gap: 15px; margin-bottom: 20px; position: relative; }
+        .global-btn { padding: 12px 20px; font-size: 18px; color: white; border-radius: 15px; }
+        #go-btn { background-color: #ff9800; box-shadow: 0 5px 0 #f57c00; }
+        .reset-btn { background-color: #95a5a6; box-shadow: 0 5px 0 #7f8c8d; }
 
-        button {
-            font-family: 'Fredoka', sans-serif;
-            font-weight: 700;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.1s;
-            user-select: none;
-        }
-
-        button:active {
-            transform: translateY(4px);
-            box-shadow: 0 0px 0 transparent !important;
-        }
-
-        button.cmd-btn {
-            padding: 10px 2px;
-            font-size: 13px; 
-            color: white;
-            flex: 1;
-            background-color: var(--p1-main); 
-            box-shadow: 0 5px 0 var(--p1-dark);
-            white-space: nowrap;
-        }
-
-        button.undo-btn {
-            background-color: #e74c3c;
-            box-shadow: 0 5px 0 #c0392b;
-            flex: 0.8;
-        }
-
-        .seq-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            min-height: 45px;
-            background: rgba(255,255,255,0.7);
-            padding: 8px;
-            border-radius: 10px;
-            width: 95%;
-            border: 2px dashed rgba(0,0,0,0.1);
-        }
-
-        .cmd-block {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 32px; height: 32px;
-            border-radius: 6px;
-            color: white;
-            font-weight: bold;
-            font-size: 18px;
-            box-shadow: 0 3px 0 rgba(0,0,0,0.2);
-            animation: popIn 0.2s ease-out;
-            background: var(--p1-main);
-        }
-
-        @keyframes popIn {
-            0% { transform: scale(0); }
-            100% { transform: scale(1); }
-        }
-
-        .global-controls {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        button.global-btn {
-            padding: 12px 20px;
-            font-size: 18px;
-            color: white;
-            border-radius: 15px;
-        }
-        
-        button#go-btn { background-color: #ff9800; box-shadow: 0 5px 0 #f57c00; }
-        button.reset-btn { background-color: #95a5a6; box-shadow: 0 5px 0 #7f8c8d; }
-
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.6);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            visibility: hidden;
-            opacity: 0;
-            transition: all 0.3s;
-        }
-
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 100; visibility: hidden; opacity: 0; transition: all 0.3s; }
         .modal-overlay.active { visibility: visible; opacity: 1; }
-        .modal-box {
-            background: white;
-            padding: 25px;
-            border-radius: 20px;
-            text-align: center;
-            max-width: 80%;
-            transform: scale(0.7);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
+        .modal-box { background: white; padding: 25px; border-radius: 20px; text-align: center; max-width: 80%; transform: scale(0.7); transition: 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .modal-overlay.active .modal-box { transform: scale(1); }
         .modal-title { font-size: 24px; margin-bottom: 10px; color: #ff9800; }
         .modal-msg { font-size: 16px; margin-bottom: 20px; color: #555; white-space: pre-line;}
@@ -408,19 +67,7 @@
     </style>
 </head>
 <body>
-
-    <div class="decorations">
-        <div class="sun">☀️</div>
-        <div class="cloud c1">☁️</div>
-        <div class="cloud c2">☁️</div>
-        <div class="cloud c3">☁️</div>
-        <div class="grass"></div>
-        <div class="flower-bg f1">🌻</div>
-        <div class="flower-bg f2">🌸</div>
-        <div class="flower-bg f3">🌷</div>
-        <div class="flower-bg f4">🌼</div>
-    </div>
-
+    <div class="decorations"><div class="sun">☀️</div><div class="grass"></div></div>
     <h1>¡Cuenta en Orden! 🐝</h1>
     <div class="prompt-box">
         Recolecta los números en <span class="highlight-text">ORDEN ESTRICTO</span> (1, 2, 3, 4, 5). <br>¡Asegúrate de que tu último paso sea en el <span class="highlight-text">número 6</span>!
@@ -428,8 +75,7 @@
     </div>
 
     <div class="grid-wrapper">
-        <div id="grid"></div>
-        <canvas id="drawing-canvas"></canvas>
+        <div id="grid"></div><canvas id="drawing-canvas"></canvas>
     </div>
 
     <div class="panels-container">
@@ -452,77 +98,35 @@
 
     <div class="modal-overlay" id="modal">
         <div class="modal-box">
-            <h2 class="modal-title" id="m-title">Título</h2>
-            <p class="modal-msg" id="m-msg">Mensaje</p>
+            <h2 class="modal-title" id="m-title">Título</h2><p class="modal-msg" id="m-msg">Mensaje</p>
             <button class="modal-btn" onclick="closeModal()">¡Entendido!</button>
         </div>
     </div>
 
     <script>
-        const gridSize = 4;
-        let isExecuting = false;
-        
+        const gridSize = 4; let isExecuting = false;
         let bee = { pos: {x: 0, y: 0}, dir: 0, commands: [] }; 
-        let gridAssignments = {}; 
-        let targetPos = {x: 0, y: 0};
-        
-        // Variables para el orden
-        let nextNumberExpected = 1;
-        let failedOrder = false;
+        let gridAssignments = {}; let targetPos = {x: 0, y: 0};
+        let nextNumberExpected = 1; let failedOrder = false;
 
-        const gridEl = document.getElementById('grid');
-        const canvas = document.getElementById('drawing-canvas');
-        const ctx = canvas.getContext('2d');
-        
-        let isDrawing = false;
-        let startX = 0, startY = 0;
+        const gridEl = document.getElementById('grid'); const canvas = document.getElementById('drawing-canvas'); const ctx = canvas.getContext('2d');
+        let isDrawing = false; let startX, startY;
 
-        // Genera un camino conexo (forma de serpiente) para garantizar que los números 
-        // 1 al 6 estén siempre uno junto al otro y la ruta sea lógica.
         function generateLevel() {
             let success = false;
-            
             while (!success) {
-                gridAssignments = {};
-                let path = [{x: 0, y: 0}];
-                let visited = new Set(['0,0']);
-                
+                gridAssignments = {}; let path = [{x: 0, y: 0}]; let visited = new Set(['0,0']);
                 for (let i = 1; i <= 6; i++) {
                     let curr = path[path.length - 1];
-                    
-                    // Posibles vecinos
-                    let neighbors = [
-                        {x: curr.x, y: curr.y - 1}, // Arriba
-                        {x: curr.x, y: curr.y + 1}, // Abajo
-                        {x: curr.x - 1, y: curr.y}, // Izquierda
-                        {x: curr.x + 1, y: curr.y}  // Derecha
-                    ];
-                    
-                    // Filtrar vecinos que estén dentro del tablero y no hayan sido visitados
-                    let validNeighbors = neighbors.filter(n => 
-                        n.x >= 0 && n.x < gridSize && 
-                        n.y >= 0 && n.y < gridSize && 
-                        !visited.has(`${n.x},${n.y}`)
-                    );
-                    
-                    // Si se encerró (callejón sin salida), abortar y crear otro nivel
-                    if (validNeighbors.length === 0) {
-                        break; 
-                    }
-                    
-                    // Elegir un vecino aleatorio y avanzar
+                    let neighbors = [ {x: curr.x, y: curr.y - 1}, {x: curr.x, y: curr.y + 1}, {x: curr.x - 1, y: curr.y}, {x: curr.x + 1, y: curr.y} ];
+                    let validNeighbors = neighbors.filter(n => n.x >= 0 && n.x < gridSize && n.y >= 0 && n.y < gridSize && !visited.has(`${n.x},${n.y}`));
+                    if (validNeighbors.length === 0) break; 
                     let next = validNeighbors[Math.floor(Math.random() * validNeighbors.length)];
-                    path.push(next);
-                    visited.add(`${next.x},${next.y}`);
-                    
+                    path.push(next); visited.add(`${next.x},${next.y}`);
                     gridAssignments[`${next.x},${next.y}`] = i;
                     if (i === 6) targetPos = {x: next.x, y: next.y};
                 }
-                
-                // Si logró colocar los 6 números sin encerrarse, el nivel es válido
-                if (path.length === 7) {
-                    success = true;
-                }
+                if (path.length === 7) success = true;
             }
         }
 
@@ -530,256 +134,89 @@
             gridEl.innerHTML = '';
             for (let y = 0; y < gridSize; y++) {
                 for (let x = 0; x < gridSize; x++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'cell';
-                    cell.id = `cell-${x}-${y}`;
-                    
-                    if (x === 0 && y === 0) {
-                        cell.dataset.start = "true";
-                    }
-                    
+                    const cell = document.createElement('div'); cell.className = 'cell'; cell.id = `cell-${x}-${y}`;
+                    if (x === 0 && y === 0) cell.dataset.start = "true";
                     let num = gridAssignments[`${x},${y}`];
-                    if (num) {
-                        cell.dataset.number = num;
-                        cell.innerText = num;
-                        
-                        if (num === 6) {
-                            cell.classList.add('target-cell');
-                        } else {
-                            cell.classList.add('nectar-cell');
-                        }
+                    if (num) { cell.dataset.number = num; cell.innerText = num;
+                        if (num === 6) cell.classList.add('target-cell'); else cell.classList.add('nectar-cell');
                     }
-
                     gridEl.appendChild(cell);
                 }
             }
-            
-            // Ajustar el canvas
-            setTimeout(() => {
-                canvas.width = gridEl.offsetWidth;
-                canvas.height = gridEl.offsetHeight;
-                ctx.lineWidth = 8;
-                ctx.lineCap = 'round';
-                ctx.lineJoin = 'round';
-                ctx.setLineDash([12, 15]); 
-                ctx.strokeStyle = 'rgba(255, 152, 0, 0.8)'; 
-            }, 50);
+            setTimeout(() => { canvas.width = gridEl.offsetWidth; canvas.height = gridEl.offsetHeight; ctx.lineWidth = 8; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.setLineDash([12, 15]); ctx.strokeStyle = 'rgba(255, 152, 0, 0.8)'; }, 50);
         }
 
-        // LÓGICA DE DIBUJO PARA PLANEACIÓN
-        function getCursorPos(clientX, clientY) {
-            const rect = canvas.getBoundingClientRect();
-            return { x: clientX - rect.left, y: clientY - rect.top };
-        }
+        function getCursorPos(cX, cY) { const r = canvas.getBoundingClientRect(); return { x: cX - r.left, y: cY - r.top }; }
+        function startDraw(e) { if (isExecuting) return; isDrawing = true; let cX = e.touches?e.touches[0].clientX:e.clientX; let cY = e.touches?e.touches[0].clientY:e.clientY; const p = getCursorPos(cX, cY); ctx.beginPath(); ctx.moveTo(p.x, p.y); if(e.cancelable) e.preventDefault(); }
+        function draw(e) { if (!isDrawing || isExecuting) return; let cX = e.touches?e.touches[0].clientX:e.clientX; let cY = e.touches?e.touches[0].clientY:e.clientY; const p = getCursorPos(cX, cY); ctx.lineTo(p.x, p.y); ctx.stroke(); if(e.cancelable) e.preventDefault(); }
+        canvas.addEventListener('mousedown', startDraw); canvas.addEventListener('mousemove', draw); window.addEventListener('mouseup', ()=>isDrawing=false);
+        canvas.addEventListener('touchstart', startDraw, {passive:false}); canvas.addEventListener('touchmove', draw, {passive:false}); window.addEventListener('touchend', ()=>isDrawing=false);
 
-        function startDraw(e) {
-            if (isExecuting) return;
-            isDrawing = true;
-            let clientX = e.clientX, clientY = e.clientY;
-            if (e.touches && e.touches.length > 0) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; }
-            
-            startX = clientX; startY = clientY;
-            const pos = getCursorPos(clientX, clientY);
-            ctx.beginPath();
-            ctx.moveTo(pos.x, pos.y);
-            if(e.cancelable) e.preventDefault();
-        }
-
-        function draw(e) {
-            if (!isDrawing || isExecuting) return;
-            let clientX = e.clientX, clientY = e.clientY;
-            if (e.touches && e.touches.length > 0) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; }
-            const pos = getCursorPos(clientX, clientY);
-            ctx.lineTo(pos.x, pos.y);
-            ctx.stroke();
-            if(e.cancelable) e.preventDefault();
-        }
-
-        function stopDraw() { isDrawing = false; }
-
-        canvas.addEventListener('mousedown', startDraw);
-        canvas.addEventListener('mousemove', draw);
-        window.addEventListener('mouseup', stopDraw);
-        canvas.addEventListener('touchstart', startDraw, { passive: false });
-        canvas.addEventListener('touchmove', draw, { passive: false });
-        window.addEventListener('touchend', stopDraw);
-
-
-        function getTransform(dir) {
-            if (dir === 0) return 'scaleX(-1)';      
-            if (dir === 1) return 'rotate(-90deg)';  
-            if (dir === 2) return 'scaleX(1)';       
-            if (dir === 3) return 'rotate(90deg)';   
-            return 'scaleX(1)';
+        // NUEVA ORIENTACIÓN HACIA ARRIBA
+        function getTransform(dir) { 
+            if (dir === 0) return 'rotate(90deg)';
+            if (dir === 1) return 'rotate(180deg)';
+            if (dir === 2) return 'rotate(-90deg)';
+            if (dir === 3) return 'rotate(0deg)';
         }
 
         function drawBee() {
             document.querySelectorAll('.bee-container').forEach(b => b.remove());
-
             const cell = document.getElementById(`cell-${bee.pos.x}-${bee.pos.y}`);
-            const container = document.createElement('div');
-            container.className = `bee-container`;
-            
-            const orientation = document.createElement('div');
-            orientation.className = 'bee-orientation';
-            orientation.style.transform = getTransform(bee.dir);
-            
-            const sprite = document.createElement('div');
-            sprite.className = 'bee-sprite';
-            sprite.innerText = '🐝';
-            
-            orientation.appendChild(sprite);
-            container.appendChild(orientation);
-            cell.appendChild(container);
+            const container = document.createElement('div'); container.className = `bee-container`;
+            const orient = document.createElement('div'); orient.className = 'bee-orientation'; orient.style.transform = getTransform(bee.dir);
+            const sprite = document.createElement('div'); sprite.className = 'bee-sprite'; 
+            sprite.innerHTML = '<img src="../assets/robots/BeebotEmoji.png" alt="BeeBot" style="width: 48px; height: 48px; object-fit: contain; pointer-events: none;">';
+            orient.appendChild(sprite); container.appendChild(orient); cell.appendChild(container);
         }
 
-        function addCommand(cmd) {
-            if(isExecuting) return;
-            bee.commands.push(cmd);
-            updateSequenceUI();
-        }
-
-        function undoCommand() {
-            if(isExecuting || bee.commands.length === 0) return;
-            bee.commands.pop();
-            updateSequenceUI();
-        }
-
+        function addCommand(cmd) { if(isExecuting) return; bee.commands.push(cmd); updateSequenceUI(); }
+        function undoCommand() { if(isExecuting || bee.commands.length === 0) return; bee.commands.pop(); updateSequenceUI(); }
         function updateSequenceUI() {
-            const symbols = { 'F': '⬆️', 'R': '↻', 'L': '↺' };
-            const container = document.getElementById(`seq`);
-            container.innerHTML = ''; 
-            
-            bee.commands.forEach(cmd => {
-                const span = document.createElement('span');
-                span.className = 'cmd-block';
-                span.innerText = symbols[cmd];
-                container.appendChild(span);
-            });
+            const sym = { 'F': '⬆️', 'R': '↻', 'L': '↺' }; const container = document.getElementById(`seq`); container.innerHTML = ''; 
+            bee.commands.forEach(cmd => { const span = document.createElement('span'); span.className = 'cmd-block'; span.innerText = symbols[cmd]; container.appendChild(span); });
         }
 
-        // Verifica la casilla pisada y evalúa el orden
         function visitCell(x, y) {
-            const cell = document.getElementById(`cell-${x}-${y}`);
-            let num = cell.dataset.number;
-            
+            const cell = document.getElementById(`cell-${x}-${y}`); let num = cell.dataset.number;
             if (num && !failedOrder) {
                 num = parseInt(num);
-                
-                // Si pisamos exactamente el número que nos tocaba
-                if (num === nextNumberExpected) {
-                    cell.classList.add('visited-correct');
-                    nextNumberExpected++;
-                } 
-                // Si pisamos un número mayor (nos saltamos el orden)
-                else if (num > nextNumberExpected) {
-                    cell.classList.add('visited-wrong');
-                    failedOrder = true; // Rompió la regla, el juego falla
-                }
-                // Si el número es menor (num < nextNumberExpected), significa que 
-                // ya lo habíamos recolectado y pasamos por encima de nuevo. Se ignora.
+                if (num === nextNumberExpected) { cell.classList.add('visited-correct'); nextNumberExpected++; } 
+                else if (num > nextNumberExpected) { cell.classList.add('visited-wrong'); failedOrder = true; }
             }
         }
 
         function executeCommands() {
-            if (bee.commands.length === 0 || isExecuting) return;
-            
-            isExecuting = true;
-            document.getElementById('go-btn').style.opacity = "0.5";
-            
-            // Reiniciar progreso para este intento
-            nextNumberExpected = 1;
-            failedOrder = false;
-
-            // Limpiar visualmente aciertos o fallos previos
-            document.querySelectorAll('.cell').forEach(c => {
-                c.classList.remove('visited-correct', 'visited-wrong');
-            });
-
-            // Evaluamos la celda de inicio por si acaso
+            if (bee.commands.length === 0 || isExecuting) return; isExecuting = true; document.getElementById('go-btn').style.opacity = "0.5";
+            nextNumberExpected = 1; failedOrder = false; document.querySelectorAll('.cell').forEach(c => c.classList.remove('visited-correct', 'visited-wrong'));
             visitCell(bee.pos.x, bee.pos.y);
-
             let step = 0;
             const interval = setInterval(() => {
-                if (step >= bee.commands.length || failedOrder) {
-                    clearInterval(interval);
-                    checkWin();
-                    return;
-                }
-
+                if (step >= bee.commands.length || failedOrder) { clearInterval(interval); checkWin(); return; }
                 const cmd = bee.commands[step];
                 if (cmd === 'F') {
-                    let newX = bee.pos.x;
-                    let newY = bee.pos.y;
-                    if (bee.dir === 0) newX++;      
-                    else if (bee.dir === 1) newY++; 
-                    else if (bee.dir === 2) newX--; 
-                    else if (bee.dir === 3) newY--; 
-
-                    if (newX >= 0 && newX < gridSize && newY >= 0 && newY < gridSize) {
-                        bee.pos.x = newX;
-                        bee.pos.y = newY;
-                        visitCell(bee.pos.x, bee.pos.y); // Chequea recolección al pisar
-                    }
-                } else if (cmd === 'R') {
-                    bee.dir = (bee.dir + 1) % 4; 
-                } else if (cmd === 'L') {
-                    bee.dir = (bee.dir + 3) % 4; 
-                }
-                
-                drawBee();
-                step++;
-                
-                // Si falló el orden en este paso, detenemos todo en el siguiente ciclo
+                    let nx = bee.pos.x, ny = bee.pos.y;
+                    if (bee.dir === 0) nx++; else if (bee.dir === 1) ny++; else if (bee.dir === 2) nx--; else if (bee.dir === 3) ny--; 
+                    if (nx >= 0 && nx < gridSize && ny >= 0 && ny < gridSize) { bee.pos.x = nx; bee.pos.y = ny; visitCell(bee.pos.x, bee.pos.y); }
+                } else if (cmd === 'R') bee.dir = (bee.dir + 1) % 4; else if (cmd === 'L') bee.dir = (bee.dir + 3) % 4; 
+                drawBee(); step++;
             }, 600); 
         }
 
-        function showModal(title, msg) {
-            document.getElementById('m-title').innerText = title;
-            document.getElementById('m-msg').innerText = msg;
-            document.getElementById('modal').classList.add('active');
-        }
-
-        function closeModal() {
-            document.getElementById('modal').classList.remove('active');
-        }
-
+        function showModal(t, m) { document.getElementById('m-title').innerText = t; document.getElementById('m-msg').innerText = m; document.getElementById('modal').classList.add('active'); }
+        function closeModal() { document.getElementById('modal').classList.remove('active'); }
         function checkWin() {
             setTimeout(() => {
                 let isOnTarget = (bee.pos.x === targetPos.x && bee.pos.y === targetPos.y);
-
-                if (failedOrder) {
-                    showModal("¡Te saltaste números! 😟", "Recuerda que debes recolectar los números en estricto orden: 1, 2, 3, 4, 5 y al final el 6.");
-                } else if (isOnTarget && nextNumberExpected === 7) {
-                    showModal("¡Misión Cumplida! 🎉", "¡Recolectaste todos los números en el orden perfecto y llegaste a la flor!");
-                } else if (nextNumberExpected === 7 && !isOnTarget) {
-                    showModal("¡Falta el destino final! 🌺", "Recogiste todo bien, pero recuerda que el último paso debe ser detenerse en el 6.");
-                } else {
-                    showModal("¡Sigue intentando! 🤔", `Te quedaste en el camino. Tu siguiente número a buscar era el ${nextNumberExpected}.`);
-                }
-                
-                document.getElementById('go-btn').style.opacity = "1";
-                isExecuting = false;
+                if (failedOrder) showModal("¡Te saltaste números! 😟", "Recuerda que debes recolectar los números en estricto orden: 1, 2, 3, 4, 5 y al final el 6.");
+                else if (isOnTarget && nextNumberExpected === 7) showModal("¡Misión Cumplida! 🎉", "¡Recolectaste todos los números en el orden perfecto y llegaste a la flor!");
+                else if (nextNumberExpected === 7 && !isOnTarget) showModal("¡Falta el destino final! 🌺", "Recogiste todo bien, pero recuerda que el último paso debe ser detenerse en el 6.");
+                else showModal("¡Sigue intentando! 🤔", `Te quedaste en el camino. Tu siguiente número a buscar era el ${nextNumberExpected}.`);
+                document.getElementById('go-btn').style.opacity = "1"; isExecuting = false;
             }, 400);
         }
 
-        function resetGame() {
-            bee = { pos: {x: 0, y: 0}, dir: 0, commands: [] };
-            nextNumberExpected = 1;
-            failedOrder = false;
-            isExecuting = false;
-            
-            generateLevel();
-            updateSequenceUI();
-            
-            document.getElementById('go-btn').style.opacity = "1";
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            initGrid();
-            drawBee();
-        }
-
-        // Arrancar juego al abrir
+        function resetGame() { bee = { pos: {x: 0, y: 0}, dir: 0, commands: [] }; nextNumberExpected = 1; failedOrder = false; isExecuting = false; generateLevel(); updateSequenceUI(); document.getElementById('go-btn').style.opacity = "1"; ctx.clearRect(0, 0, canvas.width, canvas.height); initGrid(); drawBee(); }
         resetGame();
     </script>
 </body>

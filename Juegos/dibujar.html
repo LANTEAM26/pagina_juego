@@ -6,16 +6,8 @@
     <title>¡Pixel Art! 🎨</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --p1-main: #9b59b6; 
-            --p1-dark: #8e44ad; 
-            --p1-light: #e8daef; 
-            --grid-bg: #8d6e63; 
-        }
-        
+        :root { --p1-main: #9b59b6; --p1-dark: #8e44ad; --p1-light: #e8daef; --grid-bg: #8d6e63; }
         body { font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; align-items: center; margin: 0; padding: 10px; min-height: 100vh; touch-action: none; color: #333; background-color: transparent; }
-        
-        /* PAISAJE DE FONDO */
         .decorations { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -1; pointer-events: none; overflow: hidden; background: linear-gradient(180deg, #74ebd5 0%, #ACB6E5 100%); }
         .decorations::before { content: ''; position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg width='60' height='104' viewBox='0 0 60 104' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 52l15-26 15 26v52l-15 26-15-26zM0 0l15 26v52L0 104V0zm60 0v104L45 78V26z' fill='%23ffffff' fill-opacity='0.15' fill-rule='evenodd'/%3E%3C/svg%3E"); z-index: 1; }
         .sun { position: absolute; top: 3%; right: 5%; font-size: 70px; z-index: 2; filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.8)); animation: pulse-sun 3s infinite alternate; }
@@ -24,15 +16,9 @@
         .c1 { top: 8%; left: -20%; animation: drift 35s linear infinite; } .c2 { top: 20%; left: -20%; animation: drift 45s linear infinite 15s; font-size: 45px;} .c3 { top: 5%; left: -20%; animation: drift 55s linear infinite 25s; font-size: 80px;}
         @keyframes drift { 0% { transform: translateX(-20vw); } 100% { transform: translateX(120vw); } }
         .grass { position: absolute; bottom: -5vh; left: -10vw; width: 120vw; height: 25vh; background: #a9dfbf; border-radius: 50% 50% 0 0; z-index: 2; box-shadow: inset 0 15px 0 #82e0aa, 0 -30px 50px rgba(46,204,113,0.3); }
-        .flower-bg { position: absolute; font-size: 35px; bottom: 15vh; z-index: 3; transform-origin: bottom center; animation: sway 2.5s ease-in-out infinite alternate; }
-        .f1 { left: 12%; animation-delay: 0s; font-size: 45px; } .f2 { left: 28%; animation-delay: 1s; bottom: 12vh; font-size: 30px;} .f3 { right: 25%; animation-delay: 0.5s; bottom: 18vh; font-size: 40px; } .f4 { right: 8%; animation-delay: 1.5s; font-size: 50px;}
-        @keyframes sway { 0% { transform: rotate(-12deg); } 100% { transform: rotate(12deg); } }
-        
         h1 { color: #2c3e50; margin: 0px 0 5px 0; text-align: center; font-size: 26px; text-shadow: 2px 2px 0px #fff; position: relative; }
-        
         .prompt-box { text-align: center; background: rgba(255, 255, 255, 0.95); padding: 10px 20px; border-radius: 15px; font-size: 16px; font-weight: 600; max-width: 550px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; border: 3px solid #9b59b6; }
         
-        /* Contenedor del Mini Dibujo (Objetivo) */
         .target-shape { display: grid; grid-template-columns: repeat(4, 22px); gap: 3px; margin: 10px auto 5px auto; width: fit-content; background: #bdc3c7; padding: 4px; border-radius: 8px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);}
         .mini-cell { width: 22px; height: 22px; background: white; border-radius: 4px; }
         .mini-cell.painted { background: #e74c3c; box-shadow: inset 0 -2px 0 #c0392b; }
@@ -41,7 +27,6 @@
         #grid { display: grid; grid-template-columns: repeat(4, 75px); grid-template-rows: repeat(4, 75px); gap: 6px; background-color: var(--grid-bg); border-radius: 10px; padding: 6px; }
         #drawing-canvas { position: absolute; top: 10px; left: 10px; z-index: 10; cursor: crosshair; border-radius: 10px; }
         
-        /* Celdas del Tablero */
         .cell { background-color: #fff9c4; border-radius: 8px; display: flex; justify-content: center; align-items: center; position: relative; user-select: none; box-shadow: inset 0 -4px 0 rgba(0,0,0,0.1); font-size: 35px; transition: background-color 0.2s;}
         .cell[data-start="true"] { background-color: #e2f1f8; box-shadow: inset 0 -4px 0 rgba(0,0,0,0.05); }
         .cell.painted { background-color: #e74c3c !important; box-shadow: inset 0 -4px 0 #c0392b !important; }
@@ -49,7 +34,8 @@
 
         .bee-container { position: absolute; z-index: 15; width: 55px; height: 55px; display: flex; justify-content: center; align-items: center; }
         .bee-orientation { transition: transform 0.2s ease; display: flex; justify-content: center; align-items: center; }
-        .bee-sprite { font-size: 40px; animation: float 2s ease-in-out infinite; filter: drop-shadow(0 0 8px rgba(0,0,0,0.3)); }
+        .bee-sprite { display: flex; justify-content: center; align-items: center; animation: float 2s ease-in-out infinite; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-5px); } }
 
         .panels-container { display: flex; justify-content: center; width: 100%; max-width: 450px; margin-bottom: 20px; position: relative; }
         .panel { box-sizing: border-box; background: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 18px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); width: 95%; display: flex; flex-direction: column; align-items: center; border: 4px solid var(--p1-main); }
@@ -129,47 +115,30 @@
         const gridSize = 4; 
         let isExecuting = false;
         let bee = { pos: {x: 0, y: 0}, dir: 0, commands: [] }; 
-        
-        let targetPixels = []; // Aquí guardaremos la figura aleatoria generada
-        
+        let targetPixels = []; 
         const gridEl = document.getElementById('grid'); 
         const canvas = document.getElementById('drawing-canvas'); 
         const ctx = canvas.getContext('2d');
-        
         let isDrawing = false; let startX, startY;
 
-        // ALGORITMO DE GENERACIÓN DE FIGURA ALEATORIA CONECTADA
         function generateRandomShape() {
             targetPixels = [];
-            // Tamaño de la figura entre 4 y 6 píxeles
             let numPixels = Math.floor(Math.random() * 3) + 4; 
-            
-            // Punto de inicio aleatorio (evitamos 0,0 para que no sea automático pintar el inicio)
             let startX = Math.floor(Math.random() * gridSize);
             let startY = Math.floor(Math.random() * gridSize);
-            if(startX === 0 && startY === 0) startX = 1; // Ajuste simple
-            
+            if(startX === 0 && startY === 0) startX = 1; 
             targetPixels.push(`${startX},${startY}`);
             
             let attempts = 0;
             while(targetPixels.length < numPixels && attempts < 50) {
-                // Escoger un píxel que ya pertenece a la figura para expandirla desde ahí
                 let basePixel = targetPixels[Math.floor(Math.random() * targetPixels.length)];
                 let [bx, by] = basePixel.split(',').map(Number);
-                
-                // Escoger dirección aleatoria (Arriba, Abajo, Izquierda, Derecha)
                 let dirs = [[0,1], [1,0], [0,-1], [-1,0]];
                 let d = dirs[Math.floor(Math.random() * dirs.length)];
-                let nx = bx + d[0];
-                let ny = by + d[1];
-                
-                // Verificar que no se salga del mapa
+                let nx = bx + d[0]; let ny = by + d[1];
                 if(nx >= 0 && nx < gridSize && ny >= 0 && ny < gridSize) {
                     let nStr = `${nx},${ny}`;
-                    // Si el píxel es nuevo, lo añadimos a la figura
-                    if(!targetPixels.includes(nStr)) {
-                        targetPixels.push(nStr);
-                    }
+                    if(!targetPixels.includes(nStr)) targetPixels.push(nStr);
                 }
                 attempts++;
             }
@@ -179,109 +148,82 @@
             gridEl.innerHTML = '';
             for (let y = 0; y < gridSize; y++) {
                 for (let x = 0; x < gridSize; x++) {
-                    const cell = document.createElement('div'); 
-                    cell.className = 'cell'; 
-                    cell.id = `cell-${x}-${y}`;
+                    const cell = document.createElement('div'); cell.className = 'cell'; cell.id = `cell-${x}-${y}`;
                     if (x===0 && y===0) cell.dataset.start = "true";
                     gridEl.appendChild(cell);
                 }
             }
-            
-            // Construir el mapa miniatura del objetivo
-            const miniTarget = document.getElementById('mini-target'); 
-            miniTarget.innerHTML = '';
+            const miniTarget = document.getElementById('mini-target'); miniTarget.innerHTML = '';
             for (let y = 0; y < gridSize; y++) {
                 for (let x = 0; x < gridSize; x++) {
-                    const mCell = document.createElement('div'); 
-                    mCell.className = 'mini-cell';
-                    if (targetPixels.includes(`${x},${y}`)) {
-                        mCell.classList.add('painted');
-                    }
+                    const mCell = document.createElement('div'); mCell.className = 'mini-cell';
+                    if (targetPixels.includes(`${x},${y}`)) mCell.classList.add('painted');
                     miniTarget.appendChild(mCell);
                 }
             }
-            
             setTimeout(() => {
-                canvas.width = gridEl.offsetWidth; 
-                canvas.height = gridEl.offsetHeight;
-                ctx.lineWidth = 8; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; 
-                ctx.setLineDash([12, 15]); ctx.strokeStyle = 'rgba(255, 152, 0, 0.8)'; 
+                canvas.width = gridEl.offsetWidth; canvas.height = gridEl.offsetHeight;
+                ctx.lineWidth = 8; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.setLineDash([12, 15]); ctx.strokeStyle = 'rgba(255, 152, 0, 0.8)'; 
             }, 50);
         }
 
-        // LÓGICA DE DIBUJO (Con el dedo/ratón para planear)
         function getCursorPos(cX, cY) { const r = canvas.getBoundingClientRect(); return { x: cX - r.left, y: cY - r.top }; }
         function startDraw(e) { if (isExecuting) return; isDrawing = true; let cX = e.touches?e.touches[0].clientX:e.clientX; let cY = e.touches?e.touches[0].clientY:e.clientY; const p = getCursorPos(cX, cY); ctx.beginPath(); ctx.moveTo(p.x, p.y); if(e.cancelable) e.preventDefault(); }
         function draw(e) { if (!isDrawing || isExecuting) return; let cX = e.touches?e.touches[0].clientX:e.clientX; let cY = e.touches?e.touches[0].clientY:e.clientY; const p = getCursorPos(cX, cY); ctx.lineTo(p.x, p.y); ctx.stroke(); if(e.cancelable) e.preventDefault(); }
         canvas.addEventListener('mousedown', startDraw); canvas.addEventListener('mousemove', draw); window.addEventListener('mouseup', ()=>isDrawing=false);
         canvas.addEventListener('touchstart', startDraw, {passive:false}); canvas.addEventListener('touchmove', draw, {passive:false}); window.addEventListener('touchend', ()=>isDrawing=false);
 
-        function getTransform(dir) { return dir===0 ? 'scaleX(-1)' : dir===1 ? 'rotate(-90deg)' : dir===2 ? 'scaleX(1)' : 'rotate(90deg)'; }
+        // NUEVA ORIENTACIÓN HACIA ARRIBA
+        function getTransform(dir) { 
+            if (dir === 0) return 'rotate(90deg)';
+            if (dir === 1) return 'rotate(180deg)';
+            if (dir === 2) return 'rotate(-90deg)';
+            if (dir === 3) return 'rotate(0deg)';
+        }
         
         function drawBee() {
             document.querySelectorAll('.bee-container').forEach(b => b.remove());
             const cell = document.getElementById(`cell-${bee.pos.x}-${bee.pos.y}`);
             const container = document.createElement('div'); container.className = 'bee-container';
             const orient = document.createElement('div'); orient.className = 'bee-orientation'; orient.style.transform = getTransform(bee.dir);
-            const sprite = document.createElement('div'); sprite.className = 'bee-sprite'; sprite.innerText = '🐝';
+            const sprite = document.createElement('div'); sprite.className = 'bee-sprite'; 
+            sprite.innerHTML = '<img src="../assets/robots/BeebotEmoji.png" alt="BeeBot" style="width: 48px; height: 48px; object-fit: contain; pointer-events: none;">';
             orient.appendChild(sprite); container.appendChild(orient); cell.appendChild(container);
         }
 
         function addCommand(cmd) { if(isExecuting) return; bee.commands.push(cmd); updateUI(); }
         function undoCommand() { if(isExecuting || bee.commands.length===0) return; bee.commands.pop(); updateUI(); }
-        
         function updateUI() {
-            const sym = { 'F': '⬆️', 'R': '↻', 'L': '↺', 'P': '🖌️' }; 
-            const seq = document.getElementById('seq'); 
-            seq.innerHTML = ''; 
-            bee.commands.forEach(c => { 
-                const s = document.createElement('span'); 
-                s.className = 'cmd-block' + (c==='P' ? ' paint-block' : ''); 
-                s.innerText = sym[c]; 
-                seq.appendChild(s); 
-            });
+            const sym = { 'F': '⬆️', 'R': '↻', 'L': '↺', 'P': '🖌️' }; const seq = document.getElementById('seq'); seq.innerHTML = ''; 
+            bee.commands.forEach(c => { const s = document.createElement('span'); s.className = 'cmd-block' + (c==='P' ? ' paint-block' : ''); s.innerText = sym[c]; seq.appendChild(s); });
         }
 
         function paintCell() {
             const cell = document.getElementById(`cell-${bee.pos.x}-${bee.pos.y}`);
             cell.classList.add('painting-anim');
-            setTimeout(() => {
-                cell.classList.remove('painting-anim');
-                cell.classList.add('painted');
-            }, 200);
+            setTimeout(() => { cell.classList.remove('painting-anim'); cell.classList.add('painted'); }, 200);
         }
 
         function executeCommands() {
-            if (bee.commands.length === 0 || isExecuting) return; 
-            isExecuting = true; 
-            document.getElementById('go-btn').style.opacity = "0.5";
-            
-            // Limpiar la pintura del intento anterior antes de volar
+            if (bee.commands.length === 0 || isExecuting) return; isExecuting = true; document.getElementById('go-btn').style.opacity = "0.5";
             document.querySelectorAll('.cell').forEach(c => c.classList.remove('painted'));
             
             let step = 0;
             const interval = setInterval(() => {
-                if (step >= bee.commands.length) { 
-                    clearInterval(interval); 
-                    setTimeout(() => checkWin(), 400); 
-                    return; 
-                }
+                if (step >= bee.commands.length) { clearInterval(interval); setTimeout(() => checkWin(), 400); return; }
                 const cmd = bee.commands[step];
                 if (cmd === 'F') {
                     let nx = bee.pos.x, ny = bee.pos.y;
                     if (bee.dir===0) nx++; else if (bee.dir===1) ny++; else if (bee.dir===2) nx--; else ny--; 
                     if (nx>=0 && nx<gridSize && ny>=0 && ny<gridSize) { bee.pos.x = nx; bee.pos.y = ny; }
-                } else if (cmd === 'R') bee.dir = (bee.dir+1)%4; 
-                else if (cmd === 'L') bee.dir = (bee.dir+3)%4;
+                } else if (cmd === 'R') bee.dir = (bee.dir+1)%4; else if (cmd === 'L') bee.dir = (bee.dir+3)%4;
                 else if (cmd === 'P') paintCell();
-                
                 drawBee(); step++;
             }, 600); 
         }
 
         function showModal(t, m) { document.getElementById('m-title').innerText = t; document.getElementById('m-msg').innerText = m; document.getElementById('modal').classList.add('active'); }
         function closeModal() { document.getElementById('modal').classList.remove('active'); }
-        
         function checkWin() {
             let isPerfect = true;
             for(let y=0; y<gridSize; y++){
@@ -296,19 +238,7 @@
             document.getElementById('go-btn').style.opacity = "1"; isExecuting = false;
         }
 
-        function resetGame() { 
-            bee = { pos:{x:0,y:0}, dir:0, commands:[] }; 
-            isExecuting = false; 
-            
-            generateRandomShape(); // Generamos el nuevo reto aleatorio
-            
-            updateUI(); 
-            document.getElementById('go-btn').style.opacity="1"; 
-            ctx.clearRect(0,0,canvas.width,canvas.height); 
-            initGrid(); 
-            drawBee(); 
-        }
-        
+        function resetGame() { bee = { pos:{x:0,y:0}, dir:0, commands:[] }; isExecuting = false; generateRandomShape(); updateUI(); document.getElementById('go-btn').style.opacity="1"; ctx.clearRect(0,0,canvas.width,canvas.height); initGrid(); drawBee(); }
         resetGame();
     </script>
 </body>

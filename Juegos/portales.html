@@ -8,19 +8,14 @@
     <style>
         :root { --p1-main: #3498db; --p1-dark: #2980b9; --grid-bg: #8d6e63; }
         body { font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; align-items: center; margin: 0; padding: 10px; min-height: 100vh; touch-action: none; color: #333; background-color: transparent; }
-        
         .decorations { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -1; pointer-events: none; overflow: hidden; background: linear-gradient(180deg, #74ebd5 0%, #ACB6E5 100%); }
         .decorations::before { content: ''; position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg width='60' height='104' viewBox='0 0 60 104' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 52l15-26 15 26v52l-15 26-15-26zM0 0l15 26v52L0 104V0zm60 0v104L45 78V26z' fill='%23ffffff' fill-opacity='0.15' fill-rule='evenodd'/%3E%3C/svg%3E"); z-index: 1; }
         .sun { position: absolute; top: 3%; right: 5%; font-size: 70px; z-index: 2; filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.8)); animation: pulse-sun 3s infinite alternate; }
         @keyframes pulse-sun { 0% { transform: scale(1) rotate(0deg); } 100% { transform: scale(1.1) rotate(10deg); } }
-        .cloud { position: absolute; font-size: 60px; opacity: 0.8; z-index: 2; filter: drop-shadow(0 5px 15px rgba(255,255,255,0.5)); }
-        .c1 { top: 8%; left: -20%; animation: drift 35s linear infinite; } .c2 { top: 20%; left: -20%; animation: drift 45s linear infinite 15s; font-size: 45px;} .c3 { top: 5%; left: -20%; animation: drift 55s linear infinite 25s; font-size: 80px;}
-        @keyframes drift { 0% { transform: translateX(-20vw); } 100% { transform: translateX(120vw); } }
         .grass { position: absolute; bottom: -5vh; left: -10vw; width: 120vw; height: 25vh; background: #a9dfbf; border-radius: 50% 50% 0 0; z-index: 2; box-shadow: inset 0 15px 0 #82e0aa, 0 -30px 50px rgba(46,204,113,0.3); }
         
         h1 { color: #2c3e50; margin: 0px 0 5px 0; text-align: center; font-size: 26px; text-shadow: 2px 2px 0px #fff; position: relative; }
         .prompt-box { text-align: center; background: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 15px; font-size: 16px; font-weight: 600; max-width: 550px; width: 90%; margin-bottom: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; border: 3px solid #9b59b6; }
-        
         .difficulty-selector { display: flex; gap: 10px; margin-bottom: 15px; position: relative; }
         .diff-btn { background-color: rgba(255, 255, 255, 0.8); border: 2px solid transparent; padding: 8px 15px; border-radius: 20px; font-size: 14px; color: #333; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .diff-btn.active { background-color: #9b59b6; border-color: #8e44ad; color: white; box-shadow: 0 4px 0 #8e44ad; transform: translateY(-2px); }
@@ -31,7 +26,6 @@
         
         .cell { background-color: #fff9c4; border-radius: 8px; display: flex; justify-content: center; align-items: center; position: relative; user-select: none; box-shadow: inset 0 -4px 0 rgba(0,0,0,0.1); }
         .cell[data-start="true"] { background-color: #e2f1f8; }
-        
         .target-cell { background-color: #fcf3cf !important; box-shadow: inset 0 0 15px #f1c40f !important; }
         .target-cell::after { content: '🌺'; font-size: 40px; position: absolute; animation: pulse-flower 1.5s infinite alternate; }
         @keyframes pulse-flower { 0% { transform: scale(1); } 100% { transform: scale(1.15); } }
@@ -43,22 +37,11 @@
         .portal-b::after { content: '🌀'; font-size: 40px; position: absolute; }
         .portal-o { background-color: #e67e22 !important; box-shadow: inset 0 0 20px #d35400 !important; animation: spin 4s linear infinite reverse;}
         .portal-o::after { content: '🌀'; font-size: 40px; position: absolute; filter: hue-rotate(150deg); }
-        
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
         .bee-container { position: absolute; z-index: 15; width: 45px; height: 45px; display: flex; justify-content: center; align-items: center; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        
-        /* La abeja se mantiene siempre derecha (volteada hacia la derecha para que coincida con el avance por defecto) */
-        .bee-sprite { font-size: 35px; animation: float 2s ease-in-out infinite; filter: drop-shadow(0 0 8px rgba(0,0,0,0.5)); transform: scaleX(-1); }
-        @keyframes float { 0%, 100% { transform: translateY(0px) scaleX(-1); } 50% { transform: translateY(-5px) scaleX(-1); } }
-
-        /* Flecha indicadora de dirección */
-        .bee-arrow { position: absolute; font-size: 24px; z-index: 20; filter: drop-shadow(0px 2px 2px rgba(0,0,0,0.4)); animation: pulse-arrow 0.8s infinite alternate; }
-        .bee-arrow.dir-0 { right: -18px; top: 10px; }
-        .bee-arrow.dir-1 { bottom: -18px; left: 10px; }
-        .bee-arrow.dir-2 { left: -18px; top: 10px; }
-        .bee-arrow.dir-3 { top: -18px; left: 10px; }
-        @keyframes pulse-arrow { 0% { transform: scale(1); } 100% { transform: scale(1.2); } }
+        .bee-orientation { transition: transform 0.2s ease; display: flex; justify-content: center; align-items: center; }
+        .bee-sprite { display: flex; justify-content: center; align-items: center; animation: float 2s ease-in-out infinite; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
 
         .panels-container { display: flex; justify-content: center; width: 100%; max-width: 450px; margin-bottom: 20px; position: relative; }
         .panel { box-sizing: border-box; background: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 18px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); width: 95%; display: flex; flex-direction: column; align-items: center; border: 4px solid var(--p1-main); }
@@ -70,7 +53,6 @@
         .undo-btn { background-color: #e74c3c; box-shadow: 0 5px 0 #c0392b; flex: 0.8; }
         .seq-container { display: flex; flex-wrap: wrap; gap: 5px; min-height: 45px; background: rgba(255,255,255,0.7); padding: 8px; border-radius: 10px; width: 95%; border: 2px dashed rgba(0,0,0,0.1); }
         .cmd-block { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; color: white; font-weight: bold; font-size: 18px; box-shadow: 0 3px 0 rgba(0,0,0,0.2); background: var(--p1-main); animation: popIn 0.2s ease-out; }
-        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
 
         .global-controls { display: flex; gap: 15px; margin-bottom: 20px; position: relative; }
         .global-btn { padding: 12px 20px; font-size: 18px; color: white; border-radius: 15px; }
@@ -87,12 +69,7 @@
     </style>
 </head>
 <body>
-
-    <div class="decorations">
-        <div class="sun">☀️</div><div class="cloud c1">☁️</div><div class="cloud c2">☁️</div><div class="cloud c3">☁️</div>
-        <div class="grass"></div>
-    </div>
-
+    <div class="decorations"><div class="sun">☀️</div><div class="grass"></div></div>
     <h1>¡Portales Mágicos! 🌀</h1>
     
     <div class="difficulty-selector">
@@ -101,11 +78,10 @@
         <button id="diff-3" class="diff-btn" onclick="setDifficulty(3)">⭐⭐⭐ Nivel 3</button>
     </div>
 
-    <div class="prompt-box">Cruza los portales para traspasar los muros. <br><span style="font-size:12px; color:#555;">¡Guíate por la flecha para saber hacia dónde está mirando la abeja!</span></div>
+    <div class="prompt-box">Cruza los portales para traspasar los muros. <br><span style="font-size:12px; color:#555;">¡El portal te escupirá automáticamente en dirección a la flor!</span></div>
 
     <div class="grid-wrapper">
-        <div id="grid"></div>
-        <canvas id="drawing-canvas"></canvas>
+        <div id="grid"></div><canvas id="drawing-canvas"></canvas>
     </div>
 
     <div class="panels-container">
@@ -137,57 +113,23 @@
         const gridSize = 5; let isExecuting = false;
         let bee = { pos: {x: 0, y: 0}, dir: 0, commands: [] }; 
         let targetPos = {x: 0, y: 0}; let currentDifficulty = 1; 
-        
-        let walls = new Set();
-        let portals = []; 
+        let walls = new Set(); let portals = []; 
 
-        const levels = {
-            1: [
-                "S . W . G",
-                ". . W . .",
-                "B . W . B",
-                ". . . . .",
-                ". . . . ."
-            ],
-            2: [
-                "S W W G .",
-                ". W . W .",
-                "B W O W .",
-                ". W . W .",
-                ". B . O ."
-            ],
-            3: [
-                "S W B . .",
-                ". W W W O",
-                ". W G W .",
-                "B W . W .",
-                ". . . O ."
-            ]
-        };
+        const levels = { 1: ["S . W . G", ". . W . .", "B . W . B", ". . . . .", ". . . . ."], 2: ["S W W G .", ". W . W .", "B W O W .", ". W . W .", ". B . O ."], 3: ["S W B . .", ". W W W O", ". W G W .", "B W . W .", ". . . O ."] };
 
         const gridEl = document.getElementById('grid'); const canvas = document.getElementById('drawing-canvas'); const ctx = canvas.getContext('2d');
         let isDrawing = false;
 
-        function setDifficulty(level) {
-            if (isExecuting) return;
-            currentDifficulty = level;
-            document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById('diff-' + level).classList.add('active');
-            resetGame();
-        }
-
+        function setDifficulty(level) { if (isExecuting) return; currentDifficulty = level; document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('active')); document.getElementById('diff-' + level).classList.add('active'); resetGame(); }
         function loadLevel() {
-            walls.clear(); portals = [];
-            let layout = levels[currentDifficulty];
+            walls.clear(); portals = []; let layout = levels[currentDifficulty];
             for (let y = 0; y < gridSize; y++) {
                 let row = layout[y].split(' ');
                 for (let x = 0; x < gridSize; x++) {
                     let tile = row[x];
                     if (tile === 'S') { bee.pos = {x, y}; bee.dir = 0; }
-                    else if (tile === 'G') targetPos = {x, y};
-                    else if (tile === 'W') walls.add(`${x},${y}`);
-                    else if (tile === 'B') portals.push({type: 'B', x, y});
-                    else if (tile === 'O') portals.push({type: 'O', x, y});
+                    else if (tile === 'G') targetPos = {x, y}; else if (tile === 'W') walls.add(`${x},${y}`);
+                    else if (tile === 'B') portals.push({type: 'B', x, y}); else if (tile === 'O') portals.push({type: 'O', x, y});
                 }
             }
         }
@@ -196,24 +138,15 @@
             gridEl.innerHTML = '';
             for (let y = 0; y < gridSize; y++) {
                 for (let x = 0; x < gridSize; x++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'cell'; cell.id = `cell-${x}-${y}`;
-                    
+                    const cell = document.createElement('div'); cell.className = 'cell'; cell.id = `cell-${x}-${y}`;
                     if (x === bee.pos.x && y === bee.pos.y) cell.dataset.start = "true";
                     if (x === targetPos.x && y === targetPos.y) cell.classList.add('target-cell');
                     if (walls.has(`${x},${y}`)) cell.classList.add('obstacle-cell');
-                    
-                    let isPortal = portals.find(p => p.x === x && p.y === y);
-                    if (isPortal) {
-                        cell.classList.add(isPortal.type === 'B' ? 'portal-b' : 'portal-o');
-                    }
+                    let isPortal = portals.find(p => p.x === x && p.y === y); if (isPortal) cell.classList.add(isPortal.type === 'B' ? 'portal-b' : 'portal-o');
                     gridEl.appendChild(cell);
                 }
             }
-            setTimeout(() => {
-                canvas.width = gridEl.offsetWidth; canvas.height = gridEl.offsetHeight;
-                ctx.lineWidth = 6; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.setLineDash([10, 15]); ctx.strokeStyle = 'rgba(155, 89, 182, 0.7)'; 
-            }, 50);
+            setTimeout(() => { canvas.width = gridEl.offsetWidth; canvas.height = gridEl.offsetHeight; ctx.lineWidth = 6; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.setLineDash([10, 15]); ctx.strokeStyle = 'rgba(155, 89, 182, 0.7)'; }, 50);
         }
 
         function getCursorPos(e) { const r = canvas.getBoundingClientRect(); let cX = e.touches?e.touches[0].clientX:e.clientX; let cY = e.touches?e.touches[0].clientY:e.clientY; return { x: cX - r.left, y: cY - r.top }; }
@@ -222,23 +155,22 @@
         canvas.addEventListener('mousedown', startDraw); canvas.addEventListener('mousemove', draw); window.addEventListener('mouseup', ()=>isDrawing=false);
         canvas.addEventListener('touchstart', startDraw, {passive:false}); canvas.addEventListener('touchmove', draw, {passive:false}); window.addEventListener('touchend', ()=>isDrawing=false);
 
+        // NUEVA ORIENTACIÓN HACIA ARRIBA
+        function getTransform(dir) { 
+            if (dir === 0) return 'rotate(90deg)';
+            if (dir === 1) return 'rotate(180deg)';
+            if (dir === 2) return 'rotate(-90deg)';
+            if (dir === 3) return 'rotate(0deg)';
+        }
+
         function drawBee() {
             document.querySelectorAll('.bee-container').forEach(b => b.remove());
             const cell = document.getElementById(`cell-${bee.pos.x}-${bee.pos.y}`);
             const container = document.createElement('div'); container.className = `bee-container`;
-            
-            const sprite = document.createElement('div'); sprite.className = 'bee-sprite'; sprite.innerText = '🐝';
-            
-            // La flecha indicadora que no marea
-            const arrow = document.createElement('div'); arrow.className = `bee-arrow dir-${bee.dir}`;
-            if (bee.dir === 0) arrow.innerText = '➡️';
-            else if (bee.dir === 1) arrow.innerText = '⬇️';
-            else if (bee.dir === 2) arrow.innerText = '⬅️';
-            else if (bee.dir === 3) arrow.innerText = '⬆️';
-
-            container.appendChild(sprite); 
-            container.appendChild(arrow);
-            cell.appendChild(container);
+            const orient = document.createElement('div'); orient.className = 'bee-orientation'; orient.style.transform = getTransform(bee.dir);
+            const sprite = document.createElement('div'); sprite.className = 'bee-sprite'; 
+            sprite.innerHTML = '<img src="../assets/robots/BeebotEmoji.png" alt="BeeBot" style="width: 48px; height: 48px; object-fit: contain; pointer-events: none;">';
+            orient.appendChild(sprite); container.appendChild(orient); cell.appendChild(container);
         }
 
         function addCommand(cmd) { if(isExecuting) return; bee.commands.push(cmd); updateUI(); }
@@ -253,45 +185,41 @@
             if (onPortal) {
                 let otherPortal = portals.find(p => p.type === onPortal.type && (p.x !== bee.pos.x || p.y !== bee.pos.y));
                 if (otherPortal) {
-                    bee.pos.x = otherPortal.x; bee.pos.y = otherPortal.y;
+                    let options = [ { dx: 1, dy: 0, dir: 0 }, { dx: 0, dy: 1, dir: 1 }, { dx: -1, dy: 0, dir: 2 }, { dx: 0, dy: -1, dir: 3 } ];
+                    let bestNeighbor = null; let minDist = Infinity;
+                    for (let opt of options) {
+                        let nx = otherPortal.x + opt.dx; let ny = otherPortal.y + opt.dy;
+                        if (nx >= 0 && nx < gridSize && ny >= 0 && ny < gridSize && !walls.has(`${nx},${ny}`)) {
+                            let dist = Math.abs(nx - targetPos.x) + Math.abs(ny - targetPos.y);
+                            if (dist < minDist) { minDist = dist; bestNeighbor = { x: nx, y: ny, dir: opt.dir }; }
+                        }
+                    }
+                    if (bestNeighbor) { bee.pos.x = bestNeighbor.x; bee.pos.y = bestNeighbor.y; bee.dir = bestNeighbor.dir; } 
+                    else { bee.pos.x = otherPortal.x; bee.pos.y = otherPortal.y; }
                 }
             }
         }
 
         function executeCommands() {
-            if (bee.commands.length === 0 || isExecuting) return;
-            isExecuting = true; document.getElementById('go-btn').style.opacity = "0.5";
-
+            if (bee.commands.length === 0 || isExecuting) return; isExecuting = true; document.getElementById('go-btn').style.opacity = "0.5";
             let step = 0;
             const interval = setInterval(() => {
-                if (step >= bee.commands.length) {
-                    clearInterval(interval); checkWin(); return;
-                }
+                if (step >= bee.commands.length) { clearInterval(interval); checkWin(); return; }
                 const cmd = bee.commands[step];
                 if (cmd === 'F') {
                     let nx = bee.pos.x, ny = bee.pos.y;
                     if (bee.dir === 0) nx++; else if (bee.dir === 1) ny++; else if (bee.dir === 2) nx--; else if (bee.dir === 3) ny--; 
-
-                    if (nx >= 0 && nx < gridSize && ny >= 0 && ny < gridSize) {
-                        if (!walls.has(`${nx},${ny}`)) {
-                            bee.pos.x = nx; bee.pos.y = ny;
-                            checkTeleport(); 
-                        }
-                    }
-                } else if (cmd === 'R') bee.dir = (bee.dir + 1) % 4; 
-                else if (cmd === 'L') bee.dir = (bee.dir + 3) % 4; 
-                
+                    if (nx >= 0 && nx < gridSize && ny >= 0 && ny < gridSize) { if (!walls.has(`${nx},${ny}`)) { bee.pos.x = nx; bee.pos.y = ny; checkTeleport(); } }
+                } else if (cmd === 'R') bee.dir = (bee.dir + 1) % 4; else if (cmd === 'L') bee.dir = (bee.dir + 3) % 4; 
                 drawBee(); step++;
             }, 600); 
         }
 
         function showModal(title, msg) { document.getElementById('m-title').innerText = title; document.getElementById('m-msg').innerText = msg; document.getElementById('modal').classList.add('active'); }
         function closeModal() { document.getElementById('modal').classList.remove('active'); }
-
         function checkWin() {
             setTimeout(() => {
-                if (bee.pos.x === targetPos.x && bee.pos.y === targetPos.y) showModal("¡Lo lograste! 🎉", "¡Entendiste cómo funcionan los portales y llegaste a la flor!");
-                else showModal("¡Ups! 🌀", "La abeja se perdió entre las dimensiones.\n¡Sigue la flecha e intenta de nuevo!");
+                if (bee.pos.x === targetPos.x && bee.pos.y === targetPos.y) showModal("¡Lo lograste! 🎉", "¡Usaste los portales perfectamente y llegaste a la flor!");
                 document.getElementById('go-btn').style.opacity = "1"; isExecuting = false;
             }, 400);
         }
