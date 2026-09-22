@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎮 Battle Stars - Competencia</title>
+
+<!-- FUENTES -->
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+/* =========================================================
+   VARIABLES DE TEMAS (STYLES)
+========================================================= */
+:root[data-theme="cyberpunk"] {
+    --bg: #0b0317;
+    --panel: #16082e;
+    --panel-light: #211044;
+    --purple: #7800ff;
+    --pink: #ff007b;
+    --cyan: #00f3ff;
+    --yellow: #ffdf00;
+    --green: #2ed573;
+    --white: #ffffff;
+    --muted: #a99bc7;
+    --border: #3b1a78;
+    --header-grad: linear-gradient(90deg, #4d00a8, #7800ff, #ff007b);
+}
+
+:root[data-theme="retro"] {
+    --bg: #021a08;
+    --panel: #063813;
+    --panel-light: #0b4e1c;
+    --purple: #008f39;
+    --pink: #00ff66;
+    --cyan: #33ffcc;
+    --yellow: #ffff00;
+    --green: #2ed573;
+    --white: #ffffff;
+    --muted: #8cd4a8;
+    --border: #13752e;
+    --header-grad: linear-gradient(90deg, #004d20, #008f39, #00ff66);
+}
+
+:root[data-theme="galaxy"] {
+    --bg: #030617;
+    --panel: #0d1230;
+    --panel-light: #161e47;
+    --purple: #4834df;
+    --pink: #e056fd;
+    --cyan: #68deff;
+    --yellow: #f6e58d;
+    --green: #badc58;
+    --white: #ffffff;
+    --muted: #a4b0be;
+    --border: #293570;
+    --header-grad: linear-gradient(90deg, #130f40, #4834df, #68deff);
+}
+
+/* =========================================================
+   RESET
+========================================================= */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    font-family: 'Outfit', sans-serif;
+    color: var(--white);
+    background:
+        radial-gradient(circle at 10% 10%, rgba(120,0,255,.25), transparent 35%),
+        radial-gradient(circle at 90% 90%, rgba(0,243,255,.18), transparent 35%),
+        radial-gradient(circle at 50% 50%, rgba(255,0,123,.08), transparent 50%),
+        var(--bg);
+    background-attachment: fixed;
+    padding: 25px;
+    transition: background 0.3s ease;
+}
+
+/* =========================================================
+   APP PRINCIPAL
+========================================================= */
+.arcade-container {
+    width: 100%;
+    max-width: 1250px;
+    margin: auto;
+    background: var(--panel);
+    border: 2px solid var(--cyan);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 0 25px rgba(0,243,255,.15), 0 0 70px rgba(120,0,255,.12);
+    transition: background 0.3s, border-color 0.3s;
+}
+
+/* =========================================================
+   HEADER & BOTÓN DE ESTILO
+========================================================= */
+.arcade-header {
+    position: relative;
+    padding: 35px 25px;
+    text-align: center;
+    background: var(--header-grad);
+    border-bottom: 2px solid var(--cyan);
+    overflow: hidden;
+    transition: background 0.3s;
+}
+
+.theme-switcher-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px solid var(--white);
+    color: var(--white);
+    padding: 8px 14px;
+    border-radius: 25px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    backdrop-filter: blur(4px);
+    transition: 0.2s;
+}
+
+.theme-switcher-btn:hover {
+    background: var(--white);
+    color: var(--bg);
+    transform: scale(1.05);
+}
+
+.arcade-header::before {
+    content: "✦";
+    position: absolute;
+    font-size: 80px;
+    left: 5%;
+    top: 5px;
+    opacity: .15;
+}
+
+.arcade-header::after {
+    content: "★";
+    position: absolute;
+    font-size: 100px;
+    right: 5%;
+    bottom: -30px;
+    opacity: .15;
+}
+
+.arcade-header h1 {
+    position: relative;
+    z-index: 2;
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(1rem, 3vw, 1.8rem);
+    line-height: 1.6;
+    text-shadow: 3px 3px 0 var(--cyan), -2px -2px 0 var(--pink);
+}
+
+.arcade-header p {
+    position: relative;
+    z-index: 2;
+    margin-top: 14px;
+    color: var(--yellow);
+    font-size: clamp(.85rem, 2vw, 1.1rem);
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* =========================================================
+   PANEL DE CONFIGURACIÓN
+========================================================= */
+.config-panel {
+    padding: 25px;
+    background: var(--bg);
+    border-bottom: 2px solid var(--border);
+}
+
+.section-title {
+    margin-bottom: 20px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: .8rem;
+    color: var(--cyan);
+    text-align: center;
+    line-height: 1.8;
+}
+
+.config-controls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(180px, 1fr));
+    gap: 15px;
+    max-width: 700px;
+    margin: auto;
+}
+
+.config-box {
+    background: var(--panel-light);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 15px;
+}
+
+.config-box label {
+    display: block;
+    color: var(--muted);
+    font-size: .85rem;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.config-box input {
+    width: 100%;
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 11px;
+    color: white;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    outline: none;
+}
+
+.config-box input:focus {
+    border-color: var(--cyan);
+    box-shadow: 0 0 12px rgba(0,243,255,.2);
+}
+
+/* =========================================================
+   BOTONES
+========================================================= */
+.button-row {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+button {
+    border: none;
+    cursor: pointer;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 900;
+    transition: .25s ease;
+}
+
+button:hover {
+    transform: translateY(-3px);
+}
+
+.btn {
+    padding: 13px 20px;
+    border-radius: 9px;
+    color: white;
+    font-size: .9rem;
+}
+
+.btn-create {
+    background: linear-gradient(135deg, var(--purple), var(--pink));
+    border: 2px solid var(--cyan);
+    box-shadow: 0 0 18px rgba(120,0,255,.3);
+}
+
+.btn-reset {
+    background: var(--panel-light);
+    border: 2px solid var(--pink);
+    color: var(--pink);
+}
+
+/* =========================================================
+   EQUIPOS
+========================================================= */
+.teams-editor {
+    margin-top: 22px;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(130px, 1fr));
+    gap: 10px;
+}
+
+.team-input {
+    min-width: 0;
+    padding: 11px 8px;
+    text-align: center;
+    color: white;
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: 9px;
+    outline: none;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+}
+
+.team-input:focus {
+    border-color: var(--cyan);
+    box-shadow: 0 0 12px rgba(0,243,255,.25);
+}
+
+/* =========================================================
+   MARCADOR
+========================================================= */
+.scoreboard {
+    padding: 25px;
+}
+
+.scoreboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 18px;
+}
+
+.scoreboard-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: .85rem;
+    color: var(--pink);
+    line-height: 1.7;
+}
+
+.live {
+    padding: 7px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--green);
+    color: var(--green);
+    background: rgba(46,213,115,.08);
+    font-family: 'Press Start 2P', monospace;
+    font-size: .5rem;
+    white-space: nowrap;
+}
+
+/* =========================================================
+   TABLA
+========================================================= */
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--panel-light);
+}
+
+table {
+    width: 100%;
+    min-width: 850px;
+    border-collapse: separate;
+    border-spacing: 6px;
+    padding: 7px;
+}
+
+th {
+    padding: 13px 8px;
+    background: var(--purple);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    color: white;
+    font-size: .8rem;
+}
+
+th:first-child {
+    color: var(--cyan);
+    font-family: 'Press Start 2P', monospace;
+    font-size: .55rem;
+}
+
+/* =========================================================
+   CELDAS
+========================================================= */
+td {
+    padding: 12px 8px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    text-align: center;
+}
+
+tr:hover td {
+    background: var(--panel-light);
+}
+
+/* =========================================================
+   RETO
+========================================================= */
+.reto-cell {
+    min-width: 190px;
+}
+
+.reto-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 7px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: white;
+    font-family: 'Outfit', sans-serif;
+    font-size: .85rem;
+    font-weight: 700;
+    text-align: center;
+    outline: none;
+}
+
+.reto-input:focus {
+    border-color: var(--pink);
+    box-shadow: 0 0 10px rgba(255,0,123,.2);
+}
+
+/* =========================================================
+   ESTRELLAS
+========================================================= */
+.stars {
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+}
+
+.star {
+    font-size: 25px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: .18s ease;
+    line-height: 1;
+    user-select: none;
+}
+
+.star:hover {
+    transform: scale(1.3);
+    color: var(--yellow);
+}
+
+.star.active {
+    color: var(--yellow);
+    text-shadow: 0 0 5px #fff000, 0 0 12px #ffb000, 0 0 20px rgba(255,190,0,.5);
+}
+
+/* =========================================================
+   TOTAL
+========================================================= */
+.total-row td {
+    background: linear-gradient(135deg, var(--panel-light), var(--purple));
+    border-color: var(--cyan);
+}
+
+.total-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: .55rem;
+    color: var(--cyan);
+}
+
+.total-number {
+    font-family: 'Press Start 2P', monospace;
+    font-size: .85rem;
+    color: var(--yellow);
+}
+
+/* =========================================================
+   RANKING EN VIVO
+========================================================= */
+.live-ranking {
+    margin-top: 25px;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--panel-light);
+}
+
+.ranking-title {
+    margin-bottom: 15px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: .65rem;
+    color: var(--cyan);
+    text-align: center;
+    line-height: 1.7;
+}
+
+.ranking-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.ranking-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    transition: .25s;
+}
+
+.ranking-item:hover {
+    transform: translateX(5px);
+    border-color: var(--cyan);
+    box-shadow: 0 0 15px rgba(0,243,255,.15);
+}
+
+.ranking-item.first {
+    border-color: var(--yellow);
+    background: linear-gradient(135deg, #302403, #211707);
+    box-shadow: 0 0 18px rgba(255,204,0,.15);
+}
+
+.rank-position {
+    width: 40px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: .65rem;
+    text-align: center;
+    color: var(--muted);
+}
+
+.first .rank-position {
+    color: var(--yellow);
+}
+
+.rank-avatar {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: var(--bg);
+    border: 2px solid var(--cyan);
+    border-radius: 9px;
+    font-size: 1.35rem;
+}
+
+.first .rank-avatar {
+    border-color: var(--yellow);
+}
+
+.rank-name {
+    flex: 1;
+    min-width: 0;
+    font-weight: 900;
+    font-size: .95rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.first .rank-name {
+    color: var(--yellow);
+}
+
+.rank-score {
+    font-family: 'Press Start 2P', monospace;
+    color: var(--cyan);
+    font-size: .6rem;
+    background: var(--bg);
+    padding: 9px;
+    border-radius: 6px;
+}
+
+.first .rank-score {
+    color: var(--yellow);
+    border: 1px solid #8c7200;
+}
+
+/* =========================================================
+   BOTÓN FINAL
+========================================================= */
+.finish-area {
+    padding: 0 25px 30px;
+    text-align: center;
+}
+
+.finish-button {
+    width: 100%;
+    max-width: 500px;
+    padding: 18px;
+    border-radius: 12px;
+    background: linear-gradient(90deg, #ff9d00, var(--pink), var(--purple));
+    border: 2px solid white;
+    color: white;
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(.65rem, 2vw, .85rem);
+    line-height: 1.8;
+    box-shadow: 0 0 25px rgba(255,0,123,.3);
+}
+
+.finish-button:hover {
+    box-shadow: 0 0 35px rgba(0,243,255,.45);
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+.arcade-footer {
+    padding: 15px;
+    text-align: center;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    color: var(--pink);
+    font-family: 'Press Start 2P', monospace;
+    font-size: .5rem;
+    line-height: 1.8;
+}
+
+/* =========================================================
+   MODAL RESULTADOS
+========================================================= */
+.modal {
+    position: fixed;
+    inset: 0;
+    z-index: 5000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(5,0,15,.88);
+    backdrop-filter: blur(8px);
+    overflow-y: auto;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-box {
+    width: 100%;
+    max-width: 850px;
+    max-height: 95vh;
+    overflow-y: auto;
+    background: linear-gradient(145deg, var(--panel), var(--bg));
+    border: 3px solid var(--cyan);
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(0,243,255,.3), 0 0 80px rgba(120,0,255,.25);
+    animation: modalIn .5s ease;
+}
+
+@keyframes modalIn {
+    from { opacity: 0; transform: scale(.75) translateY(40px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.final-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: .55rem;
+    color: var(--green);
+    margin-bottom: 15px;
+}
+
+.final-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(1.2rem, 4vw, 2rem);
+    line-height: 1.7;
+    color: white;
+    text-shadow: 3px 3px 0 var(--pink), -2px -2px 0 var(--cyan);
+}
+
+.final-subtitle {
+    margin-top: 10px;
+    color: var(--yellow);
+    font-weight: 800;
+}
+
+/* =========================================================
+   CAMPEÓN
+========================================================= */
+.champion-box {
+    margin: 25px auto;
+    padding: 25px;
+    max-width: 600px;
+    background: linear-gradient(135deg, #352b04, #211805);
+    border: 2px solid var(--yellow);
+    border-radius: 15px;
+    box-shadow: 0 0 30px rgba(255,204,0,.2);
+}
+
+.champion-crown {
+    font-size: 4rem;
+    animation: bounce 1.2s infinite;
+}
+
+@keyframes bounce {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.champion-name {
+    margin-top: 10px;
+    color: var(--yellow);
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(1rem, 4vw, 1.7rem);
+    line-height: 1.8;
+}
+
+.champion-score {
+    margin-top: 10px;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 800;
+}
+
+/* =========================================================
+   RESULTADOS
+========================================================= */
+.final-ranking {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.final-item {
+    display: grid;
+    grid-template-columns: 60px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    background: var(--panel-light);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    text-align: left;
+}
+
+.final-item:nth-child(1) { border-color: var(--yellow); }
+.final-item:nth-child(2) { border-color: #c0c0c0; }
+.final-item:nth-child(3) { border-color: #cd7f32; }
+
+.final-medal {
+    font-size: 1.7rem;
+    text-align: center;
+}
+
+.final-team {
+    font-weight: 900;
+    font-size: 1rem;
+}
+
+.final-points {
+    font-family: 'Press Start 2P', monospace;
+    color: var(--cyan);
+    font-size: .65rem;
+}
+
+.close-button {
+    margin-top: 25px;
+    padding: 13px 25px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, var(--purple), var(--pink));
+    color: white;
+    border: 2px solid var(--cyan);
+    font-size: .85rem;
+    cursor: pointer;
+}
+
+/* =========================================================
+   CONFETI
+========================================================= */
+.confetti {
+    position: fixed;
+    top: -30px;
+    width: 9px;
+    height: 18px;
+    z-index: 10000;
+    animation: fall linear forwards;
+}
+
+@keyframes fall {
+    to { transform: translateY(110vh) rotate(720deg); }
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+@media (max-width: 900px) {
+    body { padding: 15px; }
+    .teams-editor { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 600px) {
+    body { padding: 0; }
+    .arcade-container { border-radius: 0; border-left: none; border-right: none; min-height: 100vh; }
+    .config-controls { grid-template-columns: 1fr; }
+    .button-row { flex-direction: column; }
+    .btn { width: 100%; }
+    .teams-editor { grid-template-columns: repeat(2, 1fr); }
+    .scoreboard-header { align-items: flex-start; flex-direction: column; }
+    table { min-width: 720px; }
+    .star { font-size: 22px; }
+    .theme-switcher-btn { position: relative; top: auto; right: auto; margin: 10px auto 0; display: inline-flex; }
+}
+</style>
+</head>
+
+<body data-theme="cyberpunk">
+
+<div class="arcade-container">
+
+    <!-- HEADER -->
+    <header class="arcade-header">
+        <button class="theme-switcher-btn" onclick="cambiarTema()">🎨 <span id="themeName">CYBERPUNK</span></button>
+        <h1>🎮 BATTLE STARS</h1>
+        <p>⚡ ¡Competencia de campeones! ⚡</p>
+    </header>
+
+    <!-- CONFIGURACIÓN -->
+    <section class="config-panel">
+        <div class="section-title">⚙️ CONFIGURACIÓN DEL JUEGO</div>
+        <div class="config-controls">
+            <div class="config-box">
+                <label>👥 CANTIDAD DE EQUIPOS</label>
+                <input type="number" id="cantidadGrupos" min="2" max="6" value="4">
+            </div>
+            <div class="config-box">
+                <label>🎯 CANTIDAD DE RETOS</label>
+                <input type="number" id="cantidadRetos" min="1" max="15" value="5">
+            </div>
+        </div>
+
+        <div class="button-row">
+            <button class="btn btn-create" onclick="generarTabla()">✨ CREAR PARTIDA</button>
+            <button class="btn btn-reset" onclick="reiniciarPuntos()">🔄 REINICIAR PUNTOS</button>
+        </div>
+
+        <!-- EDITAR EQUIPOS -->
+        <div class="teams-editor" id="teamsEditor"></div>
+    </section>
+
+    <!-- MARCADOR -->
+    <section class="scoreboard">
+        <div class="scoreboard-header">
+            <div class="scoreboard-title">🏆 MARCADOR DE LA PARTIDA</div>
+            <div class="live">● EN VIVO</div>
+        </div>
+
+        <!-- TABLA -->
+        <div class="table-wrapper">
+            <table>
+                <thead id="encabezado"></thead>
+                <tbody id="cuerpo"></tbody>
+            </table>
+        </div>
+
+        <!-- RANKING -->
+        <div class="live-ranking">
+            <div class="ranking-title">📊 RANKING EN VIVO</div>
+            <div class="ranking-list" id="rankingList"></div>
+        </div>
+    </section>
+
+    <!-- FINALIZAR -->
+    <div class="finish-area">
+        <button class="finish-button" onclick="finalizarCompetencia()">🏁 FINALIZAR COMPETENCIA 🏆</button>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="arcade-footer">
+        ⭐ SIGUE JUGANDO • SIGUE APRENDIENDO • SÉ UN CAMPEÓN ⭐
+    </footer>
+
+</div>
+
+<!-- MODAL RESULTADOS -->
+<div class="modal" id="modalResultados">
+    <div class="modal-box">
+        <div class="final-label">★ GAME RESULTS ★</div>
+        <h2 class="final-title">🎉 ¡PARTIDA TERMINADA! 🎉</h2>
+        <p class="final-subtitle">¡Estos son los resultados finales!</p>
+
+        <!-- CAMPEÓN -->
+        <div class="champion-box">
+            <div class="champion-crown">🏆</div>
+            <div class="champion-name" id="championName">CAMPEÓN</div>
+            <div class="champion-score" id="championScore"></div>
+        </div>
+
+        <!-- CLASIFICACIÓN -->
+        <div class="section-title">🏅 CLASIFICACIÓN FINAL</div>
+        <div class="final-ranking" id="finalRanking"></div>
+
+        <button class="close-button" onclick="cerrarResultados()">🎮 VOLVER AL JUEGO</button>
+    </div>
+</div>
+
+<script>
+/* =========================================================
+   CAMBIO DE TEMAS (ESTILOS)
+========================================================= */
+const temas = ["cyberpunk", "retro", "galaxy"];
+const nombresTemas = ["CYBERPUNK", "RETRO ARCADE", "GALAXY SPACE"];
+let temaActualIndex = 0;
+
+function cambiarTema() {
+    temaActualIndex = (temaActualIndex + 1) % temas.length;
+    const nuevoTema = temas[temaActualIndex];
+    
+    document.documentElement.setAttribute("data-theme", nuevoTema);
+    document.getElementById("themeName").textContent = nombresTemas[temaActualIndex];
+}
+
+/* =========================================================
+   DATOS Y CONFIGURACIÓN INICIAL
+========================================================= */
+let grupos = [];
+let retos = [];
+let puntos = [];
+
+const nombresIniciales = [
+    "🐼 Los Pandas",
+    "🐝 Las Abejitas",
+    "⭐ Las Estrellitas",
+    "🦖 Los Dinosaurios",
+    "🦄 Los Unicornios",
+    "🦁 Los Leones"
+];
+
+const retosIniciales = [
+    "📚 Reto de Lectura", "🧮 Reto de Matemáticas", "🙋 Reto de Participación",
+    "🤝 Trabajo en Equipo", "🎨 Reto de Creatividad", "🏃 Reto de Velocidad",
+    "🧠 Reto de Preguntas", "🎯 Reto Sorpresa", "🌈 Reto Especial",
+    "⭐ Gran Reto", "🚀 Reto Relámpago", "💡 Reto de Ideas",
+    "🎤 Reto de Expresión", "🧩 Reto Misterioso", "👑 Reto Final"
+];
+
+const coloresAvatar = ["#00f3ff", "#2ed573", "#ffdf00", "#ff4757", "#c56cf0", "#ff9f43"];
+const avatares = ["🐼", "🐝", "⭐", "🦖", "🦄", "🦁"];
+
+/* =========================================================
+   CREAR TABLA
+========================================================= */
+function generarTabla() {
+    let cantidadGrupos = parseInt(document.getElementById("cantidadGrupos").value);
+    let cantidadRetos = parseInt(document.getElementById("cantidadRetos").value);
+
+    cantidadGrupos = Math.max(2, Math.min(6, cantidadGrupos));
+    cantidadRetos = Math.max(1, Math.min(15, cantidadRetos));
+
+    document.getElementById("cantidadGrupos").value = cantidadGrupos;
+    document.getElementById("cantidadRetos").value = cantidadRetos;
+
+    grupos = [];
+    retos = [];
+    puntos = [];
+
+    for (let i = 0; i < cantidadGrupos; i++) {
+        grupos.push(nombresIniciales[i]);
+    }
+
+    for (let i = 0; i < cantidadRetos; i++) {
+        retos.push(retosIniciales[i] || "🎯 Reto " + (i + 1));
+    }
+
+    for (let r = 0; r < cantidadRetos; r++) {
+        puntos[r] = [];
+        for (let g = 0; g < cantidadGrupos; g++) {
+            puntos[r][g] = 0;
+        }
+    }
+
+    mostrarEditores();
+    dibujarTabla();
+    actualizarRanking();
+}
+
+/* =========================================================
+   EDITORES DE EQUIPOS
+========================================================= */
+function mostrarEditores() {
+    const editor = document.getElementById("teamsEditor");
+    editor.innerHTML = "";
+
+    grupos.forEach((grupo, index) => {
+        const input = document.createElement("input");
+        input.className = "team-input";
+        input.value = grupo;
+        input.placeholder = "Equipo " + (index + 1);
+        input.style.borderColor = coloresAvatar[index];
+
+        input.addEventListener("input", function() {
+            grupos[index] = this.value || "Equipo " + (index + 1);
+            dibujarTabla();
+            actualizarRanking();
+        });
+
+        editor.appendChild(input);
+    });
+}
+
+/* =========================================================
+   DIBUJAR TABLA
+========================================================= */
+function dibujarTabla() {
+    const encabezado = document.getElementById("encabezado");
+    const cuerpo = document.getElementById("cuerpo");
+
+    encabezado.innerHTML = "";
+    cuerpo.innerHTML = "";
+
+    /* HEADER */
+    const filaHeader = document.createElement("tr");
+    const retoHeader = document.createElement("th");
+    retoHeader.textContent = "🎯 RETO";
+    filaHeader.appendChild(retoHeader);
+
+    grupos.forEach((grupo, index) => {
+        const th = document.createElement("th");
+        th.textContent = grupo;
+        th.style.borderColor = coloresAvatar[index];
+        filaHeader.appendChild(th);
+    });
+    encabezado.appendChild(filaHeader);
+
+    /* FILAS DE RETOS */
+    retos.forEach((reto, r) => {
+        const fila = document.createElement("tr");
+
+        const celdaReto = document.createElement("td");
+        celdaReto.className = "reto-cell";
+        const inputReto = document.createElement("input");
+        inputReto.className = "reto-input";
+        inputReto.value = reto;
+        inputReto.addEventListener("input", function() {
+            retos[r] = this.value;
+        });
+        celdaReto.appendChild(inputReto);
+        fila.appendChild(celdaReto);
+
+        /* ESTRELLAS */
+        grupos.forEach((grupo, g) => {
+            const celda = document.createElement("td");
+            const divEstrellas = document.createElement("div");
+            divEstrellas.className = "stars";
+
+            for (let s = 0; s < 5; s++) {
+                const estrella = document.createElement("span");
+                estrella.className = "star";
+                estrella.textContent = "★";
+                
+                if (s < puntos[r][g]) {
+                    estrella.classList.add("active");
+                }
+
+                estrella.onclick = function() {
+                    puntos[r][g] = s + 1;
+                    dibujarTabla();
+                    actualizarRanking();
+                };
+
+                divEstrellas.appendChild(estrella);
+            }
+            celda.appendChild(divEstrellas);
+            fila.appendChild(celda);
+        });
+
+        cuerpo.appendChild(fila);
+    });
+
+    /* FILA TOTALES */
+    const filaTotal = document.createElement("tr");
+    filaTotal.className = "total-row";
+    
+    const celdaTotalLabel = document.createElement("td");
+    celdaTotalLabel.className = "total-label";
+    celdaTotalLabel.textContent = "⭐ TOTAL";
+    filaTotal.appendChild(celdaTotalLabel);
+
+    grupos.forEach((grupo, g) => {
+        let suma = 0;
+        for (let r = 0; r < retos.length; r++) {
+            suma += puntos[r][g];
+        }
+
+        const celdaSuma = document.createElement("td");
+        celdaSuma.className = "total-number";
+        celdaSuma.textContent = suma + " pts";
+        filaTotal.appendChild(celdaSuma);
+    });
+
+    cuerpo.appendChild(filaTotal);
+}
+
+/* =========================================================
+   ACTUALIZAR RANKING EN VIVO
+========================================================= */
+function actualizarRanking() {
+    const rankingList = document.getElementById("rankingList");
+    rankingList.innerHTML = "";
+
+    let datosRanking = grupos.map((nombre, index) => {
+        let suma = 0;
+        for (let r = 0; r < retos.length; r++) {
+            suma += puntos[r][index];
+        }
+        return {
+            nombre: nombre,
+            puntos: suma,
+            avatar: avatares[index] || "⭐"
+        };
+    });
+
+    datosRanking.sort((a, b) => b.puntos - a.puntos);
+
+    datosRanking.forEach((item, pos) => {
+        const div = document.createElement("div");
+        div.className = "ranking-item" + (pos === 0 ? " first" : "");
+
+        div.innerHTML = `
+            <div class="rank-position">#${pos + 1}</div>
+            <div class="rank-avatar">${item.avatar}</div>
+            <div class="rank-name">${item.nombre}</div>
+            <div class="rank-score">⭐ ${item.puntos} PTS</div>
+        `;
+        rankingList.appendChild(div);
+    });
+}
+
+/* =========================================================
+   REINICIAR PUNTOS
+========================================================= */
+function reiniciarPuntos() {
+    for (let r = 0; r < retos.length; r++) {
+        for (let g = 0; g < grupos.length; g++) {
+            puntos[r][g] = 0;
+        }
+    }
+    dibujarTabla();
+    actualizarRanking();
+}
+
+/* =========================================================
+   FINALIZAR COMPETENCIA
+========================================================= */
+function finalizarCompetencia() {
+    let datosRanking = grupos.map((nombre, index) => {
+        let suma = 0;
+        for (let r = 0; r < retos.length; r++) {
+            suma += puntos[r][index];
+        }
+        return {
+            nombre: nombre,
+            puntos: suma,
+            avatar: avatares[index] || "⭐"
+        };
+    });
+
+    datosRanking.sort((a, b) => b.puntos - a.puntos);
+
+    document.getElementById("championName").textContent = datosRanking[0].avatar + " " + datosRanking[0].nombre;
+    document.getElementById("championScore").textContent = "¡Con un total de " + datosRanking[0].puntos + " estrellas!";
+
+    const finalRanking = document.getElementById("finalRanking");
+    finalRanking.innerHTML = "";
+
+    const medallas = ["🥇", "🥈", "🥉", "🏅", "🏅", "🏅"];
+
+    datosRanking.forEach((item, pos) => {
+        const div = document.createElement("div");
+        div.className = "final-item";
+        div.innerHTML = `
+            <div class="final-medal">${medallas[pos] || "🎮"}</div>
+            <div class="final-team">${item.avatar} ${item.nombre}</div>
+            <div class="final-points">⭐ ${item.puntos} PTS</div>
+        `;
+        finalRanking.appendChild(div);
+    });
+
+    document.getElementById("modalResultados").classList.add("show");
+    lanzarConfeti();
+}
+
+function cerrarResultados() {
+    document.getElementById("modalResultados").classList.remove("show");
+}
+
+/* =========================================================
+   EFECTO DE CONFETI
+========================================================= */
+function lanzarConfeti() {
+    const colores = ['#00f3ff', '#ff007b', '#ffdf00', '#2ed573', '#c56cf0'];
+    for (let i = 0; i < 70; i++) {
+        const conf = document.createElement('div');
+        conf.className = 'confetti';
+        conf.style.left = Math.random() * 100 + 'vw';
+        conf.style.backgroundColor = colores[Math.floor(Math.random() * colores.length)];
+        conf.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+        conf.style.opacity = Math.random();
+        document.body.appendChild(conf);
+
+        setTimeout(() => conf.remove(), 3500);
+    }
+}
+
+// Cargar automáticamente al iniciar
+window.onload = function() {
+    generarTabla();
+};
+</script>
+
+</body>
+</html>

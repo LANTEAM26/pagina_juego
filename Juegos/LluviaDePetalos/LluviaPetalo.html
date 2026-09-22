@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lluvia de Pétalos 🌸 | La Abeja Recolectora</title>
+    <link rel="stylesheet" href="Lluvia.css">
+</head>
+<body>
+
+<!-- =========================================================
+     FONDO PRIMAVERAL GLOBAL — CUBRE TODA LA PANTALLA
+     (lluvia de pétalos + emojis primaverales)
+     ========================================================= -->
+<div id="spring-bg" aria-hidden="true">
+
+    <!-- Capa 1: emojis flotantes decorativos -->
+    <div class="spring-floaters">
+        <span class="spring-emoji sun"       style="top:6%;  left:4%;  animation-delay:0s;">☀️</span>
+        <span class="spring-emoji rainbow"   style="top:4%;  left:92%; animation-delay:1.5s;">🌈</span>
+        <span class="spring-emoji cloud"     style="top:14%; left:22%; animation-delay:3s;">☁️</span>
+        <span class="spring-emoji cloud"     style="top:10%; left:68%; animation-delay:4.5s;">☁️</span>
+        <span class="spring-emoji butterfly" style="top:28%; left:8%;  animation-delay:0.5s;">🦋</span>
+        <span class="spring-emoji butterfly" style="top:35%; left:88%; animation-delay:2.5s;">🦋</span>
+        <span class="spring-emoji butterfly" style="top:60%; left:15%; animation-delay:5s;">🦋</span>
+        <span class="spring-emoji bee"       style="top:42%; left:5%;  animation-delay:1.5s;">🐝</span>
+        <span class="spring-emoji bee"       style="top:70%; left:93%; animation-delay:3.5s;">🐝</span>
+        <span class="spring-emoji ladybug"   style="top:78%; left:6%;  animation-delay:4s;">🐞</span>
+        <span class="spring-emoji snail"     style="top:88%; left:88%; animation-delay:2s;">🐌</span>
+        <span class="spring-emoji flower"    style="top:50%; left:3%;  animation-delay:2s;">🌷</span>
+        <span class="spring-emoji flower"    style="top:20%; left:95%; animation-delay:1s;">🌻</span>
+        <span class="spring-emoji flower"    style="top:92%; left:12%; animation-delay:3s;">🌸</span>
+        <span class="spring-emoji flower"    style="top:82%; left:78%; animation-delay:5s;">🌼</span>
+        <span class="spring-emoji flower"    style="top:66%; left:50%; animation-delay:0.5s;">🌺</span>
+    </div>
+
+    <!-- Capa 2: lluvia de pétalos cayendo por TODA la pantalla -->
+    <div class="spring-rain">
+        <span class="spring-fall" style="left:3%;   animation-delay:0s;   animation-duration:12s;">🌸</span>
+        <span class="spring-fall" style="left:10%;  animation-delay:3s;   animation-duration:14s;">🌺</span>
+        <span class="spring-fall" style="left:17%;  animation-delay:6s;   animation-duration:11s;">🌼</span>
+        <span class="spring-fall" style="left:24%;  animation-delay:1.5s; animation-duration:15s;">🌻</span>
+        <span class="spring-fall" style="left:31%;  animation-delay:8s;   animation-duration:13s;">🌸</span>
+        <span class="spring-fall" style="left:38%;  animation-delay:4s;   animation-duration:12s;">🍃</span>
+        <span class="spring-fall" style="left:45%;  animation-delay:10s;  animation-duration:14s;">🌷</span>
+        <span class="spring-fall" style="left:52%;  animation-delay:2s;   animation-duration:11s;">🌺</span>
+        <span class="spring-fall" style="left:59%;  animation-delay:7s;   animation-duration:13s;">🌸</span>
+        <span class="spring-fall" style="left:66%;  animation-delay:5s;   animation-duration:15s;">🌼</span>
+        <span class="spring-fall" style="left:73%;  animation-delay:9s;   animation-duration:12s;">🍃</span>
+        <span class="spring-fall" style="left:80%;  animation-delay:1s;   animation-duration:14s;">🌸</span>
+        <span class="spring-fall" style="left:87%;  animation-delay:6s;   animation-duration:11s;">🌺</span>
+        <span class="spring-fall" style="left:94%;  animation-delay:3s;   animation-duration:13s;">🌻</span>
+
+        <!-- Segunda ronda con delays distintos para más densidad -->
+        <span class="spring-fall" style="left:7%;   animation-delay:5.5s; animation-duration:16s;">🌷</span>
+        <span class="spring-fall" style="left:28%;  animation-delay:11s;  animation-duration:13s;">🍃</span>
+        <span class="spring-fall" style="left:48%;  animation-delay:12.5s;animation-duration:15s;">🌼</span>
+        <span class="spring-fall" style="left:70%;  animation-delay:8.5s; animation-duration:12s;">🌸</span>
+        <span class="spring-fall" style="left:88%;  animation-delay:13s;  animation-duration:14s;">🌺</span>
+    </div>
+
+</div>
+<!-- /#spring-bg -->
+
+<!-- =========================================================
+     GAME WRAPPER (16:9) — Contiene el juego
+     ========================================================= -->
+<div id="game-wrapper">
+
+    <!-- =========================================================
+         PANTALLA DE JUEGO
+         ========================================================= -->
+    <section id="screen-game" class="screen active">
+
+        <!-- FILA SUPERIOR: PROGRESO + BOTONES -->
+        <div id="top-bar">
+
+            <div id="progress-wrap">
+                <div class="progress-labels">
+                    <span class="progress-label-left">
+                        🌸 Nivel <span id="hud-level-value">1</span> · Progreso
+                    </span>
+                    <span class="progress-label-right">
+                        <span id="hud-score-value-2">0</span> / <span id="hud-goal-value-2">100</span> pts
+                    </span>
+                </div>
+                <div id="progress-bar">
+                    <div id="progress-fill"></div>
+                    <div id="progress-shine"></div>
+                </div>
+            </div>
+
+            <div class="hud-actions">
+                <button id="btn-mute"  class="hud-btn" title="Activar / silenciar sonidos">🔊</button>
+                <button id="btn-pause" class="hud-btn" title="Pausar">⏸</button>
+                <button id="btn-quit"  class="hud-btn" title="Salir al menú">✕</button>
+            </div>
+
+        </div>
+
+        <!-- LAYOUT PRINCIPAL -->
+        <div id="game-layout">
+
+            <!-- ÁREA DE JUEGO -->
+            <div id="canvas-container">
+
+                <canvas id="game-canvas" width="1920" height="1080"></canvas>
+
+                <div id="score-popups" aria-hidden="true"></div>
+
+                <div id="bee-speech" class="speech-bubble hidden">
+                    <span id="bee-speech-text">¡Vamos!</span>
+                </div>
+
+                <div id="level-up-toast" class="toast hidden">
+                    <span id="level-up-text">¡Nivel superado!</span>
+                </div>
+
+                <div id="time-warning" class="time-warning hidden">
+                    <img src="Recurso/reloj.gif" alt="" onerror="this.style.display='none'">
+                    <span>¡Queda poco tiempo!</span>
+                </div>
+
+                <div id="time-gained-toast" class="time-gained-toast hidden">
+                    <span id="time-gained-text">+5s ⏱</span>
+                </div>
+
+                <div id="wind-indicator" class="hidden">
+                    <img src="Recurso/viento.png" alt="" onerror="this.style.display='none'">
+                    <span id="wind-direction">→</span>
+                </div>
+
+                <div id="pause-overlay" class="overlay hidden">
+                    <div class="overlay-box">
+                        <h2>⏸ Juego en pausa</h2>
+                        <p>Respira, mira las flores…</p>
+                        <div class="overlay-buttons">
+                            <button id="btn-resume"     class="btn-primary">▶ Continuar</button>
+                            <button id="btn-pause-menu" class="btn-secondary">🏠 Menú</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- SIDEBAR DERECHA -->
+            <aside id="game-sidebar">
+
+                <!-- HUD compacto -->
+                <div id="hud">
+
+                    <!-- Vidas (corazones arriba, texto abajo centrado) -->
+                    <div class="hud-row hud-row-lives">
+                        <div class="hud-item hud-lives">
+                            <div id="lives-container"></div>
+                            <span class="hud-label">Vidas</span>
+                        </div>
+                    </div>
+
+                    <!-- Puntaje | Tiempo -->
+                    <div class="hud-row">
+                        <div class="hud-item hud-score">
+                            <img src="Recurso/icono-flor.png" alt="" class="hud-icon" onerror="this.style.display='none'">
+                            <span id="hud-score-value">0</span>
+                        </div>
+
+                        <div class="hud-item hud-timer" id="hud-timer-box">
+                            <img src="Recurso/reloj.gif" alt="" class="hud-icon" onerror="this.style.display='none'">
+                            <span id="hud-timer-value">70</span>
+                            <span class="hud-timer-unit">s</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Contadores -->
+                <div id="counters-panel">
+                    <h3 class="counters-title">Recolectadas</h3>
+
+                    <div class="counter-row" data-type="flor1">
+                        <img src="Recurso/flor1.png" alt="" onerror="this.style.display='none'">
+                        <span class="counter-points">+5</span>
+                        <span class="counter-qty" id="count-flor1">0</span>
+                    </div>
+
+                    <div class="counter-row" data-type="flor2">
+                        <img src="Recurso/flor2.png" alt="" onerror="this.style.display='none'">
+                        <span class="counter-points">+10</span>
+                        <span class="counter-qty" id="count-flor2">0</span>
+                    </div>
+
+                    <div class="counter-row" data-type="flor3">
+                        <img src="Recurso/flor3.png" alt="" onerror="this.style.display='none'">
+                        <span class="counter-points">+15</span>
+                        <span class="counter-qty" id="count-flor3">0</span>
+                    </div>
+
+                    <div class="counter-row golden" data-type="golden">
+                        <img src="Recurso/flor-dorada.png" alt="" onerror="this.style.display='none'">
+                        <span class="counter-points">+30×3</span>
+                        <span class="counter-qty" id="count-golden">0</span>
+                    </div>
+
+                    <div class="counter-row rain" data-type="rain">
+                        <img src="Recurso/gota.png" alt="" onerror="this.style.display='none'">
+                        <span class="counter-points">-10</span>
+                        <span class="counter-qty" id="count-rain">0</span>
+                    </div>
+                </div>
+
+                <!-- Botones ← → -->
+                <div id="move-controls">
+                    <button id="btn-left" class="move-btn" aria-label="Giro a la izquierda">
+                        <img src="Recurso/flecha-izq.png" alt="" onerror="this.style.display='none'">
+                        <span class="move-label">Giro<br>Izquierda</span>
+                    </button>
+                    <button id="btn-right" class="move-btn" aria-label="Giro a la derecha">
+                        <img src="Recurso/flecha-der.png" alt="" onerror="this.style.display='none'">
+                        <span class="move-label">Giro<br>Derecha</span>
+                    </button>
+                </div>
+
+            </aside>
+
+        </div>
+
+    </section>
+
+    <!-- =========================================================
+         MODAL INTRO
+         ========================================================= -->
+    <div id="intro-modal" class="modal-overlay">
+
+        <div class="modal-box">
+
+            <button class="modal-close" id="btn-skip-intro" title="Saltar indicaciones">✕</button>
+
+            <div class="panel-dots">
+                <span class="dot active" data-dot="1"></span>
+                <span class="dot"        data-dot="2"></span>
+                <span class="dot"        data-dot="3"></span>
+            </div>
+
+            <!-- PANEL 1 -->
+            <div class="intro-panel active" data-panel="1">
+                <div class="panel-hero">
+                    <img src="Recurso/beebot1.png" alt="Beebot" class="panel-bee"      onerror="this.style.display='none'">
+                    <img src="Recurso/beebot2.png" alt="Beebot" class="panel-bee flip" onerror="this.style.display='none'">
+                </div>
+
+                <h1 class="panel-title">Lluvia de Pétalos</h1>
+                <p class="panel-subtitle">🌸 Una aventura de primavera 🌸</p>
+
+                <p class="panel-desc">
+                    ¡Hola! Soy <strong>Beebot</strong>. La primavera ha llegado
+                    y necesito tu ayuda para recolectar las flores que caen del cielo.
+                    ¡Pero cuidado con la lluvia! ¿Me ayudas a llenar mi cesta?
+                </p>
+
+                <div class="panel-nav">
+                    <button class="btn-primary modal-next" data-next="2">Siguiente →</button>
+                </div>
+            </div>
+
+            <!-- PANEL 2 -->
+            <div class="intro-panel" data-panel="2">
+                <h2 class="panel-title-sm">🌸 ¿Cómo se juega?</h2>
+
+                <div class="instr-grid">
+                    <div class="instr-item">
+                        <div class="instr-icon">
+                            <img src="Recurso/flecha-izq.png" alt="" onerror="this.style.display='none'">
+                            <img src="Recurso/flecha-der.png" alt="" onerror="this.style.display='none'">
+                        </div>
+                        <h3>Gira y muévete</h3>
+                        <p>Usa los botones <strong>Giro Izquierda</strong> y <strong>Giro Derecha</strong>, o las flechas del teclado.</p>
+                    </div>
+
+                    <div class="instr-item">
+                        <div class="instr-icon">
+                            <img src="Recurso/flor1.png" alt="" onerror="this.style.display='none'">
+                            <img src="Recurso/flor2.png" alt="" onerror="this.style.display='none'">
+                            <img src="Recurso/flor3.png" alt="" onerror="this.style.display='none'">
+                        </div>
+                        <h3>Recolecta flores</h3>
+                        <p>Llena la <strong>barra de progreso</strong> antes de que acabe el tiempo.</p>
+                    </div>
+
+                    <div class="instr-item warning">
+                        <div class="instr-icon">
+                            <img src="Recurso/gota.png" alt="" onerror="this.style.display='none'">
+                        </div>
+                        <h3>¡Evita la lluvia!</h3>
+                        <p>Las gotas te quitan <strong>vida y puntos</strong>, y ponen a Beebot triste.</p>
+                    </div>
+
+                    <div class="instr-item golden">
+                        <div class="instr-icon">
+                            <img src="Recurso/flor-dorada.png" alt="" onerror="this.style.display='none'">
+                        </div>
+                        <h3>Flor dorada</h3>
+                        <p>Vale <strong>×3 puntos</strong>. ¡No la dejes escapar!</p>
+                    </div>
+
+                    <div class="instr-item time">
+                        <div class="instr-icon">
+                            <img src="Recurso/reloj.gif" alt="" onerror="this.style.display='none'">
+                        </div>
+                        <h3>Reloj mágico</h3>
+                        <p>Aparece pocas veces y da <strong>+5 a +10 segundos</strong> aleatorios.</p>
+                    </div>
+
+                    <div class="instr-item wind">
+                        <div class="instr-icon">
+                            <img src="Recurso/viento.png" alt="" onerror="this.style.display='none'">
+                        </div>
+                        <h3>Viento (nivel 3)</h3>
+                        <p>El viento mueve las flores a un lado. ¡Ajusta tu estrategia!</p>
+                    </div>
+                </div>
+
+                <div class="panel-note">
+                    <img src="Recurso/beebot2.png" alt="" onerror="this.style.display='none'">
+                    <span>Escucha a Beebot: dirá <strong>"giro a la izquierda"</strong> o <strong>"giro a la derecha"</strong> según hacia dónde vayas. 🐝</span>
+                </div>
+
+                <div class="panel-nav">
+                    <button class="btn-secondary modal-prev" data-prev="1">← Atrás</button>
+                    <button class="btn-primary   modal-next" data-next="3">Siguiente →</button>
+                </div>
+            </div>
+
+            <!-- PANEL 3 -->
+            <div class="intro-panel" data-panel="3">
+                <h2 class="panel-title-sm">🎯 Puntajes y condiciones</h2>
+
+                <div class="points-grid">
+                    <div class="points-card">
+                        <img src="Recurso/flor1.png" alt="" onerror="this.style.display='none'">
+                        <span class="points-value">+5</span>
+                        <span class="points-name">Flor rosa</span>
+                    </div>
+                    <div class="points-card">
+                        <img src="Recurso/flor2.png" alt="" onerror="this.style.display='none'">
+                        <span class="points-value">+10</span>
+                        <span class="points-name">Flor lila</span>
+                    </div>
+                    <div class="points-card">
+                        <img src="Recurso/flor3.png" alt="" onerror="this.style.display='none'">
+                        <span class="points-value">+15</span>
+                        <span class="points-name">Flor amarilla</span>
+                    </div>
+                    <div class="points-card golden">
+                        <img src="Recurso/flor-dorada.png" alt="" onerror="this.style.display='none'">
+                        <span class="points-value">+30 ×3</span>
+                        <span class="points-name">Flor dorada</span>
+                    </div>
+                    <div class="points-card time">
+                        <img src="Recurso/reloj.gif" alt="" onerror="this.style.display='none'">
+                        <span class="points-value">+5 a +10s</span>
+                        <span class="points-name">Reloj mágico</span>
+                    </div>
+                    <div class="points-card rain">
+                        <img src="Recurso/gota.png" alt="" onerror="this.style.display='none'">
+                        <span class="points-value">-10</span>
+                        <span class="points-name">Gota · −1 vida</span>
+                    </div>
+                </div>
+
+                <div class="level-selector">
+                    <p>Elige tu nivel:</p>
+                    <div class="level-buttons">
+                        <button class="level-btn selected" data-level="0">
+                            <span class="level-num">1</span>
+                            <span class="level-name">Fácil</span>
+                            <span class="level-info">100 pts · 70 s</span>
+                        </button>
+                        <button class="level-btn" data-level="1">
+                            <span class="level-num">2</span>
+                            <span class="level-name">Intermedio</span>
+                            <span class="level-info">250 pts · 50 s</span>
+                        </button>
+                        <button class="level-btn" data-level="2">
+                            <span class="level-num">3</span>
+                            <span class="level-name">Difícil</span>
+                            <span class="level-info">450 pts · 40 s</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="panel-nav">
+                    <button class="btn-secondary modal-prev" data-prev="2">← Atrás</button>
+                    <button id="btn-start" class="btn-primary btn-start-game">🌸 ¡Comenzar!</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- =========================================================
+         MODAL FINAL
+         ========================================================= -->
+    <div id="end-modal" class="modal-overlay hidden">
+
+        <div class="modal-box end-modal-box">
+
+            <h1 id="end-title">¡¡Se acabó el tiempo!!</h1>
+
+            <img src="Recurso/abeja-triste.png" alt="Beebot" id="end-bee-img"
+                 onerror="this.src='Recurso/beebot1.png'">
+
+            <div class="end-stats">
+                <div class="stat-card">
+                    <span class="stat-label">Puntaje final</span>
+                    <span id="end-score" class="stat-value">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Nivel alcanzado</span>
+                    <span id="end-level" class="stat-value">1</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Flores recolectadas</span>
+                    <span id="end-flowers" class="stat-value">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Gotas esquivadas</span>
+                    <span id="end-dodged" class="stat-value">0</span>
+                </div>
+            </div>
+
+            <p id="end-message" class="end-message">¡Buen intento! Sigue practicando 🌷</p>
+
+            <div class="end-buttons">
+                <button id="btn-retry" class="btn-primary">🔁 Jugar otra vez</button>
+                <button id="btn-menu"  class="btn-secondary">🏠 Volver al menú</button>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- /#game-wrapper -->
+
+<script src="Lluvia.js"></script>
+</body>
+</html>

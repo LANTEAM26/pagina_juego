@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚚 Super Camión de Reciclaje</title>
+    <!-- Fuente moderna y divertida -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Fredoka', cursive, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #134e5e 0%, #71b280 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #2d3748;
+            padding: 20px;
+        }
+
+        .game-container {
+            background: #ffffff;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 680px;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            border: 5px solid #ffffff;
+        }
+
+        h1 {
+            color: #10b981;
+            font-size: 30px;
+            margin-bottom: 5px;
+            text-shadow: 1px 1px 0px #d1fae5;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            color: #64748b;
+            margin-bottom: 20px;
+        }
+
+        /* --- CIUDAD Y CAMIÓN --- */
+        .city-track {
+            background: linear-gradient(to bottom, #86efac 0%, #4ade80 100%);
+            border-radius: 20px;
+            height: 110px;
+            position: relative;
+            margin-bottom: 25px;
+            overflow: hidden;
+            border: 4px solid #15803d;
+            box-shadow: inset 0 6px 12px rgba(0,0,0,0.1);
+        }
+
+        .city-background {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            padding-bottom: 8px;
+            font-size: 32px;
+            opacity: 0.8;
+        }
+
+        .truck {
+            position: absolute;
+            bottom: 12px;
+            left: 10px;
+            font-size: 48px;
+            transition: left 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 2;
+            /* Invertir el camión para que mire hacia la derecha (hacia adelante) */
+            transform: scaleX(-1);
+            filter: drop-shadow(-4px 4px 6px rgba(0,0,0,0.3));
+        }
+
+        /* --- ESTADÍSTICAS --- */
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            background: #f1f5f9;
+            padding: 12px 20px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            font-weight: 600;
+            font-size: 17px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .stat-item span {
+            color: #0d9488;
+            font-size: 19px;
+        }
+
+        /* --- ZONA DE RESIDUOS --- */
+        .item-box {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border: 3px dashed #10b981;
+            border-radius: 24px;
+            height: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            position: relative;
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.15);
+            animation: floatItem 2.5s ease-in-out infinite;
+        }
+
+        @keyframes floatItem {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .item-emoji {
+            font-size: 70px;
+            margin-bottom: 5px;
+            filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1));
+        }
+
+        .item-name {
+            font-size: 17px;
+            font-weight: 600;
+            color: #065f46;
+        }
+
+        /* --- CONTENEDORES --- */
+        .bins-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .bin {
+            border: none;
+            border-radius: 20px;
+            padding: 20px 10px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.25s ease;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            color: white;
+            font-weight: 600;
+            border-bottom: 5px solid rgba(0,0,0,0.2);
+        }
+
+        .bin:hover {
+            transform: translateY(-6px);
+            filter: brightness(1.1);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+        }
+
+        .bin:active {
+            transform: translateY(-2px);
+            border-bottom-width: 2px;
+        }
+
+        .bin-paper { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .bin-plastic { background: linear-gradient(135deg, #eab308, #ca8a04); }
+        .bin-glass { background: linear-gradient(135deg, #22c55e, #15803d); }
+
+        .bin-icon {
+            font-size: 40px;
+            margin-bottom: 8px;
+        }
+
+        .bin-label {
+            font-size: 16px;
+        }
+
+        /* --- MENSAJE DE FEEDBACK --- */
+        .feedback {
+            font-size: 17px;
+            font-weight: 600;
+            height: 30px;
+            margin-bottom: 10px;
+        }
+
+        .feedback.success { color: #15803d; }
+        .feedback.error { color: #dc2626; }
+
+        /* --- PANTALLA FINAL (MODAL) --- */
+        .screen-modal {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.96);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 25px;
+            z-index: 10;
+            display: none;
+            padding: 20px;
+        }
+
+        .screen-modal h2 {
+            font-size: 36px;
+            color: #059669;
+            margin-bottom: 10px;
+        }
+
+        .screen-modal p {
+            font-size: 17px;
+            color: #475569;
+            margin-bottom: 25px;
+            max-width: 450px;
+        }
+
+        .btn-restart {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 6px 15px rgba(16, 185, 129, 0.4);
+            border-bottom: 4px solid #047857;
+        }
+
+        .btn-restart:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+        .btn-restart:active {
+            border-bottom-width: 2px;
+            transform: translateY(1px);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <h1>🚚 Super Camión de Reciclaje</h1>
+        <p class="subtitle">¡Ayuda a limpiar la ciudad reciclando cada residuo en su lugar!</p>
+
+        <!-- Pista de la ciudad y camión mirando al frente -->
+        <div class="city-track" id="cityTrack">
+            <div class="city-background" id="cityBg"></div>
+            <div class="truck" id="truck">🚚</div>
+        </div>
+
+        <!-- Estadísticas -->
+        <div class="stats">
+            <div class="stat-item">Puntuación: <span id="score">0</span></div>
+            <div class="stat-item">Progreso: <span id="progressText">0/10</span></div>
+        </div>
+
+        <!-- Objeto actual -->
+        <div class="item-box" id="itemBox">
+            <div class="item-emoji" id="itemEmoji">📰</div>
+            <div class="item-name" id="itemName">Periódico viejo</div>
+        </div>
+
+        <!-- Feedback de acierto/error -->
+        <div class="feedback" id="feedbackMsg"></div>
+
+        <!-- Contenedores con estilo moderno -->
+        <div class="bins-container">
+            <button class="bin bin-paper" onclick="checkAnswer('papel')">
+                <span class="bin-icon">🟦</span>
+                <span class="bin-label">Papel</span>
+            </button>
+            <button class="bin bin-plastic" onclick="checkAnswer('plastico')">
+                <span class="bin-icon">🟨</span>
+                <span class="bin-label">Plástico</span>
+            </button>
+            <button class="bin bin-glass" onclick="checkAnswer('vidrio')">
+                <span class="bin-icon">🟩</span>
+                <span class="bin-label">Vidrio</span>
+            </button>
+        </div>
+
+        <!-- Pantalla de Victoria -->
+        <div class="screen-modal" id="winModal">
+            <h2 id="modalTitle">🎉 ¡Misión Cumplida!</h2>
+            <p id="modalText">¡Increíble trabajo! Lograste reciclar toda la basura y la ciudad luce hermosa y limpia.</p>
+            <button class="btn-restart" onclick="restartGame()">¡Jugar de nuevo! 🚀</button>
+        </div>
+    </div>
+
+    <script>
+        const items = [
+            { emoji: "📰", name: "Periódico viejo", type: "papel" },
+            { emoji: "🥤", name: "Vaso de plástico", type: "plastico" },
+            { emoji: "🍾", name: "Botella de vidrio", type: "vidrio" },
+            { emoji: "📦", name: "Caja de cartón", type: "papel" },
+            { emoji: "🧴", name: "Envase de champú", type: "plastico" },
+            { emoji: "🫙", name: "Frasco de mermelada", type: "vidrio" },
+            { emoji: "📓", name: "Cuaderno usado", type: "papel" },
+            { emoji: "🛍️", name: "Bolsa plástica", type: "plastico" },
+            { emoji: "🍷", name: "Copa de vidrio", type: "vidrio" },
+            { emoji: "✉️", name: "Carta de papel", type: "papel" }
+        ];
+
+        const cityElements = ["🏠", "🌳", "🏫", "🏢", "🌳", "🏥", "🌳", "🏟️", "🗼", "🌟"];
+
+        let currentItemsList = [];
+        let currentIndex = 0;
+        let score = 0;
+        const totalItemsToWin = 10;
+
+        const truck = document.getElementById("truck");
+        const itemEmoji = document.getElementById("itemEmoji");
+        const itemName = document.getElementById("itemName");
+        const scoreDisplay = document.getElementById("score");
+        const progressText = document.getElementById("progressText");
+        const feedbackMsg = document.getElementById("feedbackMsg");
+        const cityBg = document.getElementById("cityBg");
+        const winModal = document.getElementById("winModal");
+        const modalTitle = document.getElementById("modalTitle");
+        const modalText = document.getElementById("modalText");
+
+        function initGame() {
+            currentItemsList = [...items].sort(() => Math.random() - 0.5);
+            currentIndex = 0;
+            score = 0;
+            scoreDisplay.textContent = score;
+            progressText.textContent = `${currentIndex}/${totalItemsToWin}`;
+            winModal.style.display = "none";
+            feedbackMsg.textContent = "";
+            
+            setupCityBackground();
+            updateTruckPosition();
+            loadNextItem();
+        }
+
+        function setupCityBackground() {
+            cityBg.innerHTML = "";
+            cityElements.forEach((el, index) => {
+                const span = document.createElement("span");
+                span.textContent = el;
+                span.style.position = "absolute";
+                span.style.left = `${(index / (cityElements.length - 1)) * 82 + 8}%`;
+                cityBg.appendChild(span);
+            });
+        }
+
+        function loadNextItem() {
+            if (currentIndex >= totalItemsToWin) {
+                showWinScreen();
+                return;
+            }
+
+            const currentObj = currentItemsList[currentIndex];
+            itemEmoji.textContent = currentObj.emoji;
+            itemName.textContent = currentObj.name;
+        }
+
+        function checkAnswer(selectedType) {
+            const currentObj = currentItemsList[currentIndex];
+
+            if (selectedType === currentObj.type) {
+                score += 10;
+                currentIndex++;
+                scoreDisplay.textContent = score;
+                progressText.textContent = `${currentIndex}/${totalItemsToWin}`;
+                
+                feedbackMsg.textContent = "¡Genial! 🌟 (+10 pts)";
+                feedbackMsg.className = "feedback success";
+
+                updateTruckPosition();
+
+                setTimeout(() => {
+                    feedbackMsg.textContent = "";
+                    loadNextItem();
+                }, 800);
+
+            } else {
+                feedbackMsg.textContent = "¡Cuidado! ❌ Contenedor incorrecto";
+                feedbackMsg.className = "feedback error";
+                
+                const itemBox = document.getElementById("itemBox");
+                itemBox.style.transform = "translateX(12px) rotate(3deg)";
+                setTimeout(() => itemBox.style.transform = "translateX(-12px) rotate(-3deg)", 100);
+                setTimeout(() => itemBox.style.transform = "translateX(0) rotate(0deg)", 200);
+            }
+        }
+
+        function updateTruckPosition() {
+            const trackWidth = document.getElementById("cityTrack").clientWidth - 70;
+            const percentage = currentIndex / totalItemsToWin;
+            const newLeft = 10 + (percentage * (trackWidth - 40));
+            truck.style.left = `${newLeft}px`;
+        }
+
+        function showWinScreen() {
+            modalTitle.textContent = "🎉 ¡Ciudad Super Limpia!";
+            modalText.textContent = `¡Increíble trabajo! Conseguiste ${score} puntos y el camión completó su ruta con éxito.`;
+            winModal.style.display = "flex";
+        }
+
+        function restartGame() {
+            initGame();
+        }
+
+        window.onload = initGame;
+    </script>
+</body>
+</html>
