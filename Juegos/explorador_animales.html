@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐾 Explorador de Animales</title>
+<style>
+/* =========================================================
+   RESET
+========================================================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: "Trebuchet MS", "Comic Sans MS", sans-serif;
+    overflow: hidden;
+    user-select: none;
+    background: #72d6ff;
+}
+/* =========================================================
+   JUEGO
+========================================================= */
+#game {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(
+        180deg,
+        #62d7ff 0%,
+        #b8efff 52%,
+        #8bd36e 52%,
+        #4caf50 100%
+    );
+}
+/* =========================================================
+   CIELO
+========================================================= */
+#sky {
+    position: absolute;
+    inset: 0 0 43% 0;
+    overflow: hidden;
+    background:
+        linear-gradient(
+            180deg,
+            #42bdf5 0%,
+            #8be4ff 65%,
+            #d6f8ff 100%
+        );
+}
+/* SOL */
+#sun {
+    position: absolute;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    right: 7%;
+    top: 9%;
+    background: radial-gradient(
+        circle,
+        #fffde7 0%,
+        #fff176 45%,
+        #ffca28 100%
+    );
+    box-shadow:
+        0 0 30px #ffe082,
+        0 0 70px rgba(255, 193, 7, .55);
+    animation: sunFloat 4s ease-in-out infinite;
+}
+@keyframes sunFloat {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(8px); }
+}
+/* NUBES */
+.cloud {
+    position: absolute;
+    width: 130px;
+    height: 42px;
+    border-radius: 40px;
+    background: rgba(255,255,255,.9);
+    filter: drop-shadow(0 6px 5px rgba(0,0,0,.08));
+    animation: cloudMove linear infinite;
+}
+.cloud::before,
+.cloud::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    background: inherit;
+}
+.cloud::before {
+    width: 65px;
+    height: 65px;
+    left: 18px;
+    bottom: 0;
+}
+.cloud::after {
+    width: 55px;
+    height: 55px;
+    right: 18px;
+    bottom: 0;
+}
+.cloud.one { top: 17%; left: -160px; animation-duration: 35s; }
+.cloud.two { top: 32%; left: -220px; transform: scale(.7); animation-duration: 43s; animation-delay: -15s; }
+.cloud.three { top: 9%; left: -250px; transform: scale(.55); animation-duration: 50s; animation-delay: -25s; }
+@keyframes cloudMove { from { left: -250px; } to { left: 110%; } }
+/* =========================================================
+   MONTAÑAS
+========================================================= */
+.mountains {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 45%;
+}
+.mountain {
+    position: absolute;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border-left: 180px solid transparent;
+    border-right: 180px solid transparent;
+    border-bottom: 260px solid #69a96b;
+}
+.mountain.one { left: -80px; }
+.mountain.two { left: 20%; transform: scale(1.3); border-bottom-color: #5b9d64; }
+.mountain.three { right: -90px; transform: scale(1.1); border-bottom-color: #74b878; }
+/* =========================================================
+   DECORACIÓN
+========================================================= */
+.decor {
+    position: absolute;
+    bottom: 17%;
+    font-size: 55px;
+    z-index: 3;
+    animation: sway 3s ease-in-out infinite;
+}
+.decor.tree1 { left: 4%; }
+.decor.tree2 { left: 17%; font-size: 70px; }
+.decor.tree3 { right: 14%; }
+.decor.flower1 { left: 30%; font-size: 35px; }
+.decor.flower2 { right: 28%; font-size: 38px; }
+@keyframes sway {
+    0%,100% { transform: rotate(-2deg); }
+    50% { transform: rotate(2deg); }
+}
+/* =========================================================
+   HUD
+========================================================= */
+#hud {
+    position: absolute;
+    top: 16px;
+    left: 18px;
+    right: 18px;
+    z-index: 50;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+.hud-group { display: flex; gap: 10px; }
+.hud-box {
+    background: rgba(255,255,255,.94);
+    border: 4px solid #ffffff;
+    border-radius: 22px;
+    padding: 9px 17px;
+    color: #285943;
+    font-size: 17px;
+    font-weight: 900;
+    box-shadow:
+        0 5px 0 rgba(37, 92, 53, .25),
+        0 8px 18px rgba(0,0,0,.12);
+}
+#title {
+    position: absolute;
+    z-index: 60;
+    top: 17px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 11px 28px;
+    border-radius: 30px;
+    background: linear-gradient(180deg, #ffffff, #e8fff0);
+    border: 4px solid #42b96b;
+    box-shadow: 0 6px 0 #258b4c, 0 10px 25px rgba(0,0,0,.15);
+    color: #238148;
+    font-size: 23px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+/* =========================================================
+   PROGRESO
+========================================================= */
+#progressContainer {
+    position: absolute;
+    top: 84px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
+    width: min(420px, 70vw);
+    height: 18px;
+    background: rgba(255,255,255,.65);
+    border-radius: 20px;
+    border: 3px solid rgba(255,255,255,.9);
+    overflow: hidden;
+}
+#progress {
+    width: 0%;
+    height: 100%;
+    border-radius: 20px;
+    background: linear-gradient(90deg, #00c853, #76ff03, #00e676);
+    transition: width .4s ease;
+}
+/* =========================================================
+   PANEL PRINCIPAL — MÁS ALTO ✅
+========================================================= */
+#gamePanel {
+    position: absolute;
+    z-index: 20;
+    left: 50%;
+    bottom: 3%;
+    transform: translateX(-50%);
+    width: min(1100px, 94vw);
+    height: 58%; /* 🔼 Subido de 48% a 58% — más espacio */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    padding: 25px 28px;
+    border-radius: 35px;
+    background:
+        linear-gradient(135deg, rgba(255,255,255,.97), rgba(238,255,244,.97));
+    border: 6px solid #ffffff;
+    box-shadow:
+        0 12px 0 rgba(36,104,55,.3),
+        0 22px 45px rgba(0,0,0,.18);
+}
+/* =========================================================
+   ANIMAL CARD — MÁS ESPACIO ✅
+========================================================= */
+#animalArea {
+    width: 39%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    position: relative;
+    padding-top: 8px;
+}
+#animalCard {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    border-radius: 28px;
+    background:
+        radial-gradient(circle at 50% 25%, #ffffff 0%, #e7f9ff 65%, #c5efff 100%);
+    border: 4px solid #78d4f4;
+    box-shadow: inset 0 -8px 0 rgba(0,0,0,.04), 0 8px 15px rgba(0,0,0,.1);
+    padding: 15px 10px 20px;
+}
+/* INSTRUCCIÓN — Arriba, sin tapar ✅ */
+#instruction {
+    width: 100%;
+    padding: 10px 18px;
+    margin-bottom: 15px;
+    border-radius: 20px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #29a65a, #1e8449);
+    font-size: 17px;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: 0 4px 0 #19733d;
+}
+#animalEmoji {
+    font-size: clamp(90px, 11vw, 150px);
+    line-height: 1;
+    margin: 10px 0;
+    filter: drop-shadow(0 10px 6px rgba(0,0,0,.15));
+    animation: animalIdle 2.5s ease-in-out infinite;
+}
+@keyframes animalIdle {
+    0%,100% { transform: translateY(0) rotate(-2deg); }
+    50% { transform: translateY(-10px) rotate(2deg); }
+}
+#animalName {
+    margin-top: 8px;
+    padding: 8px 22px;
+    background: #ffffff;
+    border-radius: 25px;
+    color: #285943;
+    border: 3px solid #80cbc4;
+    font-size: 22px;
+    font-weight: 900;
+    box-shadow: 0 4px 0 #55a99f;
+}
+/* =========================================================
+   HÁBITATS
+========================================================= */
+#habitats {
+    width: 57%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+.habitat {
+    position: relative;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    color: white;
+    font-family: inherit;
+    font-weight: 900;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    transition: transform .18s ease, filter .18s ease;
+    box-shadow: 0 8px 0 rgba(0,0,0,.25), 0 12px 18px rgba(0,0,0,.12);
+}
+.habitat:hover {
+    transform: translateY(-6px) scale(1.02);
+    filter: brightness(1.08);
+}
+.habitat:active {
+    transform: translateY(3px);
+    box-shadow: 0 4px 0 rgba(0,0,0,.25);
+}
+.habitat-icon {
+    font-size: 55px;
+    margin-bottom: 8px;
+    filter: drop-shadow(0 4px 2px rgba(0,0,0,.25));
+}
+.habitat-name {
+    font-size: 20px;
+    text-shadow: 2px 2px 0 rgba(0,0,0,.25);
+}
+.habitat-info {
+    margin-top: 5px;
+    font-size: 12px;
+    opacity: .9;
+}
+/* COLORES */
+.land { background: linear-gradient(145deg, #66bb6a, #2e7d32); }
+.water { background: linear-gradient(145deg, #29b6f6, #0277bd); }
+.air { background: linear-gradient(145deg, #90caf9, #1565c0); }
+.amphibian { background: linear-gradient(145deg, #ab47bc, #6a1b9a); }
+/* =========================================================
+   ESTADOS DE RESPUESTA
+========================================================= */
+.habitat.correct { animation: correct .55s ease; }
+@keyframes correct {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.08); box-shadow: 0 0 0 8px #69f0ae, 0 12px 0 rgba(0,0,0,.2); }
+    100% { transform: scale(1); }
+}
+.habitat.wrong { animation: wrong .45s ease; }
+@keyframes wrong {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+/* =========================================================
+   MENSAJE — NUEVO ESTILO Y TIPOGRAFÍA ✅
+========================================================= */
+#message {
+    position: absolute;
+    z-index: 150;
+    top: 48%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    font-family: "Georgia", "Palatino", serif; /* 🔤 Nueva letra */
+    font-size: clamp(32px, 6vw, 65px);
+    font-weight: bold;
+    letter-spacing: 1px;
+    padding: 15px 35px;
+    border-radius: 20px;
+    background: #ffffff;
+    box-shadow: 0 8px 0 rgba(0,0,0,.15), 0 15px 30px rgba(0,0,0,.2);
+    pointer-events: none;
+    transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+    white-space: nowrap;
+}
+#message.show { transform: translate(-50%, -50%) scale(1); }
+/* ✅ Mensaje CORRECTO — Nuevo diseño */
+#message.correct-msg {
+    color: #1b9445;
+    border: 5px solid #69e090;
+    background: linear-gradient(135deg, #ffffff, #ecfdf1);
+}
+/* ✅ Mensaje INCORRECTO — Nuevo diseño */
+#message.wrong-msg {
+    color: #d63030;
+    border: 5px solid #ff9494;
+    background: linear-gradient(135deg, #ffffff, #fff2f2);
+}
+/* =========================================================
+   TARJETA DE INFORMACIÓN
+========================================================= */
+#fact {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    z-index: 140;
+    width: min(600px, 85vw);
+    padding: 14px 22px;
+    border-radius: 20px;
+    background: rgba(255,255,255,.97);
+    border: 4px solid #81c784;
+    color: #355e3b;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: 0 7px 20px rgba(0,0,0,.18);
+    transition: transform .4s ease;
+}
+#fact.show { transform: translateX(-50%) translateY(0); }
+/* =========================================================
+   PANTALLA FINAL
+========================================================= */
+#endScreen {
+    position: absolute;
+    inset: 0;
+    z-index: 500;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 18px;
+    text-align: center;
+    background:
+        radial-gradient(circle at 50% 20%, #ffffff 0%, #d9ffe4 45%, #8ee6a1 100%);
+}
+#endScreen.show { display: flex; }
+#endScreen h1 {
+    font-size: clamp(42px, 7vw, 75px);
+    color: #159447;
+    text-shadow: 4px 4px 0 white, 8px 8px 0 #72d98d;
+}
+#endScreen p {
+    padding: 13px 25px;
+    background: white;
+    border-radius: 25px;
+    color: #355e3b;
+    border: 4px solid #65c982;
+    font-size: 21px;
+    font-weight: bold;
+    box-shadow: 0 5px 0 #3f9b5a;
+}
+#restartBtn {
+    border: none;
+    padding: 15px 35px;
+    border-radius: 30px;
+    background: linear-gradient(180deg, #66bb6a, #2e7d32);
+    color: white;
+    font-family: inherit;
+    font-size: 21px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 7px 0 #1b5e20, 0 12px 20px rgba(0,0,0,.15);
+    transition: .2s;
+}
+#restartBtn:hover { transform: translateY(-4px); }
+#restartBtn:active { transform: translateY(3px); box-shadow: 0 3px 0 #1b5e20; }
+/* =========================================================
+   CONFETI
+========================================================= */
+.confetti {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    top: -20px;
+    z-index: 600;
+    animation: confettiFall 3s linear forwards;
+}
+@keyframes confettiFall {
+    to { transform: translateY(110vh) rotate(720deg); }
+}
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+@media (max-width: 800px) {
+    #title { font-size: 17px; padding: 8px 15px; }
+    .hud-box { font-size: 13px; padding: 7px 10px; }
+    #gamePanel { height: 60%; padding: 15px; gap: 10px; }
+    #animalArea { width: 38%; }
+    #habitats { width: 62%; gap: 8px; }
+    .habitat-icon { font-size: 40px; }
+    .habitat-name { font-size: 15px; }
+    .habitat-info { display: none; }
+    #animalName { font-size: 17px; }
+    #instruction { font-size: 14px; padding: 8px 12px; }
+    #message { font-size: 28px; padding: 12px 25px; }
+}
+@media (max-height: 700px) {
+    #gamePanel { height: 62%; }
+    #animalEmoji { font-size: 85px; }
+    #progressContainer { top: 70px; }
+}
+</style>
+</head>
+<body>
+<div id="game">
+    <!-- CIELO -->
+    <div id="sky">
+        <div id="sun"></div>
+        <div class="cloud one"></div>
+        <div class="cloud two"></div>
+        <div class="cloud three"></div>
+        <div class="mountains">
+            <div class="mountain one"></div>
+            <div class="mountain two"></div>
+            <div class="mountain three"></div>
+        </div>
+    </div>
+    <!-- DECORACIÓN -->
+    <div class="decor tree1">🌳</div>
+    <div class="decor tree2">🌲</div>
+    <div class="decor tree3">🌳</div>
+    <div class="decor flower1">🌻</div>
+    <div class="decor flower2">🌷</div>
+    <!-- HUD -->
+    <div id="hud">
+        <div class="hud-group">
+            <div class="hud-box">⭐ Puntos: <span id="score">0</span></div>
+            <div class="hud-box">❤️ Vidas: <span id="lives">3</span></div>
+        </div>
+        <div class="hud-box">🐾 Animal: <span id="counter">1/20</span></div>
+    </div>
+    <div id="title">🔎🐾 Explorador de Animales 🌎</div>
+    <!-- PROGRESO -->
+    <div id="progressContainer"><div id="progress"></div></div>
+    <!-- PANEL DEL JUEGO -->
+    <div id="gamePanel">
+        <!-- ANIMAL -->
+        <div id="animalArea">
+            <div id="animalCard">
+                <div id="instruction">
+                    🤔 ¿Dónde vive este animal?
+                </div>
+                <div id="animalEmoji">🦁</div>
+                <div id="animalName">León</div>
+            </div>
+        </div>
+        <!-- HÁBITATS -->
+        <div id="habitats">
+            <button class="habitat land" data-type="land">
+                <div class="habitat-icon">🌳</div>
+                <div class="habitat-name">Terrestre</div>
+                <div class="habitat-info">Vive en tierra</div>
+            </button>
+            <button class="habitat water" data-type="water">
+                <div class="habitat-icon">🌊</div>
+                <div class="habitat-name">Acuático</div>
+                <div class="habitat-info">Vive en el agua</div>
+            </button>
+            <button class="habitat air" data-type="air">
+                <div class="habitat-icon">☁️</div>
+                <div class="habitat-name">Aéreo</div>
+                <div class="habitat-info">Se desplaza por el aire</div>
+            </button>
+            <button class="habitat amphibian" data-type="amphibian">
+                <div class="habitat-icon">🐸</div>
+                <div class="habitat-name">Anfibio</div>
+                <div class="habitat-info">Agua y tierra</div>
+            </button>
+        </div>
+    </div>
+    <!-- MENSAJE -->
+    <div id="message"></div>
+    <!-- DATO DEL ANIMAL -->
+    <div id="fact"></div>
+    <!-- PANTALLA FINAL -->
+    <div id="endScreen">
+        <h1>🎉 ¡Gran Explorador! 🎉</h1>
+        <p>🌎 ¡Has clasificado a todos los animales!</p>
+        <p>⭐ Puntuación: <span id="finalScore">0</span></p>
+        <p>🐾 Animales descubiertos: <span id="finalAnimals">0</span></p>
+        <button id="restartBtn">🔄 Jugar de nuevo</button>
+    </div>
+</div>
+<script>
+/* =========================================================
+   DATOS DE LOS ANIMALES
+========================================================= */
+const animals = [
+    { emoji: "🦁", name: "León", type: "land", fact: "🦁 El león vive principalmente en las sabanas y es un mamífero." },
+    { emoji: "🐘", name: "Elefante", type: "land", fact: "🐘 Los elefantes son grandes mamíferos terrestres y tienen una larga trompa." },
+    { emoji: "🐕", name: "Perro", type: "land", fact: "🐕 El perro es un mamífero que puede vivir junto a las personas." },
+    { emoji: "🐱", name: "Gato", type: "land", fact: "🐱 Los gatos son mamíferos y tienen muy buen sentido del equilibrio." },
+    { emoji: "🐼", name: "Panda", type: "land", fact: "🐼 El panda gigante vive en los bosques de China y se alimenta principalmente de bambú." },
+    { emoji: "🐫", name: "Camello", type: "land", fact: "🐫 El camello está adaptado para vivir en lugares secos como los desiertos." },
+    { emoji: "🐬", name: "Delfín", type: "water", fact: "🐬 El delfín es un mamífero marino que respira aire." },
+    { emoji: "🐟", name: "Pez", type: "water", fact: "🐟 Los peces viven en el agua y utilizan branquias para respirar." },
+    { emoji: "🦈", name: "Tiburón", type: "water", fact: "🦈 Los tiburones son peces que viven principalmente en los océanos." },
+    { emoji: "🐳", name: "Ballena", type: "water", fact: "🐳 Las ballenas son mamíferos marinos y necesitan salir a la superficie para respirar." },
+    { emoji: "🐙", name: "Pulpo", type: "water", fact: "🐙 El pulpo vive en el mar y tiene ocho brazos." },
+    { emoji: "🦀", name: "Cangrejo", type: "water", fact: "🦀 Muchos cangrejos viven cerca del mar y tienen un caparazón duro." },
+    { emoji: "🦅", name: "Águila", type: "air", fact: "🦅 Las águilas son aves y utilizan sus alas para desplazarse por el aire." },
+    { emoji: "🦜", name: "Loro", type: "air", fact: "🦜 Los loros son aves con picos fuertes y pueden aprender algunos sonidos." },
+    { emoji: "🦉", name: "Búho", type: "air", fact: "🦉 Los búhos son aves que tienen una excelente visión y suelen estar activos de noche." },
+    { emoji: "🦋", name: "Mariposa", type: "air", fact: "🦋 Las mariposas pasan por una metamorfosis antes de convertirse en adultas." },
+    { emoji: "🐝", name: "Abeja", type: "air", fact: "🐝 Las abejas ayudan a polinizar muchas plantas mientras buscan néctar." },
+    { emoji: "🐸", name: "Rana", type: "amphibian", fact: "🐸 Las ranas son anfibios y pueden vivir tanto en ambientes húmedos como terrestres." },
+    { emoji: "🦎", name: "Salamandra", type: "amphibian", fact: "🦎 Las salamandras viven cerca del agua y necesitan humedad para sobrevivir." },
+    { emoji: "🐢", name: "Tortuga", type: "amphibian", fact: "🐢 Las tortugas pueden vivir tanto en tierra como en el agua según la especie." }
+];
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+let currentIndex = 0;
+let score = 0;
+let lives = 3;
+let usedAnimals = [];
+
+const animalEmoji = document.getElementById("animalEmoji");
+const animalName = document.getElementById("animalName");
+const scoreEl = document.getElementById("score");
+const livesEl = document.getElementById("lives");
+const counterEl = document.getElementById("counter");
+const progressEl = document.getElementById("progress");
+const messageEl = document.getElementById("message");
+const factEl = document.getElementById("fact");
+const endScreen = document.getElementById("endScreen");
+const finalScore = document.getElementById("finalScore");
+const finalAnimals = document.getElementById("finalAnimals");
+const restartBtn = document.getElementById("restartBtn");
+const habitatBtns = document.querySelectorAll(".habitat");
+
+/* =========================================================
+   MEZCLAR
+========================================================= */
+function shuffleArray(arr) {
+    return [...arr].sort(() => Math.random() - 0.5);
+}
+
+/* =========================================================
+   CARGAR ANIMAL
+========================================================= */
+function loadCurrentAnimal() {
+    if (usedAnimals.length === 0) {
+        usedAnimals = shuffleArray([...Array(animals.length).keys()]);
+    }
+    const idx = usedAnimals.shift();
+    currentIndex = idx;
+    const animal = animals[idx];
+    
+    animalEmoji.textContent = animal.emoji;
+    animalName.textContent = animal.name;
+    counterEl.textContent = `${animals.length - usedAnimals.length}/${animals.length}`;
+    
+    const progress = ((animals.length - usedAnimals.length) / animals.length) * 100;
+    progressEl.style.width = `${progress}%`;
+    
+    scoreEl.textContent = score;
+    livesEl.textContent = lives;
+    
+    factEl.classList.remove("show");
+    messageEl.classList.remove("show", "correct-msg", "wrong-msg");
+    
+    habitatBtns.forEach(btn => {
+        btn.classList.remove("correct", "wrong");
+    });
+}
+
+/* =========================================================
+   MOSTRAR MENSAJE — NUEVO ESTILO ✅
+========================================================= */
+function showMessage(text, isCorrect) {
+    messageEl.textContent = text;
+    messageEl.classList.remove("correct-msg", "wrong-msg");
+    messageEl.classList.add("show", isCorrect ? "correct-msg" : "wrong-msg");
+    
+    setTimeout(() => {
+        messageEl.classList.remove("show");
+    }, 1400);
+}
+
+/* =========================================================
+   MOSTRAR DATO
+========================================================= */
+function showFact() {
+    const animal = animals[currentIndex];
+    factEl.textContent = animal.fact;
+    factEl.classList.add("show");
+}
+
+/* =========================================================
+   CONFETI
+========================================================= */
+function createConfetti() {
+    const colors = ["#ff6b6b", "#ffd93d", "#6bcb77", "#4d96ff", "#ff6bcb"];
+    for (let i = 0; i < 40; i++) {
+        setTimeout(() => {
+            const c = document.createElement("div");
+            c.className = "confetti";
+            c.style.left = `${Math.random() * 100}%`;
+            c.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            c.style.animationDuration = `${2 + Math.random() * 2}s`;
+            document.getElementById("game").appendChild(c);
+            setTimeout(() => c.remove(), 3000);
+        }, i * 40);
+    }
+}
+
+/* =========================================================
+   COMPROBAR RESPUESTA
+========================================================= */
+habitatBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+        const selectedType = btn.dataset.type;
+        const correctType = animals[currentIndex].type;
+        
+        if (selectedType === correctType) {
+            score += 10;
+            btn.classList.add("correct");
+            showMessage("¡Muy bien! 🎉", true);
+            showFact();
+            createConfetti();
+            
+            setTimeout(() => {
+                if (usedAnimals.length === 0) {
+                    showEndScreen();
+                } else {
+                    loadCurrentAnimal();
+                }
+            }, 2000);
+        } else {
+            lives--;
+            score = Math.max(0, score - 5);
+            btn.classList.add("wrong");
+            showMessage("¡Inténtalo otra vez! 💪", false);
+            
+            scoreEl.textContent = score;
+            livesEl.textContent = lives;
+            
+            if (lives <= 0) {
+                setTimeout(showEndScreen, 1500);
+            }
+        }
+    });
+});
+
+/* =========================================================
+   PANTALLA FINAL
+========================================================= */
+function showEndScreen() {
+    finalScore.textContent = score;
+    finalAnimals.textContent = animals.length;
+    endScreen.classList.add("show");
+}
+
+/* =========================================================
+   REINICIAR
+========================================================= */
+restartBtn.addEventListener("click", () => {
+    score = 0;
+    lives = 3;
+    usedAnimals = [];
+    endScreen.classList.remove("show");
+    loadCurrentAnimal();
+});
+
+/* =========================================================
+   INICIAR
+========================================================= */
+loadCurrentAnimal();
+</script>
+</body>
+</html>
