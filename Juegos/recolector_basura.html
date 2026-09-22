@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>🚛 EcoCamión Reciclador 🌱</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    font-family: 'Comic Sans MS', 'Trebuchet MS', cursive;
+    background: #87ceeb;
+    overflow: hidden;
+    user-select: none;
+    height: 100vh;
+    width: 100vw;
+  }
+  
+  #game {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* ===== HUD ===== */
+  #hud {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    display: flex;
+    gap: 15px;
+    z-index: 100;
+  }
+  .hud-box {
+    background: white;
+    padding: 10px 22px;
+    border-radius: 30px;
+    border: 4px solid #ff80ab;
+    box-shadow: 0 5px 0 #c2185b;
+    font-weight: bold;
+    color: #5d4037;
+    font-size: 18px;
+  }
+  
+  #title {
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(180deg, #fff 0%, #ffe0ec 100%);
+    padding: 10px 30px;
+    border-radius: 35px;
+    border: 4px solid #ff80ab;
+    box-shadow: 0 5px 0 #c2185b;
+    font-size: 22px;
+    font-weight: bold;
+    color: #d81b60;
+    z-index: 100;
+    white-space: nowrap;
+  }
+  
+  /* ===== ZONA SUPERIOR: CIELO + CIUDAD ===== */
+  #world {
+    position: relative;
+    width: 100%;
+    height: 55%;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  
+  #sky {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, #a8e6ff 0%, #d4f1ff 100%);
+    z-index: 1;
+    transition: background 0.8s ease;
+  }
+  
+  #sun {
+    position: absolute;
+    top: 25%;
+    right: 6%;
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle, #fff9a8 0%, #ffd54f 100%);
+    border-radius: 50%;
+    box-shadow: 0 0 50px #ffd54f;
+    animation: sunPulse 3s ease-in-out infinite;
+    z-index: 2;
+  }
+  #sun::before {
+    content: '◕ ◕';
+    position: absolute;
+    top: 24px; left: 15px;
+    font-size: 14px;
+    color: #5d4037;
+    letter-spacing: 10px;
+  }
+  #sun::after {
+    content: '◡';
+    position: absolute;
+    top: 42px; left: 30px;
+    font-size: 18px;
+    color: #5d4037;
+  }
+  @keyframes sunPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+  }
+  
+  .cloud {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(255,255,255,0.8);
+    z-index: 2;
+  }
+  .cloud::before, .cloud::after {
+    content: '';
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+  }
+  .cloud1 { width: 80px; height: 40px; top: 15%; left: 10%; animation: floatCloud 25s linear infinite; }
+  .cloud1::before { width: 50px; height: 50px; top: -20px; left: 10px; }
+  .cloud1::after { width: 40px; height: 40px; top: -16px; left: 40px; }
+  .cloud2 { width: 100px; height: 50px; top: 25%; left: 55%; animation: floatCloud 30s linear infinite; animation-delay: -12s; }
+  .cloud2::before { width: 60px; height: 60px; top: -26px; left: 15px; }
+  .cloud2::after { width: 50px; height: 50px; top: -20px; left: 50px; }
+  .cloud3 { width: 70px; height: 35px; top: 35%; left: 30%; animation: floatCloud 22s linear infinite; animation-delay: -6s; }
+  .cloud3::before { width: 45px; height: 45px; top: -18px; left: 10px; }
+  .cloud3::after { width: 35px; height: 35px; top: -12px; left: 35px; }
+  
+  @keyframes floatCloud {
+    from { transform: translateX(-200px); }
+    to { transform: translateX(calc(100vw + 200px)); }
+  }
+  
+  #city {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 70%;
+    z-index: 3;
+  }
+  
+  #buildings {
+    position: absolute;
+    bottom: 32%;
+    left: 0;
+    width: 100%;
+    height: 68%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    padding: 0 20px;
+    gap: 8px;
+  }
+  
+  .building {
+    position: relative;
+    border-radius: 15px 15px 0 0;
+    border: 4px solid rgba(0,0,0,0.15);
+    border-bottom: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding-bottom: 10px;
+    flex: 1;
+    max-width: 120px;
+    min-width: 55px;
+  }
+  .building::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 20px;
+    background: inherit;
+    border-radius: 10px 10px 0 0;
+    border: 4px solid rgba(0,0,0,0.15);
+    border-bottom: none;
+    filter: brightness(0.9);
+  }
+  .building .face {
+    font-size: 28px;
+    margin-bottom: 5px;
+  }
+  .building .windows {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 4px;
+  }
+  .window {
+    width: 15px;
+    height: 19px;
+    background: #b3e5fc;
+    border-radius: 5px;
+    border: 2px solid rgba(0,0,0,0.2);
+  }
+  
+  /* ===== DECORACIÓN ===== */
+  .decor {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    flex-shrink: 0;
+    animation: swayDecor 3s ease-in-out infinite;
+    transform-origin: bottom center;
+  }
+  .decor .decor-emoji {
+    font-size: 50px;
+    line-height: 1;
+    filter: drop-shadow(0 4px 3px rgba(0,0,0,0.2));
+  }
+  .decor.small .decor-emoji { font-size: 38px; }
+  .decor.tiny .decor-emoji  { font-size: 30px; }
+  
+  @keyframes swayDecor {
+    0%, 100% { transform: rotate(-2deg); }
+    50% { transform: rotate(2deg); }
+  }
+  
+  .decor:nth-child(odd) { animation-delay: -1s; }
+  .decor:nth-child(even) { animation-delay: -2s; }
+  
+  #street {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 32%;
+    background: linear-gradient(180deg, #90a4ae 0%, #78909c 100%);
+    border-top: 6px solid #546e7a;
+  }
+  #street::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: repeating-linear-gradient(90deg, #fff59d 0, #fff59d 40px, transparent 40px, transparent 80px);
+  }
+  #street::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 15px;
+    background: #b0bec5;
+    border-bottom: 3px solid #78909c;
+  }
+  
+  /* ===== CAMIÓN KAWAII CSS ===== */
+  #truck {
+    position: absolute;
+    bottom: 12%;
+    left: 15%;
+    transform: translateX(-50%);
+    width: 220px;
+    height: 140px;
+    z-index: 10;
+    transition: left 1.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  
+  .truck-body {
+    position: absolute;
+    bottom: 25px;
+    left: 0;
+    width: 160px;
+    height: 90px;
+    background: linear-gradient(180deg, #81c784 0%, #4caf50 100%);
+    border-radius: 15px 15px 10px 10px;
+    border: 3px solid #2e7d32;
+    box-shadow: inset -5px -5px 0 rgba(0,0,0,0.1);
+  }
+  .truck-body::before {
+    content: '♻';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 40px;
+    color: white;
+    text-shadow: 2px 2px 0 #2e7d32;
+  }
+  
+  .truck-cabin {
+    position: absolute;
+    bottom: 25px;
+    right: 0;
+    width: 80px;
+    height: 70px;
+    background: linear-gradient(180deg, #a5d6a7 0%, #66bb6a 100%);
+    border-radius: 15px 20px 10px 10px;
+    border: 3px solid #2e7d32;
+  }
+  .truck-window {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 55px;
+    height: 35px;
+    background: linear-gradient(180deg, #b3e5fc 0%, #81d4fa 100%);
+    border-radius: 10px 12px 5px 5px;
+    border: 2px solid #2e7d32;
+    overflow: hidden;
+  }
+  .driver {
+    position: absolute;
+    bottom: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 30px;
+    background: #ffcc80;
+    border-radius: 50%;
+  }
+  .driver::before {
+    content: '◕ ◕';
+    position: absolute;
+    top: 8px; left: 3px;
+    font-size: 9px;
+    color: #3e2723;
+    letter-spacing: 3px;
+  }
+  .driver::after {
+    content: '◡';
+    position: absolute;
+    top: 17px; left: 11px;
+    font-size: 10px;
+    color: #3e2723;
+  }
+  
+  .truck-face {
+    position: absolute;
+    bottom: 55px;
+    left: 20px;
+    width: 120px;
+    height: 40px;
+    pointer-events: none;
+  }
+  .eye {
+    position: absolute;
+    top: 5px;
+    width: 14px;
+    height: 18px;
+    background: #263238;
+    border-radius: 50%;
+    animation: blink 4s infinite;
+  }
+  .eye.left { left: 30px; }
+  .eye.right { left: 75px; }
+  .eye::after {
+    content: '';
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 5px; height: 5px;
+    background: white;
+    border-radius: 50%;
+  }
+  @keyframes blink {
+    0%, 90%, 100% { transform: scaleY(1); }
+    95% { transform: scaleY(0.1); }
+  }
+  .mouth {
+    position: absolute;
+    top: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 25px;
+    height: 12px;
+    border: 3px solid #263238;
+    border-top: none;
+    border-radius: 0 0 20px 20px;
+    background: #ff8a80;
+  }
+  .cheek {
+    position: absolute;
+    top: 20px;
+    width: 12px; height: 8px;
+    background: #ff8a80;
+    border-radius: 50%;
+    opacity: 0.7;
+  }
+  .cheek.left { left: 15px; }
+  .cheek.right { left: 95px; }
+  
+  .wheel {
+    position: absolute;
+    bottom: 0;
+    width: 35px;
+    height: 35px;
+    background: radial-gradient(circle, #546e7a 30%, #263238 70%);
+    border-radius: 50%;
+    border: 3px solid #1a1a1a;
+  }
+  .wheel::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px; height: 10px;
+    background: #b0bec5;
+    border-radius: 50%;
+  }
+  .wheel.left { left: 15px; animation: spin 0.8s linear infinite; }
+  .wheel.right { right: 15px; animation: spin 0.8s linear infinite; }
+  @keyframes spin {
+    from { transform: rotate(0); }
+    to { transform: rotate(360deg); }
+  }
+  #truck.driving .wheel { animation-duration: 0.3s; }
+  
+  .smoke {
+    position: absolute;
+    top: 10px;
+    left: -15px;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0;
+  }
+  #truck.driving .smoke {
+    animation: smokePuff 0.6s ease-out infinite;
+  }
+  @keyframes smokePuff {
+    0% { opacity: 0.8; transform: translate(0,0) scale(0.5); }
+    100% { opacity: 0; transform: translate(-30px, -20px) scale(1.5); }
+  }
+  
+  /* ===== ZONA DE JUEGO: TACHOS IZQUIERDA + BASURA DERECHA ===== */
+  #playArea {
+    position: relative;
+    flex: 1;
+    background: linear-gradient(180deg, #fff9c4 0%, #ffecb3 100%);
+    border-top: 6px dashed #ffb74d;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: 30px;
+    padding: 14px 30px;
+    z-index: 5;
+    overflow: hidden;
+  }
+  
+  /* ===== TACHOS (IZQUIERDA) ===== */
+  #bins {
+    display: flex;
+    gap: 18px;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .bin {
+    width: 120px;
+    height: 145px;
+    border-radius: 20px 20px 14px 14px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s;
+    border: 5px solid rgba(0,0,0,0.25);
+    box-shadow: 0 9px 0 rgba(0,0,0,0.3), 0 12px 22px rgba(0,0,0,0.18);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.35);
+    padding-top: 10px;
+  }
+  .bin:hover {
+    transform: translateY(-10px) scale(1.06);
+    box-shadow: 0 16px 0 rgba(0,0,0,0.3), 0 20px 28px rgba(0,0,0,0.22);
+  }
+  .bin:active {
+    transform: translateY(-2px) scale(0.98);
+    box-shadow: 0 5px 0 rgba(0,0,0,0.3);
+  }
+  .bin-icon {
+    font-size: 42px;
+    margin-bottom: 6px;
+    filter: drop-shadow(2px 3px 0 rgba(0,0,0,0.25));
+    line-height: 1;
+  }
+  .bin-label {
+    font-size: 14px;
+    background: rgba(0,0,0,0.18);
+    padding: 4px 12px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  
+  .bin::before {
+    content: '';
+    position: absolute;
+    top: -14px;
+    left: -8px;
+    right: -8px;
+    height: 16px;
+    background: inherit;
+    border-radius: 12px 12px 4px 4px;
+    border: 5px solid rgba(0,0,0,0.25);
+    filter: brightness(0.85);
+  }
+  .bin::after {
+    content: '';
+    position: absolute;
+    top: -26px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 14px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 8px 8px 0 0;
+    border: 3px solid rgba(0,0,0,0.25);
+    border-bottom: none;
+  }
+  
+  .bin.organic { background: linear-gradient(180deg, #a1887f 0%, #6d4c41 100%); }
+  .bin.plastic { background: linear-gradient(180deg, #ffeb3b 0%, #fbc02d 100%); color: #5d4037; text-shadow: 1px 1px 0 rgba(255,255,255,0.5); }
+  .bin.paper   { background: linear-gradient(180deg, #42a5f5 0%, #1976d2 100%); }
+  .bin.glass   { background: linear-gradient(180deg, #66bb6a 0%, #2e7d32 100%); }
+  
+  .bin.organic .bin-label { background: rgba(0,0,0,0.25); }
+  .bin.plastic .bin-label { background: rgba(255,255,255,0.5); color: #5d4037; }
+  .bin.paper .bin-label   { background: rgba(0,0,0,0.25); }
+  .bin.glass .bin-label   { background: rgba(0,0,0,0.25); }
+  
+  .bin.correct { animation: correctPop 0.5s ease; }
+  @keyframes correctPop {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.15) translateY(-10px); box-shadow: 0 0 0 8px #fff59d, 0 20px 0 rgba(0,0,0,0.3); }
+    100% { transform: scale(1); }
+  }
+  .bin.wrong { animation: wrongShake 0.5s ease; }
+  @keyframes wrongShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+  }
+  
+  /* ===== BASURA A RECICLAR (DERECHA, GRANDE) ===== */
+  #trashPanel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  #trashDisplay {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  #trashEmoji {
+    font-size: 130px;
+    line-height: 1;
+    animation: bounceTrash 1.5s ease-in-out infinite;
+    filter: drop-shadow(0 8px 6px rgba(0,0,0,0.2));
+  }
+  @keyframes bounceTrash {
+    0%, 100% { transform: translateY(0) rotate(-4deg); }
+    50% { transform: translateY(-12px) rotate(4deg); }
+  }
+  #trashName {
+    font-size: 24px;
+    font-weight: bold;
+    color: #5d4037;
+    background: white;
+    padding: 8px 26px;
+    border-radius: 30px;
+    border: 4px solid #ff8a65;
+    box-shadow: 0 5px 0 #d84315;
+    white-space: nowrap;
+  }
+  
+  /* ===== MENSAJES SIN FONDO ===== */
+  #message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    font-size: 90px;
+    font-weight: 900;
+    color: #2e7d32;
+    z-index: 200;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+    white-space: nowrap;
+    letter-spacing: 2px;
+    font-family: 'Trebuchet MS', 'Comic Sans MS', cursive;
+    -webkit-text-stroke: 5px white;
+    text-shadow: 
+      0 0 12px rgba(0,0,0,0.25),
+      6px 6px 0 rgba(0,0,0,0.12);
+  }
+  #message.show { transform: translate(-50%, -50%) scale(1); }
+  #message.wrong {
+    color: #e53935;
+    -webkit-text-stroke: 5px white;
+  }
+  
+  /* ===== PANTALLA FINAL ===== */
+  #endScreen {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(180deg, #ffe0f0 0%, #e0f7ff 100%);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 300;
+    gap: 22px;
+    padding: 20px;
+  }
+  #endScreen.show { display: flex; }
+  #endScreen h1 {
+    font-size: 64px;
+    color: #d81b60;
+    text-shadow: 4px 4px 0 #fff, 8px 8px 0 #ff80ab;
+    text-align: center;
+  }
+  #endScreen p {
+    font-size: 26px;
+    color: #5d4037;
+    background: white;
+    padding: 16px 32px;
+    border-radius: 30px;
+    border: 5px solid #ff80ab;
+    box-shadow: 0 5px 0 #c2185b;
+    text-align: center;
+  }
+  #restartBtn {
+    padding: 16px 42px;
+    font-size: 24px;
+    font-family: inherit;
+    font-weight: bold;
+    background: linear-gradient(180deg, #81c784 0%, #4caf50 100%);
+    color: white;
+    border: 5px solid #2e7d32;
+    border-radius: 35px;
+    box-shadow: 0 7px 0 #2e7d32;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  #restartBtn:hover { transform: translateY(-4px); }
+  #restartBtn:active { transform: translateY(4px); box-shadow: 0 2px 0 #2e7d32; }
+  
+  .confetti {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    top: -15px;
+    animation: fall 3s linear forwards;
+    z-index: 301;
+  }
+  @keyframes fall {
+    to { transform: translateY(110vh) rotate(720deg); }
+  }
+  
+  @media (max-height: 720px) {
+    .hud-box { padding: 8px 16px; font-size: 15px; }
+    #title { padding: 8px 22px; font-size: 18px; }
+    .bin { width: 100px; height: 120px; }
+    .bin-icon { font-size: 34px; }
+    .bin-label { font-size: 12px; padding: 3px 9px; }
+    #bins { gap: 14px; }
+    #trashEmoji { font-size: 100px; }
+    #trashName { font-size: 18px; padding: 6px 20px; }
+    #message { font-size: 60px; -webkit-text-stroke: 4px white; }
+    .decor .decor-emoji { font-size: 40px; }
+    #playArea { gap: 20px; padding: 10px 20px; }
+  }
+</style>
+</head>
+<body>
+<div id="game">
+  
+  <div id="hud">
+    <div class="hud-box">⭐ Puntos: <span id="score">0</span></div>
+    <div class="hud-box">📍 Lugar: <span id="location">Parque</span></div>
+  </div>
+  
+  <div id="title">🚛 EcoCamión Reciclador 🌱</div>
+  
+  <div id="world">
+    <div id="sky">
+      <div id="sun"></div>
+      <div class="cloud cloud1"></div>
+      <div class="cloud cloud2"></div>
+      <div class="cloud cloud3"></div>
+    </div>
+    
+    <div id="city">
+      <div id="buildings"></div>
+      <div id="street"></div>
+      <div id="truck">
+        <div class="smoke"></div>
+        <div class="truck-body">
+          <div class="truck-face">
+            <div class="eye left"></div>
+            <div class="eye right"></div>
+            <div class="cheek left"></div>
+            <div class="cheek right"></div>
+            <div class="mouth"></div>
+          </div>
+        </div>
+        <div class="truck-cabin">
+          <div class="truck-window">
+            <div class="driver"></div>
+          </div>
+        </div>
+        <div class="wheel left"></div>
+        <div class="wheel right"></div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- ===== ZONA DE JUEGO: TACHOS IZQUIERDA + BASURA DERECHA ===== -->
+  <div id="playArea">
+    <div id="bins">
+      <div class="bin organic" data-type="organic">
+        <div class="bin-icon">🥬</div>
+        <div class="bin-label">Orgánico</div>
+      </div>
+      <div class="bin plastic" data-type="plastic">
+        <div class="bin-icon">🧴</div>
+        <div class="bin-label">Plástico</div>
+      </div>
+      <div class="bin paper" data-type="paper">
+        <div class="bin-icon">📰</div>
+        <div class="bin-label">Papel</div>
+      </div>
+      <div class="bin glass" data-type="glass">
+        <div class="bin-icon">🍾</div>
+        <div class="bin-label">Vidrio</div>
+      </div>
+    </div>
+    
+    <div id="trashPanel">
+      <div id="trashDisplay">
+        <span id="trashEmoji">🍎</span>
+        <span id="trashName">Manzana</span>
+      </div>
+    </div>
+  </div>
+  
+  <div id="message"></div>
+  
+  <div id="endScreen">
+    <h1>🎉 ¡Ganaste! 🎉</h1>
+    <p>¡Reciclaste toda la basura de la ciudad! 🌍💚</p>
+    <p>Puntuación final: <span id="finalScore">0</span> ⭐</p>
+    <button id="restartBtn">🔄 Jugar de nuevo</button>
+  </div>
+  
+</div>
+
+<script>
+  /* ================================================================
+     LISTA DE BASURAS MUY VARIADA
+     Sin repetir cosas raras. Distribución equilibrada.
+     ================================================================ */
+  const trashItems = [
+    // 🥬 ORGÁNICO
+    { emoji: '🍎', name: 'Manzana',            type: 'organic' },
+    { emoji: '🍌', name: 'Plátano',            type: 'organic' },
+    { emoji: '🍊', name: 'Naranja',            type: 'organic' },
+    { emoji: '🍉', name: 'Sandía',             type: 'organic' },
+    { emoji: '🍇', name: 'Uvas',               type: 'organic' },
+    { emoji: '🥕', name: 'Zanahoria',          type: 'organic' },
+    { emoji: '🥦', name: 'Brócoli',            type: 'organic' },
+    { emoji: '🍞', name: 'Pan viejo',          type: 'organic' },
+    { emoji: '🌽', name: 'Mazorca',            type: 'organic' },
+    { emoji: '🍕', name: 'Restos de pizza',    type: 'organic' },
+    { emoji: '🍗', name: 'Hueso de pollo',     type: 'organic' },
+    { emoji: '🥑', name: 'Aguacate',           type: 'organic' },
+    { emoji: '🍓', name: 'Fresas',             type: 'organic' },
+    { emoji: '🥔', name: 'Papa',               type: 'organic' },
+    { emoji: '🍅', name: 'Tomate',             type: 'organic' },
+    
+    // 🧴 PLÁSTICO
+    { emoji: '🥤', name: 'Vaso de plástico',   type: 'plastic' },
+    { emoji: '🧴', name: 'Botella de champú',  type: 'plastic' },
+    { emoji: '🧃', name: 'Tetra brick',        type: 'plastic' },
+    { emoji: '🛍️', name: 'Bolsa plástica',     type: 'plastic' },
+    { emoji: '🥡', name: 'Envase de comida',   type: 'plastic' },
+    { emoji: '🍶', name: 'Botella de yogur',   type: 'plastic' },
+    { emoji: '🪥', name: 'Cepillo de dientes', type: 'plastic' },
+    { emoji: '🧸', name: 'Juguete roto',       type: 'plastic' },
+    { emoji: '💧', name: 'Botella de agua',    type: 'plastic' },
+    { emoji: '🧼', name: 'Envase de jabón',    type: 'plastic' },
+    { emoji: '🪣', name: 'Cubeta rota',        type: 'plastic' },
+    { emoji: '🥫', name: 'Lata de refresco',   type: 'plastic' },
+    
+    // 📰 PAPEL
+    { emoji: '📰', name: 'Periódico',          type: 'paper' },
+    { emoji: '📦', name: 'Caja de cartón',     type: 'paper' },
+    { emoji: '📄', name: 'Hojas de papel',     type: 'paper' },
+    { emoji: '📚', name: 'Revista vieja',      type: 'paper' },
+    { emoji: '🧻', name: 'Rollo de papel',     type: 'paper' },
+    { emoji: '✉️', name: 'Sobre usado',        type: 'paper' },
+    { emoji: '📃', name: 'Folletos',           type: 'paper' },
+    { emoji: '🗞️', name: 'Diario viejo',       type: 'paper' },
+    { emoji: '📒', name: 'Cuaderno usado',     type: 'paper' },
+    { emoji: '🎁', name: 'Caja de regalo',     type: 'paper' },
+    { emoji: '📋', name: 'Papel de oficina',   type: 'paper' },
+    
+    // 🍾 VIDRIO
+    { emoji: '🍾', name: 'Botella de vidrio',  type: 'glass' },
+    { emoji: '🫙', name: 'Frasco de mermelada',type: 'glass' },
+    { emoji: '🥃', name: 'Vaso roto',          type: 'glass' },
+    { emoji: '🍷', name: 'Botella de vino',    type: 'glass' },
+    { emoji: '🍶', name: 'Frasco de salsa',    type: 'glass' },
+    { emoji: '🥛', name: 'Vaso de leche',      type: 'glass' },
+    { emoji: '🧪', name: 'Tubo de ensayo',     type: 'glass' },
+    { emoji: '🏺', name: 'Jarrón roto',        type: 'glass' },
+    { emoji: '💡', name: 'Bombilla',           type: 'glass' },
+    { emoji: '🪞', name: 'Espejo roto',        type: 'glass' }
+  ];
+  
+  /* ================================================================
+     ESCENARIOS
+     ================================================================ */
+  const scenes = [
+    { 
+      name: 'Parque 🌳',
+      skyColors: ['#a8e6ff', '#d4f1ff'],
+      groundColors: ['#90a4ae', '#78909c'],
+      decor: ['🌳', '🌸', '🌷', '🌳', '🌻', '🦋'],
+      buildings: [
+        { color: '#81c784', height: 120, face: '🌳', windows: 2 },
+        { color: '#f48fb1', height: 100, face: '🌸', windows: 2 },
+        { color: '#fff59d', height: 110, face: '🌼', windows: 2 },
+        { color: '#81c784', height: 130, face: '🌳', windows: 2 },
+        { color: '#ce93d8', height: 95, face: '🌺', windows: 2 },
+        { color: '#81c784', height: 115, face: '🌳', windows: 2 }
+      ]
+    },
+    { 
+      name: 'Escuela 🏫',
+      skyColors: ['#a8e6ff', '#d4f1ff'],
+      groundColors: ['#90a4ae', '#78909c'],
+      decor: ['🌳', '📚', '✏️', '🌳', '🎒', '🌳'],
+      buildings: [
+        { color: '#ffcc80', height: 140, face: '🏫', windows: 4 },
+        { color: '#90caf9', height: 110, face: '📚', windows: 3 },
+        { color: '#ffab91', height: 125, face: '🎒', windows: 3 },
+        { color: '#ffcc80', height: 135, face: '🏫', windows: 4 },
+        { color: '#a5d6a7', height: 105, face: '✏️', windows: 3 },
+        { color: '#ffcc80', height: 130, face: '🏫', windows: 4 }
+      ]
+    },
+    { 
+      name: 'Ciudad 🏢',
+      skyColors: ['#bbdefb', '#e3f2fd'],
+      groundColors: ['#78909c', '#546e7a'],
+      decor: ['🌳', '🚦', '🌳', '🚏', '🌳', '🏙️'],
+      buildings: [
+        { color: '#90a4ae', height: 180, face: '🏢', windows: 6 },
+        { color: '#b0bec5', height: 150, face: '🏬', windows: 5 },
+        { color: '#78909c', height: 200, face: '🏨', windows: 7 },
+        { color: '#90a4ae', height: 160, face: '🏪', windows: 5 },
+        { color: '#b0bec5', height: 170, face: '🏢', windows: 6 },
+        { color: '#78909c', height: 190, face: '🏬', windows: 6 }
+      ]
+    },
+    { 
+      name: 'Playa 🏖️',
+      skyColors: ['#81d4fa', '#e1f5fe'],
+      groundColors: ['#ffe082', '#ffca28'],
+      decor: ['🌴', '🌊', '🌴', '🐚', '🌴', '⛱️'],
+      buildings: [
+        { color: '#4fc3f7', height: 100, face: '🌴', windows: 2 },
+        { color: '#ffe082', height: 90, face: '🐚', windows: 2 },
+        { color: '#4dd0e1', height: 95, face: '⛱️', windows: 2 },
+        { color: '#4fc3f7', height: 105, face: '🌊', windows: 2 },
+        { color: '#ffe082', height: 88, face: '🌴', windows: 2 },
+        { color: '#4dd0e1', height: 92, face: '🐚', windows: 2 }
+      ]
+    },
+    { 
+      name: 'Bosque 🌲',
+      skyColors: ['#b2dfdb', '#e0f2f1'],
+      groundColors: ['#6d4c41', '#4e342e'],
+      decor: ['🌲', '🍄', '🌲', '🦊', '🌲', '🐿️'],
+      buildings: [
+        { color: '#388e3c', height: 150, face: '🌲', windows: 2 },
+        { color: '#66bb6a', height: 120, face: '🍄', windows: 2 },
+        { color: '#2e7d32', height: 140, face: '🦊', windows: 2 },
+        { color: '#388e3c', height: 160, face: '🌲', windows: 2 },
+        { color: '#66bb6a', height: 115, face: '🐿️', windows: 2 },
+        { color: '#2e7d32', height: 145, face: '🌲', windows: 2 }
+      ]
+    }
+  ];
+  
+  let score = 0;
+  let currentTrash = null;
+  let currentScene = 0;
+  let trashQueue = [];
+  let itemsToRecycle = 25; // 5 escenarios × 5 basuras
+  let itemsRecycled = 0;
+  let itemsInScene = 0;
+  
+  const truckPositions = [15, 30, 45, 62, 78, 90];
+  
+  const scoreEl = document.getElementById('score');
+  const locationEl = document.getElementById('location');
+  const trashEmojiEl = document.getElementById('trashEmoji');
+  const trashNameEl = document.getElementById('trashName');
+  const buildingsEl = document.getElementById('buildings');
+  const truckEl = document.getElementById('truck');
+  const messageEl = document.getElementById('message');
+  const endScreen = document.getElementById('endScreen');
+  const finalScoreEl = document.getElementById('finalScore');
+  const skyEl = document.getElementById('sky');
+  const streetEl = document.getElementById('street');
+  const bins = document.querySelectorAll('.bin');
+  
+  function buildScene(sceneIndex) {
+    const scene = scenes[sceneIndex];
+    buildingsEl.innerHTML = '';
+    
+    skyEl.style.background = `linear-gradient(180deg, ${scene.skyColors[0]} 0%, ${scene.skyColors[1]} 100%)`;
+    streetEl.style.background = `linear-gradient(180deg, ${scene.groundColors[0]} 0%, ${scene.groundColors[1]} 100%)`;
+    
+    const totalBuildings = scene.buildings.length;
+    const totalDecor = scene.decor.length;
+    let decorIndex = 0;
+    
+    scene.buildings.forEach((b, i) => {
+      const building = document.createElement('div');
+      building.className = 'building';
+      building.style.background = `linear-gradient(180deg, ${b.color} 0%, ${adjustColor(b.color, -20)} 100%)`;
+      building.style.height = b.height + 'px';
+      
+      let windowsHTML = '';
+      for (let w = 0; w < b.windows; w++) {
+        windowsHTML += '<div class="window"></div>';
+      }
+      
+      building.innerHTML = `
+        <div class="face">${b.face}</div>
+        <div class="windows">${windowsHTML}</div>
+      `;
+      buildingsEl.appendChild(building);
+      
+      if (i < totalBuildings - 1 && decorIndex < totalDecor) {
+        const decor = document.createElement('div');
+        decor.className = 'decor';
+        if (i % 2 === 1) decor.classList.add('small');
+        if (i % 3 === 2) decor.classList.add('tiny');
+        decor.innerHTML = `<div class="decor-emoji">${scene.decor[decorIndex]}</div>`;
+        buildingsEl.appendChild(decor);
+        decorIndex++;
+      }
+    });
+    
+    while (decorIndex < totalDecor) {
+      const decor = document.createElement('div');
+      decor.className = 'decor small';
+      decor.innerHTML = `<div class="decor-emoji">${scene.decor[decorIndex]}</div>`;
+      buildingsEl.appendChild(decor);
+      decorIndex++;
+    }
+  }
+  
+  function adjustColor(hex, amount) {
+    const num = parseInt(hex.slice(1), 16);
+    const r = Math.min(255, Math.max(0, (num >> 16) + amount));
+    const g = Math.min(255, Math.max(0, ((num >> 8) & 0x00FF) + amount));
+    const b = Math.min(255, Math.max(0, (num & 0x0000FF) + amount));
+    return `#${(r << 16 | g << 8 | b).toString(16).padStart(6, '0')}`;
+  }
+  
+  /* Baraja y evita repetir el mismo tipo seguido (para dar variedad) */
+  function prepareTrashQueue() {
+    trashQueue = [];
+    let lastType = null;
+    let lastEmoji = null;
+    
+    for (let i = 0; i < itemsToRecycle; i++) {
+      let item;
+      let attempts = 0;
+      do {
+        item = trashItems[Math.floor(Math.random() * trashItems.length)];
+        attempts++;
+      } while (
+        attempts < 30 && 
+        (item.emoji === lastEmoji || (item.type === lastType && Math.random() < 0.6))
+      );
+      
+      trashQueue.push(item);
+      lastType = item.type;
+      lastEmoji = item.emoji;
+    }
+  }
+  
+  function nextTrash() {
+    if (itemsRecycled >= itemsToRecycle) {
+      endGame();
+      return;
+    }
+    currentTrash = trashQueue[itemsRecycled];
+    trashEmojiEl.textContent = currentTrash.emoji;
+    trashNameEl.textContent = currentTrash.name;
+  }
+  
+  function changeScene() {
+    currentScene = (currentScene + 1) % scenes.length;
+    locationEl.textContent = scenes[currentScene].name;
+    buildScene(currentScene);
+    
+    const newPos = truckPositions[currentScene];
+    truckEl.style.left = newPos + '%';
+    truckEl.classList.add('driving');
+    setTimeout(() => truckEl.classList.remove('driving'), 1500);
+  }
+  
+  /* Mensajes SIN FONDO - solo texto grande con emoji */
+  function showMessage(text, correct) {
+    messageEl.textContent = text;
+    messageEl.classList.toggle('wrong', !correct);
+    messageEl.classList.add('show');
+    setTimeout(() => messageEl.classList.remove('show'), 1100);
+  }
+  
+  function launchConfetti() {
+    const colors = ['#ff80ab', '#ffd54f', '#81c784', '#64b5f6', '#ba68c8', '#ff7043'];
+    for (let i = 0; i < 40; i++) {
+      const c = document.createElement('div');
+      c.className = 'confetti';
+      c.style.left = Math.random() * 100 + '%';
+      c.style.background = colors[Math.floor(Math.random() * colors.length)];
+      c.style.animationDelay = Math.random() * 0.8 + 's';
+      c.style.animationDuration = (2 + Math.random() * 2) + 's';
+      c.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 4500);
+    }
+  }
+  
+  function handleBinClick(binEl, type) {
+    if (!currentTrash) return;
+    
+    if (type === currentTrash.type) {
+      score += 10;
+      scoreEl.textContent = score;
+      showMessage('¡Muy bien! 🎉', true);
+      binEl.classList.add('correct');
+      setTimeout(() => binEl.classList.remove('correct'), 500);
+      
+      itemsRecycled++;
+      itemsInScene++;
+      
+      if (itemsInScene >= 5 && itemsRecycled < itemsToRecycle) {
+        itemsInScene = 0;
+        changeScene();
+      } else if (itemsInScene % 2 === 0 && itemsRecycled < itemsToRecycle) {
+        const nextPos = truckPositions[currentScene] + (itemsInScene === 2 ? 3 : 5);
+        truckEl.style.left = Math.min(nextPos, 92) + '%';
+        truckEl.classList.add('driving');
+        setTimeout(() => truckEl.classList.remove('driving'), 1000);
+      }
+      
+      setTimeout(nextTrash, 900);
+    } else {
+      showMessage('¡Intenta otra vez! 💪', false);
+      score = Math.max(0, score - 2);
+      scoreEl.textContent = score;
+      binEl.classList.add('wrong');
+      setTimeout(() => binEl.classList.remove('wrong'), 500);
+    }
+  }
+  
+  function endGame() {
+    finalScoreEl.textContent = score;
+    endScreen.classList.add('show');
+    launchConfetti();
+    setTimeout(launchConfetti, 600);
+    setTimeout(launchConfetti, 1200);
+  }
+  
+  function restart() {
+    score = 0;
+    itemsRecycled = 0;
+    itemsInScene = 0;
+    currentScene = 0;
+    scoreEl.textContent = 0;
+    locationEl.textContent = scenes[0].name;
+    truckEl.style.left = truckPositions[0] + '%';
+    endScreen.classList.remove('show');
+    buildScene(0);
+    prepareTrashQueue();
+    nextTrash();
+  }
+  
+  bins.forEach(bin => {
+    bin.addEventListener('click', () => handleBinClick(bin, bin.dataset.type));
+  });
+  
+  document.getElementById('restartBtn').addEventListener('click', restart);
+  
+  buildScene(0);
+  prepareTrashQueue();
+  nextTrash();
+</script>
+</body>
+</html>
