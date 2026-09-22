@@ -1,0 +1,3942 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐠 Aventura Submarina</title>
+
+    <style>
+        /* =====================================================
+   CONFIGURACIÓN GENERAL
+===================================================== */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --azul-claro: #65dcff;
+            --azul: #219bd6;
+            --azul-profundo: #083a76;
+            --azul-abismo: #061c47;
+            --turquesa: #48f0d0;
+            --amarillo: #ffe06c;
+            --coral: #ff7f9d;
+            --violeta: #8b7cff;
+            --blanco: #f4fdff;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            padding: 16px;
+            overflow-x: hidden;
+
+            font-family:
+                "Arial Rounded MT Bold",
+                "Trebuchet MS",
+                Arial,
+                sans-serif;
+
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+
+            color: white;
+
+            background:
+                radial-gradient(circle at 16% 13%,
+                    rgba(72, 240, 208, .16),
+                    transparent 22%),
+                radial-gradient(circle at 84% 20%,
+                    rgba(101, 220, 255, .14),
+                    transparent 20%),
+                linear-gradient(180deg,
+                    #0d5fac 0%,
+                    #07386f 42%,
+                    #061f50 72%,
+                    #041438 100%);
+
+            position: relative;
+        }
+
+
+        /* =====================================================
+   TEXTURA DE AGUA / RAYOS
+===================================================== */
+
+        body::before {
+            content: "";
+
+            position: fixed;
+            inset: 0;
+
+            pointer-events: none;
+
+            opacity: .20;
+
+            background:
+                repeating-linear-gradient(115deg,
+                    transparent 0 80px,
+                    rgba(255, 255, 255, .08) 80px 87px,
+                    transparent 87px 165px);
+
+            animation:
+                moverRayos 14s linear infinite;
+        }
+
+        @keyframes moverRayos {
+            from {
+                transform: translateX(-80px);
+            }
+
+            to {
+                transform: translateX(80px);
+            }
+        }
+
+
+        /* =====================================================
+   BURBUJAS DEL FONDO
+===================================================== */
+
+        .burbujas {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .burbuja-fondo {
+            position: absolute;
+
+            bottom: -50px;
+
+            width: var(--tam);
+            height: var(--tam);
+
+            border-radius: 50%;
+
+            border:
+                2px solid rgba(190, 242, 255, .55);
+
+            background:
+                rgba(255, 255, 255, .08);
+
+            box-shadow:
+                inset -4px -4px 8px rgba(255, 255, 255, .08);
+
+            animation:
+                subirBurbuja var(--dur) linear infinite;
+
+            animation-delay:
+                var(--delay);
+
+            opacity: .65;
+        }
+
+        @keyframes subirBurbuja {
+            from {
+                transform:
+                    translateY(0) translateX(0) scale(.8);
+
+                opacity: 0;
+            }
+
+            15% {
+                opacity: .65;
+            }
+
+            70% {
+                transform:
+                    translateY(-75vh) translateX(25px) scale(1);
+            }
+
+            to {
+                transform:
+                    translateY(-115vh) translateX(-15px) scale(.7);
+
+                opacity: 0;
+            }
+        }
+
+
+        /* =====================================================
+   APP
+===================================================== */
+
+        .app {
+            width:
+                min(1280px, 98vw);
+
+            margin:
+                0 auto;
+
+            padding:
+                22px;
+
+            position:
+                relative;
+
+            z-index:
+                5;
+
+            overflow:
+                hidden;
+
+            border-radius:
+                34px;
+
+            border:
+                2px solid rgba(147, 232, 255, .42);
+
+            background:
+                linear-gradient(145deg,
+                    rgba(3, 28, 66, .76),
+                    rgba(4, 20, 55, .72));
+
+            backdrop-filter:
+                blur(7px);
+
+            box-shadow:
+                0 0 0 5px rgba(255, 255, 255, .03),
+
+                0 25px 60px rgba(0, 0, 0, .28),
+
+                inset 0 0 35px rgba(72, 240, 208, .04);
+        }
+
+
+        /* =====================================================
+   VOLVER
+===================================================== */
+
+        .volver {
+            position:
+                absolute;
+
+            top:
+                17px;
+
+            left:
+                18px;
+
+            z-index:
+                30;
+
+            padding:
+                10px 15px;
+
+            border-radius:
+                14px;
+
+            color:
+                white;
+
+            text-decoration:
+                none;
+
+            font-size:
+                13px;
+
+            font-weight:
+                bold;
+
+            background:
+                linear-gradient(135deg,
+                    rgba(33, 155, 214, .90),
+                    rgba(68, 83, 180, .90));
+
+            border:
+                1px solid rgba(255, 255, 255, .72);
+
+            box-shadow:
+                0 5px 0 rgba(0, 22, 70, .55);
+
+            transition:
+                .15s;
+        }
+
+        .volver:hover {
+            transform:
+                translateY(-2px);
+        }
+
+
+        /* =====================================================
+   CABECERA
+===================================================== */
+
+        .cabecera {
+            text-align:
+                center;
+
+            margin:
+                2px 0 12px;
+
+            position:
+                relative;
+
+            z-index:
+                4;
+        }
+
+        .mini-etiqueta {
+            display:
+                inline-block;
+
+            padding:
+                6px 13px;
+
+            border-radius:
+                999px;
+
+            color:
+                #d9fbff;
+
+            background:
+                rgba(72, 240, 208, .12);
+
+            border:
+                1px solid rgba(72, 240, 208, .28);
+
+            font-size:
+                11px;
+
+            font-weight:
+                bold;
+
+            letter-spacing:
+                1.5px;
+        }
+
+        h1 {
+            margin:
+                6px 0 3px;
+
+            font-size:
+                clamp(34px, 4.5vw, 54px);
+
+            color:
+                #e9fdff;
+
+            text-shadow:
+                0 0 18px rgba(101, 220, 255, .45),
+
+                0 4px 0 rgba(5, 69, 122, .6);
+        }
+
+        .subtitulo {
+            color:
+                #a6e6f3;
+
+            font-size:
+                15px;
+        }
+
+
+        /* =====================================================
+   PANEL SUPERIOR
+===================================================== */
+
+        .panel-superior {
+            display:
+                grid;
+
+            grid-template-columns:
+                minmax(370px, .82fr) minmax(470px, 1.18fr);
+
+            gap:
+                16px;
+
+            align-items:
+                stretch;
+        }
+
+
+        /* =====================================================
+   PANEL DEL RELOJ
+===================================================== */
+
+        .reloj-card {
+            padding:
+                20px 22px;
+
+            border-radius:
+                25px;
+
+            text-align:
+                center;
+
+            display:
+                flex;
+
+            flex-direction:
+                column;
+
+            justify-content:
+                center;
+
+            background:
+                linear-gradient(145deg,
+                    rgba(4, 31, 73, .76),
+                    rgba(7, 44, 89, .58));
+
+            border:
+                2px solid rgba(101, 220, 255, .42);
+
+            box-shadow:
+                inset 0 0 25px rgba(72, 240, 208, .05),
+
+                0 10px 25px rgba(0, 0, 0, .16);
+        }
+
+        .estado {
+            color:
+                #63efd7;
+
+            font-size:
+                12px;
+
+            font-weight:
+                bold;
+
+            letter-spacing:
+                2.5px;
+
+            text-transform:
+                uppercase;
+        }
+
+        .tiempo {
+            margin:
+                4px 0;
+
+            font-size:
+                clamp(88px, 8vw, 122px);
+
+            line-height:
+                .95;
+
+            font-weight:
+                bold;
+
+            letter-spacing:
+                3px;
+
+            color:
+                #dffcff;
+
+            text-shadow:
+                0 0 10px rgba(101, 220, 255, .95),
+
+                0 0 30px rgba(101, 220, 255, .30);
+        }
+
+        .mensaje {
+            min-height:
+                26px;
+
+            color:
+                #ffe891;
+
+            font-size:
+                16px;
+
+            font-weight:
+                bold;
+        }
+
+
+        /* =====================================================
+   DATOS DE LA MISIÓN
+===================================================== */
+
+        .info-card {
+            padding:
+                16px;
+
+            border-radius:
+                25px;
+
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap:
+                10px;
+
+            background:
+                linear-gradient(145deg,
+                    rgba(6, 37, 78, .66),
+                    rgba(7, 28, 62, .56));
+
+            border:
+                2px solid rgba(101, 220, 255, .25);
+        }
+
+        .dato {
+            min-height:
+                95px;
+
+            padding:
+                13px 10px;
+
+            display:
+                flex;
+
+            flex-direction:
+                column;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            border-radius:
+                18px;
+
+            background:
+                linear-gradient(145deg,
+                    rgba(255, 255, 255, .08),
+                    rgba(255, 255, 255, .035));
+
+            border:
+                1px solid rgba(197, 242, 255, .15);
+        }
+
+        .dato-icono {
+            font-size:
+                29px;
+
+            margin-bottom:
+                4px;
+        }
+
+        .dato strong {
+            color:
+                #a8eaf4;
+
+            font-size:
+                11px;
+
+            letter-spacing:
+                .7px;
+        }
+
+        .dato span {
+            margin-top:
+                3px;
+
+            color:
+                white;
+
+            font-size:
+                18px;
+
+            font-weight:
+                bold;
+        }
+
+
+        /* =====================================================
+   OCÉANO / ESCENARIO
+===================================================== */
+
+        .oceano {
+            width:
+                100%;
+
+            height:
+                430px;
+
+            margin:
+                16px 0 12px;
+
+            position:
+                relative;
+
+            overflow:
+                hidden;
+
+            border-radius:
+                28px;
+
+            border:
+                3px solid rgba(96, 202, 240, .38);
+
+            background:
+                radial-gradient(circle at 20% 12%,
+                    rgba(106, 236, 255, .17),
+                    transparent 20%),
+                radial-gradient(circle at 80% 36%,
+                    rgba(72, 240, 208, .07),
+                    transparent 18%),
+                linear-gradient(180deg,
+                    #258bd2 0%,
+                    #1267ad 24%,
+                    #0a477f 50%,
+                    #073064 72%,
+                    #061c43 100%);
+
+            box-shadow:
+                inset 0 0 50px rgba(0, 0, 0, .20),
+
+                0 10px 28px rgba(0, 0, 0, .18);
+        }
+
+
+        /* =====================================================
+   SUPERFICIE DEL AGUA
+===================================================== */
+
+        .superficie {
+            position:
+                absolute;
+
+            left:
+                0;
+
+            right:
+                0;
+
+            top:
+                0;
+
+            height:
+                27px;
+
+            background:
+                repeating-radial-gradient(ellipse at top,
+                    rgba(255, 255, 255, .25) 0 4px,
+                    transparent 5px 14px);
+
+            opacity:
+                .65;
+        }
+
+
+        /* =====================================================
+   RAYOS BAJO EL AGUA
+===================================================== */
+
+        .rayo {
+            position:
+                absolute;
+
+            top:
+                0;
+
+            width:
+                75px;
+
+            height:
+                240px;
+
+            opacity:
+                .10;
+
+            background:
+                linear-gradient(180deg,
+                    rgba(255, 255, 255, .8),
+                    transparent);
+
+            clip-path:
+                polygon(35% 0,
+                    65% 0,
+                    100% 100%,
+                    0 100%);
+
+            animation:
+                bamboleoRayo 5s ease-in-out infinite alternate;
+        }
+
+        .r1 {
+            left:
+                13%;
+        }
+
+        .r2 {
+            left:
+                55%;
+
+            height:
+                310px;
+
+            animation-delay:
+                1.3s;
+        }
+
+        .r3 {
+            right:
+                8%;
+
+            height:
+                190px;
+
+            animation-delay:
+                2.1s;
+        }
+
+        @keyframes bamboleoRayo {
+            from {
+                transform:
+                    translateX(-12px) skewX(-3deg);
+            }
+
+            to {
+                transform:
+                    translateX(12px) skewX(3deg);
+            }
+        }
+
+
+        /* =====================================================
+   ZONAS DE PROFUNDIDAD
+===================================================== */
+
+        .zona {
+            position:
+                absolute;
+
+            left:
+                15px;
+
+            padding:
+                5px 10px;
+
+            border-radius:
+                999px;
+
+            color:
+                rgba(220, 248, 255, .74);
+
+            background:
+                rgba(4, 29, 66, .30);
+
+            border:
+                1px solid rgba(173, 230, 245, .14);
+
+            font-size:
+                10px;
+
+            letter-spacing:
+                1px;
+
+            font-weight:
+                bold;
+        }
+
+        .z1 {
+            top:
+                63px;
+        }
+
+        .z2 {
+            top:
+                184px;
+        }
+
+        .z3 {
+            top:
+                305px;
+        }
+
+
+        /* =====================================================
+   PECES
+===================================================== */
+
+        .pez {
+            position:
+                absolute;
+
+            z-index:
+                4;
+
+            font-size:
+                29px;
+
+            filter:
+                drop-shadow(0 4px 3px rgba(0, 0, 0, .14));
+
+            animation:
+                nadar var(--dur) linear infinite;
+        }
+
+        .pez1 {
+            top:
+                82px;
+
+            left:
+                -60px;
+
+            --dur:
+                12s;
+        }
+
+        .pez2 {
+            top:
+                148px;
+
+            left:
+                -100px;
+
+            --dur:
+                17s;
+
+            animation-delay:
+                4s;
+        }
+
+        .pez3 {
+            top:
+                245px;
+
+            left:
+                -150px;
+
+            --dur:
+                14s;
+
+            animation-delay:
+                2s;
+        }
+
+        .pez4 {
+            top:
+                335px;
+
+            left:
+                -90px;
+
+            --dur:
+                20s;
+
+            animation-delay:
+                6s;
+        }
+
+        @keyframes nadar {
+            from {
+                transform:
+                    translateX(-80px) scaleX(-1);
+            }
+
+            to {
+                transform:
+                    translateX(1450px) scaleX(-1);
+            }
+        }
+
+
+        /* =====================================================
+   MEDUSA
+===================================================== */
+
+        .medusa {
+            position:
+                absolute;
+
+            right:
+                13%;
+
+            top:
+                182px;
+
+            z-index:
+                4;
+
+            font-size:
+                44px;
+
+            opacity:
+                .88;
+
+            animation:
+                flotarMedusa 3s ease-in-out infinite;
+        }
+
+        @keyframes flotarMedusa {
+
+            0%,
+            100% {
+                transform:
+                    translateY(0);
+            }
+
+            50% {
+                transform:
+                    translateY(-18px);
+            }
+        }
+
+
+        /* =====================================================
+   SUBMARINO CSS
+===================================================== */
+
+        .submarino {
+            position:
+                absolute;
+
+            left:
+                26%;
+
+            top:
+                52px;
+
+            width:
+                125px;
+
+            height:
+                74px;
+
+            z-index:
+                12;
+
+            transition:
+                top .9s linear,
+                left .9s linear;
+
+            filter:
+                drop-shadow(0 8px 5px rgba(0, 0, 0, .25));
+        }
+
+        .sub-cuerpo {
+            position:
+                absolute;
+
+            left:
+                9px;
+
+            top:
+                23px;
+
+            width:
+                106px;
+
+            height:
+                43px;
+
+            border-radius:
+                50px 58px 58px 50px;
+
+            background:
+                linear-gradient(180deg,
+                    #ffd95f,
+                    #efa83f);
+
+            border:
+                4px solid #81501f;
+
+            box-shadow:
+                inset 0 5px 0 rgba(255, 255, 255, .24);
+        }
+
+        .sub-cabina {
+            position:
+                absolute;
+
+            left:
+                43px;
+
+            top:
+                8px;
+
+            width:
+                45px;
+
+            height:
+                31px;
+
+            border-radius:
+                28px 28px 8px 8px;
+
+            background:
+                linear-gradient(180deg,
+                    #86e9ff,
+                    #2d9cd3);
+
+            border:
+                4px solid #81501f;
+        }
+
+        .sub-ventana {
+            position:
+                absolute;
+
+            top:
+                32px;
+
+            width:
+                22px;
+
+            height:
+                22px;
+
+            border-radius:
+                50%;
+
+            background:
+                #b8f5ff;
+
+            border:
+                4px solid #7b4b22;
+
+            box-shadow:
+                inset 0 0 8px rgba(25, 119, 170, .45);
+        }
+
+        .v1 {
+            left:
+                33px;
+        }
+
+        .v2 {
+            left:
+                66px;
+        }
+
+        .helice {
+            position:
+                absolute;
+
+            left:
+                -2px;
+
+            top:
+                34px;
+
+            width:
+                17px;
+
+            height:
+                17px;
+
+            border-radius:
+                50%;
+
+            background:
+                #ff7f9d;
+
+            border:
+                3px solid #82405c;
+
+            animation:
+                girarHelice .22s linear infinite;
+        }
+
+        .helice::before,
+        .helice::after {
+            content:
+                "";
+
+            position:
+                absolute;
+
+            left:
+                4px;
+
+            top:
+                -10px;
+
+            width:
+                5px;
+
+            height:
+                32px;
+
+            border-radius:
+                5px;
+
+            background:
+                #ff91aa;
+        }
+
+        .helice::after {
+            transform:
+                rotate(90deg);
+        }
+
+        @keyframes girarHelice {
+            from {
+                transform:
+                    rotate(0deg);
+            }
+
+            to {
+                transform:
+                    rotate(360deg);
+            }
+        }
+
+        .sub-luz {
+            position:
+                absolute;
+
+            right:
+                -47px;
+
+            top:
+                30px;
+
+            width:
+                66px;
+
+            height:
+                28px;
+
+            opacity:
+                .38;
+
+            background:
+                linear-gradient(90deg,
+                    rgba(255, 248, 169, .80),
+                    transparent);
+
+            clip-path:
+                polygon(0 32%,
+                    100% 0,
+                    100% 100%,
+                    0 68%);
+
+            animation:
+                luzSub 1.3s ease-in-out infinite alternate;
+        }
+
+        @keyframes luzSub {
+            from {
+                opacity:
+                    .20;
+            }
+
+            to {
+                opacity:
+                    .54;
+            }
+        }
+
+        .submarino.moviendo {
+            animation:
+                flotarSub .45s ease-in-out infinite alternate;
+        }
+
+        @keyframes flotarSub {
+            from {
+                transform:
+                    rotate(-2deg) translateY(0);
+            }
+
+            to {
+                transform:
+                    rotate(2deg) translateY(-4px);
+            }
+        }
+
+
+        /* =====================================================
+   BURBUJAS DEL SUBMARINO
+===================================================== */
+
+        .burbujitas-sub {
+            position:
+                absolute;
+
+            left:
+                -40px;
+
+            top:
+                27px;
+
+            width:
+                40px;
+
+            height:
+                38px;
+        }
+
+        .mini-b {
+            position:
+                absolute;
+
+            border-radius:
+                50%;
+
+            border:
+                2px solid rgba(219, 250, 255, .65);
+
+            animation:
+                salirBurbuja 1.3s ease-out infinite;
+        }
+
+        .mb1 {
+            width:
+                10px;
+
+            height:
+                10px;
+
+            left:
+                20px;
+
+            top:
+                15px;
+        }
+
+        .mb2 {
+            width:
+                7px;
+
+            height:
+                7px;
+
+            left:
+                8px;
+
+            top:
+                25px;
+
+            animation-delay:
+                .4s;
+        }
+
+        .mb3 {
+            width:
+                13px;
+
+            height:
+                13px;
+
+            left:
+                27px;
+
+            top:
+                28px;
+
+            animation-delay:
+                .8s;
+        }
+
+        @keyframes salirBurbuja {
+            from {
+                transform:
+                    translate(0, 0) scale(.7);
+
+                opacity:
+                    .2;
+            }
+
+            to {
+                transform:
+                    translate(-38px, -28px) scale(1.1);
+
+                opacity:
+                    0;
+            }
+        }
+
+
+        /* =====================================================
+   FONDO DEL MAR
+===================================================== */
+
+        .arena {
+            position:
+                absolute;
+
+            left:
+                0;
+
+            right:
+                0;
+
+            bottom:
+                0;
+
+            height:
+                58px;
+
+            background:
+                linear-gradient(180deg,
+                    #d7b86c,
+                    #a57a48);
+
+            clip-path:
+                polygon(0 34%,
+                    8% 15%,
+                    17% 28%,
+                    27% 14%,
+                    39% 31%,
+                    51% 20%,
+                    64% 37%,
+                    74% 18%,
+                    84% 30%,
+                    92% 13%,
+                    100% 25%,
+                    100% 100%,
+                    0 100%);
+        }
+
+        .coral {
+            position:
+                absolute;
+
+            bottom:
+                35px;
+
+            z-index:
+                5;
+
+            font-size:
+                48px;
+
+            filter:
+                drop-shadow(0 5px 3px rgba(0, 0, 0, .18));
+        }
+
+        .coral1 {
+            left:
+                8%;
+        }
+
+        .coral2 {
+            left:
+                48%;
+        }
+
+        .coral3 {
+            right:
+                6%;
+        }
+
+
+        /* =====================================================
+   COFRE
+===================================================== */
+
+        .cofre {
+            position:
+                absolute;
+
+            right:
+                12%;
+
+            bottom:
+                43px;
+
+            z-index:
+                8;
+
+            font-size:
+                69px;
+
+            filter:
+                drop-shadow(0 0 12px rgba(255, 224, 108, .44));
+
+            animation:
+                brillarCofre 1.2s ease-in-out infinite alternate;
+
+            transition:
+                .4s;
+        }
+
+        @keyframes brillarCofre {
+            from {
+                transform:
+                    scale(1);
+            }
+
+            to {
+                transform:
+                    scale(1.08);
+            }
+        }
+
+        .cofre.encontrado {
+            transform:
+                scale(1.20);
+
+            filter:
+                drop-shadow(0 0 25px rgba(255, 224, 108, .95));
+        }
+
+
+        /* =====================================================
+   BARRA DE OXÍGENO / PROGRESO
+===================================================== */
+
+        .oxigeno-zona {
+            width:
+                min(900px, 92%);
+
+            margin:
+                0 auto 14px;
+        }
+
+        .oxigeno-superior {
+            display:
+                flex;
+
+            justify-content:
+                space-between;
+
+            align-items:
+                center;
+
+            margin-bottom:
+                5px;
+
+            color:
+                #a9e9f4;
+
+            font-size:
+                12px;
+
+            font-weight:
+                bold;
+        }
+
+        .oxigeno-barra {
+            height:
+                27px;
+
+            padding:
+                4px;
+
+            position:
+                relative;
+
+            overflow:
+                hidden;
+
+            border-radius:
+                999px;
+
+            border:
+                2px solid rgba(153, 231, 245, .65);
+
+            background:
+                rgba(3, 24, 60, .72);
+
+            box-shadow:
+                inset 0 0 10px rgba(0, 0, 0, .25);
+        }
+
+        .oxigeno-carga {
+            width:
+                0%;
+
+            height:
+                100%;
+
+            border-radius:
+                999px;
+
+            background:
+                linear-gradient(90deg,
+                    #55e7ff,
+                    #48f0d0,
+                    #ffe06c);
+
+            box-shadow:
+                0 0 16px rgba(72, 240, 208, .45);
+
+            transition:
+                width 1s linear;
+        }
+
+
+        /* =====================================================
+   CONFIGURACIÓN Y CONTROLES
+===================================================== */
+
+        .panel-controles {
+            display:
+                grid;
+
+            grid-template-columns:
+                1fr auto;
+
+            gap:
+                14px;
+
+            align-items:
+                center;
+
+            padding:
+                14px 16px;
+
+            border-radius:
+                22px;
+
+            background:
+                linear-gradient(145deg,
+                    rgba(5, 34, 73, .66),
+                    rgba(9, 27, 63, .55));
+
+            border:
+                1px solid rgba(107, 211, 236, .25);
+        }
+
+        .configuracion {
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                10px;
+
+            flex-wrap:
+                wrap;
+        }
+
+        .configuracion strong {
+            color:
+                #b9edf5;
+
+            margin-right:
+                5px;
+
+            font-size:
+                14px;
+        }
+
+        .configuracion input {
+            width:
+                108px;
+
+            padding:
+                11px;
+
+            outline:
+                none;
+
+            text-align:
+                center;
+
+            border-radius:
+                14px;
+
+            border:
+                2px solid rgba(101, 220, 255, .52);
+
+            color:
+                #d9fbff;
+
+            background:
+                rgba(4, 29, 66, .72);
+
+            font-family:
+                inherit;
+
+            font-size:
+                16px;
+
+            font-weight:
+                bold;
+        }
+
+        .configuracion input::placeholder {
+            color:
+                #79aebd;
+
+            opacity:
+                1;
+
+            font-size:
+                13px;
+        }
+
+        .configuracion input:focus {
+            border-color:
+                #48f0d0;
+
+            box-shadow:
+                0 0 0 4px rgba(72, 240, 208, .10);
+        }
+
+        .separador {
+            color:
+                #66d9ed;
+
+            font-size:
+                25px;
+
+            font-weight:
+                bold;
+        }
+
+        .botones {
+            display:
+                flex;
+
+            justify-content:
+                flex-end;
+
+            gap:
+                8px;
+
+            flex-wrap:
+                wrap;
+        }
+
+        button {
+            border:
+                none;
+
+            cursor:
+                pointer;
+
+            font-family:
+                inherit;
+
+            font-weight:
+                bold;
+
+            transition:
+                .15s ease;
+        }
+
+        button:hover {
+            transform:
+                translateY(-2px);
+
+            filter:
+                brightness(1.06);
+        }
+
+        button:active {
+            transform:
+                translateY(1px);
+        }
+
+        .btn {
+            padding:
+                11px 15px;
+
+            border-radius:
+                14px;
+
+            color:
+                white;
+
+            border:
+                1px solid rgba(255, 255, 255, .72);
+        }
+
+        .programar-btn {
+            background:
+                linear-gradient(135deg,
+                    #1ab6d5,
+                    #2568cf);
+
+            box-shadow:
+                0 5px 0 #124d8b;
+        }
+
+        .iniciar {
+            background:
+                linear-gradient(135deg,
+                    #43d997,
+                    #1fa66f);
+
+            box-shadow:
+                0 5px 0 #146e4d;
+        }
+
+        .pausar {
+            color:
+                #684217;
+
+            background:
+                linear-gradient(135deg,
+                    #ffe074,
+                    #f1aa48);
+
+            box-shadow:
+                0 5px 0 #ae6b2e;
+        }
+
+        .reiniciar {
+            background:
+                linear-gradient(135deg,
+                    #9c81f0,
+                    #6650bd);
+
+            box-shadow:
+                0 5px 0 #42337e;
+        }
+
+        .sonido-btn {
+            display:
+                block;
+
+            margin:
+                12px auto 0;
+
+            padding:
+                9px 15px;
+
+            border-radius:
+                13px;
+
+            color:
+                #d5f7ff;
+
+            background:
+                rgba(13, 67, 116, .70);
+
+            border:
+                1px solid rgba(185, 239, 248, .40);
+        }
+
+        .sonido-btn.desactivado {
+            opacity:
+                .58;
+        }
+
+
+        /* =====================================================
+   ÚLTIMOS 10
+===================================================== */
+
+        .ultimos {
+            animation:
+                alertaTiempo .48s infinite alternate;
+        }
+
+        @keyframes alertaTiempo {
+            from {
+                color:
+                    #ffe06c;
+
+                transform:
+                    scale(1);
+            }
+
+            to {
+                color:
+                    #ff8098;
+
+                transform:
+                    scale(1.06);
+            }
+        }
+
+
+        /* =====================================================
+   PANTALLA FINAL
+===================================================== */
+
+        .final {
+            display:
+                none;
+
+            position:
+                fixed;
+
+            inset:
+                0;
+
+            z-index:
+                60;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            padding:
+                25px;
+
+            background:
+                rgba(2, 18, 49, .82);
+
+            backdrop-filter:
+                blur(8px);
+        }
+
+        .final.activo {
+            display:
+                flex;
+
+            animation:
+                aparecer .38s ease;
+        }
+
+        @keyframes aparecer {
+            from {
+                opacity:
+                    0;
+
+                transform:
+                    scale(.92);
+            }
+
+            to {
+                opacity:
+                    1;
+
+                transform:
+                    scale(1);
+            }
+        }
+
+        .final-card {
+            width:
+                min(540px, 92vw);
+
+            padding:
+                28px;
+
+            text-align:
+                center;
+
+            border-radius:
+                28px;
+
+            background:
+                linear-gradient(145deg,
+                    #0c5791,
+                    #082759);
+
+            border:
+                2px solid rgba(123, 227, 246, .55);
+
+            box-shadow:
+                0 25px 60px rgba(0, 0, 0, .30),
+
+                inset 0 0 30px rgba(72, 240, 208, .06);
+        }
+
+        .final-iconos {
+            font-size:
+                70px;
+
+            animation:
+                tesoroFinal .7s ease-in-out infinite alternate;
+        }
+
+        @keyframes tesoroFinal {
+            from {
+                transform:
+                    translateY(0) rotate(-3deg);
+            }
+
+            to {
+                transform:
+                    translateY(-10px) rotate(3deg);
+            }
+        }
+
+        .final h2 {
+            margin:
+                7px 0 5px;
+
+            color:
+                #e5fdff;
+
+            font-size:
+                clamp(34px, 6vw, 56px);
+
+            text-shadow:
+                0 0 16px rgba(101, 220, 255, .50);
+        }
+
+        .final p {
+            margin:
+                8px auto;
+
+            max-width:
+                440px;
+
+            color:
+                #c8eef5;
+
+            font-size:
+                17px;
+        }
+
+        .insignia {
+            display:
+                inline-block;
+
+            margin:
+                11px 0;
+
+            padding:
+                8px 14px;
+
+            border-radius:
+                999px;
+
+            color:
+                #5b430e;
+
+            background:
+                #ffe06c;
+
+            font-size:
+                13px;
+
+            font-weight:
+                bold;
+
+            box-shadow:
+                0 0 15px rgba(255, 224, 108, .32);
+        }
+
+        .nueva {
+            margin-top:
+                12px;
+
+            padding:
+                12px 20px;
+
+            border-radius:
+                14px;
+
+            color:
+                #0a477f;
+
+            background:
+                white;
+
+            box-shadow:
+                0 5px 0 #9cc7da;
+        }
+
+
+        /* =====================================================
+   PC DE POCA ALTURA
+===================================================== */
+
+        @media (min-width: 900px) and (max-height: 820px) {
+
+            body {
+                padding-top:
+                    8px;
+            }
+
+            .app {
+                padding:
+                    14px 20px 20px;
+            }
+
+            .cabecera {
+                margin-bottom:
+                    8px;
+            }
+
+            h1 {
+                font-size:
+                    38px;
+            }
+
+            .subtitulo {
+                font-size:
+                    13px;
+            }
+
+            .reloj-card {
+                padding:
+                    12px 18px;
+            }
+
+            .tiempo {
+                font-size:
+                    84px;
+            }
+
+            .info-card {
+                padding:
+                    11px;
+            }
+
+            .dato {
+                min-height:
+                    74px;
+
+                padding:
+                    8px;
+            }
+
+            .dato-icono {
+                font-size:
+                    23px;
+            }
+
+            .oceano {
+                height:
+                    330px;
+
+                margin:
+                    10px 0 9px;
+            }
+
+            .submarino {
+                transform:
+                    scale(.90);
+
+                transform-origin:
+                    center;
+            }
+
+            .zona.z3 {
+                top:
+                    242px;
+            }
+
+            .pez4 {
+                top:
+                    265px;
+            }
+
+            .medusa {
+                top:
+                    148px;
+            }
+
+            .coral {
+                font-size:
+                    40px;
+            }
+
+            .cofre {
+                font-size:
+                    58px;
+            }
+
+            .panel-controles {
+                padding:
+                    10px 13px;
+            }
+
+            .configuracion input {
+                padding:
+                    8px 9px;
+            }
+
+            .btn {
+                padding:
+                    8px 13px;
+            }
+
+            .sonido-btn {
+                margin-top:
+                    8px;
+
+                padding:
+                    7px 13px;
+            }
+        }
+
+
+        /* =====================================================
+   TABLET
+===================================================== */
+
+        @media (max-width: 980px) {
+
+            .panel-superior {
+                grid-template-columns:
+                    1fr;
+            }
+
+            .panel-controles {
+                grid-template-columns:
+                    1fr;
+            }
+
+            .configuracion,
+            .botones {
+                justify-content:
+                    center;
+            }
+
+            .oceano {
+                height:
+                    390px;
+            }
+        }
+
+
+        /* =====================================================
+   CELULAR
+===================================================== */
+
+        @media (max-width: 650px) {
+
+            body {
+                padding:
+                    8px;
+            }
+
+            .app {
+                padding:
+                    18px 11px;
+
+                border-radius:
+                    24px;
+            }
+
+            .volver {
+                position:
+                    relative;
+
+                display:
+                    table;
+
+                top:
+                    auto;
+
+                left:
+                    auto;
+
+                margin-bottom:
+                    10px;
+            }
+
+            .cabecera {
+                margin-top:
+                    0;
+            }
+
+            h1 {
+                font-size:
+                    29px;
+            }
+
+            .subtitulo {
+                font-size:
+                    12px;
+            }
+
+            .tiempo {
+                font-size:
+                    68px;
+            }
+
+            .info-card {
+                grid-template-columns:
+                    1fr;
+            }
+
+            .dato {
+                min-height:
+                    65px;
+
+                flex-direction:
+                    row;
+
+                gap:
+                    8px;
+            }
+
+            .dato-icono {
+                margin:
+                    0;
+
+                font-size:
+                    24px;
+            }
+
+            .oceano {
+                height:
+                    330px;
+            }
+
+            .submarino {
+                width:
+                    96px;
+
+                transform:
+                    scale(.78);
+
+                transform-origin:
+                    left center;
+            }
+
+            .cofre {
+                font-size:
+                    52px;
+            }
+
+            .coral {
+                font-size:
+                    34px;
+            }
+
+            .configuracion {
+                justify-content:
+                    center;
+            }
+
+            .configuracion strong {
+                width:
+                    100%;
+
+                text-align:
+                    center;
+            }
+
+            .configuracion input {
+                width:
+                    100px;
+            }
+
+            .botones {
+                justify-content:
+                    center;
+            }
+
+            .btn {
+                min-width:
+                    115px;
+            }
+
+            .sonido-btn {
+                width:
+                    100%;
+
+                font-size:
+                    12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <!-- =====================================================
+     BURBUJAS DEL FONDO
+===================================================== -->
+
+    <div class="burbujas">
+
+        <div class="burbuja-fondo" style="
+            left:6%;
+            --tam:19px;
+            --dur:11s;
+            --delay:-4s;">
+        </div>
+
+        <div class="burbuja-fondo" style="
+            left:17%;
+            --tam:10px;
+            --dur:8s;
+            --delay:-2s;">
+        </div>
+
+        <div class="burbuja-fondo" style="
+            left:30%;
+            --tam:25px;
+            --dur:14s;
+            --delay:-8s;">
+        </div>
+
+        <div class="burbuja-fondo" style="
+            left:45%;
+            --tam:13px;
+            --dur:10s;
+            --delay:-6s;">
+        </div>
+
+        <div class="burbuja-fondo" style="
+            left:62%;
+            --tam:20px;
+            --dur:13s;
+            --delay:-1s;">
+        </div>
+
+        <div class="burbuja-fondo" style="
+            left:76%;
+            --tam:11px;
+            --dur:9s;
+            --delay:-5s;">
+        </div>
+
+        <div class="burbuja-fondo" style="
+            left:88%;
+            --tam:28px;
+            --dur:16s;
+            --delay:-9s;">
+        </div>
+
+    </div>
+
+
+    <div class="app">
+
+
+        <!-- VOLVER -->
+
+        <a href="index.html" class="volver">
+
+            ← Volver al menú
+
+        </a>
+
+
+        <!-- =================================================
+         CABECERA
+    ================================================== -->
+
+        <header class="cabecera">
+
+            <div class="mini-etiqueta">
+                EXPLORACIÓN OCEÁNICA
+            </div>
+
+            <h1>
+                🐠 Aventura Submarina
+            </h1>
+
+            <div class="subtitulo">
+                Desciende por el océano y encuentra el tesoro antes de que termine la misión
+            </div>
+
+        </header>
+
+
+        <!-- =================================================
+         PARTE SUPERIOR
+    ================================================== -->
+
+        <div class="panel-superior">
+
+
+            <!-- RELOJ -->
+
+            <section class="reloj-card">
+
+                <div class="estado">
+                    MISIÓN SUBMARINA
+                </div>
+
+                <div id="tiempo" class="tiempo">
+
+                    00:00
+
+                </div>
+
+                <div id="mensaje" class="mensaje">
+
+                    Programa el tiempo de exploración
+
+                </div>
+
+            </section>
+
+
+            <!-- DATOS -->
+
+            <section class="info-card">
+
+
+                <div class="dato">
+
+                    <div class="dato-icono">
+                        🌊
+                    </div>
+
+                    <strong>
+                        PROFUNDIDAD
+                    </strong>
+
+                    <span id="profundidadTxt">
+                        0 m
+                    </span>
+
+                </div>
+
+
+                <div class="dato">
+
+                    <div class="dato-icono">
+                        🫧
+                    </div>
+
+                    <strong>
+                        BURBUJAS
+                    </strong>
+
+                    <span id="burbujasTxt">
+                        0
+                    </span>
+
+                </div>
+
+
+                <div class="dato">
+
+                    <div class="dato-icono">
+                        🧭
+                    </div>
+
+                    <strong>
+                        ZONA
+                    </strong>
+
+                    <span id="zonaTxt">
+                        Superficie
+                    </span>
+
+                </div>
+
+
+            </section>
+
+
+        </div>
+
+
+        <!-- =================================================
+         OCÉANO
+    ================================================== -->
+
+        <section class="oceano">
+
+
+            <div class="superficie">
+            </div>
+
+
+            <!-- RAYOS -->
+
+            <div class="rayo r1">
+            </div>
+
+            <div class="rayo r2">
+            </div>
+
+            <div class="rayo r3">
+            </div>
+
+
+            <!-- ZONAS -->
+
+            <div class="zona z1">
+                ZONA LUMINOSA
+            </div>
+
+            <div class="zona z2">
+                ZONA PROFUNDA
+            </div>
+
+            <div class="zona z3">
+                FONDO MARINO
+            </div>
+
+
+            <!-- PECES -->
+
+            <div class="pez pez1">
+                🐠
+            </div>
+
+            <div class="pez pez2">
+                🐟
+            </div>
+
+            <div class="pez pez3">
+                🐡
+            </div>
+
+            <div class="pez pez4">
+                🐠
+            </div>
+
+
+            <!-- MEDUSA -->
+
+            <div class="medusa">
+                🪼
+            </div>
+
+
+            <!-- SUBMARINO -->
+
+            <div id="submarino" class="submarino">
+
+
+                <div class="sub-luz">
+                </div>
+
+
+                <div class="burbujitas-sub">
+
+                    <div class="mini-b mb1">
+                    </div>
+
+                    <div class="mini-b mb2">
+                    </div>
+
+                    <div class="mini-b mb3">
+                    </div>
+
+                </div>
+
+
+                <div class="sub-cabina">
+                </div>
+
+
+                <div class="sub-cuerpo">
+                </div>
+
+
+                <div class="sub-ventana v1">
+                </div>
+
+
+                <div class="sub-ventana v2">
+                </div>
+
+
+                <div class="helice">
+                </div>
+
+
+            </div>
+
+
+            <!-- FONDO MARINO -->
+
+            <div class="coral coral1">
+                🪸
+            </div>
+
+            <div class="coral coral2">
+                🌿
+            </div>
+
+            <div class="coral coral3">
+                🪸
+            </div>
+
+
+            <!-- COFRE -->
+
+            <div id="cofre" class="cofre">
+
+                🧰
+
+            </div>
+
+
+            <div class="arena">
+            </div>
+
+
+        </section>
+
+
+        <!-- =================================================
+         PROGRESO
+    ================================================== -->
+
+        <div class="oxigeno-zona">
+
+
+            <div class="oxigeno-superior">
+
+                <span>
+                    🤿 Progreso de exploración
+                </span>
+
+                <span id="porcentajeTxt">
+                    0%
+                </span>
+
+            </div>
+
+
+            <div class="oxigeno-barra">
+
+                <div id="oxigenoCarga" class="oxigeno-carga">
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- =================================================
+         CONFIGURACIÓN + BOTONES
+    ================================================== -->
+
+        <section class="panel-controles">
+
+
+            <div class="configuracion">
+
+
+                <strong>
+                    ⏱️ Configurar misión
+                </strong>
+
+
+                <input id="minutosInput" type="number" min="0" max="999" placeholder="Minutos" aria-label="Minutos">
+
+
+                <span class="separador">
+                    :
+                </span>
+
+
+                <input id="segundosInput" type="number" min="0" max="59" placeholder="Segundos" aria-label="Segundos">
+
+
+                <button id="programarBtn" class="btn programar-btn" type="button">
+
+                    ⚙️ Programar
+
+                </button>
+
+
+            </div>
+
+
+            <div class="botones">
+
+
+                <button id="iniciarBtn" class="btn iniciar" type="button">
+
+                    ▶ Iniciar
+
+                </button>
+
+
+                <button id="pausarBtn" class="btn pausar" type="button">
+
+                    ⏸ Pausar
+
+                </button>
+
+
+                <button id="reiniciarBtn" class="btn reiniciar" type="button">
+
+                    ↻ Reiniciar
+
+                </button>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- SONIDO -->
+
+        <button id="sonidoBtn" class="sonido-btn" type="button">
+
+            🔊 Sonido activado — últimos 10 segundos y final
+
+        </button>
+
+
+    </div>
+
+
+    <!-- =====================================================
+     PANTALLA FINAL
+===================================================== -->
+
+    <div id="final" class="final">
+
+
+        <div class="final-card">
+
+
+            <div class="final-iconos">
+                🚢 ✨ 🧰
+            </div>
+
+
+            <h2>
+                ¡Tesoro encontrado!
+            </h2>
+
+
+            <p>
+                La expedición llegó al fondo del océano
+                y completó la aventura submarina.
+            </p>
+
+
+            <div class="insignia">
+                🏅 Explorador del Océano
+            </div>
+
+
+            <br>
+
+
+            <button id="cerrarFinalBtn" class="nueva" type="button">
+
+                🐠 Nueva expedición
+
+            </button>
+
+
+        </div>
+
+
+    </div>
+
+
+    <script>
+
+        /* =====================================================
+           ELEMENTOS
+        ===================================================== */
+
+        const tiempoEl =
+            document.getElementById(
+                "tiempo"
+            );
+
+
+        const mensajeEl =
+            document.getElementById(
+                "mensaje"
+            );
+
+
+        const profundidadTxt =
+            document.getElementById(
+                "profundidadTxt"
+            );
+
+
+        const burbujasTxt =
+            document.getElementById(
+                "burbujasTxt"
+            );
+
+
+        const zonaTxt =
+            document.getElementById(
+                "zonaTxt"
+            );
+
+
+        const submarino =
+            document.getElementById(
+                "submarino"
+            );
+
+
+        const cofre =
+            document.getElementById(
+                "cofre"
+            );
+
+
+        const oxigenoCarga =
+            document.getElementById(
+                "oxigenoCarga"
+            );
+
+
+        const porcentajeTxt =
+            document.getElementById(
+                "porcentajeTxt"
+            );
+
+
+        const minutosInput =
+            document.getElementById(
+                "minutosInput"
+            );
+
+
+        const segundosInput =
+            document.getElementById(
+                "segundosInput"
+            );
+
+
+        const programarBtn =
+            document.getElementById(
+                "programarBtn"
+            );
+
+
+        const iniciarBtn =
+            document.getElementById(
+                "iniciarBtn"
+            );
+
+
+        const pausarBtn =
+            document.getElementById(
+                "pausarBtn"
+            );
+
+
+        const reiniciarBtn =
+            document.getElementById(
+                "reiniciarBtn"
+            );
+
+
+        const sonidoBtn =
+            document.getElementById(
+                "sonidoBtn"
+            );
+
+
+        const final =
+            document.getElementById(
+                "final"
+            );
+
+
+        const cerrarFinalBtn =
+            document.getElementById(
+                "cerrarFinalBtn"
+            );
+
+
+        /* =====================================================
+           VARIABLES
+        ===================================================== */
+
+        let tiempoTotal =
+            0;
+
+
+        let tiempoRestante =
+            0;
+
+
+        let intervalo =
+            null;
+
+
+        let ejecutando =
+            false;
+
+
+        let sonidoActivado =
+            true;
+
+
+        let audioContext =
+            null;
+
+
+        let burbujasContador =
+            0;
+
+
+        /* =====================================================
+           TIEMPO
+        ===================================================== */
+
+        function formatoTiempo(
+            total
+        ) {
+
+            const minutos =
+                Math.floor(
+                    total / 60
+                );
+
+
+            const segundos =
+                total % 60;
+
+
+            return (
+
+                String(minutos)
+                    .padStart(
+                        2,
+                        "0"
+                    )
+
+                +
+
+                ":"
+
+                +
+
+                String(segundos)
+                    .padStart(
+                        2,
+                        "0"
+                    )
+
+            );
+
+        }
+
+
+        /* =====================================================
+           AUDIO
+        ===================================================== */
+
+        function activarAudio() {
+
+            if (!audioContext) {
+
+                audioContext =
+
+                    new (
+                        window.AudioContext
+                        ||
+                        window.webkitAudioContext
+                    )();
+
+            }
+
+
+            if (
+                audioContext.state ===
+                "suspended"
+            ) {
+
+                audioContext.resume();
+
+            }
+
+        }
+
+
+        /* SONIDO SUAVE DE BURBUJA */
+
+        function sonidoBurbuja() {
+
+            if (
+                !sonidoActivado
+            ) {
+
+                return;
+
+            }
+
+
+            activarAudio();
+
+
+            const ahora =
+                audioContext.currentTime;
+
+
+            const osc =
+                audioContext.createOscillator();
+
+
+            const gain =
+                audioContext.createGain();
+
+
+            osc.type =
+                "sine";
+
+
+            osc.frequency.setValueAtTime(
+                260,
+                ahora
+            );
+
+
+            osc.frequency.exponentialRampToValueAtTime(
+                420,
+                ahora + .08
+            );
+
+
+            gain.gain.setValueAtTime(
+                .035,
+                ahora
+            );
+
+
+            gain.gain.exponentialRampToValueAtTime(
+                .001,
+                ahora + .10
+            );
+
+
+            osc.connect(
+                gain
+            );
+
+
+            gain.connect(
+                audioContext.destination
+            );
+
+
+            osc.start(
+                ahora
+            );
+
+
+            osc.stop(
+                ahora + .10
+            );
+
+        }
+
+
+        /* ÚLTIMOS 10 SEGUNDOS */
+
+        function sonidoCuenta() {
+
+            if (
+                !sonidoActivado
+            ) {
+
+                return;
+
+            }
+
+
+            activarAudio();
+
+
+            const osc =
+                audioContext.createOscillator();
+
+
+            const gain =
+                audioContext.createGain();
+
+
+            osc.type =
+                "sine";
+
+
+            osc.frequency.value =
+                700;
+
+
+            gain.gain.setValueAtTime(
+                .12,
+                audioContext.currentTime
+            );
+
+
+            gain.gain.exponentialRampToValueAtTime(
+                .01,
+                audioContext.currentTime + .13
+            );
+
+
+            osc.connect(
+                gain
+            );
+
+
+            gain.connect(
+                audioContext.destination
+            );
+
+
+            osc.start();
+
+
+            osc.stop(
+                audioContext.currentTime + .13
+            );
+
+        }
+
+
+        /* SONIDO FINAL */
+
+        function sonidoFinal() {
+
+            if (
+                !sonidoActivado
+            ) {
+
+                return;
+
+            }
+
+
+            activarAudio();
+
+
+            const ahora =
+                audioContext.currentTime;
+
+
+            const notas = [
+
+                {
+                    f: 392,
+                    t: 0,
+                    d: .20
+                },
+
+                {
+                    f: 523.25,
+                    t: .18,
+                    d: .20
+                },
+
+                {
+                    f: 659.25,
+                    t: .38,
+                    d: .22
+                },
+
+                {
+                    f: 783.99,
+                    t: .60,
+                    d: .45
+                }
+
+            ];
+
+
+            notas.forEach(
+                function (
+                    nota
+                ) {
+
+
+                    const osc =
+                        audioContext.createOscillator();
+
+
+                    const gain =
+                        audioContext.createGain();
+
+
+                    osc.type =
+                        "triangle";
+
+
+                    osc.frequency.setValueAtTime(
+                        nota.f,
+                        ahora + nota.t
+                    );
+
+
+                    gain.gain.setValueAtTime(
+                        .13,
+                        ahora + nota.t
+                    );
+
+
+                    gain.gain.exponentialRampToValueAtTime(
+                        .01,
+                        ahora
+                        +
+                        nota.t
+                        +
+                        nota.d
+                    );
+
+
+                    osc.connect(
+                        gain
+                    );
+
+
+                    gain.connect(
+                        audioContext.destination
+                    );
+
+
+                    osc.start(
+                        ahora + nota.t
+                    );
+
+
+                    osc.stop(
+                        ahora
+                        +
+                        nota.t
+                        +
+                        nota.d
+                    );
+
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           SONIDO ON / OFF
+        ===================================================== */
+
+        function cambiarSonido() {
+
+            sonidoActivado =
+                !sonidoActivado;
+
+
+            if (
+                sonidoActivado
+            ) {
+
+                sonidoBtn.textContent =
+                    "🔊 Sonido activado — últimos 10 segundos y final";
+
+
+                sonidoBtn.classList.remove(
+                    "desactivado"
+                );
+
+            }
+
+            else {
+
+                sonidoBtn.textContent =
+                    "🔇 Sonido desactivado";
+
+
+                sonidoBtn.classList.add(
+                    "desactivado"
+                );
+
+            }
+
+        }
+
+
+        /* =====================================================
+           ACTUALIZAR VISUALES
+        ===================================================== */
+
+        function actualizarVisuales() {
+
+            tiempoEl.textContent =
+                formatoTiempo(
+                    tiempoRestante
+                );
+
+
+            let progreso =
+                0;
+
+
+            if (
+                tiempoTotal > 0
+            ) {
+
+                progreso =
+
+                    (
+                        (
+                            tiempoTotal
+                            -
+                            tiempoRestante
+                        )
+                        /
+                        tiempoTotal
+                    )
+
+                    *
+
+                    100;
+
+
+                progreso =
+
+                    Math.max(
+                        0,
+
+                        Math.min(
+                            100,
+                            progreso
+                        )
+                    );
+
+            }
+
+
+            /* PROGRESO */
+
+            oxigenoCarga.style.width =
+                progreso + "%";
+
+
+            porcentajeTxt.textContent =
+                Math.round(
+                    progreso
+                )
+
+                +
+
+                "%";
+
+
+            /* PROFUNDIDAD */
+
+            const profundidad =
+                Math.round(
+                    progreso * 5
+                );
+
+
+            profundidadTxt.textContent =
+                profundidad + " m";
+
+
+            /* BURBUJAS */
+
+            burbujasContador =
+                Math.round(
+                    progreso * 1.8
+                );
+
+
+            burbujasTxt.textContent =
+                burbujasContador;
+
+
+            /* ZONAS */
+
+            if (
+                progreso < 34
+            ) {
+
+                zonaTxt.textContent =
+                    "Superficie";
+
+            }
+
+            else if (
+                progreso < 68
+            ) {
+
+                zonaTxt.textContent =
+                    "Profunda";
+
+            }
+
+            else {
+
+                zonaTxt.textContent =
+                    "Fondo";
+
+            }
+
+
+            /* =================================================
+               MOVIMIENTO DEL SUBMARINO
+               Se desplaza diagonalmente hacia el fondo.
+            ================================================= */
+
+            const oceano =
+                document.querySelector(
+                    ".oceano"
+                );
+
+
+            const altoUtil =
+                Math.max(
+                    180,
+                    oceano.clientHeight - 145
+                );
+
+
+            const topInicio =
+                45;
+
+
+            const topFinal =
+                topInicio
+                +
+                altoUtil;
+
+
+            const topActual =
+                topInicio
+                +
+                (
+                    (
+                        topFinal
+                        -
+                        topInicio
+                    )
+                    *
+                    (
+                        progreso / 100
+                    )
+                );
+
+
+            const leftInicio =
+                24;
+
+
+            const leftFinal =
+                72;
+
+
+            const leftActual =
+                leftInicio
+                +
+                (
+                    (
+                        leftFinal
+                        -
+                        leftInicio
+                    )
+                    *
+                    (
+                        progreso / 100
+                    )
+                );
+
+
+            submarino.style.top =
+                topActual + "px";
+
+
+            submarino.style.left =
+                leftActual + "%";
+
+
+            /* ÚLTIMOS 10 */
+
+            if (
+                tiempoRestante <= 10
+                &&
+                tiempoRestante > 0
+            ) {
+
+                tiempoEl.classList.add(
+                    "ultimos"
+                );
+
+
+                mensajeEl.textContent =
+
+                    "⚠️ ¡El tesoro está cerca! "
+
+                    +
+
+                    tiempoRestante
+
+                    +
+
+                    " segundos";
+
+
+                sonidoCuenta();
+
+            }
+
+            else {
+
+                tiempoEl.classList.remove(
+                    "ultimos"
+                );
+
+
+                if (
+                    ejecutando
+                ) {
+
+                    mensajeEl.textContent =
+                        "🌊 Explorando las profundidades...";
+
+                }
+
+            }
+
+        }
+
+
+        /* =====================================================
+           PROGRAMAR
+        ===================================================== */
+
+        function programarTiempo() {
+
+            activarAudio();
+
+
+            let minutos =
+
+                parseInt(
+                    minutosInput.value
+                )
+
+                ||
+
+                0;
+
+
+            let segundos =
+
+                parseInt(
+                    segundosInput.value
+                )
+
+                ||
+
+                0;
+
+
+            minutos =
+                Math.max(
+                    0,
+                    minutos
+                );
+
+
+            segundos =
+                Math.max(
+                    0,
+
+                    Math.min(
+                        59,
+                        segundos
+                    )
+                );
+
+
+            if (
+                segundosInput.value !== ""
+            ) {
+
+                segundosInput.value =
+                    segundos;
+
+            }
+
+
+            const nuevoTiempo =
+                minutos * 60
+                +
+                segundos;
+
+
+            if (
+                nuevoTiempo <= 0
+            ) {
+
+                mensajeEl.textContent =
+                    "⚠️ Ingresa minutos o segundos.";
+
+                return;
+
+            }
+
+
+            detener();
+
+
+            tiempoTotal =
+                nuevoTiempo;
+
+
+            tiempoRestante =
+                nuevoTiempo;
+
+
+            burbujasContador =
+                0;
+
+
+            cofre.classList.remove(
+                "encontrado"
+            );
+
+
+            final.classList.remove(
+                "activo"
+            );
+
+
+            submarino.style.top =
+                "52px";
+
+
+            submarino.style.left =
+                "26%";
+
+
+            mensajeEl.textContent =
+                "🐠 Misión lista. Presiona Iniciar.";
+
+
+            actualizarVisuales();
+
+        }
+
+
+        /* =====================================================
+           INICIAR
+        ===================================================== */
+
+        function iniciar() {
+
+            activarAudio();
+
+
+            if (
+                ejecutando
+            ) {
+
+                return;
+
+            }
+
+
+            if (
+                tiempoTotal <= 0
+                ||
+                tiempoRestante <= 0
+            ) {
+
+                mensajeEl.textContent =
+                    "⚠️ Primero configura el tiempo.";
+
+                return;
+
+            }
+
+
+            ejecutando =
+                true;
+
+
+            submarino.classList.add(
+                "moviendo"
+            );
+
+
+            mensajeEl.textContent =
+                "🌊 Exploración submarina iniciada...";
+
+
+            intervalo =
+
+                setInterval(
+                    function () {
+
+
+                        tiempoRestante--;
+
+
+                        actualizarVisuales();
+
+
+                        /*
+                            pequeño sonido ocasional
+                            de burbuja
+                        */
+
+                        if (
+                            tiempoRestante > 10
+                            &&
+                            tiempoRestante % 7 === 0
+                        ) {
+
+                            sonidoBurbuja();
+
+                        }
+
+
+                        if (
+                            tiempoRestante <= 0
+                        ) {
+
+                            finalizar();
+
+                        }
+
+
+                    },
+                    1000
+                );
+
+        }
+
+
+        /* =====================================================
+           PAUSAR
+        ===================================================== */
+
+        function pausar() {
+
+            if (
+                !ejecutando
+            ) {
+
+                return;
+
+            }
+
+
+            clearInterval(
+                intervalo
+            );
+
+
+            intervalo =
+                null;
+
+
+            ejecutando =
+                false;
+
+
+            submarino.classList.remove(
+                "moviendo"
+            );
+
+
+            mensajeEl.textContent =
+                "⏸ Exploración pausada.";
+
+        }
+
+
+        /* =====================================================
+           DETENER
+        ===================================================== */
+
+        function detener() {
+
+            if (
+                intervalo
+            ) {
+
+                clearInterval(
+                    intervalo
+                );
+
+
+                intervalo =
+                    null;
+
+            }
+
+
+            ejecutando =
+                false;
+
+
+            submarino.classList.remove(
+                "moviendo"
+            );
+
+        }
+
+
+        /* =====================================================
+           REINICIAR
+        ===================================================== */
+
+        function reiniciar() {
+
+            detener();
+
+
+            tiempoRestante =
+                tiempoTotal;
+
+
+            burbujasContador =
+                0;
+
+
+            cofre.classList.remove(
+                "encontrado"
+            );
+
+
+            final.classList.remove(
+                "activo"
+            );
+
+
+            submarino.style.top =
+                "52px";
+
+
+            submarino.style.left =
+                "26%";
+
+
+            if (
+                tiempoTotal > 0
+            ) {
+
+                mensajeEl.textContent =
+                    "🐠 Listo para una nueva exploración.";
+
+            }
+
+            else {
+
+                mensajeEl.textContent =
+                    "Programa el tiempo de exploración";
+
+            }
+
+
+            actualizarVisuales();
+
+        }
+
+
+        /* =====================================================
+           FINALIZAR
+        ===================================================== */
+
+        function finalizar() {
+
+            detener();
+
+
+            tiempoRestante =
+                0;
+
+
+            actualizarVisuales();
+
+
+            mensajeEl.textContent =
+                "✨ ¡Tesoro encontrado!";
+
+
+            cofre.classList.add(
+                "encontrado"
+            );
+
+
+            sonidoFinal();
+
+
+            setTimeout(
+                function () {
+
+                    final.classList.add(
+                        "activo"
+                    );
+
+                },
+                850
+            );
+
+        }
+
+
+        /* =====================================================
+           EVENTOS
+        ===================================================== */
+
+        programarBtn.addEventListener(
+            "click",
+            programarTiempo
+        );
+
+
+        iniciarBtn.addEventListener(
+            "click",
+            iniciar
+        );
+
+
+        pausarBtn.addEventListener(
+            "click",
+            pausar
+        );
+
+
+        reiniciarBtn.addEventListener(
+            "click",
+            reiniciar
+        );
+
+
+        sonidoBtn.addEventListener(
+            "click",
+            cambiarSonido
+        );
+
+
+        cerrarFinalBtn.addEventListener(
+            "click",
+            function () {
+
+                final.classList.remove(
+                    "activo"
+                );
+
+
+                reiniciar();
+
+            }
+        );
+
+
+        minutosInput.addEventListener(
+            "keydown",
+            function (
+                evento
+            ) {
+
+                if (
+                    evento.key ===
+                    "Enter"
+                ) {
+
+                    programarTiempo();
+
+                }
+
+            }
+        );
+
+
+        segundosInput.addEventListener(
+            "keydown",
+            function (
+                evento
+            ) {
+
+                if (
+                    evento.key ===
+                    "Enter"
+                ) {
+
+                    programarTiempo();
+
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+           INICIO
+        ===================================================== */
+
+        actualizarVisuales();
+
+    </script>
+
+</body>
+
+</html>

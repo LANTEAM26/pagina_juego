@@ -1,0 +1,3665 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<title>Misión Cyber</title>
+
+<style>
+
+/* =====================================================
+   GENERAL
+===================================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+
+    margin: 0;
+
+    min-height: 100vh;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    color: #d9fff8;
+
+    background:
+
+        radial-gradient(
+            circle at 15% 15%,
+            rgba(0,255,180,.11),
+            transparent 25%
+        ),
+
+        radial-gradient(
+            circle at 85% 75%,
+            rgba(0,120,255,.12),
+            transparent 30%
+        ),
+
+        linear-gradient(
+            135deg,
+            #020709,
+            #061219,
+            #071b20
+        );
+
+    padding: 22px;
+
+    overflow-x: hidden;
+}
+
+
+/* =====================================================
+   CUADRÍCULA DEL FONDO
+===================================================== */
+
+body::before {
+
+    content: "";
+
+    position: fixed;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    opacity: .15;
+
+    background-image:
+
+        linear-gradient(
+            rgba(45,255,200,.18) 1px,
+            transparent 1px
+        ),
+
+        linear-gradient(
+            90deg,
+            rgba(45,255,200,.18) 1px,
+            transparent 1px
+        );
+
+    background-size:
+        42px 42px;
+}
+
+
+/* =====================================================
+   CÓDIGO DECORATIVO DEL FONDO
+===================================================== */
+
+.codigo-fondo {
+
+    position: fixed;
+
+    inset: 0;
+
+    overflow: hidden;
+
+    pointer-events: none;
+
+    z-index: 0;
+}
+
+
+.codigo {
+
+    position: absolute;
+
+    top: -100px;
+
+    color:
+        rgba(41,255,184,.16);
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-size: 12px;
+
+    white-space: nowrap;
+
+    animation:
+        caerCodigo linear infinite;
+}
+
+
+@keyframes caerCodigo {
+
+    from {
+
+        transform:
+            translateY(-150px);
+    }
+
+    to {
+
+        transform:
+            translateY(120vh);
+    }
+
+}
+
+
+/* =====================================================
+   APP
+===================================================== */
+
+.app {
+
+    width:
+        min(1250px,97vw);
+
+    margin:
+        0 auto;
+
+    padding:
+        25px 30px 35px;
+
+    position: relative;
+
+    z-index: 2;
+
+    overflow: hidden;
+
+    border-radius: 18px;
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(4,15,20,.97),
+            rgba(5,25,29,.97)
+        );
+
+    border:
+        1px solid
+        rgba(50,255,190,.24);
+
+    box-shadow:
+
+        0 30px 70px
+        rgba(0,0,0,.60),
+
+        0 0 50px
+        rgba(0,255,180,.06),
+
+        inset 0 1px 0
+        rgba(255,255,255,.04);
+}
+
+
+/* =====================================================
+   ESQUINAS
+===================================================== */
+
+.app::before,
+.app::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 90px;
+    height: 90px;
+
+    pointer-events: none;
+}
+
+
+.app::before {
+
+    top: 12px;
+    left: 12px;
+
+    border-top:
+        2px solid #25eeb3;
+
+    border-left:
+        2px solid #25eeb3;
+}
+
+
+.app::after {
+
+    bottom: 12px;
+    right: 12px;
+
+    border-bottom:
+        2px solid #25eeb3;
+
+    border-right:
+        2px solid #25eeb3;
+}
+
+
+/* =====================================================
+   VOLVER
+===================================================== */
+
+.volver-menu {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    padding:
+        9px 14px;
+
+    border-radius: 6px;
+
+    color: #80fadc;
+
+    text-decoration: none;
+
+    font-size: 12px;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    background:
+        rgba(20,255,185,.06);
+
+    border:
+        1px solid
+        rgba(50,255,190,.23);
+
+    transition: .2s;
+}
+
+
+.volver-menu:hover {
+
+    background:
+        rgba(30,255,190,.12);
+
+    box-shadow:
+        0 0 15px
+        rgba(30,255,190,.15);
+}
+
+
+/* =====================================================
+   CABECERA
+===================================================== */
+
+.cabecera {
+
+    text-align: center;
+
+    margin:
+        8px 0 15px;
+}
+
+
+.codigo-superior {
+
+    color: #29ecb1;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-size: 11px;
+
+    letter-spacing: 3px;
+
+    margin-bottom: 5px;
+}
+
+
+h1 {
+
+    margin: 0;
+
+    font-size:
+        clamp(32px,4vw,50px);
+
+    color: #f0fffb;
+
+    text-transform: uppercase;
+
+    letter-spacing: 4px;
+
+    text-shadow:
+
+        0 0 12px
+        rgba(30,255,190,.30),
+
+        3px 0 0
+        rgba(0,140,255,.16);
+}
+
+
+.subtitulo {
+
+    margin-top: 5px;
+
+    color: #6d9f99;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-size: 13px;
+}
+
+
+/* =====================================================
+   ESTADO
+===================================================== */
+
+.estado-sistema {
+
+    width:
+        min(1050px,100%);
+
+    margin:
+        12px auto;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap: 8px;
+}
+
+
+.estado-item {
+
+    padding:
+        8px 12px;
+
+    background:
+        rgba(20,255,180,.04);
+
+    border:
+        1px solid
+        rgba(50,255,190,.12);
+
+    color: #779b95;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-size: 11px;
+}
+
+
+.estado-item strong {
+
+    color: #30eaae;
+}
+
+
+/* =====================================================
+   RELOJ + TERMINAL
+===================================================== */
+
+.zona-principal {
+
+    width:
+        min(1100px,100%);
+
+    margin:
+        12px auto;
+
+    display: grid;
+
+    grid-template-columns:
+        1.05fr .95fr;
+
+    gap: 15px;
+
+    align-items: stretch;
+}
+
+
+/* =====================================================
+   RELOJ
+===================================================== */
+
+.reloj-panel {
+
+    min-height: 245px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    text-align: center;
+
+    padding: 20px;
+
+    background:
+
+        linear-gradient(
+            180deg,
+            rgba(20,255,185,.045),
+            rgba(0,0,0,.13)
+        );
+
+    border:
+        1px solid
+        rgba(40,255,190,.14);
+
+    border-radius: 8px;
+
+    box-shadow:
+        inset 0 0 40px
+        rgba(0,255,180,.025);
+}
+
+
+.reloj-etiqueta {
+
+    color: #2fe5ae;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    letter-spacing: 4px;
+
+    font-size: 11px;
+}
+
+
+.tiempo {
+
+    margin: 0;
+
+    color: #e9fff9;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-size:
+        clamp(90px,10vw,145px);
+
+    font-weight: bold;
+
+    line-height: 1;
+
+    letter-spacing: 2px;
+
+    text-shadow:
+
+        0 0 15px
+        rgba(30,255,190,.30),
+
+        0 0 45px
+        rgba(30,255,190,.15);
+}
+
+
+.mensaje {
+
+    min-height: 25px;
+
+    margin-top: 8px;
+
+    color: #71aba0;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-size: 13px;
+}
+
+
+/* =====================================================
+   TERMINAL
+===================================================== */
+
+.terminal {
+
+    min-height: 245px;
+
+    padding: 15px;
+
+    overflow: hidden;
+
+    text-align: left;
+
+    border-radius: 8px;
+
+    background: #010708;
+
+    border:
+        1px solid
+        rgba(42,255,190,.18);
+
+    box-shadow:
+
+        inset 0 0 35px
+        rgba(0,255,175,.025),
+
+        0 0 20px
+        rgba(0,0,0,.25);
+
+    font-family:
+        "Courier New",
+        monospace;
+}
+
+
+.terminal-cabecera {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding-bottom: 9px;
+
+    margin-bottom: 7px;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.07);
+}
+
+
+.circulo {
+
+    width: 9px;
+    height: 9px;
+
+    border-radius: 50%;
+
+    background: #25e8ab;
+}
+
+
+.circulo:nth-child(2) {
+
+    background:
+        #f2c94c;
+}
+
+
+.circulo:nth-child(3) {
+
+    background:
+        #ff5c71;
+}
+
+
+.terminal-titulo {
+
+    margin-left: 8px;
+
+    color: #52736d;
+
+    font-size: 10px;
+}
+
+
+.terminal-contenido {
+
+    height: 185px;
+
+    overflow: hidden;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: flex-end;
+}
+
+
+/* =====================================================
+   LOGS DE COLORES
+===================================================== */
+
+.log {
+
+    margin:
+        2px 0;
+
+    font-size: 12px;
+
+    line-height: 1.25;
+
+    white-space: nowrap;
+
+    animation:
+        aparecerLog .13s ease;
+}
+
+
+@keyframes aparecerLog {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateX(-6px);
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateX(0);
+    }
+
+}
+
+
+.log-verde {
+    color: #2effb4;
+}
+
+.log-azul {
+    color: #49c8ff;
+}
+
+.log-violeta {
+    color: #bb8cff;
+}
+
+.log-amarillo {
+    color: #ffd75a;
+}
+
+.log-blanco {
+    color: #d6ede7;
+}
+
+.log-rojo {
+    color: #ff5b72;
+}
+
+
+/* =====================================================
+   RUTA
+===================================================== */
+
+.ruta {
+
+    width:
+        min(1050px,95%);
+
+    height: 74px;
+
+    margin:
+        10px auto 3px;
+
+    position: relative;
+}
+
+
+.ruta-linea {
+
+    position: absolute;
+
+    left: 3%;
+    right: 3%;
+
+    top: 27px;
+
+    height: 4px;
+
+    background:
+        rgba(255,255,255,.08);
+
+    border-radius: 20px;
+}
+
+
+.ruta-progreso {
+
+    width: 0%;
+
+    height: 100%;
+
+    background:
+
+        linear-gradient(
+            90deg,
+            #20e5aa,
+            #27c4d9,
+            #248dff
+        );
+
+    box-shadow:
+        0 0 16px
+        rgba(35,230,180,.40);
+
+    transition:
+        width 1s linear;
+}
+
+
+/* =====================================================
+   NODOS
+===================================================== */
+
+.nodo {
+
+    position: absolute;
+
+    top: 18px;
+
+    width: 22px;
+    height: 22px;
+
+    transform:
+        translateX(-50%);
+
+    border-radius: 50%;
+
+    background: #071b1b;
+
+    border:
+        3px solid
+        #345b57;
+
+    z-index: 5;
+
+    transition: .3s;
+}
+
+
+.nodo.activo {
+
+    border-color:
+        #24e9af;
+
+    background:
+        #1be4aa;
+
+    box-shadow:
+
+        0 0 0 5px
+        rgba(30,230,175,.08),
+
+        0 0 20px
+        rgba(30,230,175,.60);
+}
+
+
+.n1 {
+    left: 3%;
+}
+
+.n2 {
+    left: 27%;
+}
+
+.n3 {
+    left: 51%;
+}
+
+.n4 {
+    left: 75%;
+}
+
+.n5 {
+    left: 97%;
+}
+
+
+.nodo-texto {
+
+    position: absolute;
+
+    top: 48px;
+
+    transform:
+        translateX(-50%);
+
+    color: #668780;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-size: 9px;
+}
+
+
+.t1 {
+    left: 3%;
+}
+
+.t2 {
+    left: 27%;
+}
+
+.t3 {
+    left: 51%;
+}
+
+.t4 {
+    left: 75%;
+}
+
+.t5 {
+    left: 97%;
+}
+
+
+/* =====================================================
+   BARRA
+===================================================== */
+
+.barra {
+
+    width:
+        min(1050px,94%);
+
+    height: 15px;
+
+    margin:
+        5px auto 14px;
+
+    overflow: hidden;
+
+    border-radius: 3px;
+
+    background: #071618;
+
+    border:
+        1px solid
+        rgba(50,255,190,.16);
+}
+
+
+.progreso {
+
+    width: 0%;
+
+    height: 100%;
+
+    background:
+
+        repeating-linear-gradient(
+            135deg,
+            #22dcaa 0px,
+            #22dcaa 10px,
+            #19b895 10px,
+            #19b895 20px
+        );
+
+    box-shadow:
+        0 0 18px
+        rgba(30,230,180,.25);
+
+    transition:
+        width 1s linear;
+}
+
+
+/* =====================================================
+   CONFIGURACIÓN
+===================================================== */
+
+.configuracion {
+
+    width:
+        min(660px,100%);
+
+    margin:
+        35px auto 10px;
+
+    padding:
+        22px;
+
+    border-radius: 10px;
+
+    background:
+        rgba(255,255,255,.025);
+
+    border:
+        1px solid
+        rgba(50,255,190,.10);
+}
+
+
+.configuracion h2 {
+
+    margin:
+        0 0 6px;
+
+    color: #bcebe0;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-size: 18px;
+}
+
+
+.configuracion p {
+
+    margin:
+        0 0 18px;
+
+    color: #627d78;
+
+    font-size: 13px;
+}
+
+
+/* =====================================================
+   ENTRADA DE MINUTOS Y SEGUNDOS
+===================================================== */
+
+.entrada {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 12px;
+
+    flex-wrap: wrap;
+}
+
+
+/* CONTENEDOR INDIVIDUAL */
+
+.campo-tiempo {
+
+    position: relative;
+
+    width: 150px;
+}
+
+
+.campo-tiempo input {
+
+    width: 100%;
+
+    height: 58px;
+
+    padding:
+        10px 12px;
+
+    text-align: center;
+
+    color: #d9fff4;
+
+    background:
+        #041113;
+
+    border:
+        1px solid
+        rgba(40,255,190,.25);
+
+    border-radius: 6px;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-size: 20px;
+
+    outline: none;
+
+    transition:
+        border-color .2s,
+        box-shadow .2s;
+}
+
+
+/* TEXTO DENTRO */
+
+.campo-tiempo input::placeholder {
+
+    color:
+        #52766f;
+
+    opacity: 1;
+
+    font-size: 14px;
+
+    letter-spacing: 1px;
+}
+
+
+.campo-tiempo input:focus {
+
+    border-color:
+        #28e1ad;
+
+    box-shadow:
+
+        0 0 0 3px
+        rgba(40,225,173,.08),
+
+        0 0 15px
+        rgba(40,225,173,.12);
+}
+
+
+.dos-puntos {
+
+    color: #38d9ae;
+
+    font-size: 30px;
+
+    font-family:
+        "Courier New",
+        monospace;
+}
+
+
+/* =====================================================
+   BOTONES
+===================================================== */
+
+button {
+
+    border: none;
+
+    cursor: pointer;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-weight: bold;
+
+    transition:
+        transform .15s,
+        filter .15s;
+}
+
+
+button:hover {
+
+    transform:
+        translateY(-2px);
+
+    filter:
+        brightness(1.10);
+}
+
+
+.programar-btn {
+
+    height: 58px;
+
+    padding:
+        12px 22px;
+
+    border-radius: 6px;
+
+    color: #02120e;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #28e1ad,
+            #21bb92
+        );
+
+    box-shadow:
+        0 0 15px
+        rgba(40,225,173,.12);
+}
+
+
+/* =====================================================
+   CONTROLES
+===================================================== */
+
+.controles {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 12px;
+
+    flex-wrap: wrap;
+
+    margin-top: 22px;
+}
+
+
+.control {
+
+    min-width: 140px;
+
+    padding:
+        13px 20px;
+
+    border-radius: 5px;
+
+    font-size: 14px;
+}
+
+
+.iniciar {
+
+    color: #03120e;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #29e6ae,
+            #22b98f
+        );
+}
+
+
+.pausar {
+
+    color: #09121c;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #42bfff,
+            #2787d7
+        );
+}
+
+
+.reiniciar {
+
+    color: #c9d9dc;
+
+    background:
+        #26383d;
+}
+
+
+/* =====================================================
+   ÚLTIMOS SEGUNDOS
+===================================================== */
+
+.ultimos {
+
+    animation:
+        alerta
+        .4s infinite alternate;
+}
+
+
+@keyframes alerta {
+
+    from {
+
+        color: #ffffff;
+
+        text-shadow:
+            0 0 15px
+            rgba(255,40,70,.35);
+    }
+
+    to {
+
+        color: #ff3d59;
+
+        text-shadow:
+
+            0 0 18px
+            rgba(255,30,60,.75),
+
+            0 0 40px
+            rgba(255,30,60,.40);
+    }
+
+}
+
+
+/* =====================================================
+   FINAL
+===================================================== */
+
+.final {
+
+    display: none;
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 60;
+
+    justify-content: center;
+
+    align-items: center;
+
+    flex-direction: column;
+
+    text-align: center;
+
+    padding: 30px;
+
+    background:
+
+        radial-gradient(
+            circle at center,
+            #123b31,
+            #020809 68%
+        );
+}
+
+
+.final.activo {
+
+    display: flex;
+
+    animation:
+        aparecerFinal .35s ease;
+}
+
+
+@keyframes aparecerFinal {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            scale(.90);
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            scale(1);
+    }
+
+}
+
+
+.icono-final {
+
+    width: 110px;
+    height: 110px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    color: #2bf0b5;
+
+    font-size: 55px;
+
+    border:
+        3px solid
+        #2bf0b5;
+
+    box-shadow:
+
+        0 0 30px
+        rgba(40,240,180,.40),
+
+        inset 0 0 25px
+        rgba(40,240,180,.15);
+}
+
+
+.final-codigo {
+
+    margin-top: 20px;
+
+    color: #2ee7b0;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    letter-spacing: 5px;
+
+    font-size: 13px;
+}
+
+
+.final h2 {
+
+    margin: 8px;
+
+    color: white;
+
+    font-size:
+        clamp(38px,6vw,65px);
+
+    letter-spacing: 4px;
+
+    text-shadow:
+        0 0 25px
+        rgba(40,240,180,.20);
+}
+
+
+.final p {
+
+    color: #8fb8ae;
+
+    font-family:
+        "Courier New",
+        monospace;
+}
+
+
+.cerrar-final {
+
+    margin-top: 20px;
+
+    padding:
+        13px 24px;
+
+    background:
+        #29e5ad;
+
+    color: #02120d;
+
+    border-radius: 5px;
+}
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media(max-width:850px) {
+
+    .zona-principal {
+
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .reloj-panel {
+
+        min-height:
+            200px;
+    }
+
+
+    .terminal {
+
+        min-height:
+            220px;
+    }
+
+}
+
+
+/* =====================================================
+   CELULAR
+===================================================== */
+
+@media(max-width:600px) {
+
+    body {
+
+        padding: 6px;
+    }
+
+
+    .app {
+
+        padding:
+            15px 8px;
+    }
+
+
+    .estado-sistema {
+
+        grid-template-columns:
+            1fr;
+    }
+
+
+    h1 {
+
+        font-size: 31px;
+    }
+
+
+    .tiempo {
+
+        font-size:
+            clamp(58px,19vw,90px);
+    }
+
+
+    .terminal-contenido {
+
+        height: 175px;
+    }
+
+
+    .log {
+
+        font-size: 10px;
+    }
+
+
+    .entrada {
+
+        gap: 7px;
+    }
+
+
+    .campo-tiempo {
+
+        width: 120px;
+    }
+
+
+    .campo-tiempo input {
+
+        font-size: 17px;
+    }
+
+
+    .programar-btn {
+
+        width: 100%;
+
+        max-width: 260px;
+    }
+
+
+    .control {
+
+        min-width: 105px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     CÓDIGO FLOTANTE
+===================================================== -->
+
+<div class="codigo-fondo">
+
+
+    <div
+        class="codigo"
+        style="
+            left:4%;
+            animation-duration:10s;
+        ">
+
+        01010110 // PROCESS_NODE
+
+    </div>
+
+
+    <div
+        class="codigo"
+        style="
+            left:22%;
+            animation-duration:13s;
+            animation-delay:2s;
+        ">
+
+        SYS_CHECK :: 00110101
+
+    </div>
+
+
+    <div
+        class="codigo"
+        style="
+            left:48%;
+            animation-duration:11s;
+            animation-delay:5s;
+        ">
+
+        DATA_STREAM // ACTIVE
+
+    </div>
+
+
+    <div
+        class="codigo"
+        style="
+            left:72%;
+            animation-duration:14s;
+            animation-delay:3s;
+        ">
+
+        10101110 01110101
+
+    </div>
+
+
+    <div
+        class="codigo"
+        style="
+            left:90%;
+            animation-duration:12s;
+            animation-delay:1s;
+        ">
+
+        NODE_READY
+
+    </div>
+
+
+</div>
+
+
+<!-- =====================================================
+     APP
+===================================================== -->
+
+<div class="app">
+
+
+    <!-- VOLVER -->
+
+    <a
+        href="index.html"
+        class="volver-menu">
+
+        &lt; RETURN_HOME
+
+    </a>
+
+
+    <!-- =================================================
+         CABECERA
+    ================================================== -->
+
+    <header class="cabecera">
+
+
+        <div class="codigo-superior">
+
+            CYBER TRAINING SYSTEM // SEC-01
+
+        </div>
+
+
+        <h1>
+
+            MISIÓN CYBER
+
+        </h1>
+
+
+        <div class="subtitulo">
+
+            Completa la secuencia antes de que finalice el tiempo
+
+        </div>
+
+
+    </header>
+
+
+    <!-- =================================================
+         ESTADO
+    ================================================== -->
+
+    <div class="estado-sistema">
+
+
+        <div class="estado-item">
+
+            STATUS:
+
+            <strong id="estadoSistema">
+
+                READY
+
+            </strong>
+
+        </div>
+
+
+        <div class="estado-item">
+
+            NETWORK:
+
+            <strong>
+
+                ONLINE
+
+            </strong>
+
+        </div>
+
+
+        <div class="estado-item">
+
+            SECURITY:
+
+            <strong>
+
+                ACTIVE
+
+            </strong>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =================================================
+         RELOJ + TERMINAL
+    ================================================== -->
+
+    <div class="zona-principal">
+
+
+        <!-- RELOJ -->
+
+        <div class="reloj-panel">
+
+
+            <div class="reloj-etiqueta">
+
+                SESSION TIMER
+
+            </div>
+
+
+            <div
+                id="tiempo"
+                class="tiempo">
+
+                00:00
+
+            </div>
+
+
+            <div
+                id="mensaje"
+                class="mensaje">
+
+                &gt; Configura el tiempo para iniciar...
+
+            </div>
+
+
+        </div>
+
+
+        <!-- TERMINAL -->
+
+        <div class="terminal">
+
+
+            <div class="terminal-cabecera">
+
+
+                <span class="circulo"></span>
+
+                <span class="circulo"></span>
+
+                <span class="circulo"></span>
+
+
+                <span class="terminal-titulo">
+
+                    secure_terminal.exe
+
+                </span>
+
+
+            </div>
+
+
+            <div
+                id="terminalContenido"
+                class="terminal-contenido">
+
+
+                <div class="log log-verde">
+
+                    > SYSTEM READY
+
+                </div>
+
+
+                <div class="log log-azul">
+
+                    > Network interface detected
+
+                </div>
+
+
+                <div class="log log-violeta">
+
+                    > Waiting for time configuration...
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =================================================
+         RUTA
+    ================================================== -->
+
+    <div class="ruta">
+
+
+        <div class="ruta-linea">
+
+
+            <div
+                id="rutaProgreso"
+                class="ruta-progreso">
+            </div>
+
+
+        </div>
+
+
+        <div
+            id="nodo1"
+            class="nodo n1 activo">
+        </div>
+
+
+        <div
+            id="nodo2"
+            class="nodo n2">
+        </div>
+
+
+        <div
+            id="nodo3"
+            class="nodo n3">
+        </div>
+
+
+        <div
+            id="nodo4"
+            class="nodo n4">
+        </div>
+
+
+        <div
+            id="nodo5"
+            class="nodo n5">
+        </div>
+
+
+        <div class="nodo-texto t1">
+
+            START
+
+        </div>
+
+
+        <div class="nodo-texto t2">
+
+            SCAN
+
+        </div>
+
+
+        <div class="nodo-texto t3">
+
+            VERIFY
+
+        </div>
+
+
+        <div class="nodo-texto t4">
+
+            PROCESS
+
+        </div>
+
+
+        <div class="nodo-texto t5">
+
+            COMPLETE
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =================================================
+         BARRA
+    ================================================== -->
+
+    <div class="barra">
+
+
+        <div
+            id="progreso"
+            class="progreso">
+        </div>
+
+
+    </div>
+
+
+    <!-- =================================================
+         CONFIGURACIÓN
+    ================================================== -->
+
+    <div class="configuracion">
+
+
+        <h2>
+
+            // CONFIG_SESSION
+
+        </h2>
+
+
+        <p>
+
+            Ingresa los minutos y segundos de la misión.
+
+        </p>
+
+
+        <!-- SOLO MINUTOS Y SEGUNDOS -->
+
+        <div class="entrada">
+
+
+            <div class="campo-tiempo">
+
+
+                <input
+                    id="minutosInput"
+                    type="number"
+                    min="0"
+                    max="999"
+                    placeholder="Minutos"
+                    aria-label="Minutos">
+
+
+            </div>
+
+
+            <span class="dos-puntos">
+
+                :
+
+            </span>
+
+
+            <div class="campo-tiempo">
+
+
+                <input
+                    id="segundosInput"
+                    type="number"
+                    min="0"
+                    max="59"
+                    placeholder="Segundos"
+                    aria-label="Segundos">
+
+
+            </div>
+
+
+            <button
+                id="programarBtn"
+                class="programar-btn">
+
+                EXECUTE
+
+            </button>
+
+
+        </div>
+
+
+        <!-- CONTROLES -->
+
+        <div class="controles">
+
+
+            <button
+                id="iniciarBtn"
+                class="control iniciar">
+
+                START
+
+            </button>
+
+
+            <button
+                id="pausarBtn"
+                class="control pausar">
+
+                PAUSE
+
+            </button>
+
+
+            <button
+                id="reiniciarBtn"
+                class="control reiniciar">
+
+                RESET
+
+            </button>
+
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =================================================
+         FINAL
+    ================================================== -->
+
+    <div
+        id="final"
+        class="final">
+
+
+        <div class="icono-final">
+
+            ✓
+
+        </div>
+
+
+        <div class="final-codigo">
+
+            ACCESS_COMPLETE
+
+        </div>
+
+
+        <h2>
+
+            MISIÓN COMPLETADA
+
+        </h2>
+
+
+        <p>
+
+            La sesión Cyber ha finalizado correctamente.
+
+        </p>
+
+
+        <button
+            id="cerrarFinal"
+            class="cerrar-final">
+
+            NEW SESSION
+
+        </button>
+
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   ELEMENTOS
+===================================================== */
+
+const tiempo =
+    document.getElementById(
+        "tiempo"
+    );
+
+
+const mensaje =
+    document.getElementById(
+        "mensaje"
+    );
+
+
+const minutosInput =
+    document.getElementById(
+        "minutosInput"
+    );
+
+
+const segundosInput =
+    document.getElementById(
+        "segundosInput"
+    );
+
+
+const programarBtn =
+    document.getElementById(
+        "programarBtn"
+    );
+
+
+const iniciarBtn =
+    document.getElementById(
+        "iniciarBtn"
+    );
+
+
+const pausarBtn =
+    document.getElementById(
+        "pausarBtn"
+    );
+
+
+const reiniciarBtn =
+    document.getElementById(
+        "reiniciarBtn"
+    );
+
+
+const progreso =
+    document.getElementById(
+        "progreso"
+    );
+
+
+const rutaProgreso =
+    document.getElementById(
+        "rutaProgreso"
+    );
+
+
+const estadoSistema =
+    document.getElementById(
+        "estadoSistema"
+    );
+
+
+const terminalContenido =
+    document.getElementById(
+        "terminalContenido"
+    );
+
+
+const final =
+    document.getElementById(
+        "final"
+    );
+
+
+const cerrarFinal =
+    document.getElementById(
+        "cerrarFinal"
+    );
+
+
+const nodos = [
+
+    document.getElementById(
+        "nodo1"
+    ),
+
+    document.getElementById(
+        "nodo2"
+    ),
+
+    document.getElementById(
+        "nodo3"
+    ),
+
+    document.getElementById(
+        "nodo4"
+    ),
+
+    document.getElementById(
+        "nodo5"
+    )
+
+];
+
+
+/* =====================================================
+   VARIABLES
+===================================================== */
+
+/*
+    Empieza en 0 porque ahora
+    no tenemos ningún tiempo predeterminado.
+*/
+
+let tiempoTotal =
+    0;
+
+
+let tiempoRestante =
+    0;
+
+
+let intervalo =
+    null;
+
+
+let intervaloTerminal =
+    null;
+
+
+let ejecutando =
+    false;
+
+
+let audioContext =
+    null;
+
+
+/* =====================================================
+   MENSAJES DE LA TERMINAL
+===================================================== */
+
+const mensajesTerminal = [
+
+    {
+        texto:
+            "Loading security modules...",
+        clase:
+            "log-verde"
+    },
+
+    {
+        texto:
+            "NODE_04 :: response OK",
+        clase:
+            "log-azul"
+    },
+
+    {
+        texto:
+            "Scanning data stream...",
+        clase:
+            "log-violeta"
+    },
+
+    {
+        texto:
+            "Packet verification complete",
+        clase:
+            "log-verde"
+    },
+
+    {
+        texto:
+            "0x7FA1 :: memory block active",
+        clase:
+            "log-amarillo"
+    },
+
+    {
+        texto:
+            "Running system diagnostics...",
+        clase:
+            "log-azul"
+    },
+
+    {
+        texto:
+            "Encryption layer detected",
+        clase:
+            "log-violeta"
+    },
+
+    {
+        texto:
+            "Data integrity :: 100%",
+        clase:
+            "log-verde"
+    },
+
+    {
+        texto:
+            "Checking authentication token...",
+        clase:
+            "log-amarillo"
+    },
+
+    {
+        texto:
+            "SYSTEM_NODE connected",
+        clase:
+            "log-azul"
+    },
+
+    {
+        texto:
+            "Process thread initialized",
+        clase:
+            "log-blanco"
+    },
+
+    {
+        texto:
+            "Routing virtual packet...",
+        clase:
+            "log-violeta"
+    },
+
+    {
+        texto:
+            "SECURITY_PROTOCOL active",
+        clase:
+            "log-verde"
+    },
+
+    {
+        texto:
+            "01010110 11001010 00101",
+        clase:
+            "log-azul"
+    },
+
+    {
+        texto:
+            "Analyzing virtual network...",
+        clase:
+            "log-amarillo"
+    },
+
+    {
+        texto:
+            "Virtual process accepted",
+        clase:
+            "log-verde"
+    },
+
+    {
+        texto:
+            "Checking node integrity...",
+        clase:
+            "log-violeta"
+    }
+
+];
+
+
+/* =====================================================
+   AGREGAR LÍNEA A TERMINAL
+===================================================== */
+
+function agregarLineaTerminal() {
+
+
+    const dato =
+
+        mensajesTerminal[
+            Math.floor(
+                Math.random()
+                *
+                mensajesTerminal.length
+            )
+        ];
+
+
+    const linea =
+
+        document.createElement(
+            "div"
+        );
+
+
+    linea.className =
+
+        "log "
+
+        +
+
+        dato.clase;
+
+
+    const codigo =
+
+        Math.floor(
+            Math.random()
+            *
+            9999
+        )
+
+        .toString()
+
+        .padStart(
+            4,
+            "0"
+        );
+
+
+    linea.textContent =
+
+        "> ["
+
+        +
+
+        codigo
+
+        +
+
+        "] "
+
+        +
+
+        dato.texto;
+
+
+    terminalContenido.appendChild(
+        linea
+    );
+
+
+    /*
+        Solo dejamos visibles
+        las últimas 9 líneas.
+    */
+
+    while (
+        terminalContenido.children.length > 9
+    ) {
+
+
+        terminalContenido.removeChild(
+            terminalContenido.firstChild
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   INICIAR TERMINAL RÁPIDA
+===================================================== */
+
+function iniciarTerminal() {
+
+
+    if (
+        intervaloTerminal
+    ) {
+
+        return;
+
+    }
+
+
+    /*
+        Cada 250 ms aparece
+        una nueva línea.
+    */
+
+    intervaloTerminal =
+
+        setInterval(
+            agregarLineaTerminal,
+            250
+        );
+
+}
+
+
+/* =====================================================
+   DETENER TERMINAL
+===================================================== */
+
+function detenerTerminal() {
+
+
+    if (
+        intervaloTerminal
+    ) {
+
+
+        clearInterval(
+            intervaloTerminal
+        );
+
+
+        intervaloTerminal =
+            null;
+
+    }
+
+}
+
+
+/* =====================================================
+   AUDIO
+===================================================== */
+
+function iniciarAudio() {
+
+
+    if (
+        !audioContext
+    ) {
+
+
+        audioContext =
+
+            new (
+                window.AudioContext
+                ||
+                window.webkitAudioContext
+            )();
+
+    }
+
+
+    if (
+        audioContext.state ===
+        "suspended"
+    ) {
+
+
+        audioContext.resume();
+
+    }
+
+}
+
+
+/* =====================================================
+   PITIDO ÚLTIMOS 10 SEGUNDOS
+===================================================== */
+
+function sonidoCuenta() {
+
+
+    iniciarAudio();
+
+
+    const oscillator =
+        audioContext.createOscillator();
+
+
+    const gain =
+        audioContext.createGain();
+
+
+    oscillator.type =
+        "square";
+
+
+    oscillator.frequency.value =
+        820;
+
+
+    gain.gain.setValueAtTime(
+        .12,
+        audioContext.currentTime
+    );
+
+
+    gain.gain.exponentialRampToValueAtTime(
+        .01,
+        audioContext.currentTime
+        +
+        .13
+    );
+
+
+    oscillator.connect(
+        gain
+    );
+
+
+    gain.connect(
+        audioContext.destination
+    );
+
+
+    oscillator.start();
+
+
+    oscillator.stop(
+        audioContext.currentTime
+        +
+        .13
+    );
+
+}
+
+
+/* =====================================================
+   SONIDO FINAL FUERTE
+===================================================== */
+
+function sonidoFinal() {
+
+
+    iniciarAudio();
+
+
+    const ahora =
+        audioContext.currentTime;
+
+
+    const golpes = [
+
+        {
+            inicio: 0,
+            frecuencia: 220,
+            duracion: .25
+        },
+
+        {
+            inicio: .32,
+            frecuencia: 290,
+            duracion: .25
+        },
+
+        {
+            inicio: .64,
+            frecuencia: 380,
+            duracion: .28
+        },
+
+        {
+            inicio: 1,
+            frecuencia: 620,
+            duracion: .75
+        }
+
+    ];
+
+
+    golpes.forEach(
+        function(
+            golpe
+        ) {
+
+
+            const oscillator =
+
+                audioContext
+                .createOscillator();
+
+
+            const gain =
+
+                audioContext
+                .createGain();
+
+
+            oscillator.type =
+                "sawtooth";
+
+
+            oscillator
+            .frequency
+            .setValueAtTime(
+
+                golpe.frecuencia,
+
+                ahora
+                +
+                golpe.inicio
+
+            );
+
+
+            gain
+            .gain
+            .setValueAtTime(
+
+                .18,
+
+                ahora
+                +
+                golpe.inicio
+
+            );
+
+
+            gain
+            .gain
+            .exponentialRampToValueAtTime(
+
+                .001,
+
+                ahora
+                +
+                golpe.inicio
+                +
+                golpe.duracion
+
+            );
+
+
+            oscillator.connect(
+                gain
+            );
+
+
+            gain.connect(
+                audioContext.destination
+            );
+
+
+            oscillator.start(
+
+                ahora
+                +
+                golpe.inicio
+
+            );
+
+
+            oscillator.stop(
+
+                ahora
+                +
+                golpe.inicio
+                +
+                golpe.duracion
+
+            );
+
+        }
+    );
+
+
+    /* ALARMA DIGITAL FINAL */
+
+    const alarma =
+
+        audioContext
+        .createOscillator();
+
+
+    const volumenAlarma =
+
+        audioContext
+        .createGain();
+
+
+    alarma.type =
+        "square";
+
+
+    alarma
+    .frequency
+    .setValueAtTime(
+
+        900,
+
+        ahora + 1
+
+    );
+
+
+    alarma
+    .frequency
+    .exponentialRampToValueAtTime(
+
+        450,
+
+        ahora + 1.7
+
+    );
+
+
+    volumenAlarma
+    .gain
+    .setValueAtTime(
+
+        .10,
+
+        ahora + 1
+
+    );
+
+
+    volumenAlarma
+    .gain
+    .exponentialRampToValueAtTime(
+
+        .001,
+
+        ahora + 1.75
+
+    );
+
+
+    alarma.connect(
+        volumenAlarma
+    );
+
+
+    volumenAlarma.connect(
+        audioContext.destination
+    );
+
+
+    alarma.start(
+        ahora + 1
+    );
+
+
+    alarma.stop(
+        ahora + 1.75
+    );
+
+}
+
+
+/* =====================================================
+   FORMATO DE TIEMPO
+===================================================== */
+
+function formatoTiempo(
+    segundos
+) {
+
+
+    const minutos =
+
+        Math.floor(
+            segundos / 60
+        );
+
+
+    const segundosRestantes =
+
+        segundos % 60;
+
+
+    return (
+
+        String(minutos)
+
+        .padStart(
+            2,
+            "0"
+        )
+
+        +
+
+        ":"
+
+        +
+
+        String(segundosRestantes)
+
+        .padStart(
+            2,
+            "0"
+        )
+
+    );
+
+}
+
+
+/* =====================================================
+   ACTUALIZAR NODOS
+===================================================== */
+
+function actualizarNodos(
+    porcentaje
+) {
+
+
+    nodos.forEach(
+        function(
+            nodo,
+            index
+        ) {
+
+
+            const limite =
+                index * 25;
+
+
+            if (
+                porcentaje >= limite
+            ) {
+
+
+                nodo
+                .classList
+                .add(
+                    "activo"
+                );
+
+            }
+
+            else {
+
+
+                nodo
+                .classList
+                .remove(
+                    "activo"
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   ACTUALIZAR PANTALLA
+===================================================== */
+
+function actualizarPantalla() {
+
+
+    tiempo.textContent =
+
+        formatoTiempo(
+            tiempoRestante
+        );
+
+
+    let porcentajeReal =
+        0;
+
+
+    /*
+        Evitamos división entre 0.
+    */
+
+    if (
+        tiempoTotal > 0
+    ) {
+
+
+        const porcentaje =
+
+            1
+
+            -
+
+            (
+                tiempoRestante
+                /
+                tiempoTotal
+            );
+
+
+        porcentajeReal =
+
+            Math.max(
+                0,
+
+                Math.min(
+                    100,
+                    porcentaje * 100
+                )
+            );
+
+    }
+
+
+    progreso.style.width =
+
+        porcentajeReal
+        +
+        "%";
+
+
+    rutaProgreso.style.width =
+
+        porcentajeReal
+        +
+        "%";
+
+
+    actualizarNodos(
+        porcentajeReal
+    );
+
+
+    /* ÚLTIMOS 10 SEGUNDOS */
+
+    if (
+
+        tiempoRestante <= 10
+
+        &&
+
+        tiempoRestante > 0
+
+        &&
+
+        tiempoTotal > 0
+
+    ) {
+
+
+        tiempo.classList.add(
+            "ultimos"
+        );
+
+
+        mensaje.textContent =
+
+            "> ALERT // "
+
+            +
+
+            tiempoRestante
+
+            +
+
+            " segundos restantes";
+
+    }
+
+    else {
+
+
+        tiempo.classList.remove(
+            "ultimos"
+        );
+
+
+        if (
+            ejecutando
+        ) {
+
+
+            mensaje.textContent =
+                "> Ejecutando secuencia Cyber...";
+
+        }
+
+    }
+
+}
+
+
+/* =====================================================
+   PROGRAMAR
+===================================================== */
+
+function programar() {
+
+
+    detener();
+
+
+    let minutos =
+
+        parseInt(
+            minutosInput.value
+        )
+
+        ||
+
+        0;
+
+
+    let segundos =
+
+        parseInt(
+            segundosInput.value
+        )
+
+        ||
+
+        0;
+
+
+    minutos =
+
+        Math.max(
+            0,
+            minutos
+        );
+
+
+    segundos =
+
+        Math.max(
+            0,
+
+            Math.min(
+                59,
+                segundos
+            )
+        );
+
+
+    /*
+        Si escriben 70 segundos,
+        visualmente lo dejamos en 59.
+    */
+
+    segundosInput.value =
+
+        segundos === 0
+        &&
+        segundosInput.value === ""
+
+        ?
+
+        ""
+
+        :
+
+        segundos;
+
+
+    tiempoTotal =
+
+        minutos * 60
+
+        +
+
+        segundos;
+
+
+    /*
+        Ya NO colocamos
+        10 segundos automáticamente.
+    */
+
+    if (
+        tiempoTotal <= 0
+    ) {
+
+
+        tiempoTotal =
+            0;
+
+
+        tiempoRestante =
+            0;
+
+
+        estadoSistema.textContent =
+            "WAITING";
+
+
+        mensaje.textContent =
+            "> Ingresa minutos o segundos.";
+
+
+        terminalContenido.innerHTML = `
+
+            <div class="log log-rojo">
+                > ERROR // TIME NOT DEFINED
+            </div>
+
+            <div class="log log-amarillo">
+                > Introduce minutos o segundos
+            </div>
+
+            <div class="log log-violeta">
+                > Waiting for configuration...
+            </div>
+
+        `;
+
+
+        actualizarPantalla();
+
+
+        return;
+
+    }
+
+
+    tiempoRestante =
+        tiempoTotal;
+
+
+    estadoSistema.textContent =
+        "READY";
+
+
+    mensaje.textContent =
+        "> Sesión configurada.";
+
+
+    final.classList.remove(
+        "activo"
+    );
+
+
+    terminalContenido.innerHTML = `
+
+        <div class="log log-verde">
+            > SYSTEM READY
+        </div>
+
+        <div class="log log-azul">
+            > Session configured
+        </div>
+
+        <div class="log log-violeta">
+            > Waiting for START command...
+        </div>
+
+    `;
+
+
+    actualizarPantalla();
+
+}
+
+
+/* =====================================================
+   INICIAR
+===================================================== */
+
+function iniciar() {
+
+
+    if (
+        ejecutando
+    ) {
+
+        return;
+
+    }
+
+
+    /*
+        Si todavía no programó tiempo.
+    */
+
+    if (
+        tiempoTotal <= 0
+        ||
+        tiempoRestante <= 0
+    ) {
+
+
+        estadoSistema.textContent =
+            "WAITING";
+
+
+        mensaje.textContent =
+            "> Primero configura el tiempo.";
+
+
+        const linea =
+
+            document.createElement(
+                "div"
+            );
+
+
+        linea.className =
+            "log log-rojo";
+
+
+        linea.textContent =
+            "> START DENIED // TIME NOT DEFINED";
+
+
+        terminalContenido.appendChild(
+            linea
+        );
+
+
+        return;
+
+    }
+
+
+    iniciarAudio();
+
+
+    ejecutando =
+        true;
+
+
+    estadoSistema.textContent =
+        "RUNNING";
+
+
+    mensaje.textContent =
+        "> Ejecutando secuencia...";
+
+
+    iniciarTerminal();
+
+
+    intervalo =
+
+        setInterval(
+            function() {
+
+
+                if (
+                    tiempoRestante > 0
+                ) {
+
+
+                    tiempoRestante--;
+
+
+                    actualizarPantalla();
+
+
+                    if (
+
+                        tiempoRestante <= 10
+
+                        &&
+
+                        tiempoRestante > 0
+
+                    ) {
+
+
+                        sonidoCuenta();
+
+                    }
+
+                }
+
+
+                if (
+                    tiempoRestante === 0
+                ) {
+
+
+                    terminar();
+
+                }
+
+
+            },
+            1000
+        );
+
+}
+
+
+/* =====================================================
+   PAUSAR
+===================================================== */
+
+function pausar() {
+
+
+    if (
+        !ejecutando
+    ) {
+
+        return;
+
+    }
+
+
+    clearInterval(
+        intervalo
+    );
+
+
+    intervalo =
+        null;
+
+
+    ejecutando =
+        false;
+
+
+    detenerTerminal();
+
+
+    estadoSistema.textContent =
+        "PAUSED";
+
+
+    mensaje.textContent =
+        "> Secuencia pausada.";
+
+
+    const linea =
+
+        document.createElement(
+            "div"
+        );
+
+
+    linea.className =
+        "log log-amarillo";
+
+
+    linea.textContent =
+        "> PROCESS PAUSED";
+
+
+    terminalContenido.appendChild(
+        linea
+    );
+
+}
+
+
+/* =====================================================
+   DETENER
+===================================================== */
+
+function detener() {
+
+
+    if (
+        intervalo
+    ) {
+
+
+        clearInterval(
+            intervalo
+        );
+
+
+        intervalo =
+            null;
+
+    }
+
+
+    detenerTerminal();
+
+
+    ejecutando =
+        false;
+
+}
+
+
+/* =====================================================
+   REINICIAR
+===================================================== */
+
+function reiniciar() {
+
+
+    detener();
+
+
+    /*
+        Si existe tiempo configurado,
+        regresamos a ese tiempo.
+    */
+
+    tiempoRestante =
+        tiempoTotal;
+
+
+    estadoSistema.textContent =
+
+        tiempoTotal > 0
+
+        ?
+
+        "READY"
+
+        :
+
+        "WAITING";
+
+
+    mensaje.textContent =
+
+        tiempoTotal > 0
+
+        ?
+
+        "> Sistema reiniciado."
+
+        :
+
+        "> Configura el tiempo para iniciar.";
+
+
+    final.classList.remove(
+        "activo"
+    );
+
+
+    terminalContenido.innerHTML = `
+
+        <div class="log log-verde">
+            > SYSTEM RESET
+        </div>
+
+        <div class="log log-azul">
+            > Nodes restored
+        </div>
+
+        <div class="log log-violeta">
+            > Waiting for mission...
+        </div>
+
+    `;
+
+
+    actualizarPantalla();
+
+}
+
+
+/* =====================================================
+   FINAL
+===================================================== */
+
+function terminar() {
+
+
+    detener();
+
+
+    tiempoRestante =
+        0;
+
+
+    estadoSistema.textContent =
+        "COMPLETE";
+
+
+    actualizarPantalla();
+
+
+    mensaje.textContent =
+        "> ACCESS COMPLETE";
+
+
+    terminalContenido.innerHTML = `
+
+        <div class="log log-verde">
+            > NODE_01 COMPLETE
+        </div>
+
+        <div class="log log-azul">
+            > NODE_02 COMPLETE
+        </div>
+
+        <div class="log log-violeta">
+            > DATA VERIFIED
+        </div>
+
+        <div class="log log-amarillo">
+            > FINALIZING SESSION...
+        </div>
+
+        <div class="log log-verde">
+            > ACCESS COMPLETE
+        </div>
+
+    `;
+
+
+    sonidoFinal();
+
+
+    setTimeout(
+        function() {
+
+
+            final.classList.add(
+                "activo"
+            );
+
+
+        },
+        1200
+    );
+
+}
+
+
+/* =====================================================
+   EVENTOS
+===================================================== */
+
+programarBtn.addEventListener(
+    "click",
+    programar
+);
+
+
+iniciarBtn.addEventListener(
+    "click",
+    iniciar
+);
+
+
+pausarBtn.addEventListener(
+    "click",
+    pausar
+);
+
+
+reiniciarBtn.addEventListener(
+    "click",
+    reiniciar
+);
+
+
+cerrarFinal.addEventListener(
+    "click",
+    function() {
+
+
+        final.classList.remove(
+            "activo"
+        );
+
+
+        reiniciar();
+
+    }
+);
+
+
+/* =====================================================
+   ENTER PARA PROGRAMAR
+===================================================== */
+
+minutosInput.addEventListener(
+    "keydown",
+    function(evento) {
+
+
+        if (
+            evento.key ===
+            "Enter"
+        ) {
+
+            programar();
+
+        }
+
+    }
+);
+
+
+segundosInput.addEventListener(
+    "keydown",
+    function(evento) {
+
+
+        if (
+            evento.key ===
+            "Enter"
+        ) {
+
+            programar();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   INICIO
+===================================================== */
+
+actualizarPantalla();
+
+</script>
+
+</body>
+
+</html>

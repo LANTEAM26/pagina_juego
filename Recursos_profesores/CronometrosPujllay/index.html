@@ -1,0 +1,2145 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<title>⏰ Aventuras del Tiempo</title>
+
+<style>
+
+/* =====================================================
+   CONFIGURACIÓN GENERAL
+===================================================== */
+
+*{
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+:root{
+    --texto:#4d4a70;
+    --blanco:#ffffff;
+}
+
+body{
+    margin:0;
+    min-height:100vh;
+    overflow-x:hidden;
+    font-family:
+        "Arial Rounded MT Bold",
+        "Comic Sans MS",
+        Arial,
+        sans-serif;
+    color:var(--texto);
+    background:#7189d5;
+}
+
+
+/* =====================================================
+   FONDOS FIJOS QUE CAMBIAN AL HACER SCROLL
+===================================================== */
+
+.escenarios{
+    position:fixed;
+    inset:0;
+    z-index:-20;
+    overflow:hidden;
+    pointer-events:none;
+}
+
+.escenario{
+    position:absolute;
+    inset:0;
+    opacity:0;
+    transition:opacity 1s ease;
+}
+
+
+/* =====================================================
+   INICIAL
+===================================================== */
+
+.fondo-inicial{
+    opacity:1;
+    background:
+        radial-gradient(
+            circle at 18% 16%,
+            rgba(255,255,255,.24),
+            transparent 18%
+        ),
+        radial-gradient(
+            circle at 82% 18%,
+            rgba(255,255,255,.16),
+            transparent 19%
+        ),
+        linear-gradient(
+            180deg,
+            #738bdd 0%,
+            #a89be1 67%,
+            #ba8a68 67%,
+            #9b6d4f 100%
+        );
+}
+
+.fondo-inicial::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    opacity:.22;
+    background-image:
+        radial-gradient(
+            circle,
+            rgba(255,255,255,.85) 2px,
+            transparent 3px
+        );
+    background-size:68px 68px;
+}
+
+.fondo-inicial::after{
+    content:"";
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    height:33%;
+    border-top:8px solid rgba(85,55,40,.18);
+    background:
+        repeating-linear-gradient(
+            90deg,
+            rgba(255,255,255,.05) 0 2px,
+            transparent 2px 125px
+        );
+}
+
+
+/* =====================================================
+   PRIMARIA
+===================================================== */
+
+.fondo-primaria{
+    background:
+        radial-gradient(
+            circle at 82% 12%,
+            rgba(255,242,128,.85) 0 55px,
+            rgba(255,242,128,.20) 56px 82px,
+            transparent 83px
+        ),
+        linear-gradient(
+            180deg,
+            #72c9f4 0%,
+            #c4efff 61%,
+            #9fdb78 61%,
+            #70bd63 100%
+        );
+}
+
+.fondo-primaria::before{
+    content:"";
+    position:absolute;
+    left:-5%;
+    right:-5%;
+    bottom:19%;
+    height:38%;
+    opacity:.55;
+    background:#6aa25e;
+    clip-path:
+        polygon(
+            0 100%,
+            0 72%,
+            12% 35%,
+            24% 68%,
+            38% 18%,
+            53% 66%,
+            68% 29%,
+            81% 63%,
+            92% 31%,
+            100% 68%,
+            100% 100%
+        );
+}
+
+.fondo-primaria::after{
+    content:"";
+    position:absolute;
+    left:32%;
+    bottom:-10%;
+    width:36%;
+    height:65%;
+    opacity:.75;
+    background:
+        linear-gradient(
+            180deg,
+            #ead59b,
+            #b88655
+        );
+    clip-path:
+        polygon(
+            43% 0,
+            57% 0,
+            100% 100%,
+            0 100%
+        );
+}
+
+
+/* =====================================================
+   SECUNDARIA
+===================================================== */
+
+.fondo-secundaria{
+    background:
+        radial-gradient(
+            circle at 18% 20%,
+            rgba(74,232,255,.15),
+            transparent 21%
+        ),
+        radial-gradient(
+            circle at 83% 25%,
+            rgba(157,102,255,.18),
+            transparent 23%
+        ),
+        linear-gradient(
+            155deg,
+            #07142f,
+            #15174b 58%,
+            #08102a
+        );
+}
+
+.fondo-secundaria::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    opacity:.18;
+    background-image:
+        linear-gradient(
+            rgba(77,233,255,.36) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(77,233,255,.36) 1px,
+            transparent 1px
+        );
+    background-size:48px 48px;
+    animation:gridCyber 12s linear infinite;
+}
+
+@keyframes gridCyber{
+    from{
+        background-position:0 0;
+    }
+
+    to{
+        background-position:48px 48px;
+    }
+}
+
+
+/* =====================================================
+   CAMBIO ACTIVO DE ESCENARIOS
+===================================================== */
+
+body[data-escenario="inicial"] .fondo-inicial{
+    opacity:1;
+}
+
+body[data-escenario="inicial"] .fondo-primaria,
+body[data-escenario="inicial"] .fondo-secundaria{
+    opacity:0;
+}
+
+body[data-escenario="primaria"] .fondo-primaria{
+    opacity:1;
+}
+
+body[data-escenario="primaria"] .fondo-inicial,
+body[data-escenario="primaria"] .fondo-secundaria{
+    opacity:0;
+}
+
+body[data-escenario="secundaria"] .fondo-secundaria{
+    opacity:1;
+}
+
+body[data-escenario="secundaria"] .fondo-inicial,
+body[data-escenario="secundaria"] .fondo-primaria{
+    opacity:0;
+}
+
+
+/* =====================================================
+   DECORACIONES
+===================================================== */
+
+.decoracion{
+    position:absolute;
+    pointer-events:none;
+}
+
+.inicial-juguete{
+    bottom:5%;
+    font-size:58px;
+    filter:
+        drop-shadow(
+            0 7px 5px
+            rgba(45,35,90,.18)
+        );
+}
+
+.ij1{
+    left:4%;
+}
+
+.ij2{
+    right:4%;
+}
+
+.globo{
+    right:8%;
+    top:10%;
+    font-size:55px;
+    animation:flotar 3s ease-in-out infinite alternate;
+}
+
+.nube{
+    left:-160px;
+    font-size:62px;
+    opacity:.62;
+    animation:nubeMover 28s linear infinite;
+}
+
+.nube1{
+    top:12%;
+}
+
+.nube2{
+    top:28%;
+    animation-duration:36s;
+    animation-delay:7s;
+    font-size:48px;
+}
+
+@keyframes nubeMover{
+    from{
+        transform:translateX(0);
+    }
+
+    to{
+        transform:
+            translateX(
+                calc(100vw + 350px)
+            );
+    }
+}
+
+@keyframes flotar{
+    from{
+        transform:
+            translateY(0)
+            rotate(-4deg);
+    }
+
+    to{
+        transform:
+            translateY(-18px)
+            rotate(4deg);
+    }
+}
+
+.arbol{
+    bottom:7%;
+    font-size:58px;
+}
+
+.arbol1{
+    left:5%;
+}
+
+.arbol2{
+    right:5%;
+}
+
+.cyber-simbolo{
+    color:#4de9ff;
+    opacity:.22;
+    font-family:Consolas,monospace;
+    text-shadow:0 0 12px rgba(77,233,255,.8);
+    animation:cyberFlota 5s ease-in-out infinite alternate;
+}
+
+.cs1{
+    left:6%;
+    top:15%;
+    font-size:40px;
+}
+
+.cs2{
+    right:8%;
+    top:23%;
+    font-size:32px;
+    color:#b68cff;
+}
+
+.cs3{
+    left:9%;
+    bottom:15%;
+    font-size:30px;
+}
+
+.cs4{
+    right:8%;
+    bottom:12%;
+    font-size:43px;
+    color:#b68cff;
+}
+
+@keyframes cyberFlota{
+    from{
+        transform:translateY(0);
+    }
+
+    to{
+        transform:translateY(-16px);
+    }
+}
+
+
+/* =====================================================
+   PORTADA
+===================================================== */
+
+.portada{
+    min-height:92vh;
+    padding:65px 20px 80px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    z-index:5;
+}
+
+.portada-contenido{
+    width:min(900px,94vw);
+    text-align:center;
+}
+
+.logo{
+    width:128px;
+    height:128px;
+    margin:0 auto 16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    font-size:65px;
+    background:
+        linear-gradient(
+            145deg,
+            #fff8dc,
+            #ffd875
+        );
+    border:7px solid rgba(255,255,255,.94);
+    box-shadow:
+        0 10px 0 #c99348,
+        0 19px 32px rgba(42,35,90,.25);
+    animation:reloj 3s ease-in-out infinite;
+}
+
+@keyframes reloj{
+    0%,
+    100%{
+        transform:
+            translateY(0)
+            rotate(-4deg);
+    }
+
+    50%{
+        transform:
+            translateY(-10px)
+            rotate(4deg);
+    }
+}
+
+.portada h1{
+    margin:0;
+    color:white;
+    font-size:
+        clamp(
+            48px,
+            8vw,
+            82px
+        );
+    text-shadow:
+        0 5px 0 rgba(63,80,158,.85),
+        0 12px 25px rgba(30,25,85,.28);
+}
+
+.portada p{
+    display:inline-block;
+    margin:15px auto 0;
+    padding:12px 25px;
+    border-radius:999px;
+    color:#5b5579;
+    background:rgba(255,255,255,.91);
+    border:2px solid rgba(255,255,255,.84);
+    font-size:18px;
+    box-shadow:0 8px 18px rgba(35,30,90,.14);
+}
+
+.bajar{
+    margin-top:38px;
+    color:white;
+    font-size:14px;
+    font-weight:bold;
+    text-shadow:0 3px 8px rgba(30,30,80,.3);
+    animation:bajar 1.15s ease-in-out infinite alternate;
+}
+
+.bajar span{
+    display:block;
+    margin-top:5px;
+    font-size:30px;
+}
+
+@keyframes bajar{
+    from{
+        transform:translateY(0);
+    }
+
+    to{
+        transform:translateY(8px);
+    }
+}
+
+
+/* =====================================================
+   NAVEGADOR LATERAL
+===================================================== */
+
+.navegacion{
+    position:fixed;
+    right:18px;
+    top:50%;
+    transform:translateY(-50%);
+    z-index:80;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    padding:10px 8px;
+    border-radius:22px;
+    background:rgba(255,255,255,.15);
+    border:1px solid rgba(255,255,255,.24);
+    backdrop-filter:blur(8px);
+}
+
+.nav-btn{
+    width:15px;
+    height:15px;
+    padding:0;
+    position:relative;
+    border-radius:50%;
+    border:3px solid white;
+    background:rgba(255,255,255,.25);
+    cursor:pointer;
+    transition:.2s;
+}
+
+.nav-btn.activo{
+    transform:scale(1.35);
+    background:white;
+    box-shadow:0 0 12px rgba(255,255,255,.7);
+}
+
+.nav-btn::after{
+    content:attr(data-label);
+    position:absolute;
+    right:25px;
+    top:50%;
+    transform:translateY(-50%);
+    padding:5px 9px;
+    border-radius:9px;
+    color:#4f4a70;
+    background:white;
+    font-family:Arial,sans-serif;
+    font-size:11px;
+    font-weight:bold;
+    white-space:nowrap;
+    opacity:0;
+    pointer-events:none;
+    transition:.18s;
+}
+
+.nav-btn:hover::after{
+    opacity:1;
+}
+
+
+/* =====================================================
+   SECCIONES
+===================================================== */
+
+.nivel{
+    min-height:100vh;
+    padding:80px 22px 100px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    z-index:5;
+}
+
+.nivel-contenido{
+    width:min(1180px,94vw);
+}
+
+.nivel-header{
+    width:fit-content;
+    max-width:92%;
+    margin:0 auto 35px;
+    padding:19px 29px;
+    text-align:center;
+    border-radius:28px;
+    background:rgba(255,255,255,.89);
+    border:3px solid rgba(255,255,255,.88);
+    box-shadow:0 14px 28px rgba(35,30,85,.17);
+    backdrop-filter:blur(6px);
+}
+
+.edad{
+    display:inline-block;
+    margin-bottom:5px;
+    padding:5px 12px;
+    border-radius:999px;
+    color:white;
+    font-size:11px;
+    font-weight:bold;
+    letter-spacing:1px;
+}
+
+.inicial .edad{
+    background:#e89649;
+}
+
+.primaria .edad{
+    background:#42a878;
+}
+
+.secundaria .edad{
+    background:
+        linear-gradient(
+            135deg,
+            #268caf,
+            #7455cf
+        );
+}
+
+.nivel-header h2{
+    margin:3px 0 4px;
+    color:#4f4973;
+    font-size:
+        clamp(
+            32px,
+            5vw,
+            47px
+        );
+}
+
+.nivel-header p{
+    margin:0;
+    color:#706b88;
+    font-family:Arial,sans-serif;
+    font-size:15px;
+    line-height:1.4;
+}
+
+.secundaria .nivel-header{
+    background:rgba(6,20,51,.82);
+    border-color:rgba(77,233,255,.28);
+    box-shadow:0 0 25px rgba(77,233,255,.08);
+}
+
+.secundaria .nivel-header h2{
+    color:#e9fbff;
+}
+
+.secundaria .nivel-header p{
+    color:#9acbd6;
+}
+
+
+/* =====================================================
+   TARJETAS
+===================================================== */
+
+.grid{
+    display:grid;
+    grid-template-columns:
+        repeat(
+            3,
+            1fr
+        );
+    gap:22px;
+}
+
+.grid.cuatro{
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0,1fr)
+        );
+    max-width:900px;
+    margin:auto;
+}
+
+
+.grid.dos{
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 430px)
+        );
+    justify-content:center;
+}
+
+.grid.uno{
+    grid-template-columns:
+        minmax(
+            300px,
+            470px
+        );
+    justify-content:center;
+}
+
+.tarjeta{
+    min-height:340px;
+    padding:24px;
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:space-between;
+    text-align:center;
+    border-radius:32px;
+    border:5px solid rgba(255,255,255,.92);
+    background:rgba(255,255,255,.90);
+    box-shadow:
+        0 10px 0 var(--sombra),
+        0 19px 32px rgba(35,35,75,.19);
+    transition:
+        transform .23s ease,
+        box-shadow .23s ease;
+}
+
+.tarjeta:hover{
+    transform:
+        translateY(-9px)
+        scale(1.025);
+    box-shadow:
+        0 12px 0 var(--sombra),
+        0 25px 38px rgba(30,30,75,.24);
+}
+
+.tarjeta::before{
+    content:"";
+    position:absolute;
+    width:150px;
+    height:150px;
+    right:-55px;
+    top:-55px;
+    border-radius:50%;
+    background:var(--acento);
+    opacity:.15;
+}
+
+.tarjeta::after{
+    content:"";
+    position:absolute;
+    width:85px;
+    height:85px;
+    left:-28px;
+    bottom:-28px;
+    border-radius:50%;
+    background:var(--acento);
+    opacity:.11;
+}
+
+.icono{
+    width:116px;
+    height:116px;
+    margin-bottom:8px;
+    position:relative;
+    z-index:3;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:28px;
+    background:
+        linear-gradient(
+            145deg,
+            #ffffff,
+            rgba(255,255,255,.65)
+        );
+    border:4px solid rgba(255,255,255,.93);
+    box-shadow:
+        inset 0 -6px 0 rgba(60,50,100,.06),
+        0 8px 15px rgba(50,45,90,.1);
+    font-size:68px;
+    animation:icono 2.5s ease-in-out infinite;
+}
+
+@keyframes icono{
+    0%,
+    100%{
+        transform:
+            translateY(0)
+            rotate(-3deg);
+    }
+
+    50%{
+        transform:
+            translateY(-8px)
+            rotate(3deg);
+    }
+}
+
+.tarjeta-info{
+    position:relative;
+    z-index:3;
+}
+
+.tag{
+    display:inline-block;
+    padding:5px 10px;
+    border-radius:999px;
+    color:var(--acento-oscuro);
+    background:var(--tag);
+    font-size:11px;
+    font-weight:bold;
+    letter-spacing:.7px;
+    text-transform:uppercase;
+}
+
+.tarjeta h3{
+    margin:8px 0 7px;
+    color:#4d486f;
+    font-size:26px;
+}
+
+.tarjeta p{
+    min-height:64px;
+    margin:0 0 17px;
+    color:#6c687e;
+    font-family:Arial,sans-serif;
+    font-size:14px;
+    line-height:1.45;
+}
+
+.boton{
+    display:inline-block;
+    padding:11px 20px;
+    border-radius:17px;
+    color:white;
+    text-decoration:none;
+    font-size:14px;
+    font-weight:bold;
+    border:2px solid white;
+    background:var(--boton);
+    box-shadow:0 5px 0 var(--boton-sombra);
+    transition:.15s;
+}
+
+.boton:hover{
+    transform:translateY(-3px);
+    filter:brightness(1.07);
+}
+
+
+/* =====================================================
+   COLORES INICIAL
+===================================================== */
+
+.cuy{
+    --acento:#67bd62;
+    --acento-oscuro:#3c8240;
+    --tag:#e2f5da;
+    --sombra:#69a65f;
+    --boton:#52ad60;
+    --boton-sombra:#397c43;
+}
+
+.abeja{
+    --acento:#ffc83f;
+    --acento-oscuro:#9d6810;
+    --tag:#fff2bb;
+    --sombra:#d69f31;
+    --boton:#eaa02b;
+    --boton-sombra:#a96817;
+}
+
+.submarina{
+    --acento:#29ade0;
+    --acento-oscuro:#17769d;
+    --tag:#d7f5ff;
+    --sombra:#3789b5;
+    --boton:#239fd1;
+    --boton-sombra:#17688e;
+}
+
+
+/* =====================================================
+   COLORES PRIMARIA
+===================================================== */
+
+.robot{
+    --acento:#5daeea;
+    --acento-oscuro:#3e70a0;
+    --tag:#dcefff;
+    --sombra:#638fc0;
+    --boton:#537fd8;
+    --boton-sombra:#3f5faa;
+}
+
+.scratch{
+    --acento:#ff9c3d;
+    --acento-oscuro:#a45a15;
+    --tag:#ffe8cc;
+    --sombra:#d57832;
+    --boton:#ef7d2f;
+    --boton-sombra:#ad5420;
+}
+
+.laberinto{
+    --acento:#8d68f0;
+    --acento-oscuro:#6246ad;
+    --tag:#eee6ff;
+    --sombra:#7659bd;
+    --boton:#7665da;
+    --boton-sombra:#5146a1;
+}
+
+.pixel{
+    --acento:#ff79a8;
+    --acento-oscuro:#a9476d;
+    --tag:#ffe2ee;
+    --sombra:#c95d86;
+    --boton:
+        linear-gradient(
+            135deg,
+            #ff709f,
+            #8d6be8
+        );
+    --boton-sombra:#7252a8;
+}
+
+
+/* =====================================================
+   SECUNDARIA
+===================================================== */
+
+.secundaria .tarjeta{
+    color:white;
+    border-color:rgba(126,230,255,.36);
+    background:
+        linear-gradient(
+            145deg,
+            rgba(9,30,66,.92),
+            rgba(21,25,75,.92)
+        );
+    box-shadow:
+        0 8px 0 var(--sombra),
+        0 0 25px rgba(77,233,255,.08),
+        0 20px 34px rgba(0,0,0,.30);
+}
+
+.secundaria .icono{
+    background:
+        linear-gradient(
+            145deg,
+            rgba(22,59,103,.93),
+            rgba(39,35,99,.93)
+        );
+    border-color:rgba(136,230,255,.38);
+    box-shadow:
+        inset 0 0 22px rgba(77,233,255,.08),
+        0 8px 18px rgba(0,0,0,.22);
+}
+
+.secundaria .tarjeta h3{
+    color:#e9fbff;
+}
+
+.secundaria .tarjeta p{
+    color:#a7cbd6;
+}
+
+.cyber{
+    --acento:#43e9ff;
+    --acento-oscuro:#67efff;
+    --tag:rgba(67,233,255,.12);
+    --sombra:#17657d;
+    --boton:
+        linear-gradient(
+            135deg,
+            #16a7c5,
+            #5458cf
+        );
+    --boton-sombra:#263c83;
+}
+
+
+/* =====================================================
+   TRANSICIONES ENTRE NIVELES
+===================================================== */
+
+.transicion{
+    height:150px;
+    position:relative;
+    z-index:6;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    text-align:center;
+    font-size:14px;
+    font-weight:bold;
+    text-shadow:0 3px 8px rgba(20,20,70,.28);
+}
+
+.transicion span{
+    padding:9px 17px;
+    border-radius:999px;
+    background:rgba(255,255,255,.16);
+    border:1px solid rgba(255,255,255,.3);
+    backdrop-filter:blur(6px);
+}
+
+
+/* =====================================================
+   PIE
+===================================================== */
+
+.pie{
+    min-height:38vh;
+    padding:70px 20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    z-index:5;
+    text-align:center;
+}
+
+.pie-box{
+    padding:21px 29px;
+    border-radius:24px;
+    background:rgba(6,20,51,.70);
+    border:1px solid rgba(77,233,255,.25);
+    backdrop-filter:blur(7px);
+    color:#d7f6ff;
+}
+
+.pie-box strong{
+    display:block;
+    margin-bottom:5px;
+    color:white;
+    font-size:21px;
+}
+
+.pie-box span{
+    color:#9ccbd7;
+    font-family:Arial,sans-serif;
+    font-size:13px;
+}
+
+
+/* =====================================================
+   ENTRADAS
+===================================================== */
+
+.revelar{
+    opacity:0;
+    transform:translateY(35px);
+    transition:
+        opacity .65s ease,
+        transform .65s ease;
+}
+
+.revelar.visible{
+    opacity:1;
+    transform:translateY(0);
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media(max-width:1000px){
+
+    .grid{
+        grid-template-columns:
+            repeat(
+                2,
+                1fr
+            );
+    }
+
+    .grid .tarjeta:last-child:nth-child(odd){
+        grid-column:1 / -1;
+        width:min(440px,100%);
+        justify-self:center;
+    }
+
+    .grid.cuatro{
+        grid-template-columns:
+            repeat(
+                2,
+                1fr
+            );
+    }
+
+    .navegacion{
+        right:8px;
+    }
+}
+
+
+@media(max-width:650px){
+
+    .portada{
+        min-height:82vh;
+        padding:45px 12px 60px;
+    }
+
+    .logo{
+        width:104px;
+        height:104px;
+        font-size:53px;
+    }
+
+    .portada h1{
+        font-size:42px;
+    }
+
+    .portada p{
+        font-size:15px;
+        padding:10px 16px;
+    }
+
+    .nivel{
+        min-height:auto;
+        padding:65px 12px 75px;
+    }
+
+    .nivel-header{
+        max-width:100%;
+        padding:16px 18px;
+        border-radius:22px;
+    }
+
+    .nivel-header h2{
+        font-size:31px;
+    }
+
+    .grid,
+    .grid.cuatro,
+    .grid.dos,
+    .grid.uno{
+        grid-template-columns:1fr;
+    }
+
+    .grid .tarjeta:last-child:nth-child(odd){
+        grid-column:auto;
+        width:100%;
+    }
+
+    .tarjeta{
+        min-height:315px;
+        padding:20px;
+        border-radius:27px;
+    }
+
+    .icono{
+        width:100px;
+        height:100px;
+        font-size:58px;
+    }
+
+    .tarjeta h3{
+        font-size:23px;
+    }
+
+    .navegacion{
+        top:auto;
+        right:50%;
+        bottom:12px;
+        transform:translateX(50%);
+        flex-direction:row;
+        background:rgba(20,28,70,.42);
+    }
+
+    .nav-btn::after{
+        display:none;
+    }
+
+    .inicial-juguete{
+        font-size:38px;
+    }
+
+    .arbol{
+        font-size:40px;
+    }
+}
+
+</style>
+
+</head>
+
+
+<body data-escenario="inicial">
+
+
+<!-- =====================================================
+     ESCENARIOS
+===================================================== -->
+
+<div class="escenarios">
+
+
+    <!-- INICIAL -->
+
+    <div class="escenario fondo-inicial">
+
+        <div class="decoracion inicial-juguete ij1">
+            🧸　🧱
+        </div>
+
+        <div class="decoracion inicial-juguete ij2">
+            🚂　⚽
+        </div>
+
+        <div class="decoracion globo">
+            🎈
+        </div>
+
+    </div>
+
+
+    <!-- PRIMARIA -->
+
+    <div class="escenario fondo-primaria">
+
+        <div class="decoracion nube nube1">
+            ☁️
+        </div>
+
+        <div class="decoracion nube nube2">
+            ☁️
+        </div>
+
+        <div class="decoracion arbol arbol1">
+            🌳
+        </div>
+
+        <div class="decoracion arbol arbol2">
+            🌻
+        </div>
+
+    </div>
+
+
+    <!-- SECUNDARIA -->
+
+    <div class="escenario fondo-secundaria">
+
+        <div class="decoracion cyber-simbolo cs1">
+            &lt;/&gt;
+        </div>
+
+        <div class="decoracion cyber-simbolo cs2">
+            0101
+        </div>
+
+        <div class="decoracion cyber-simbolo cs3">
+            { }
+        </div>
+
+        <div class="decoracion cyber-simbolo cs4">
+            #
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<!-- =====================================================
+     NAVEGACIÓN
+===================================================== -->
+
+<nav class="navegacion">
+
+
+    <button
+        class="nav-btn activo"
+        data-ir="inicial"
+        data-label="Inicial"
+        aria-label="Ir a Inicial">
+    </button>
+
+
+    <button
+        class="nav-btn"
+        data-ir="primaria"
+        data-label="Primaria"
+        aria-label="Ir a Primaria">
+    </button>
+
+
+    <button
+        class="nav-btn"
+        data-ir="secundaria"
+        data-label="Secundaria"
+        aria-label="Ir a Secundaria">
+    </button>
+
+
+</nav>
+
+
+<!-- =====================================================
+     PORTADA
+===================================================== -->
+
+<header class="portada">
+
+
+    <div class="portada-contenido">
+
+
+        <div class="logo">
+            ⏰
+        </div>
+
+
+        <h1>
+            Aventuras del Tiempo
+        </h1>
+
+
+        <p>
+            Elige una aventura y convierte cada minuto en una misión
+        </p>
+
+
+        <div class="bajar">
+
+            Comienza con Inicial
+
+            <span>
+                ↓
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+</header>
+
+
+<!-- =====================================================
+     INICIAL
+===================================================== -->
+
+<section
+    id="inicial"
+    class="nivel inicial"
+    data-escenario="inicial">
+
+
+    <div class="nivel-contenido">
+
+
+        <div class="nivel-header revelar">
+
+            <div class="edad">
+                NIVEL INICIAL
+            </div>
+
+            <h2>
+                🧸 Pequeñas Aventuras
+            </h2>
+
+            <p>
+                Historias visuales, coloridas y sencillas
+                para acompañar el tiempo de los más pequeños.
+            </p>
+
+        </div>
+
+
+        <div class="grid">
+
+
+            <!-- CUY -->
+
+            <article class="tarjeta cuy revelar">
+
+
+                <div class="icono">
+                    🐹
+                </div>
+
+
+                <div class="tarjeta-info">
+
+
+                    <div class="tag">
+                        Naturaleza
+                    </div>
+
+
+                    <h3>
+                        El viaje del Cuy
+                    </h3>
+
+
+                    <p>
+                        Acompaña al cuy durante su recorrido
+                        hasta encontrar su deliciosa alfalfa.
+                    </p>
+
+
+                    <a
+                        href="Cuy.html"
+                        class="boton">
+
+                        🌿 Comenzar
+
+                    </a>
+
+
+                </div>
+
+
+            </article>
+
+
+            <!-- ABEJA -->
+
+            <article class="tarjeta abeja revelar">
+
+
+                <div class="icono">
+                    🐝
+                </div>
+
+
+                <div class="tarjeta-info">
+
+
+                    <div class="tag">
+                        Jardín
+                    </div>
+
+
+                    <h3>
+                        Ruta de Bee-Bot
+                    </h3>
+
+
+                    <p>
+                        Recorre las flores, reúne polen
+                        y ayuda a Bee-Bot a regresar al panal.
+                    </p>
+
+
+                    <a
+                        href="abeja.html"
+                        class="boton">
+
+                        🌼 Entrar al jardín
+
+                    </a>
+
+
+                </div>
+
+
+            </article>
+
+
+            <!-- SUBMARINA -->
+
+            <article class="tarjeta submarina revelar">
+
+
+                <div class="icono">
+                    🐠
+                </div>
+
+
+                <div class="tarjeta-info">
+
+
+                    <div class="tag">
+                        Océano
+                    </div>
+
+
+                    <h3>
+                        Aventura Submarina
+                    </h3>
+
+
+                    <p>
+                        Desciende por el océano con el submarino
+                        y encuentra el tesoro del fondo marino.
+                    </p>
+
+
+                    <a
+                        href="aventura_submarina.html"
+                        class="boton">
+
+                        🌊 Explorar
+
+                    </a>
+
+
+                </div>
+
+
+            </article>
+
+
+        </div>
+
+
+    </div>
+
+
+</section>
+
+
+<div class="transicion">
+
+    <span>
+        🌈 Seguimos creciendo... ↓
+    </span>
+
+</div>
+
+
+<!-- =====================================================
+     PRIMARIA
+===================================================== -->
+
+<section
+    id="primaria"
+    class="nivel primaria"
+    data-escenario="primaria">
+
+
+    <div class="nivel-contenido">
+
+
+        <div class="nivel-header revelar">
+
+            <div class="edad">
+                NIVEL PRIMARIA
+            </div>
+
+            <h2>
+                🎒 Misiones y Desafíos
+            </h2>
+
+            <p>
+                Aventuras con tecnología, programación,
+                pensamiento computacional y creatividad.
+            </p>
+
+        </div>
+
+
+        <div class="grid">
+
+
+            <!-- ROBOT -->
+
+            <article class="tarjeta robot revelar">
+
+
+                <div class="icono">
+                    🤖
+                </div>
+
+
+                <div class="tarjeta-info">
+
+
+                    <div class="tag">
+                        Tecnología
+                    </div>
+
+
+                    <h3>
+                        Misión Robot
+                    </h3>
+
+
+                    <p>
+                        El robot cruza su laboratorio
+                        mientras busca su núcleo de energía.
+                    </p>
+
+
+                    <a
+                        href="robot.html"
+                        class="boton">
+
+                        ⚡ Iniciar misión
+
+                    </a>
+
+
+                </div>
+
+
+            </article>
+
+
+            <!-- SCRATCH -->
+
+            <article class="tarjeta scratch revelar">
+
+
+                <div class="icono">
+                    🐱
+                </div>
+
+
+                <div class="tarjeta-info">
+
+
+                    <div class="tag">
+                        Programación
+                    </div>
+
+
+                    <h3>
+                        Scratch Runner
+                    </h3>
+
+
+                    <p>
+                        El gatito corre, salta obstáculos
+                        y muestra una secuencia de bloques.
+                    </p>
+
+
+                    <a
+                        href="scratch_dino_gatito.html"
+                        class="boton">
+
+                        🧩 Programar
+
+                    </a>
+
+
+                </div>
+
+
+            </article>
+
+
+            <!-- LABERINTO -->
+
+            <article class="tarjeta laberinto revelar">
+
+
+                <div class="icono">
+                    🐶
+                </div>
+
+
+                <div class="tarjeta-info">
+
+
+                    <div class="tag">
+                        Algoritmos
+                    </div>
+
+
+                    <h3>
+                        Laberinto de Algoritmos
+                    </h3>
+
+
+                    <p>
+                        Ayuda al perrito a seguir
+                        una secuencia de instrucciones y llegar a la estrella.
+                    </p>
+
+
+                    <a
+                        href="laberinto_algoritmos_perrito_3_metas.html"
+                        class="boton">
+
+                        ⭐ Resolver laberinto
+
+                    </a>
+
+
+                </div>
+
+
+            </article>
+</div>
+
+
+    </div>
+
+
+</section>
+
+
+<div class="transicion">
+
+    <span>
+        💻 Entrando a la zona avanzada... ↓
+    </span>
+
+</div>
+
+
+<!-- =====================================================
+     SECUNDARIA
+===================================================== -->
+
+<section
+    id="secundaria"
+    class="nivel secundaria"
+    data-escenario="secundaria">
+
+
+    <div class="nivel-contenido">
+
+
+        <div class="nivel-header revelar">
+
+            <div class="edad">
+                NIVEL SECUNDARIA
+            </div>
+
+            <h2>
+                💻 Zona Tech
+            </h2>
+
+            <p>
+                Un entorno más moderno y tecnológico,
+                con desafíos digitales y creatividad visual.
+            </p>
+
+        </div>
+
+
+        <div class="grid dos">
+
+
+            <!-- CYBER -->
+
+            <article class="tarjeta cyber revelar">
+
+
+                <div class="icono">
+                    💻
+                </div>
+
+
+                <div class="tarjeta-info">
+
+
+                    <div class="tag">
+                        Cyber
+                    </div>
+
+
+                    <h3>
+                        Misión Cyber
+                    </h3>
+
+
+                    <p>
+                        Completa la misión mientras el sistema
+                        ejecuta procesos y avanza la cuenta regresiva.
+                    </p>
+
+
+                    <a
+                        href="cyber.html"
+                        class="boton">
+
+                        &gt;_ Entrar al sistema
+
+                    </a>
+
+
+                </div>
+
+
+            </article>
+
+
+            <!-- PIXEL ART -->
+<!-- PIXEL ART -->
+
+            <article class="tarjeta pixel revelar">
+
+
+                <div class="icono">
+                    🎨
+                </div>
+
+
+                <div class="tarjeta-info">
+
+
+                    <div class="tag">
+                        Creatividad digital
+                    </div>
+
+
+                    <h3>
+                        Lienzo Pixel Art
+                    </h3>
+
+
+                    <p>
+                        Explora una actividad visual basada
+                        en píxeles, patrones y creatividad digital.
+                    </p>
+
+
+                    <a
+                        href="Lienzo_Pixel_Art.html"
+                        class="boton">
+
+                        🟪 Abrir lienzo
+
+                    </a>
+
+
+                </div>
+
+
+            </article>
+
+
+
+        </div>
+
+
+    </div>
+
+
+</section>
+
+
+<!-- =====================================================
+     PIE
+===================================================== -->
+
+<footer class="pie">
+
+
+    <div class="pie-box">
+
+        <strong>
+            ⏰ Aventuras del Tiempo
+        </strong>
+
+        <span>
+            Inicial · Primaria · Secundaria
+        </span>
+
+    </div>
+
+
+</footer>
+
+
+<script>
+
+/* =====================================================
+   CAMBIAR ESCENARIO SEGÚN SCROLL
+===================================================== */
+
+const niveles =
+    document.querySelectorAll(
+        ".nivel"
+    );
+
+
+const botones =
+    document.querySelectorAll(
+        ".nav-btn"
+    );
+
+
+function activarEscenario(
+    nombre
+){
+
+    document.body.dataset.escenario =
+        nombre;
+
+
+    botones.forEach(
+        function(
+            boton
+        ){
+
+            boton.classList.toggle(
+                "activo",
+                boton.dataset.ir === nombre
+            );
+
+        }
+    );
+
+}
+
+
+const observadorNiveles =
+    new IntersectionObserver(
+
+        function(
+            entradas
+        ){
+
+            entradas.forEach(
+                function(
+                    entrada
+                ){
+
+                    if(
+                        entrada.isIntersecting
+                    ){
+
+                        activarEscenario(
+                            entrada.target.dataset.escenario
+                        );
+
+                    }
+
+                }
+            );
+
+        },
+
+        {
+            threshold:.30,
+            rootMargin:
+                "-16% 0px -44% 0px"
+        }
+
+    );
+
+
+niveles.forEach(
+    function(
+        nivel
+    ){
+
+        observadorNiveles.observe(
+            nivel
+        );
+
+    }
+);
+
+
+/* =====================================================
+   PORTADA SIEMPRE USA INICIAL
+===================================================== */
+
+const portada =
+    document.querySelector(
+        ".portada"
+    );
+
+
+const observadorPortada =
+    new IntersectionObserver(
+
+        function(
+            entradas
+        ){
+
+            entradas.forEach(
+                function(
+                    entrada
+                ){
+
+                    if(
+                        entrada.isIntersecting
+                    ){
+
+                        activarEscenario(
+                            "inicial"
+                        );
+
+                    }
+
+                }
+            );
+
+        },
+
+        {
+            threshold:.35
+        }
+
+    );
+
+
+observadorPortada.observe(
+    portada
+);
+
+
+/* =====================================================
+   BOTONES LATERALES
+===================================================== */
+
+botones.forEach(
+    function(
+        boton
+    ){
+
+        boton.addEventListener(
+            "click",
+            function(){
+
+                const destino =
+                    document.getElementById(
+                        boton.dataset.ir
+                    );
+
+
+                if(
+                    destino
+                ){
+
+                    destino.scrollIntoView(
+                        {
+                            behavior:"smooth",
+                            block:"start"
+                        }
+                    );
+
+                }
+
+            }
+        );
+
+    }
+);
+
+
+/* =====================================================
+   ANIMACIÓN DE TARJETAS
+===================================================== */
+
+const revelar =
+    document.querySelectorAll(
+        ".revelar"
+    );
+
+
+const observadorRevelar =
+    new IntersectionObserver(
+
+        function(
+            entradas
+        ){
+
+            entradas.forEach(
+                function(
+                    entrada
+                ){
+
+                    if(
+                        entrada.isIntersecting
+                    ){
+
+                        entrada.target
+                            .classList
+                            .add(
+                                "visible"
+                            );
+
+
+                        observadorRevelar
+                            .unobserve(
+                                entrada.target
+                            );
+
+                    }
+
+                }
+            );
+
+        },
+
+        {
+            threshold:.12
+        }
+
+    );
+
+
+revelar.forEach(
+    function(
+        elemento,
+        indice
+    ){
+
+        elemento.style.transitionDelay =
+            (
+                indice % 4
+            )
+            *
+            70
+            +
+            "ms";
+
+
+        observadorRevelar.observe(
+            elemento
+        );
+
+    }
+);
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Laberinto de Algoritmos</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --cielo1: #79d2ff;
+            --cielo2: #dff7ff;
+            --pasto1: #a7df85;
+            --pasto2: #67b75e;
+            --panel: #fffdfd;
+            --panel2: #f7fbff;
+            --texto: #4b5073;
+            --azul: #4f8cff;
+            --azul2: #66c7ff;
+            --verde: #4ccd7b;
+            --morado: #8c67f0;
+            --amarillo: #ffd75f;
+            --naranja: #ffaf49;
+            --rosa: #ff7ca8;
+            --sombra: #4d6b86;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            padding: 14px;
+            overflow-x: hidden;
+            font-family: "Arial Rounded MT Bold", "Comic Sans MS", Arial, sans-serif;
+            color: var(--texto);
+            background:
+                radial-gradient(circle at 14% 14%, rgba(255, 255, 255, .35), transparent 18%),
+                radial-gradient(circle at 84% 18%, rgba(255, 255, 255, .26), transparent 19%),
+                linear-gradient(180deg, var(--cielo1) 0%, var(--cielo2) 49%, var(--pasto1) 49%, var(--pasto2) 100%);
+        }
+
+        .capa-fondo {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .nube {
+            position: absolute;
+            left: -180px;
+            font-size: 70px;
+            opacity: .6;
+            animation: nube 26s linear infinite;
+        }
+
+        .nube.n1 { top: 7% }
+        .nube.n2 { top: 18%; animation-duration: 34s; animation-delay: 7s; font-size: 55px }
+        .nube.n3 { top: 30%; animation-duration: 30s; animation-delay: 12s; font-size: 48px }
+
+        @keyframes nube {
+            from { transform: translateX(0) }
+            to { transform: translateX(calc(100vw + 380px)) }
+        }
+
+        .colina {
+            position: absolute;
+            bottom: -3%;
+            border-radius: 50%;
+            background: rgba(76, 162, 75, .25);
+            filter: blur(2px);
+        }
+        .colina.c1 { left: -6%; width: 35vw; height: 18vw }
+        .colina.c2 { left: 24%; width: 30vw; height: 14vw; background: rgba(80, 168, 77, .32) }
+        .colina.c3 { right: -10%; width: 38vw; height: 17vw; background: rgba(88, 172, 76, .28) }
+
+        .patita {
+            position: absolute;
+            font-size: 34px;
+            opacity: .12;
+            color: #6d5bbf;
+            animation: patitaFlota 5s ease-in-out infinite alternate;
+        }
+        .patita.p1 { left: 5%; top: 16% }
+        .patita.p2 { right: 8%; top: 38%; animation-delay: 1s }
+        .patita.p3 { left: 10%; bottom: 16%; animation-delay: 2s }
+        .patita.p4 { right: 14%; bottom: 22%; animation-delay: 3s }
+
+        @keyframes patitaFlota {
+            from { transform: translateY(0) rotate(-6deg) }
+            to { transform: translateY(-16px) rotate(6deg) }
+        }
+
+        .app {
+            width: min(1380px, 98vw);
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+            padding: 18px 22px 24px;
+            border-radius: 34px;
+            background: rgba(255, 255, 255, .86);
+            border: 4px solid rgba(255, 255, 255, .9);
+            box-shadow: 0 25px 55px rgba(43, 74, 102, .22), inset 0 -7px 0 rgba(110, 150, 180, .06);
+            backdrop-filter: blur(9px);
+        }
+
+        .volver {
+            position: absolute;
+            left: 18px;
+            top: 18px;
+            display: inline-block;
+            text-decoration: none;
+            padding: 10px 16px;
+            border-radius: 14px;
+            color: white;
+            background: linear-gradient(135deg, #6f74ea, #4ea7f0);
+            border: 2px solid white;
+            box-shadow: 0 5px 0 #4852a9;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .cabecera {
+            text-align: center;
+            margin: 4px 0 15px;
+        }
+
+        h1 {
+            margin: 0 0 5px;
+            font-size: clamp(38px, 4.8vw, 60px);
+            color: #4b58a3;
+            text-shadow: 0 5px 0 #e7ecff;
+        }
+
+        .subtitulo {
+            color: #727895;
+            font-size: 16px;
+            max-width: 780px;
+            margin: 0 auto;
+            line-height: 1.45;
+        }
+
+        /* LAYOUT PRINCIPAL: 2 columnas */
+        .layout-principal {
+            display: grid;
+            grid-template-columns: minmax(340px, .48fr) minmax(420px, .52fr);
+            gap: 16px;
+            align-items: start;
+        }
+
+        .columna-info {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .reloj-card,
+        .pasos-card,
+        .tablero-card,
+        .controles-card {
+            border-radius: 26px;
+            background: linear-gradient(145deg, rgba(255, 255, 255, .98), rgba(244, 249, 255, .95));
+            border: 3px solid rgba(255, 255, 255, .95);
+            box-shadow: 0 12px 26px rgba(75, 95, 120, .14);
+        }
+
+        .reloj-card {
+            padding: 22px 18px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reloj-card::before {
+            content: "";
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            top: -80px;
+            right: -70px;
+            border-radius: 50%;
+            background: rgba(102, 199, 255, .14);
+        }
+
+        .reloj-card::after {
+            content: "";
+            position: absolute;
+            width: 130px;
+            height: 130px;
+            left: -30px;
+            bottom: -30px;
+            border-radius: 50%;
+            background: rgba(140, 103, 240, .12);
+        }
+
+        .estado-linea {
+            position: relative;
+            z-index: 2;
+            color: #6d63c9;
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .tiempo {
+            position: relative;
+            z-index: 2;
+            margin: 2px 0 4px;
+            font-size: clamp(80px, 8vw, 120px);
+            line-height: .95;
+            color: #4b58a3;
+            text-shadow: 0 6px 0 #e6ebff;
+        }
+
+        .mensaje {
+            position: relative;
+            z-index: 2;
+            min-height: 28px;
+            color: #ef8b2d;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .ultimos {
+            animation: alerta .45s infinite alternate;
+        }
+
+        @keyframes alerta {
+            from { color: #ef9530; transform: scale(1) }
+            to { color: #ef4f6a; transform: scale(1.05) }
+        }
+
+        .pasos-card {
+            padding: 18px 16px 16px;
+        }
+
+        .pasos-titulo {
+            margin: 0 0 12px;
+            text-align: center;
+            color: #5a638d;
+            font-size: 19px;
+        }
+
+        .pasos {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .paso {
+            min-width: 92px;
+            padding: 11px 10px;
+            border-radius: 16px;
+            background: white;
+            border: 2px solid #e1e6f0;
+            box-shadow: 0 5px 0 #d8ddea;
+            color: #76809a;
+            text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+            opacity: .72;
+            transition: .22s;
+        }
+
+        .paso b {
+            display: block;
+            margin-bottom: 3px;
+            font-size: 28px;
+        }
+
+        .paso.activo {
+            opacity: 1;
+            color: white;
+            transform: translateY(-4px) scale(1.04);
+            background: linear-gradient(135deg, #5ea8ff, #8d67f0);
+            border-color: white;
+            box-shadow: 0 7px 0 #5550aa, 0 12px 18px rgba(77, 95, 165, .16);
+        }
+
+        .paso.completo {
+            opacity: 1;
+            color: #3e714d;
+            background: #dcf8e5;
+            border-color: #c0ebcf;
+            box-shadow: 0 5px 0 #a8d8b8;
+        }
+
+        .tablero-card {
+            padding: 14px;
+        }
+
+        .escena-superior {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .titulo-mini {
+            color: #596393;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .mision-chip {
+            padding: 7px 13px;
+            border-radius: 999px;
+            color: #76511a;
+            background: #fff0b8;
+            border: 2px solid #ffe08a;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* Tablero más pequeño */
+        .tablero {
+            width: min(620px, 100%);
+            aspect-ratio: 8/6;
+            margin: 0 auto;
+            padding: 8px;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(6, 1fr);
+            gap: 5px;
+            border-radius: 24px;
+            background: linear-gradient(145deg, #76b5e9, #5e95d0);
+            border: 5px solid #4776af;
+            box-shadow: inset 0 0 18px rgba(35, 70, 115, .22);
+        }
+
+        .celda {
+            position: relative;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: linear-gradient(145deg, #f8fcff, #ebf3ff);
+            border: 2px solid #d5e4f3;
+        }
+
+        .celda::before {
+            content: "";
+            position: absolute;
+            inset: 6px;
+            border-radius: 9px;
+            background: rgba(255, 255, 255, .25);
+            opacity: .7;
+        }
+
+        .celda.camino {
+            background: linear-gradient(145deg, #fff3bc, #ffe07f);
+            border-color: #f0c95d;
+        }
+
+        .celda.inicio {
+            background: linear-gradient(145deg, #d7f6ff, #b6eaff);
+            border-color: #8cd3f0;
+        }
+
+        .celda.inicio::after {
+            content: "";
+            position: absolute;
+            font-size: 26px;
+        }
+
+        .celda.obstaculo {
+            background: linear-gradient(145deg, #8fd26c, #5fb45d);
+            border-color: #419144;
+        }
+
+        .celda.obstaculo::after {
+            content: "🌳";
+            position: absolute;
+            font-size: 28px;
+            z-index: 2;
+        }
+
+        .celda.meta {
+            background: linear-gradient(145deg, #fff4b0, #ffd556);
+            border-color: #ecb82f;
+        }
+
+        .celda.meta::after {
+            content: "⭐";
+            position: absolute;
+            font-size: 34px;
+            z-index: 3;
+            animation: estrella 1s ease-in-out infinite alternate;
+        }
+
+        @keyframes estrella {
+            from { transform: scale(1) rotate(-5deg) }
+            to { transform: scale(1.15) rotate(5deg) }
+        }
+
+        .explorador {
+            position: absolute;
+            inset: 5px;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            filter: drop-shadow(0 4px 3px rgba(0, 0, 0, .18));
+            animation: perrito .35s infinite alternate;
+        }
+
+        @keyframes perrito {
+            from { transform: translateY(0) }
+            to { transform: translateY(-4px) }
+        }
+
+        .estado-mini {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-top: 12px;
+            padding: 10px 14px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, .7);
+            border: 2px solid #e1e6f0;
+            flex-wrap: wrap;
+        }
+
+        .estado-mini-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #5a638d;
+        }
+
+        .estado-mini-item strong {
+            color: #4b58a3;
+        }
+
+        .estado-mini-item span {
+            color: #4d5480;
+            background: #f0f4ff;
+            padding: 3px 8px;
+            border-radius: 8px;
+        }
+
+        .progreso-zona {
+            margin-top: 10px;
+        }
+
+        .progreso-txt {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            color: #6f7592;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .barra {
+            height: 22px;
+            padding: 3px;
+            border-radius: 999px;
+            background: #ecf0f7;
+            border: 2px solid #dbe1ec;
+        }
+
+        .carga {
+            width: 0%;
+            height: 100%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #59a2ff, #8a68f0, #54cd86, #ffd75f);
+            transition: width 1s linear;
+        }
+
+        .controles-card {
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        .controles-top {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 9px;
+        }
+
+        .controles-top strong {
+            color: #5c6387;
+            font-size: 14px;
+        }
+
+        .controles-top input {
+            width: 120px;
+            padding: 10px;
+            border-radius: 14px;
+            border: 2px solid #d0d8e8;
+            background: white;
+            color: #4a5277;
+            text-align: center;
+            font: inherit;
+            font-size: 16px;
+            font-weight: bold;
+            outline: none;
+        }
+
+        .controles-top input:focus {
+            border-color: #7a6ce7;
+            box-shadow: 0 0 0 4px rgba(122, 108, 231, .12);
+        }
+
+        .controles-top input::placeholder {
+            color: #a8b0c4;
+            font-size: 13px;
+        }
+
+        .dp {
+            font-size: 26px;
+            font-weight: bold;
+            color: #6a63cf;
+        }
+
+        .botones {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
+        button {
+            border: none;
+            cursor: pointer;
+            font: inherit;
+            font-weight: bold;
+            transition: .16s;
+        }
+
+        button:hover { transform: translateY(-2px) }
+        button:active { transform: translateY(1px) }
+
+        .btn {
+            padding: 11px 18px;
+            border-radius: 14px;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .programar {
+            background: linear-gradient(135deg, #58a7ff, #736cf1);
+            box-shadow: 0 5px 0 #4f4faa;
+        }
+
+        .iniciar {
+            background: linear-gradient(135deg, #53d17f, #2eac64);
+            box-shadow: 0 5px 0 #25774a;
+        }
+
+        .pausar {
+            color: #654825;
+            background: linear-gradient(135deg, #ffd86a, #eda54a);
+            box-shadow: 0 5px 0 #b87832;
+        }
+
+        .reiniciar {
+            background: linear-gradient(135deg, #af89f1, #7e65d9);
+            box-shadow: 0 5px 0 #5943a8;
+        }
+
+        .sonido {
+            display: block;
+            margin: 12px auto 0;
+            padding: 9px 15px;
+            border-radius: 14px;
+            color: #626b8d;
+            background: #f2f5fb;
+            border: 1px solid #d8deea;
+        }
+
+        .sonido.off { opacity: .6; }
+
+        .final {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 60;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(67, 88, 120, .6);
+            backdrop-filter: blur(7px);
+        }
+
+        .final.activo {
+            display: flex;
+            animation: aparecer .35s ease;
+        }
+
+        @keyframes aparecer {
+            from { opacity: 0; transform: scale(.92) }
+            to { opacity: 1; transform: scale(1) }
+        }
+
+        .final-card {
+            width: min(520px, 92vw);
+            padding: 30px 26px;
+            text-align: center;
+            border-radius: 28px;
+            background: white;
+            border: 4px solid #fff3b0;
+            box-shadow: 0 25px 60px rgba(38, 56, 84, .26);
+        }
+
+        .final-icono {
+            font-size: 82px;
+            animation: celebra .55s infinite alternate;
+        }
+
+        @keyframes celebra {
+            from { transform: translateY(0) rotate(-4deg) }
+            to { transform: translateY(-12px) rotate(4deg) }
+        }
+
+        .final-card h2 {
+            margin: 8px 0 4px;
+            color: #4b58a3;
+            font-size: 42px;
+        }
+
+        .final-card p {
+            margin: 6px 0 12px;
+            color: #747b98;
+            line-height: 1.45;
+        }
+
+        .insignia {
+            display: inline-block;
+            padding: 9px 14px;
+            border-radius: 999px;
+            background: #fff2b2;
+            color: #7b5813;
+            font-weight: bold;
+        }
+
+        .nueva {
+            margin-top: 12px;
+            padding: 11px 18px;
+            border-radius: 14px;
+            color: white;
+            background: linear-gradient(135deg, #6c71ea, #4ea8f1);
+            border: 2px solid white;
+            box-shadow: 0 5px 0 #4953a8;
+        }
+
+        @media (min-width:900px) and (max-height:820px) {
+            .app { padding: 14px 20px 18px }
+            .cabecera { margin-bottom: 10px }
+            h1 { font-size: 42px }
+            .subtitulo { font-size: 14px }
+            .reloj-card { padding: 14px 16px }
+            .tiempo { font-size: 72px }
+            .tablero-card { padding: 10px }
+            .tablero { max-width: 560px }
+            .controles-card { padding: 11px }
+            .btn { padding: 9px 15px }
+        }
+
+        @media (max-width:1020px) {
+            .layout-principal { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width:650px) {
+            body { padding: 7px }
+            .app { padding: 15px 10px 18px; border-radius: 24px; }
+            .volver { position: relative; top: auto; left: auto; margin-bottom: 8px; }
+            h1 { font-size: 31px }
+            .subtitulo { font-size: 13px }
+            .tiempo { font-size: 64px }
+            .paso { min-width: 68px; padding: 7px 6px; font-size: 10px; }
+            .paso b { font-size: 20px }
+            .tablero { gap: 3px; padding: 5px; }
+            .celda { border-radius: 8px; }
+            .celda.obstaculo::after { font-size: 20px }
+            .celda.meta::after { font-size: 24px }
+            .celda.inicio::after { font-size: 20px }
+            .explorador { font-size: 28px }
+            .estado-mini { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="capa-fondo">
+        <div class="nube n1">☁️</div>
+        <div class="nube n2">☁️</div>
+        <div class="nube n3">☁️</div>
+
+        <div class="colina c1"></div>
+        <div class="colina c2"></div>
+        <div class="colina c3"></div>
+
+        <div class="patita p1">🐾</div>
+        <div class="patita p2"></div>
+        <div class="patita p3">🐾</div>
+        <div class="patita p4">🐾</div>
+    </div>
+
+    <div class="app">
+
+        <a href="index.html" class="volver">← Volver al menú</a>
+
+        <header class="cabecera">
+            <h1>🐶 Laberinto de Algoritmos</h1>
+            <div class="subtitulo">
+                Programa el tiempo y ayuda al perrito a seguir el algoritmo.
+                Cada vez que configures el cronómetro, la estrella cambiará a una de las <b>6 metas</b>.
+            </div>
+        </header>
+
+        <div class="layout-principal">
+
+            <!-- COLUMNA IZQUIERDA: Reloj + Pasos -->
+            <div class="columna-info">
+
+                <section class="reloj-card">
+                    <div class="estado-linea">MISIÓN EN ESPERA</div>
+                    <div id="tiempo" class="tiempo">00:00</div>
+                    <div id="mensaje" class="mensaje">Programa el tiempo de la aventura</div>
+                </section>
+
+                <section class="pasos-card">
+                    <h2 class="pasos-titulo">🧩 Secuencia del algoritmo</h2>
+                    <div id="pasos" class="pasos"></div>
+                </section>
+
+            </div>
+
+            <!-- COLUMNA DERECHA: Tablero (más pequeño) -->
+            <section class="tablero-card">
+
+                <div class="escena-superior">
+                    <div class="titulo-mini"> Recorrido del perrito</div>
+                    <div id="misionChip" class="mision-chip">Misión 1 de 6</div>
+                </div>
+
+                <div id="tablero" class="tablero"></div>
+
+                <div class="estado-mini">
+                    <div class="estado-mini-item">
+                        <strong>Paso:</strong>
+                        <span id="pasoTxt">0 / 0</span>
+                    </div>
+                    <div class="estado-mini-item">
+                        <strong>Posición:</strong>
+                        <span id="posicionTxt">Inicio</span>
+                    </div>
+                    <div class="estado-mini-item">
+                        <strong>Meta:</strong>
+                        <span id="metaTxt">⭐ Casilla</span>
+                    </div>
+                </div>
+
+                <div class="progreso-zona">
+                    <div class="progreso-txt">
+                        <span>🏠 Inicio</span>
+                        <span>Recorrido</span>
+                        <span>⭐ Meta</span>
+                    </div>
+
+                    <div class="barra">
+                        <div id="carga" class="carga"></div>
+                    </div>
+                </div>
+
+            </section>
+
+        </div>
+
+        <section class="controles-card">
+
+            <div class="controles-top">
+                <strong>️ Tiempo:</strong>
+
+                <input id="minutosInput" type="number" min="0" max="999" placeholder="Minutos">
+
+                <span class="dp">:</span>
+
+                <input id="segundosInput" type="number" min="0" max="59" placeholder="Segundos">
+
+                <button id="programarBtn" class="btn programar" type="button">
+                    ⚙️ Programar
+                </button>
+            </div>
+
+            <div class="botones">
+                <button id="iniciarBtn" class="btn iniciar" type="button">▶ Iniciar</button>
+                <button id="pausarBtn" class="btn pausar" type="button">⏸ Pausar</button>
+                <button id="reiniciarBtn" class="btn reiniciar" type="button">↻ Reiniciar</button>
+            </div>
+
+            <button id="sonidoBtn" class="sonido" type="button">
+                🔊 Sonido activado — últimos 10 segundos y final
+            </button>
+
+        </section>
+
+    </div>
+
+    <div id="final" class="final">
+        <div class="final-card">
+            <div class="final-icono">🐶⭐</div>
+            <h2>¡Meta alcanzada!</h2>
+            <p>
+                El perrito siguió correctamente el algoritmo
+                y encontró la estrella.
+            </p>
+            <div class="insignia">🏅 Maestro del Algoritmo</div>
+            <br>
+            <button id="cerrarFinalBtn" class="nueva" type="button">
+                🐾 Nueva misión
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const tiempoEl = document.getElementById("tiempo");
+        const mensajeEl = document.getElementById("mensaje");
+
+        const minutosInput = document.getElementById("minutosInput");
+        const segundosInput = document.getElementById("segundosInput");
+
+        const programarBtn = document.getElementById("programarBtn");
+        const iniciarBtn = document.getElementById("iniciarBtn");
+        const pausarBtn = document.getElementById("pausarBtn");
+        const reiniciarBtn = document.getElementById("reiniciarBtn");
+        const sonidoBtn = document.getElementById("sonidoBtn");
+
+        const tablero = document.getElementById("tablero");
+        const pasosContenedor = document.getElementById("pasos");
+        const pasoTxt = document.getElementById("pasoTxt");
+        const posicionTxt = document.getElementById("posicionTxt");
+        const metaTxt = document.getElementById("metaTxt");
+        const carga = document.getElementById("carga");
+        const misionChip = document.getElementById("misionChip");
+
+        const final = document.getElementById("final");
+        const cerrarFinalBtn = document.getElementById("cerrarFinalBtn");
+
+        let tiempoTotal = 0;
+        let tiempoRestante = 0;
+        let intervalo = null;
+        let ejecutando = false;
+        let sonidoActivado = true;
+        let audioContext = null;
+
+        const filas = 6;
+        const columnas = 8;
+
+        const misiones = [
+            { meta: [1, 5], ruta: [[0, 0], [0, 1], [0, 2], [1, 2], [2, 2], [2, 3], [2, 4], [1, 4], [1, 5]] },
+            { meta: [3, 5], ruta: [[0, 0], [0, 1], [1, 1], [2, 1], [2, 2], [2, 3], [2, 4], [2, 5], [3, 5]] },
+            { meta: [4, 2], ruta: [[0, 0], [0, 1], [1, 1], [2, 1], [2, 2], [3, 2], [4, 2]] },
+            { meta: [4, 6], ruta: [[0, 0], [0, 1], [0, 2], [1, 2], [2, 2], [2, 3], [2, 4], [2, 5], [3, 5], [4, 5], [4, 6]] },
+            { meta: [5, 4], ruta: [[0, 0], [1, 0], [1, 1], [2, 1], [2, 2], [2, 3], [3, 3], [4, 3], [5, 3], [5, 4]] },
+            { meta: [5, 7], ruta: [[0, 0], [1, 0], [1, 1], [2, 1], [2, 2], [2, 3], [2, 4], [2, 5], [3, 5], [4, 5], [5, 5], [5, 6], [5, 7]] }
+        ];
+
+        const obstaculos = new Set([
+            "0-4", "0-6", "0-7", "1-3", "1-6", "2-0", "2-6",
+            "3-1", "3-4", "3-6", "4-1", "4-4", "4-7", "5-1", "5-2"
+        ]);
+
+        let indiceMision = -1;
+        let ruta = misiones[0].ruta;
+        let metaActual = misiones[0].meta;
+        let explorador = null;
+        let pasosVisuales = [];
+
+        function activarAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioContext.state === "suspended") {
+                audioContext.resume();
+            }
+        }
+
+        function beepPaso() {
+            if (!sonidoActivado) return;
+            activarAudio();
+            const ahora = audioContext.currentTime;
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(420, ahora);
+            osc.frequency.exponentialRampToValueAtTime(580, ahora + 0.08);
+            gain.gain.setValueAtTime(0.05, ahora);
+            gain.gain.exponentialRampToValueAtTime(0.01, ahora + 0.1);
+            osc.connect(gain);
+            gain.connect(audioContext.destination);
+            osc.start();
+            osc.stop(ahora + 0.1);
+        }
+
+        function beepCuenta() {
+            if (!sonidoActivado) return;
+            activarAudio();
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.type = "square";
+            osc.frequency.value = 780;
+            gain.gain.setValueAtTime(0.10, audioContext.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.13);
+            osc.connect(gain);
+            gain.connect(audioContext.destination);
+            osc.start();
+            osc.stop(audioContext.currentTime + 0.13);
+        }
+
+        function beepFinal() {
+            if (!sonidoActivado) return;
+            activarAudio();
+            const ahora = audioContext.currentTime;
+            const notas = [
+                [523.25, 0, 0.15],
+                [659.25, 0.16, 0.15],
+                [783.99, 0.34, 0.18],
+                [1046.5, 0.55, 0.45]
+            ];
+            notas.forEach(function (n) {
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                osc.type = "triangle";
+                osc.frequency.setValueAtTime(n[0], ahora + n[1]);
+                gain.gain.setValueAtTime(0.12, ahora + n[1]);
+                gain.gain.exponentialRampToValueAtTime(0.01, ahora + n[1] + n[2]);
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+                osc.start(ahora + n[1]);
+                osc.stop(ahora + n[1] + n[2]);
+            });
+        }
+
+        function formatoTiempo(total) {
+            const m = Math.floor(total / 60);
+            const s = total % 60;
+            return String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
+        }
+
+        function obtenerDireccion(desde, hasta) {
+            const df = hasta[0] - desde[0];
+            const dc = hasta[1] - desde[1];
+            if (dc === 1) return { icono: "\u27A1\uFE0F", texto: "Avanzar" };
+            if (dc === -1) return { icono: "\u2B05\uFE0F", texto: "Izquierda" };
+            if (df === 1) return { icono: "\u2B07\uFE0F", texto: "Bajar" };
+            return { icono: "\u2B06\uFE0F", texto: "Subir" };
+        }
+
+        function crearPasos() {
+            pasosContenedor.innerHTML = "";
+            for (let i = 1; i < ruta.length; i++) {
+                const paso = document.createElement("div");
+                paso.className = "paso";
+                paso.dataset.paso = i - 1;
+                const dir = obtenerDireccion(ruta[i - 1], ruta[i]);
+                const esUltimo = i === ruta.length - 1;
+                paso.innerHTML = "<b>" + dir.icono + "</b>" + (esUltimo ? "Meta" : dir.texto);
+                pasosContenedor.appendChild(paso);
+            }
+            pasosVisuales = [...document.querySelectorAll(".paso")];
+        }
+
+        function crearTablero() {
+            tablero.innerHTML = "";
+            for (let fila = 0; fila < filas; fila++) {
+                for (let col = 0; col < columnas; col++) {
+                    const celda = document.createElement("div");
+                    celda.className = "celda";
+                    celda.dataset.fila = fila;
+                    celda.dataset.col = col;
+                    const clave = fila + "-" + col;
+
+                    if (fila === 0 && col === 0) celda.classList.add("inicio");
+                    if (obstaculos.has(clave)) celda.classList.add("obstaculo");
+                    if (ruta.some(p => p[0] === fila && p[1] === col)) celda.classList.add("camino");
+                    if (fila === metaActual[0] && col === metaActual[1]) celda.classList.add("meta");
+
+                    tablero.appendChild(celda);
+                }
+            }
+
+            explorador = document.createElement("div");
+            explorador.className = "explorador";
+            explorador.textContent = "\uD83D\uDC36";
+
+            metaTxt.textContent = "\u2B50 " + (metaActual[0] + 1) + "-" + (metaActual[1] + 1);
+            misionChip.textContent = "Misi\u00F3n " + (indiceMision + 1) + " de 6";
+            moverExplorador(0);
+        }
+
+        function obtenerCelda(fila, col) {
+            return tablero.querySelector('.celda[data-fila="' + fila + '"][data-col="' + col + '"]');
+        }
+
+        function moverExplorador(indice) {
+            const totalPasos = ruta.length - 1;
+            indice = Math.max(0, Math.min(totalPasos, indice));
+            const [fila, col] = ruta[indice];
+            const celda = obtenerCelda(fila, col);
+            if (celda) celda.appendChild(explorador);
+
+            pasoTxt.textContent = indice + " / " + totalPasos;
+            posicionTxt.textContent = indice === 0 ? "Inicio" : indice === totalPasos ? "Meta" : "Paso " + indice;
+
+            pasosVisuales.forEach(function (paso, i) {
+                paso.classList.remove("activo", "completo");
+                if (i < indice) paso.classList.add("completo");
+                if (i === indice && indice < totalPasos) paso.classList.add("activo");
+                if (indice === totalPasos) paso.classList.add("completo");
+            });
+        }
+
+        function siguienteMision() {
+            indiceMision = (indiceMision + 1) % misiones.length;
+            ruta = misiones[indiceMision].ruta;
+            metaActual = misiones[indiceMision].meta;
+            crearPasos();
+            crearTablero();
+        }
+
+        function actualizar() {
+            tiempoEl.textContent = formatoTiempo(tiempoRestante);
+
+            let progreso = 0;
+            if (tiempoTotal > 0) {
+                progreso = ((tiempoTotal - tiempoRestante) / tiempoTotal) * 100;
+                progreso = Math.max(0, Math.min(100, progreso));
+            }
+            carga.style.width = progreso + "%";
+
+            const totalPasos = ruta.length - 1;
+            const indiceRuta = Math.min(totalPasos, Math.floor((progreso / 100) * totalPasos + 0.0001));
+
+            const filaActual = explorador?.parentElement?.dataset?.fila;
+            const colActual = explorador?.parentElement?.dataset?.col;
+            const posicionAnterior = filaActual !== undefined && colActual !== undefined
+                ? Number(filaActual) * 10 + Number(colActual) : -1;
+
+            const objetivo = ruta[indiceRuta];
+            const posicionNueva = objetivo[0] * 10 + objetivo[1];
+
+            if (posicionNueva !== posicionAnterior) {
+                moverExplorador(indiceRuta);
+                if (ejecutando) beepPaso();
+            }
+
+            if (tiempoRestante <= 10 && tiempoRestante > 0) {
+                tiempoEl.classList.add("ultimos");
+                mensajeEl.textContent = "\u26A0\uFE0F \u00DAltimos " + tiempoRestante + " segundos!";
+                if (ejecutando) beepCuenta();
+            } else {
+                tiempoEl.classList.remove("ultimos");
+                if (ejecutando) mensajeEl.textContent = "\uD83D\uDC36 El perrito est\u00E1 siguiendo el algoritmo...";
+            }
+        }
+
+        function detener() {
+            if (intervalo) { clearInterval(intervalo); intervalo = null; }
+            ejecutando = false;
+        }
+
+        function programarTiempo() {
+            activarAudio();
+            detener();
+            let m = parseInt(minutosInput.value) || 0;
+            let s = parseInt(segundosInput.value) || 0;
+            m = Math.max(0, m);
+            s = Math.max(0, Math.min(59, s));
+            if (segundosInput.value !== "") segundosInput.value = s;
+            const nuevo = (m * 60) + s;
+            if (nuevo <= 0) { mensajeEl.textContent = "\u26A0\uFE0F Ingresa minutos o segundos."; return; }
+            tiempoTotal = nuevo;
+            tiempoRestante = nuevo;
+            siguienteMision();
+            carga.style.width = "0%";
+            final.classList.remove("activo");
+            mensajeEl.textContent = "\uD83D\uDC36 Ruta lista. Presiona Iniciar.";
+            actualizar();
+        }
+
+        function iniciar() {
+            activarAudio();
+            if (ejecutando) return;
+            if (tiempoTotal <= 0 || tiempoRestante <= 0) {
+                mensajeEl.textContent = "\u26A0\uFE0F Primero configura el tiempo.";
+                return;
+            }
+            ejecutando = true;
+            mensajeEl.textContent = "\uD83D\uDC36 El perrito comenz\u00F3 el recorrido...";
+            intervalo = setInterval(function () {
+                tiempoRestante--;
+                actualizar();
+                if (tiempoRestante <= 0) finalizar();
+            }, 1000);
+        }
+
+        function pausar() {
+            if (!ejecutando) return;
+            detener();
+            mensajeEl.textContent = "\u23F8 Recorrido pausado.";
+        }
+
+        function reiniciar() {
+            detener();
+            tiempoRestante = tiempoTotal;
+            final.classList.remove("activo");
+            carga.style.width = "0%";
+            if (tiempoTotal > 0) { crearPasos(); crearTablero(); }
+            mensajeEl.textContent = tiempoTotal > 0
+                ? "\uD83D\uDC36 Listo para buscar otra vez."
+                : "Programa el tiempo de la aventura";
+            actualizar();
+        }
+
+        function finalizar() {
+            detener();
+            tiempoRestante = 0;
+            moverExplorador(ruta.length - 1);
+            actualizar();
+            mensajeEl.textContent = "\u2B50 \u00A1El perrito encontr\u00F3 la estrella!";
+            beepFinal();
+            setTimeout(function () { final.classList.add("activo"); }, 700);
+        }
+
+        function cambiarSonido() {
+            sonidoActivado = !sonidoActivado;
+            sonidoBtn.textContent = sonidoActivado
+                ? "\uD83D\uDD0A Sonido activado \u2014 \u00FAltimos 10 segundos y final"
+                : "\uD83D\uDD07 Sonido desactivado";
+            sonidoBtn.classList.toggle("off", !sonidoActivado);
+        }
+
+        programarBtn.addEventListener("click", programarTiempo);
+        iniciarBtn.addEventListener("click", iniciar);
+        pausarBtn.addEventListener("click", pausar);
+        reiniciarBtn.addEventListener("click", reiniciar);
+        sonidoBtn.addEventListener("click", cambiarSonido);
+
+        cerrarFinalBtn.addEventListener("click", function () {
+            final.classList.remove("activo");
+            reiniciar();
+        });
+
+        minutosInput.addEventListener("keydown", function (e) { if (e.key === "Enter") programarTiempo(); });
+        segundosInput.addEventListener("keydown", function (e) { if (e.key === "Enter") programarTiempo(); });
+
+        siguienteMision();
+        tiempoEl.textContent = "00:00";
+        mensajeEl.textContent = "Programa el tiempo de la aventura";
+    </script>
+
+</body>
+
+</html>
