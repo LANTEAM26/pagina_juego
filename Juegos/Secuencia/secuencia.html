@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#7ec8f5">
+  <meta name="description" content="Juego de cartas para niños: ordena las historias de los cuentos clásicos.">
+  <title>El Orden de los Cuentos · Juego de cartas para niños</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="estilos.css">
+</head>
+
+<body>
+
+  <!-- ============================================================
+       ╔══════════════════════════════════════════════════════════╗
+       ║  📁  CARPETA "Recursos" · ARCHIVOS QUE DEBES SUBIR      ║
+       ╠══════════════════════════════════════════════════════════╣
+       ║                                                          ║
+       ║  🎬 VIDEO DE FONDO (en loop)                             ║
+       ║     · Recursos/fondo.mp4                                 ║
+       ║       → Video de fondo animado, se reproduce en loop     ║
+       ║       → Recomendado 1920×1080, formato MP4, sin audio    ║
+       ║     · Recursos/fondo.webm  (opcional, respaldo)          ║
+       ║                                                          ║
+       ║  🦉 MASCOTA                                              ║
+       ║     · Recursos/beebot.png                                ║
+       ║       → Búho cuentacuentos (PNG transparente, 500×500)   ║
+       ║                                                          ║
+       ║  🃏 CARTAS (6 por cuento · dentro de Recursos/)          ║
+       ║                                                          ║
+       ║  Caperucita Roja:                                        ║
+       ║     · Recursos/caperuza1.png                             ║
+       ║     · Recursos/caperuza2.png                             ║
+       ║     · Recursos/caperuza3.png                             ║
+       ║     · Recursos/caperuza4.png                             ║
+       ║     · Recursos/caperuza5.png                             ║
+       ║     · Recursos/caperuza6.png                             ║
+       ║                                                          ║
+       ║  Los Tres Cerditos:                                      ║
+       ║     · Recursos/tres1.png                                 ║
+       ║     · Recursos/tres2.png                                 ║
+       ║     · Recursos/tres3.png                                 ║
+       ║     · Recursos/tres4.png                                 ║
+       ║     · Recursos/tres5.png                                 ║
+       ║     · Recursos/tres6.png                                 ║
+       ║                                                          ║
+       ║  Ricitos de Oro:                                         ║
+       ║     · Recursos/ricito1.png                               ║
+       ║     · Recursos/ricito2.png                               ║
+       ║     · Recursos/ricito3.png                               ║
+       ║     · Recursos/ricito4.png                               ║
+       ║     · Recursos/ricito5.png                               ║
+       ║     · Recursos/ricito6.png                               ║
+       ║                                                          ║
+       ║  El Patito Feo:                                          ║
+       ║     · Recursos/patito1.png                               ║
+       ║     · Recursos/patito2.png                               ║
+       ║     · Recursos/patito3.png                               ║
+       ║     · Recursos/patito4.png                               ║
+       ║     · Recursos/patito5.png                               ║
+       ║     · Recursos/patito6.png                               ║
+       ║                                                          ║
+       ║  Hansel y Gretel:                                        ║
+       ║     · Recursos/hansel1.png                               ║
+       ║     · Recursos/hansel2.png                               ║
+       ║     · Recursos/hansel3.png                               ║
+       ║     · Recursos/hansel4.png                               ║
+       ║     · Recursos/hansel5.png                               ║
+       ║     · Recursos/hansel6.png                               ║
+       ║                                                          ║
+       ║  Pinocho:                                                ║
+       ║     · Recursos/pinocho1.png                              ║
+       ║     · Recursos/pinocho2.png                              ║
+       ║     · Recursos/pinocho3.png                              ║
+       ║     · Recursos/pinocho4.png                              ║
+       ║     · Recursos/pinocho5.png                              ║
+       ║     · Recursos/pinocho6.png                              ║
+       ║                                                          ║
+       ║  📐 TAMAÑO SUGERIDO DE CARTAS: 400×400 px (PNG)          ║
+       ║  📐 TAMAÑO SUGERIDO DE VIDEO:  1920×1080 px (MP4)        ║
+       ║  📐 TAMAÑO SUGERIDO DE BÚHO:   500×500 px (PNG)          ║
+       ╚══════════════════════════════════════════════════════════╝
+       ============================================================ -->
+
+
+  <!-- ============================================================
+       FONDO DEL JUEGO · Video en loop
+       🎬 El video se reproduce automáticamente, en silencio y en loop
+       📁 Ubicación: Recursos/fondo.mp4
+       ============================================================ -->
+  <div class="fondo" aria-hidden="true">
+    <!-- Video de fondo -->
+    <video
+      class="fondo__video"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+      poster=""
+    >
+      <source src="Recursos/fondo.mp4" type="video/mp4">
+      <source src="Recursos/fondo.webm" type="video/webm">
+    </video>
+
+    <!-- Velo decorativo encima (da ambiente de cuento) -->
+    <div class="fondo__velo"></div>
+
+    <!-- Nubes flotantes (decoración opcional encima del video) -->
+    <span class="fondo__nube fondo__nube--1">☁️</span>
+    <span class="fondo__nube fondo__nube--2">☁️</span>
+    <span class="fondo__nube fondo__nube--3">☁️</span>
+
+    <!-- Pájaros -->
+    <span class="fondo__pajaro fondo__pajaro--1">🕊️</span>
+    <span class="fondo__pajaro fondo__pajaro--2">🕊️</span>
+
+    <!-- Destellos -->
+    <span class="fondo__estrella fondo__estrella--1">✦</span>
+    <span class="fondo__estrella fondo__estrella--2">✦</span>
+    <span class="fondo__estrella fondo__estrella--3">✧</span>
+  </div>
+
+
+  <!-- ============================================================
+       CONTROLES GLOBALES FLOTANTES (arriba a la derecha)
+       ============================================================ -->
+  <div class="controles-globales" aria-label="Controles del juego">
+    <button id="btn-sonido" class="btn-flotante" aria-label="Activar o desactivar sonido" title="Sonido">
+      <span class="btn-flotante__icono" id="icono-sonido">🔊</span>
+    </button>
+    <button id="btn-pantalla-completa" class="btn-flotante" aria-label="Pantalla completa" title="Pantalla completa">
+      <span class="btn-flotante__icono">⛶</span>
+    </button>
+    <button id="btn-ayuda-rapida" class="btn-flotante" aria-label="Ayuda rápida" title="Ayuda rápida">
+      <span class="btn-flotante__icono">❓</span>
+    </button>
+  </div>
+
+  <!-- Toasts -->
+  <div id="toasts" class="toasts" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Confeti -->
+  <div id="confeti" class="confeti" aria-hidden="true"></div>
+
+  <!-- Modal -->
+  <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-titulo" hidden>
+    <div class="modal__fondo" data-cerrar-modal></div>
+    <div class="modal__caja">
+      <div class="modal__emoji" id="modal-emoji">❓</div>
+      <h3 class="modal__titulo" id="modal-titulo">Título</h3>
+      <p class="modal__texto" id="modal-texto">Mensaje</p>
+      <div class="modal__acciones" id="modal-acciones">
+        <button class="btn btn--secundario" data-cerrar-modal>Cancelar</button>
+        <button class="btn btn--principal" id="modal-confirmar">Aceptar</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       APP
+       ============================================================ -->
+  <main id="app" class="app">
+
+    <!-- ==========================================================
+         PANTALLA 1 · PORTADA
+         ========================================================== -->
+    <section id="pantalla-inicio" class="pantalla pantalla--activa" data-pantalla="inicio">
+
+      <div class="inicio__contenido">
+        <p class="inicio__etiqueta">✨ Juego de cartas para niños ✨</p>
+
+        <h1 class="inicio__titulo">
+          <span class="inicio__titulo-linea inicio__titulo-linea--arriba">El Orden</span>
+          <span class="inicio__titulo-linea inicio__titulo-linea--abajo">de los Cuentos</span>
+        </h1>
+
+        <p class="inicio__subtitulo">
+          Ordena las cartas y vuelve a contar la historia como debe ser…
+          ¡sin que se escape ningún detalle!
+        </p>
+
+        <div class="inicio__acciones">
+          <button id="btn-jugar" class="btn btn--principal btn--xl" data-ir="seleccion">
+            ▶ ¡A JUGAR!
+          </button>
+          <button class="btn btn--secundario btn--lg" data-ir="instrucciones">
+            📖 ¿Cómo se juega?
+          </button>
+        </div>
+
+        <div class="inicio__stats" aria-label="Tus estadísticas">
+          <div class="stat">
+            <span class="stat__emoji">⭐</span>
+            <span class="stat__valor" id="stats-estrellas">0</span>
+            <span class="stat__label">Estrellas</span>
+          </div>
+          <div class="stat__sep" aria-hidden="true"></div>
+          <div class="stat">
+            <span class="stat__emoji">📚</span>
+            <span class="stat__valor" id="stats-cuentos">0/6</span>
+            <span class="stat__label">Cuentos</span>
+          </div>
+          <div class="stat__sep" aria-hidden="true"></div>
+          <div class="stat">
+            <span class="stat__emoji">🏆</span>
+            <span class="stat__valor" id="stats-logros">0/9</span>
+            <span class="stat__label">Logros</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================
+           MASCOTA · Beebot
+           📁 Imagen: Recursos/beebot.png
+           Si el archivo no existe, se muestra el emoji 🦉
+           ============================================ -->
+      <div class="inicio__mascota" aria-hidden="true">
+
+        <div class="mascota__escena">
+          <div class="mascota__halo"></div>
+
+          <!-- Imagen del búho (reemplazable) -->
+          <img
+            class="mascota__img"
+            src="Recursos/beebot.png"
+            alt="Beebot, el búho cuentacuentos"
+            onerror="this.classList.add('mascota__img--error')"
+          >
+          <!-- Fallback emoji si no hay imagen -->
+          <span class="mascota__emoji mascota__emoji--fallback">🦉</span>
+
+          <div class="mascota__libro">📖</div>
+          <span class="mascota__chispa mascota__chispa--1">✨</span>
+          <span class="mascota__chispa mascota__chispa--2">✨</span>
+          <span class="mascota__chispa mascota__chispa--3">✨</span>
+        </div>
+
+        <!-- Burbuja de diálogo (al lado del búho, alineada a la izquierda) -->
+        <div class="mascota__burbuja">
+          ¡Hola! Soy <strong>Beebot</strong>, tu amigo cuentacuentos 🦉
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==========================================================
+         PANTALLA 2 · INSTRUCCIONES
+         ========================================================== -->
+    <section id="pantalla-instrucciones" class="pantalla" data-pantalla="instrucciones">
+
+      <header class="cabecera">
+        <button class="btn btn--icono" data-ir="inicio" aria-label="Volver al inicio">⬅</button>
+        <h2 class="cabecera__titulo">¿Cómo se juega?</h2>
+        <span class="cabecera__hueco" aria-hidden="true"></span>
+      </header>
+
+      <div class="pasos">
+        <article class="paso paso--1">
+          <span class="paso__numero">1</span>
+          <span class="paso__emoji">📚</span>
+          <h3 class="paso__titulo">Elige un cuento</h3>
+          <p class="paso__texto">Hay 6 cuentos mágicos esperando por ti.</p>
+        </article>
+        <article class="paso paso--2">
+          <span class="paso__numero">2</span>
+          <span class="paso__emoji">🃏</span>
+          <h3 class="paso__titulo">Mira tus cartas</h3>
+          <p class="paso__texto">Cada carta tiene un dibujo y un trocito de la historia.</p>
+        </article>
+        <article class="paso paso--3">
+          <span class="paso__numero">3</span>
+          <span class="paso__emoji">👉</span>
+          <h3 class="paso__titulo">Ordena la historia</h3>
+          <p class="paso__texto">Toca una carta para colocarla, o arrástrala hasta el hueco que quieras.</p>
+        </article>
+        <article class="paso paso--4">
+          <span class="paso__numero">4</span>
+          <span class="paso__emoji">⭐</span>
+          <h3 class="paso__titulo">¡Gana estrellas!</h3>
+          <p class="paso__texto">Si aciertas todas, ¡te llevas hasta 3 estrellas y confeti!</p>
+        </article>
+      </div>
+
+      <aside class="consejos">
+        <h3 class="consejos__titulo">💡 Trucos para pequeños cuentacuentos</h3>
+        <ul class="consejos__lista">
+          <li><strong>Toca</strong> una carta y se colocará en el primer hueco libre.</li>
+          <li>También puedes <strong>arrastrarla</strong> hasta el hueco que tú quieras.</li>
+          <li>Toca una carta ya colocada para devolverla al mazo.</li>
+          <li>Usa <strong>↩️ Deshacer</strong> para quitar la última carta colocada.</li>
+          <li>Usa <strong>💡 Pista</strong> si te atascas… ¡pero gasta estrellas!</li>
+        </ul>
+      </aside>
+
+      <div class="instrucciones__acciones">
+        <button class="btn btn--principal btn--xl" data-ir="seleccion">
+          ¡Entendido! 🎉
+        </button>
+      </div>
+    </section>
+
+
+    <!-- ==========================================================
+         PANTALLA 3 · SELECCIÓN DE CUENTO
+         ========================================================== -->
+    <section id="pantalla-seleccion" class="pantalla" data-pantalla="seleccion">
+
+      <header class="cabecera">
+        <button class="btn btn--icono" data-ir="inicio" aria-label="Volver al inicio">⬅</button>
+        <h2 class="cabecera__titulo">Elige tu cuento</h2>
+        <span class="cabecera__hueco" aria-hidden="true"></span>
+      </header>
+
+      <p class="seleccion__ayuda">Toca un cuento para empezar a ordenar sus cartas 👇</p>
+
+      <div class="seleccion__filtros" role="tablist" aria-label="Filtrar por dificultad">
+        <button class="filtro filtro--activo" data-filtro="todos" role="tab" aria-selected="true">Todos</button>
+        <button class="filtro" data-filtro="facil" role="tab" aria-selected="false">⭐ Fáciles</button>
+        <button class="filtro" data-filtro="medio" role="tab" aria-selected="false">⭐⭐ Medios</button>
+      </div>
+
+      <div class="cuentos" id="grid-cuentos">
+
+        <button class="cuento cuento--rojo" data-cuento="caperucita" data-dificultad="facil">
+          <span class="cuento__cinta">6 cartas</span>
+          <span class="cuento__estrellas-mini" data-cuento-mini="caperucita">☆☆☆</span>
+          <span class="cuento__emoji">🧺</span>
+          <h3 class="cuento__nombre">Caperucita Roja</h3>
+          <span class="cuento__dificultad">⭐ Fácil</span>
+          <span class="cuento__descripcion">Un paseo por el bosque… ¡cuidado con el lobo!</span>
+          <span class="cuento__btn">Jugar ▶</span>
+        </button>
+
+        <button class="cuento cuento--verde" data-cuento="tres_cerditos" data-dificultad="facil">
+          <span class="cuento__cinta">6 cartas</span>
+          <span class="cuento__estrellas-mini" data-cuento-mini="tres_cerditos">☆☆☆</span>
+          <span class="cuento__emoji">🐷</span>
+          <h3 class="cuento__nombre">Los Tres Cerditos</h3>
+          <span class="cuento__dificultad">⭐ Fácil</span>
+          <span class="cuento__descripcion">Paja, madera y ladrillos contra el lobo soplador.</span>
+          <span class="cuento__btn">Jugar ▶</span>
+        </button>
+
+        <button class="cuento cuento--dorado" data-cuento="ricitos" data-dificultad="medio">
+          <span class="cuento__cinta">6 cartas</span>
+          <span class="cuento__estrellas-mini" data-cuento-mini="ricitos">☆☆☆</span>
+          <span class="cuento__emoji">🐻</span>
+          <h3 class="cuento__nombre">Ricitos de Oro</h3>
+          <span class="cuento__dificultad">⭐⭐ Medio</span>
+          <span class="cuento__descripcion">Sopas, sillas y camas… ¡de la familia oso!</span>
+          <span class="cuento__btn">Jugar ▶</span>
+        </button>
+
+        <button class="cuento cuento--azul" data-cuento="patito" data-dificultad="facil">
+          <span class="cuento__cinta">6 cartas</span>
+          <span class="cuento__estrellas-mini" data-cuento-mini="patito">☆☆☆</span>
+          <span class="cuento__emoji">🦢</span>
+          <h3 class="cuento__nombre">El Patito Feo</h3>
+          <span class="cuento__dificultad">⭐ Fácil</span>
+          <span class="cuento__descripcion">Un patito distinto que se convierte en cisne.</span>
+          <span class="cuento__btn">Jugar ▶</span>
+        </button>
+
+        <button class="cuento cuento--morado" data-cuento="hansel" data-dificultad="medio">
+          <span class="cuento__cinta">6 cartas</span>
+          <span class="cuento__estrellas-mini" data-cuento-mini="hansel">☆☆☆</span>
+          <span class="cuento__emoji">🍬</span>
+          <h3 class="cuento__nombre">Hansel y Gretel</h3>
+          <span class="cuento__dificultad">⭐⭐ Medio</span>
+          <span class="cuento__descripcion">Una casita de chocolate y una bruja muy malvada.</span>
+          <span class="cuento__btn">Jugar ▶</span>
+        </button>
+
+        <button class="cuento cuento--madera" data-cuento="pinocho" data-dificultad="medio">
+          <span class="cuento__cinta">6 cartas</span>
+          <span class="cuento__estrellas-mini" data-cuento-mini="pinocho">☆☆☆</span>
+          <span class="cuento__emoji">🪵</span>
+          <h3 class="cuento__nombre">Pinocho</h3>
+          <span class="cuento__dificultad">⭐⭐ Medio</span>
+          <span class="cuento__descripcion">Un muñeco de madera con la nariz muy traviesa.</span>
+          <span class="cuento__btn">Jugar ▶</span>
+        </button>
+
+      </div>
+    </section>
+
+
+    <!-- ==========================================================
+         PANTALLA 4 · JUEGO
+         ========================================================== -->
+    <section id="pantalla-juego" class="pantalla" data-pantalla="juego">
+
+      <header class="juego__cabecera">
+
+        <button id="btn-salir" class="btn btn--icono" data-ir="seleccion" aria-label="Salir del juego">⬅</button>
+
+        <div class="juego__info">
+          <h2 id="juego-titulo" class="juego__titulo">Caperucita Roja</h2>
+          <div class="juego__progreso">
+            <div class="juego__progreso-barra">
+              <div id="juego-progreso-fill" class="juego__progreso-fill" style="width: 0%"></div>
+            </div>
+            <p id="juego-progreso" class="juego__progreso-texto">0 de 6 cartas colocadas</p>
+          </div>
+        </div>
+
+        <div class="juego__marcador">
+          <div class="marcador__item marcador__item--tiempo" title="Tiempo">
+            <span class="marcador__emoji">⏱️</span>
+            <span id="juego-tiempo" class="marcador__valor">00:00</span>
+          </div>
+          <div class="marcador__item marcador__item--intentos" title="Intentos">
+            <span class="marcador__emoji">🔄</span>
+            <span id="juego-intentos" class="marcador__valor">0</span>
+          </div>
+          <div class="marcador__item marcador__item--pistas" title="Pistas restantes">
+            <span class="marcador__emoji">💡</span>
+            <span id="juego-pistas" class="marcador__valor">3</span>
+          </div>
+          <div class="marcador__item marcador__item--estrellas" title="Estrellas">
+            <span id="juego-estrellas" class="juego__estrellas">☆☆☆</span>
+          </div>
+        </div>
+
+      </header>
+
+      <div class="juego__cuerpo">
+
+        <!-- LÍNEA DEL CUENTO -->
+        <section class="zona zona--linea" aria-label="Línea del cuento">
+          <span class="zona__decoracion zona__decoracion--tl" aria-hidden="true">📜</span>
+          <span class="zona__decoracion zona__decoracion--tr" aria-hidden="true">✨</span>
+
+          <div class="zona__cabecera">
+            <h3 class="zona__titulo">
+              <span class="zona__titulo-emoji">📜</span>
+              Línea del cuento
+            </h3>
+            <span class="zona__contador" id="linea-contador">0/6</span>
+          </div>
+
+          <div id="linea" class="linea linea--horizontal">
+            <!-- El JS colocará aquí los huecos numerados -->
+          </div>
+        </section>
+
+        <!-- TUS CARTAS -->
+        <section class="zona zona--mazo" aria-label="Mazo de cartas">
+          <span class="zona__decoracion zona__decoracion--tl" aria-hidden="true">🃏</span>
+          <span class="zona__decoracion zona__decoracion--tr" aria-hidden="true">⭐</span>
+
+          <div class="zona__cabecera">
+            <h3 class="zona__titulo">
+              <span class="zona__titulo-emoji">🃏</span>
+              Tus cartas
+            </h3>
+            <span class="zona__contador" id="mazo-contador">6 cartas</span>
+          </div>
+
+          <div id="mazo" class="mazo mazo--horizontal">
+            <!-- El JS colocará aquí las cartas desordenadas -->
+          </div>
+        </section>
+
+      </div>
+
+      <!-- BOTONES DEL JUEGO -->
+      <footer class="juego__acciones">
+
+        <button id="btn-undo" class="btn btn--accion" title="Quitar la última carta colocada (Ctrl+Z)">
+          <span class="btn__icono">↩️</span>
+          <span class="btn__texto">Deshacer</span>
+        </button>
+
+        <button id="btn-reiniciar" class="btn btn--accion" title="Reiniciar el cuento">
+          <span class="btn__icono">🔄</span>
+          <span class="btn__texto">Reiniciar</span>
+        </button>
+
+        <button id="btn-pista" class="btn btn--accion" title="Colocar una carta correcta (H)">
+          <span class="btn__icono">💡</span>
+          <span class="btn__texto">Pista</span>
+        </button>
+
+        <button id="btn-comprobar" class="btn btn--principal btn--accion-principal" title="Comprobar el orden">
+          <span class="btn__icono">✅</span>
+          <span class="btn__texto">¡Comprobar!</span>
+        </button>
+
+      </footer>
+
+      <div id="mensaje" class="mensaje" role="status" aria-live="polite"></div>
+    </section>
+
+
+    <!-- ==========================================================
+         PANTALLA 5 · RESULTADO FINAL
+         ========================================================== -->
+    <section id="pantalla-final" class="pantalla" data-pantalla="final">
+
+      <div class="final__tarjeta">
+
+        <div id="final-emoji" class="final__emoji">🎉</div>
+        <h2 id="final-titulo" class="final__titulo">¡Muy bien!</h2>
+        <p id="final-mensaje" class="final__mensaje">¡Has ordenado el cuento perfectamente!</p>
+
+        <div id="final-estrellas" class="final__estrellas">⭐⭐⭐</div>
+
+        <div class="final__resumen">
+          <div class="resumen__item">
+            <span class="resumen__emoji">⏱️</span>
+            <span class="resumen__valor" id="final-tiempo">00:00</span>
+            <span class="resumen__label">Tiempo</span>
+          </div>
+          <div class="resumen__item">
+            <span class="resumen__emoji">🔄</span>
+            <span class="resumen__valor" id="final-intentos">0</span>
+            <span class="resumen__label">Intentos</span>
+          </div>
+          <div class="resumen__item">
+            <span class="resumen__emoji">💡</span>
+            <span class="resumen__valor" id="final-pistas">0</span>
+            <span class="resumen__label">Pistas</span>
+          </div>
+        </div>
+
+        <div class="final__logros" id="final-logros" aria-label="Logros desbloqueados"></div>
+
+        <div class="final__acciones">
+          <button id="btn-otra-vez" class="btn btn--secundario">🔄 Otra vez</button>
+          <button class="btn btn--principal" data-ir="seleccion">📚 Otro cuento</button>
+        </div>
+
+        <p class="final__frase">📖 «Cada historia, bien ordenada, se vuelve mágica.»</p>
+      </div>
+    </section>
+
+  </main>
+
+
+  <!-- ============================================================
+       PLANTILLAS
+       ============================================================ -->
+
+  <template id="plantilla-carta">
+    <article class="carta" draggable="true" tabindex="0" role="button">
+      <span class="carta__adorno" aria-hidden="true">✦</span>
+
+      <div class="carta__imagen-contenedor">
+        <img class="carta__imagen" src="" alt="" loading="lazy" draggable="false">
+        <span class="carta__emoji" aria-hidden="true"></span>
+      </div>
+
+      <p class="carta__texto"></p>
+      <span class="carta__asa" aria-hidden="true">⋮⋮</span>
+    </article>
+  </template>
+
+  <template id="plantilla-hueco">
+    <div class="hueco">
+      <span class="hueco__numero"></span>
+      <span class="hueco__pista">Suelta aquí la carta</span>
+    </div>
+  </template>
+
+  <template id="plantilla-toast">
+    <div class="toast" role="status">
+      <span class="toast__emoji">🏆</span>
+      <div class="toast__contenido">
+        <strong class="toast__titulo">¡Logro desbloqueado!</strong>
+        <span class="toast__texto">Texto del logro</span>
+      </div>
+    </div>
+  </template>
+
+
+  <!-- ============================================================
+       DATOS DE LOS CUENTOS
+       📁 Todas las imágenes van con el prefijo "Recursos/"
+       ============================================================ -->
+  <script id="datos-cuentos" type="application/json">
+  {
+    "caperucita": {
+      "titulo": "Caperucita Roja",
+      "emoji": "🧺",
+      "color": "rojo",
+      "cartas": [
+        { "emoji": "👩‍🍳", "imagen": "Recursos/caperuza1.png", "texto": "La mamá le da a Caperucita una cesta con pan y miel para su abuelita." },
+        { "emoji": "🌳",  "imagen": "Recursos/caperuza2.png", "texto": "Caperucita camina por el bosque y se encuentra con el lobo feroz." },
+        { "emoji": "🐺",  "imagen": "Recursos/caperuza3.png", "texto": "El lobo corre a la casa de la abuelita y se disfraza de ella." },
+        { "emoji": "👀",  "imagen": "Recursos/caperuza4.png", "texto": "Caperucita llega y nota que su abuelita tiene orejas y dientes muy grandes." },
+        { "emoji": "🪓",  "imagen": "Recursos/caperuza5.png", "texto": "Un leñador entra a la casa y ahuyenta al lobo para siempre." },
+        { "emoji": "🥰",  "imagen": "Recursos/caperuza6.png", "texto": "Caperucita y su abuelita comen juntas la cesta. ¡Todo termina bien!" }
+      ]
+    },
+
+    "tres_cerditos": {
+      "titulo": "Los Tres Cerditos",
+      "emoji": "🐷",
+      "color": "verde",
+      "cartas": [
+        { "emoji": "👋",  "imagen": "Recursos/tres1.png", "texto": "Tres cerditos salen de casa de su mamá para vivir solos." },
+        { "emoji": "🌾",  "imagen": "Recursos/tres2.png", "texto": "El primer cerdito construye una casa de paja muy rapidito." },
+        { "emoji": "🪵",  "imagen": "Recursos/tres3.png", "texto": "El segundo cerdito construye una casa de madera." },
+        { "emoji": "🧱",  "imagen": "Recursos/tres4.png", "texto": "El tercer cerdito trabaja mucho y hace una casa de ladrillos." },
+        { "emoji": "💨",  "imagen": "Recursos/tres5.png", "texto": "El lobo sopla y sopla y derriba las casas de paja y de madera." },
+        { "emoji": "🏠",  "imagen": "Recursos/tres6.png", "texto": "Los tres se refugian en la casa de ladrillos y el lobo no puede entrar." }
+      ]
+    },
+
+    "ricitos": {
+      "titulo": "Ricitos de Oro",
+      "emoji": "🐻",
+      "color": "dorado",
+      "cartas": [
+        { "emoji": "🌲",  "imagen": "Recursos/ricito1.png", "texto": "Ricitos de Oro pasea por el bosque y encuentra una casita." },
+        { "emoji": "🥣",  "imagen": "Recursos/ricito2.png", "texto": "Entra y prueba tres platos de sopa: el pequeño es el más rico." },
+        { "emoji": "🪑",  "imagen": "Recursos/ricito3.png", "texto": "Se sienta en tres sillas y rompe la más pequeña." },
+        { "emoji": "🛏️",  "imagen": "Recursos/ricito4.png", "texto": "Prueba tres camas y se queda dormida en la más pequeña." },
+        { "emoji": "🐻‍❄️", "imagen": "Recursos/ricito5.png", "texto": "Los tres osos vuelven a casa y encuentran a Ricitos de Oro." },
+        { "emoji": "🏃‍♀️", "imagen": "Recursos/ricito6.png", "texto": "Ricitos despierta, se asusta y corre a casa de su mamá." }
+      ]
+    },
+
+    "patito": {
+      "titulo": "El Patito Feo",
+      "emoji": "🦢",
+      "color": "azul",
+      "cartas": [
+        { "emoji": "🥚",  "imagen": "Recursos/patito1.png", "texto": "Mamá pato empolla sus huevos y nace un patito muy diferente." },
+        { "emoji": "😢",  "imagen": "Recursos/patito2.png", "texto": "Los otros patos se burlan de él porque es grande y gris." },
+        { "emoji": "🍂",  "imagen": "Recursos/patito3.png", "texto": "El patito triste se va del estanque y se queda solo." },
+        { "emoji": "❄️",  "imagen": "Recursos/patito4.png", "texto": "Pasa el invierno escondido, con mucho frío y sin amigos." },
+        { "emoji": "🌷",  "imagen": "Recursos/patito5.png", "texto": "Llega la primavera y el patito se mira en el agua del estanque." },
+        { "emoji": "✨",  "imagen": "Recursos/patito6.png", "texto": "¡Se había convertido en un hermoso cisne blanco!" }
+      ]
+    },
+
+    "hansel": {
+      "titulo": "Hansel y Gretel",
+      "emoji": "🍬",
+      "color": "morado",
+      "cartas": [
+        { "emoji": "🌫️",  "imagen": "Recursos/hansel1.png", "texto": "Hansel y Gretel se pierden en lo profundo del bosque." },
+        { "emoji": "🏠",   "imagen": "Recursos/hansel2.png", "texto": "Encuentran una casita hecha de chocolate y caramelos." },
+        { "emoji": "🧙‍♀️", "imagen": "Recursos/hansel3.png", "texto": "Una bruja los atrapa y encierra a Hansel en una jaula." },
+        { "emoji": "🔥",   "imagen": "Recursos/hansel4.png", "texto": "Gretel empuja a la bruja dentro del horno y escapan." },
+        { "emoji": "💎",   "imagen": "Recursos/hansel5.png", "texto": "Encuentran un tesoro escondido entre las cosas de la bruja." },
+        { "emoji": "🏡",   "imagen": "Recursos/hansel6.png", "texto": "Vuelven a casa con su papá y ya nunca pasan hambre." }
+      ]
+    },
+
+    "pinocho": {
+      "titulo": "Pinocho",
+      "emoji": "🪵",
+      "color": "madera",
+      "cartas": [
+        { "emoji": "🧓",  "imagen": "Recursos/pinocho1.png", "texto": "Geppetto, el carpintero, talla un muñeco de madera." },
+        { "emoji": "🧚",  "imagen": "Recursos/pinocho2.png", "texto": "Un hada mágica le da vida a Pinocho con su varita." },
+        { "emoji": "🎭",  "imagen": "Recursos/pinocho3.png", "texto": "Pinocho desobedece y en vez de ir al colegio se va al teatro." },
+        { "emoji": "👃",  "imagen": "Recursos/pinocho4.png", "texto": "Cada vez que dice una mentira, ¡le crece la nariz!" },
+        { "emoji": "🐋",  "imagen": "Recursos/pinocho5.png", "texto": "Busca a Geppetto en el mar y lo rescata de una ballena." },
+        { "emoji": "👦",  "imagen": "Recursos/pinocho6.png", "texto": "El hada lo premia y se convierte en un niño de verdad." }
+      ]
+    }
+  }
+  </script>
+
+  <script src="juego.js"></script>
+</body>
+</html>
