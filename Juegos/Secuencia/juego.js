@@ -1,1257 +1,624 @@
 /* ============================================================
-   EL ORDEN DE LOS CUENTOS · Lógica del juego
-   Versión final optimizada para pizarra digital
-   
-   Mecánicas principales:
-   · Click en carta del mazo → se coloca en el primer hueco vacío
-   · Click en carta de la línea → vuelve al mazo
-   · Drag & drop → colocar en hueco específico o mover
-   · Deshacer → quita SOLO la última carta colocada en la línea
-   · Imágenes de cartas con fallback automático al emoji
-   · Video de fondo con pausa automática al ocultar la pestaña
+   AVENTURA EDUCATIVA — SCRIPT DEL PORTAL INICIAL (BEEBOT)
+   ------------------------------------------------------------
+   Funciona con la estructura de beebot.html:
+     • Header primaveral con progreso y autohide
+     • BeeBot volando (animación ya en CSS)
+     • 5 secciones de juegos por categoría (.games-section)
+     • Tarjetas .game-card con data-category y data-difficulty
+     • Filtros .filter-btn[data-filter] con contadores dinámicos
+     • Estado vacío #gamesEmpty
+     • Reveal progresivo con IntersectionObserver
+
+   Todas las funciones son defensivas: si un elemento no existe,
+   el bloque se salta sin lanzar errores.
    ============================================================ */
 
-(function () {
-  'use strict';
+'use strict';
 
-  /* ============================================================
-     1. CONSTANTES
-     ============================================================ */
-  const DATOS = JSON.parse(document.getElementById('datos-cuentos').textContent);
-  const STORAGE_KEY = 'orden-cuentos-v4';
-  const MAX_PISTAS = 3;
-  const TOAST_DURACION = 3800;
+/* ============================================================
+   0. UTILIDADES
+   ============================================================ */
+const $  = (sel, ctx = document) => ctx.querySelector(sel);
+const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
 
-  /* ============================================================
-     2. LOGROS
-     ============================================================ */
-  const LOGROS_DEF = [
-    { id: 'primer_cuento', emoji: '📖', titulo: 'Primer cuento',       desc: 'Completa tu primer cuento.' },
-    { id: 'sin_pistas',    emoji: '🧠', titulo: 'Mente brillante',    desc: 'Completa un cuento sin usar pistas.' },
-    { id: 'perfecto',      emoji: '⭐', titulo: 'Perfecto',           desc: 'Consigue 3 estrellas en un cuento.' },
-    { id: 'coleccionista', emoji: '📚', titulo: 'Coleccionista',      desc: 'Completa los 6 cuentos.' },
-    { id: 'veloz',         emoji: '⚡', titulo: 'Rayo',               desc: 'Completa un cuento en menos de 45 s.' },
-    { id: 'maestro',       emoji: '🏆', titulo: 'Maestro de cuentos', desc: 'Consigue 3 estrellas en 3 cuentos.' },
-    { id: 'explorador',    emoji: '🗺️', titulo: 'Explorador',         desc: 'Prueba los 6 cuentos.' },
-    { id: 'preciso',       emoji: '🎯', titulo: 'Preciso',            desc: 'Completa con un solo intento.' },
-    { id: 'corona',        emoji: '👑', titulo: 'Corona dorada',      desc: 'Consigue 18 estrellas en total.' }
-  ];
+const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
 
-  /* ============================================================
-     3. ESTADO
-     ============================================================ */
-  const estado = {
-    pantalla: 'inicio',
-    cuentoKey: null,
-    cuento: null,
-    cartas: [],
-    mazo: [],
-    linea: [],
-    // Pila con los índices de huecos en el ORDEN en que se colocaron.
-    // Se usa para que "Deshacer" quite solo la última carta puesta.
-    ordenColocacion: [],
-    intentos: 0,
-    pistasUsadas: 0,
-    resuelto: false,
-    estrellas: 0,
-    tiempo: 0,
-    timerId: null,
-    filtro: 'todos'
-  };
-
-  const progreso = {
-    estrellasPorCuento: {},
-    estrellasTotales: 0,
-    cuentosProbados: [],
-    logros: [],
-    partidasJugadas: 0
-  };
-
-  let dragEnProgreso = false;
-  let mensajeTimeout = null;
-
-  /* ============================================================
-     4. UTILIDADES
-     ============================================================ */
-  function barajar(arr) {
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-  }
-
-  function buscarCarta(id) {
-    return estado.cartas.find(c => c.id === id) || null;
-  }
-
-  function formatearTiempo(seg) {
-    const m = Math.floor(seg / 60).toString().padStart(2, '0');
-    const s = (seg % 60).toString().padStart(2, '0');
-    return `${m}:${s}`;
-  }
-
-  function sumaEstrellas() {
-    return Object.values(progreso.estrellasPorCuento).reduce((a, b) => a + b, 0);
-  }
-
-  /* ============================================================
-     5. PERSISTENCIA
-     ============================================================ */
-  function cargarProgreso() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return;
-      const data = JSON.parse(raw);
-      if (data.estrellasPorCuento) progreso.estrellasPorCuento = data.estrellasPorCuento;
-      if (Array.isArray(data.cuentosProbados)) progreso.cuentosProbados = data.cuentosProbados;
-      if (Array.isArray(data.logros)) progreso.logros = data.logros;
-      if (typeof data.partidasJugadas === 'number') progreso.partidasJugadas = data.partidasJugadas;
-      progreso.estrellasTotales = sumaEstrellas();
-    } catch (e) {
-      console.warn('No se pudo cargar progreso:', e);
-    }
-  }
-
-  function guardarProgreso() {
-    try {
-      progreso.estrellasTotales = sumaEstrellas();
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(progreso));
-    } catch (e) {
-      console.warn('No se pudo guardar progreso:', e);
-    }
-  }
-
-  /* ============================================================
-     6. VIDEO DE FONDO · Gestión del ciclo de vida
-     ============================================================ */
-  function inicializarVideoFondo() {
-    const video = document.querySelector('.fondo__video');
-    if (!video) return;
-
-    // Asegurar reproducción (algunos navegadores la pausan por políticas)
-    const intentarReproducir = () => {
-      const p = video.play();
-      if (p && typeof p.catch === 'function') {
-        p.catch(() => {
-          // Silenciosamente falla si el navegador bloquea la reproducción
-          // (lo típico es que autoplay+muted sí funcione)
-        });
-      }
-    };
-
-    // Intentar reproducir al cargar
-    intentarReproducir();
-
-    // Reintentar cuando el video pueda reproducirse
-    video.addEventListener('canplay', intentarReproducir, { once: true });
-
-    // Pausar cuando la pestaña está oculta (ahorra recursos en pizarra digital)
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-        if (!video.paused) video.pause();
-      } else {
-        intentarReproducir();
-      }
-    });
-
-    // Si el video por alguna razón se pausa solo estando visible, retomar
-    video.addEventListener('pause', () => {
-      if (!document.hidden) {
-        // Pequeño delay para no entrar en bucle
-        setTimeout(() => {
-          if (video.paused && !document.hidden) intentarReproducir();
-        }, 300);
-      }
-    });
-
-    // Reintentar cuando la ventana recupera el foco
-    window.addEventListener('focus', intentarReproducir);
-  }
-
-  /* ============================================================
-     7. PRECARGA DE IMÁGENES · Suaviza la primera partida
-     ============================================================ */
-  function precargarImagenesCuento(key) {
-    const cuento = DATOS[key];
-    if (!cuento) return;
-
-    cuento.cartas.forEach(c => {
-      if (c.imagen) {
-        const img = new Image();
-        img.src = c.imagen;
-      }
-    });
-  }
-
-  function precargarTodasLasImagenes() {
-    Object.keys(DATOS).forEach(key => precargarImagenesCuento(key));
-  }
-
-  /* ============================================================
-     8. SONIDO
-     ============================================================ */
-  const sonido = (function () {
-    let ctx = null;
-    let activo = true;
-
-    function init() {
-      if (!ctx) {
+const store = {
+    get(key, fallback = null) {
         try {
-          const AC = window.AudioContext || window.webkitAudioContext;
-          if (AC) ctx = new AC();
-        } catch (e) { /* silencioso */ }
-      }
-      if (ctx && ctx.state === 'suspended') ctx.resume();
+            const v = localStorage.getItem(key);
+            return v === null ? fallback : JSON.parse(v);
+        } catch { return fallback; }
+    },
+    set(key, value) {
+        try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
+    }
+};
+
+
+/* ============================================================
+   1. AÑO DINÁMICO
+   ============================================================ */
+(function setYear() {
+    const yearEl = $('#year');
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
+})();
+
+
+/* ============================================================
+   2. SISTEMA DE SONIDO (Web Audio API)
+   ============================================================ */
+const Sound = (() => {
+    let enabled = store.get('ae_sound_enabled', true);
+    let ctx = null;
+
+    function getCtx() {
+        if (!ctx) {
+            const AC = window.AudioContext || window.webkitAudioContext;
+            if (!AC) return null;
+            ctx = new AC();
+        }
+        if (ctx.state === 'suspended') ctx.resume();
+        return ctx;
     }
 
-    function tono(freq, dur, tipo, vol) {
-      if (!activo || !ctx) return;
-      try {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = tipo || 'sine';
+    function tone(freq = 440, duration = 0.12, type = 'sine', volume = 0.14) {
+        if (!enabled) return;
+        const c = getCtx();
+        if (!c) return;
+        const osc  = c.createOscillator();
+        const gain = c.createGain();
+        osc.type = type;
         osc.frequency.value = freq;
-        const ahora = ctx.currentTime;
-        gain.gain.setValueAtTime(0, ahora);
-        gain.gain.linearRampToValueAtTime(vol || 0.12, ahora + 0.015);
-        gain.gain.exponentialRampToValueAtTime(0.0001, ahora + dur);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(ahora);
-        osc.stop(ahora + dur + 0.02);
-      } catch (e) { /* silencioso */ }
+        gain.gain.value = volume;
+        gain.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + duration);
+        osc.connect(gain).connect(c.destination);
+        osc.start();
+        osc.stop(c.currentTime + duration);
+    }
+
+    function click()   { tone(660, 0.06, 'square',   0.08); }
+    function hover()   { tone(880, 0.03, 'sine',     0.03); }
+
+    function enterWorld() {
+        tone(523, 0.10, 'triangle', 0.15);
+        setTimeout(() => tone(659, 0.10, 'triangle', 0.15), 90);
+        setTimeout(() => tone(784, 0.18, 'triangle', 0.15), 180);
+    }
+
+    function select() {
+        tone(880, 0.08, 'triangle', 0.15);
+        setTimeout(() => tone(1174, 0.14, 'triangle', 0.15), 80);
+    }
+
+    function success() {
+        tone(659, 0.10, 'sine', 0.16);
+        setTimeout(() => tone(880, 0.10, 'sine', 0.16), 100);
+        setTimeout(() => tone(1174, 0.20, 'sine', 0.16), 200);
+    }
+
+    function error() {
+        tone(220, 0.16, 'sawtooth', 0.12);
+        setTimeout(() => tone(180, 0.20, 'sawtooth', 0.12), 140);
     }
 
     return {
-      toggle() { activo = !activo; if (activo) init(); return activo; },
-      estaActivo() { return activo; },
-      click()     { init(); tono(520, 0.07, 'sine', 0.08); },
-      colocar()   { init(); tono(680, 0.12, 'triangle', 0.12); },
-      quitar()    { init(); tono(420, 0.1, 'triangle', 0.1); },
-      pista()     { init(); tono(760, 0.15, 'sine', 0.12); setTimeout(() => tono(1000, 0.18, 'sine', 0.12), 100); },
-      correcto()  { init(); tono(880, 0.13, 'sine', 0.14); setTimeout(() => tono(1180, 0.2, 'sine', 0.14), 110); },
-      incorrecto(){ init(); tono(240, 0.22, 'sawtooth', 0.09); },
-      ganar()     { init(); [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => tono(f, 0.28, 'sine', 0.16), i * 130)); },
-      logro()     { init(); [660, 880, 1320].forEach((f, i) => setTimeout(() => tono(f, 0.2, 'triangle', 0.13), i * 100)); }
+        isEnabled: () => enabled,
+        toggle() {
+            enabled = !enabled;
+            store.set('ae_sound_enabled', enabled);
+            return enabled;
+        },
+        click, hover, enterWorld, select, success, error, tone
     };
-  })();
-
-  /* ============================================================
-     9. TOASTS
-     ============================================================ */
-  function mostrarToast(titulo, texto, tipo, emoji) {
-    const cont = document.getElementById('toasts');
-    const tpl = document.getElementById('plantilla-toast');
-    const nodo = tpl.content.firstElementChild.cloneNode(true);
-
-    nodo.classList.add('toast--' + (tipo || 'info'));
-    nodo.querySelector('.toast__emoji').textContent = emoji || '🏆';
-    nodo.querySelector('.toast__titulo').textContent = titulo;
-    nodo.querySelector('.toast__texto').textContent = texto;
-
-    cont.appendChild(nodo);
-
-    setTimeout(() => {
-      nodo.classList.add('saliendo');
-      setTimeout(() => nodo.remove(), 380);
-    }, TOAST_DURACION);
-  }
-
-  function toastLogro(logro) {
-    mostrarToast('¡Logro desbloqueado!', logro.titulo, 'logro', logro.emoji);
-    sonido.logro();
-  }
-
-  /* ============================================================
-     10. MODAL
-     ============================================================ */
-  const modalEl = document.getElementById('modal');
-  let modalOnConfirm = null;
-
-  function abrirModal(opts) {
-    document.getElementById('modal-emoji').textContent = opts.emoji || '❓';
-    document.getElementById('modal-titulo').textContent = opts.titulo || '';
-    document.getElementById('modal-texto').textContent = opts.texto || '';
-
-    const btnConfirmar = document.getElementById('modal-confirmar');
-    const btnCancelar = modalEl.querySelector('.modal__acciones .btn--secundario');
-
-    btnConfirmar.textContent = opts.confirmar || 'Aceptar';
-    if (btnCancelar) {
-      btnCancelar.textContent = opts.cancelar || 'Cancelar';
-      btnCancelar.style.display = opts.onCancel ? '' : 'none';
-    }
-
-    modalOnConfirm = opts.onConfirm || null;
-    modalEl.hidden = false;
-  }
-
-  function cerrarModal() {
-    modalEl.hidden = true;
-    modalOnConfirm = null;
-  }
-
-  document.getElementById('modal-confirmar').addEventListener('click', () => {
-    const cb = modalOnConfirm;
-    cerrarModal();
-    if (typeof cb === 'function') cb();
-  });
-
-  modalEl.addEventListener('click', (e) => {
-    if (e.target.hasAttribute('data-cerrar-modal')) cerrarModal();
-  });
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !modalEl.hidden) cerrarModal();
-  });
-
-  /* ============================================================
-     11. NAVEGACIÓN
-     ============================================================ */
-  function irA(pantalla) {
-    document.querySelectorAll('.pantalla').forEach(p => {
-      p.classList.toggle('pantalla--activa', p.dataset.pantalla === pantalla);
-    });
-    estado.pantalla = pantalla;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-
-    if (pantalla === 'seleccion') actualizarPanelSeleccion();
-    if (pantalla === 'inicio') actualizarStatsInicio();
-  }
-
-  /* ============================================================
-     12. CREACIÓN DE NODOS
-     ============================================================ */
-  function crearCarta(carta) {
-    const tpl = document.getElementById('plantilla-carta');
-    const el = tpl.content.firstElementChild.cloneNode(true);
-
-    el.dataset.id = carta.id;
-    el.setAttribute('aria-label', 'Carta: ' + carta.texto);
-
-    const img = el.querySelector('.carta__imagen');
-    const emoji = el.querySelector('.carta__emoji');
-    const texto = el.querySelector('.carta__texto');
-
-    // Emoji siempre como respaldo
-    emoji.textContent = carta.emoji;
-    texto.textContent = carta.texto;
-
-    // 🖼️ Imagen de la carta con fallback automático
-    // Las rutas ya vienen con el prefijo "Recursos/" desde el JSON
-    if (carta.imagen) {
-      img.alt = carta.texto;
-
-      // Estado inicial: mostrar imagen, ocultar emoji
-      img.style.display = 'block';
-      emoji.style.display = 'none';
-
-      img.onload = () => {
-        img.style.display = 'block';
-        emoji.style.display = 'none';
-      };
-
-      img.onerror = () => {
-        img.style.display = 'none';
-        emoji.style.display = 'flex';
-      };
-
-      // Cargamos la imagen después de asignar handlers
-      img.src = carta.imagen;
-    } else {
-      // Sin imagen: solo emoji
-      img.style.display = 'none';
-      emoji.style.display = 'flex';
-    }
-
-    return el;
-  }
-
-  function crearHueco(indice) {
-    const tpl = document.getElementById('plantilla-hueco');
-    const el = tpl.content.firstElementChild.cloneNode(true);
-
-    el.dataset.indice = indice;
-    el.querySelector('.hueco__numero').textContent = indice + 1;
-    el.querySelector('.hueco__pista').textContent = 'Suelta aquí la carta';
-
-    return el;
-  }
-
-  /* ============================================================
-     13. RENDER
-     ============================================================ */
-  function render() {
-    renderMazo();
-    renderLinea();
-    actualizarCabecera();
-  }
-
-  function renderMazo() {
-    const mazoEl = document.getElementById('mazo');
-    mazoEl.innerHTML = '';
-
-    if (estado.mazo.length === 0) {
-      mazoEl.classList.add('vacio');
-    } else {
-      mazoEl.classList.remove('vacio');
-      estado.mazo.forEach(id => {
-        const carta = buscarCarta(id);
-        if (!carta) return;
-        mazoEl.appendChild(crearCarta(carta));
-      });
-    }
-
-    document.getElementById('mazo-contador').textContent =
-      estado.mazo.length === 1 ? '1 carta' : `${estado.mazo.length} cartas`;
-  }
-
-  function renderLinea() {
-    const lineaEl = document.getElementById('linea');
-    lineaEl.innerHTML = '';
-
-    estado.linea.forEach((id, idx) => {
-      const hueco = crearHueco(idx);
-
-      if (id !== null) {
-        hueco.classList.add('lleno');
-        const carta = buscarCarta(id);
-        if (carta) hueco.appendChild(crearCarta(carta));
-      }
-
-      lineaEl.appendChild(hueco);
-    });
-
-    const colocadas = estado.linea.filter(x => x !== null).length;
-    document.getElementById('linea-contador').textContent =
-      `${colocadas}/${estado.cartas.length}`;
-  }
-
-  function actualizarCabecera() {
-    const total = estado.cartas.length || 0;
-    const colocadas = estado.linea.filter(x => x !== null).length;
-    const pct = total > 0 ? (colocadas / total) * 100 : 0;
-
-    const fill = document.getElementById('juego-progreso-fill');
-    if (fill) {
-      fill.style.width = pct + '%';
-      fill.classList.toggle('completo', colocadas === total);
-    }
-
-    document.getElementById('juego-progreso').textContent =
-      `${colocadas} de ${total} cartas colocadas`;
-
-    document.getElementById('juego-intentos').textContent = estado.intentos;
-    document.getElementById('juego-pistas').textContent =
-      Math.max(0, MAX_PISTAS - estado.pistasUsadas);
-    document.getElementById('juego-tiempo').textContent = formatearTiempo(estado.tiempo);
-
-    const btnPista = document.getElementById('btn-pista');
-    if (btnPista) {
-      btnPista.disabled = (MAX_PISTAS - estado.pistasUsadas) <= 0 || estado.resuelto;
-    }
-
-    const btnUndo = document.getElementById('btn-undo');
-    if (btnUndo) {
-      const hayCartasEnLinea = estado.linea.some(x => x !== null);
-      btnUndo.disabled = !hayCartasEnLinea || estado.resuelto;
-    }
-
-    const btnComprobar = document.getElementById('btn-comprobar');
-    if (btnComprobar) btnComprobar.disabled = estado.resuelto;
-
-    const btnReiniciar = document.getElementById('btn-reiniciar');
-    if (btnReiniciar) btnReiniciar.disabled = estado.resuelto;
-  }
-
-  /* ============================================================
-     14. INICIO DE CUENTO
-     ============================================================ */
-  function iniciarCuento(key) {
-    const cuento = DATOS[key];
-    if (!cuento) {
-      console.warn('Cuento no encontrado:', key);
-      return;
-    }
-
-    estado.cuentoKey = key;
-    estado.cuento = cuento;
-
-    estado.cartas = cuento.cartas.map((c, i) => ({
-      id: 'c' + i,
-      emoji: c.emoji,
-      imagen: c.imagen || '',
-      texto: c.texto,
-      orden: i
-    }));
-
-    // Mazo desordenado
-    estado.mazo = estado.cartas.map(c => c.id);
-    barajar(estado.mazo);
-
-    let intentosMezcla = 0;
-    while (estado.mazo.every((id, i) => buscarCarta(id).orden === i) && intentosMezcla < 10) {
-      barajar(estado.mazo);
-      intentosMezcla++;
-    }
-
-    estado.linea = new Array(estado.cartas.length).fill(null);
-    estado.ordenColocacion = [];
-    estado.intentos = 0;
-    estado.pistasUsadas = 0;
-    estado.resuelto = false;
-    estado.estrellas = 0;
-    estado.tiempo = 0;
-
-    document.getElementById('juego-titulo').textContent = cuento.titulo;
-    const estrellasEl = document.getElementById('juego-estrellas');
-    estrellasEl.textContent = '☆☆☆';
-    estrellasEl.classList.remove('animar');
-
-    if (!progreso.cuentosProbados.includes(key)) {
-      progreso.cuentosProbados.push(key);
-      guardarProgreso();
-    }
-
-    // Pre-cargar las imágenes de este cuento (por si aún no se cargaron)
-    precargarImagenesCuento(key);
-
-    detenerTimer();
-    estado.timerId = setInterval(() => {
-      estado.tiempo++;
-      document.getElementById('juego-tiempo').textContent = formatearTiempo(estado.tiempo);
-    }, 1000);
-
-    render();
-    irA('juego');
-  }
-
-  function detenerTimer() {
-    if (estado.timerId) {
-      clearInterval(estado.timerId);
-      estado.timerId = null;
-    }
-  }
-
-  /* ============================================================
-     15. COLOCAR Y DEVOLVER CARTAS
-     ============================================================ */
-
-  function colocarCarta(id, huecoIdx) {
-    if (estado.resuelto) return;
-    if (huecoIdx < 0 || huecoIdx >= estado.linea.length) return;
-
-    // Si el hueco ya tenía otra carta, la devolvemos al mazo
-    const existente = estado.linea[huecoIdx];
-    if (existente && existente !== id) {
-      estado.mazo.push(existente);
-      estado.ordenColocacion = estado.ordenColocacion.filter(i => i !== huecoIdx);
-    }
-
-    // Quitamos la carta del mazo
-    const idxMazo = estado.mazo.indexOf(id);
-    if (idxMazo > -1) estado.mazo.splice(idxMazo, 1);
-
-    // Quitamos la carta de cualquier otro hueco (por si se mueve)
-    for (let i = 0; i < estado.linea.length; i++) {
-      if (estado.linea[i] === id) {
-        estado.linea[i] = null;
-        estado.ordenColocacion = estado.ordenColocacion.filter(idx => idx !== i);
-      }
-    }
-
-    // Colocamos
-    estado.linea[huecoIdx] = id;
-    estado.ordenColocacion.push(huecoIdx);
-
-    sonido.colocar();
-    render();
-  }
-
-  function colocarCartaAutomatica(id) {
-    if (estado.resuelto) return;
-
-    const primerVacio = estado.linea.findIndex(x => x === null);
-    if (primerVacio === -1) {
-      mostrarMensaje('¡No hay huecos vacíos! Devuelve alguna carta primero 🤔', 'info');
-      return;
-    }
-
-    colocarCarta(id, primerVacio);
-  }
-
-  function devolverAlMazo(id) {
-    if (estado.resuelto) return;
-    if (!estado.linea.includes(id)) return;
-
-    for (let i = 0; i < estado.linea.length; i++) {
-      if (estado.linea[i] === id) {
-        estado.linea[i] = null;
-        estado.ordenColocacion = estado.ordenColocacion.filter(idx => idx !== i);
-        break;
-      }
-    }
-
-    if (!estado.mazo.includes(id)) estado.mazo.push(id);
-
-    sonido.quitar();
-    render();
-  }
-
-  /* ============================================================
-     16. DESHACER · Quita la ÚLTIMA carta colocada en la línea
-     ============================================================ */
-  function deshacer() {
-    if (estado.resuelto) return;
-
-    while (estado.ordenColocacion.length > 0) {
-      const ultimoIdx = estado.ordenColocacion.pop();
-      const id = estado.linea[ultimoIdx];
-
-      if (id !== null && id !== undefined) {
-        estado.linea[ultimoIdx] = null;
-        if (!estado.mazo.includes(id)) estado.mazo.push(id);
-
-        sonido.quitar();
-        render();
-        mostrarMensaje(`Se devolvió la carta del hueco ${ultimoIdx + 1}`, 'info');
-        return;
-      }
-    }
-
-    mostrarMensaje('No hay cartas para deshacer', 'info');
-    actualizarCabecera();
-  }
-
-  /* ============================================================
-     17. COMPROBAR
-     ============================================================ */
-  function comprobar() {
-    if (estado.resuelto) return;
-
-    if (estado.linea.some(x => x === null)) {
-      mostrarMensaje('¡Aún faltan cartas por colocar! 🃏', 'error');
-      return;
-    }
-
-    estado.intentos++;
-    actualizarCabecera();
-
-    let todoCorrecto = true;
-    estado.linea.forEach((id, idx) => {
-      const carta = buscarCarta(id);
-      if (!carta || carta.orden !== idx) todoCorrecto = false;
-    });
-
-    marcarResultado();
-
-    if (todoCorrecto) {
-      sonido.correcto();
-      ganar();
-    } else {
-      sonido.incorrecto();
-      mostrarMensaje('¡Casi! Algunas cartas están fuera de lugar 🤔', 'error');
-    }
-  }
-
-  function marcarResultado() {
-    const huecos = document.querySelectorAll('#linea .hueco');
-
-    huecos.forEach((hueco, idx) => {
-      const id = estado.linea[idx];
-      const carta = buscarCarta(id);
-      if (!carta) return;
-
-      if (carta.orden === idx) {
-        hueco.classList.add('correcto');
-      } else {
-        hueco.classList.add('incorrecto');
-      }
-    });
-
-    setTimeout(() => {
-      document.querySelectorAll('#linea .hueco').forEach(h => {
-        h.classList.remove('correcto', 'incorrecto');
-      });
-    }, 1400);
-  }
-
-  /* ============================================================
-     18. PISTA
-     ============================================================ */
-  function darPista() {
-    if (estado.resuelto) return;
-
-    if (estado.pistasUsadas >= MAX_PISTAS) {
-      mostrarMensaje('¡No te quedan más pistas! 💡', 'error');
-      return;
-    }
-
-    for (let i = 0; i < estado.linea.length; i++) {
-      const id = estado.linea[i];
-      const carta = id ? buscarCarta(id) : null;
-
-      if (!carta || carta.orden !== i) {
-        if (id) {
-          estado.mazo.push(id);
-          estado.linea[i] = null;
-          estado.ordenColocacion = estado.ordenColocacion.filter(idx => idx !== i);
-        }
-
-        const correcta = estado.cartas.find(c => c.orden === i);
-        if (!correcta) return;
-
-        const idxMazo = estado.mazo.indexOf(correcta.id);
-        if (idxMazo > -1) estado.mazo.splice(idxMazo, 1);
-
-        for (let j = 0; j < estado.linea.length; j++) {
-          if (estado.linea[j] === correcta.id) {
-            estado.linea[j] = null;
-            estado.ordenColocacion = estado.ordenColocacion.filter(idx => idx !== j);
-          }
-        }
-
-        estado.linea[i] = correcta.id;
-        estado.ordenColocacion.push(i);
-        estado.pistasUsadas++;
-
-        sonido.pista();
-        render();
-
-        const huecoEl = document.querySelector(`#linea .hueco[data-indice="${i}"]`);
-        if (huecoEl) {
-          huecoEl.classList.add('hint');
-          setTimeout(() => huecoEl.classList.remove('hint'), 2400);
-        }
-
-        mostrarMensaje(`Pista: esta carta va en el hueco ${i + 1} 💡`, 'info');
-        return;
-      }
-    }
-
-    mostrarMensaje('¡Ya está todo en orden! Pulsa Comprobar ✅', 'info');
-  }
-
-  /* ============================================================
-     19. GANAR
-     ============================================================ */
-  function calcularEstrellas() {
-    let e = 3;
-    e -= estado.pistasUsadas;
-    e -= Math.max(0, estado.intentos - 1);
-    if (estado.tiempo > 180) e -= 1;
-    return Math.max(1, Math.min(3, e));
-  }
-
-  function ganar() {
-    estado.resuelto = true;
-    detenerTimer();
-    sonido.ganar();
-
-    const estrellas = calcularEstrellas();
-    estado.estrellas = estrellas;
-
-    const estrellasEl = document.getElementById('juego-estrellas');
-    estrellasEl.textContent = '⭐'.repeat(estrellas) + '☆'.repeat(3 - estrellas);
-    estrellasEl.classList.add('animar');
-    setTimeout(() => estrellasEl.classList.remove('animar'), 600);
-
-    const previas = progreso.estrellasPorCuento[estado.cuentoKey] || 0;
-    if (estrellas > previas) {
-      progreso.estrellasPorCuento[estado.cuentoKey] = estrellas;
-    }
-    progreso.partidasJugadas++;
-    guardarProgreso();
-
-    lanzarConfeti();
-    mostrarMensaje('¡Perfecto! Has ordenado el cuento 🎉', 'exito');
-
-    actualizarCabecera();
-
-    setTimeout(() => comprobarLogros(estrellas), 500);
-    setTimeout(() => mostrarFinal(estrellas), 1600);
-  }
-
-  /* ============================================================
-     20. LOGROS
-     ============================================================ */
-  function comprobarLogros(estrellasPartida) {
-    const ctx = {
-      estrellasPartida,
-      tiempo: estado.tiempo,
-      intentos: estado.intentos,
-      pistasUsadas: estado.pistasUsadas,
-      cuentoKey: estado.cuentoKey
-    };
-
-    const nuevos = [];
-    LOGROS_DEF.forEach(logro => {
-      if (progreso.logros.includes(logro.id)) return;
-      if (cumpleLogro(logro.id, ctx)) {
-        progreso.logros.push(logro.id);
-        nuevos.push(logro);
-      }
-    });
-
-    if (nuevos.length > 0) {
-      guardarProgreso();
-      nuevos.forEach((l, i) => setTimeout(() => toastLogro(l), i * 700));
-    }
-  }
-
-  function cumpleLogro(id, ctx) {
-    switch (id) {
-      case 'primer_cuento': return Object.keys(progreso.estrellasPorCuento).length >= 1;
-      case 'sin_pistas':    return ctx.pistasUsadas === 0;
-      case 'perfecto':      return ctx.estrellasPartida === 3;
-      case 'coleccionista': return Object.keys(progreso.estrellasPorCuento).length >= 6;
-      case 'veloz':         return ctx.tiempo <= 45;
-      case 'maestro':       return Object.values(progreso.estrellasPorCuento).filter(v => v === 3).length >= 3;
-      case 'explorador':    return progreso.cuentosProbados.length >= 6;
-      case 'preciso':       return ctx.intentos === 1;
-      case 'corona':        return sumaEstrellas() >= 18;
-      default: return false;
-    }
-  }
-
-  /* ============================================================
-     21. PANTALLA FINAL
-     ============================================================ */
-  function mostrarFinal(estrellas) {
-    const config = {
-      3: { emoji: '🏆', titulo: '¡Increíble!',    mensaje: '¡Eres un maestro de los cuentos! Lo has ordenado todo perfectamente.' },
-      2: { emoji: '🌟', titulo: '¡Muy bien!',     mensaje: '¡Casi perfecto! Solo un pequeño desliz, pero lo has conseguido.' },
-      1: { emoji: '👏', titulo: '¡Buen trabajo!', mensaje: '¡Lo lograste! Sigue practicando para ganar más estrellas.' }
-    };
-
-    const c = config[estrellas] || config[1];
-
-    document.getElementById('final-emoji').textContent = c.emoji;
-    document.getElementById('final-titulo').textContent = c.titulo;
-    document.getElementById('final-mensaje').textContent = c.mensaje;
-    document.getElementById('final-estrellas').textContent =
-      '⭐'.repeat(estrellas) + '☆'.repeat(3 - estrellas);
-
-    document.getElementById('final-tiempo').textContent = formatearTiempo(estado.tiempo);
-    document.getElementById('final-intentos').textContent = estado.intentos;
-    document.getElementById('final-pistas').textContent = estado.pistasUsadas;
-
-    const contenedorLogros = document.getElementById('final-logros');
-    contenedorLogros.innerHTML = '';
-
-    const logrosRecientes = progreso.logros.slice(-3);
-    logrosRecientes.forEach(id => {
-      const def = LOGROS_DEF.find(l => l.id === id);
-      if (!def) return;
-      const badge = document.createElement('div');
-      badge.className = 'logro-badge';
-      badge.innerHTML = `<span class="logro-badge__emoji">${def.emoji}</span><span>${def.titulo}</span>`;
-      contenedorLogros.appendChild(badge);
-    });
-
-    irA('final');
-  }
-
-  /* ============================================================
-     22. CONFETI
-     ============================================================ */
-  function lanzarConfeti() {
-    const cont = document.getElementById('confeti');
-    cont.innerHTML = '';
-
-    const colores = ['#ff5b6e', '#ffd23f', '#63c96b', '#4aa9ff', '#a06bff', '#ff9d3d', '#ffffff'];
-    const total = 110;
-
-    for (let i = 0; i < total; i++) {
-      const pieza = document.createElement('div');
-      pieza.className = 'confeti__pieza';
-
-      const tamano = 8 + Math.random() * 10;
-      const esCirculo = Math.random() > 0.55;
-
-      pieza.style.left = Math.random() * 100 + '%';
-      pieza.style.width = tamano + 'px';
-      pieza.style.height = (esCirculo ? tamano : tamano * 1.6) + 'px';
-      pieza.style.background = colores[Math.floor(Math.random() * colores.length)];
-      pieza.style.borderRadius = esCirculo ? '50%' : '3px';
-      pieza.style.animationDuration = (2.2 + Math.random() * 2.4) + 's';
-      pieza.style.animationDelay = (Math.random() * 0.8) + 's';
-      pieza.style.opacity = 0.75 + Math.random() * 0.25;
-
-      cont.appendChild(pieza);
-    }
-
-    setTimeout(() => { cont.innerHTML = ''; }, 5600);
-  }
-
-  /* ============================================================
-     23. MENSAJES FLOTANTES
-     ============================================================ */
-  function mostrarMensaje(texto, tipo) {
-    const el = document.getElementById('mensaje');
-    el.textContent = texto;
-    el.className = 'mensaje visible ' + (tipo || 'info');
-    clearTimeout(mensajeTimeout);
-    mensajeTimeout = setTimeout(() => el.classList.remove('visible'), 2800);
-  }
-
-  /* ============================================================
-     24. INTERACCIÓN · CLICK / TAP
-     ============================================================ */
-  document.addEventListener('click', (e) => {
-    if (dragEnProgreso) return;
-
-    const cartaEl = e.target.closest('.carta');
-    if (cartaEl) {
-      const id = cartaEl.dataset.id;
-      const enLinea = estado.linea.includes(id);
-
-      if (enLinea) {
-        devolverAlMazo(id);
-      } else {
-        colocarCartaAutomatica(id);
-      }
-      return;
-    }
-
-    const huecoEl = e.target.closest('.hueco');
-    if (huecoEl) {
-      const idx = parseInt(huecoEl.dataset.indice, 10);
-      const id = estado.linea[idx];
-      if (id) {
-        devolverAlMazo(id);
-      }
-    }
-  });
-
-  /* ============================================================
-     25. TECLADO EN CARTAS
-     ============================================================ */
-  document.addEventListener('keydown', (e) => {
-    if (e.key !== 'Enter' && e.key !== ' ') return;
-
-    const cartaEl = e.target.closest('.carta');
-    if (!cartaEl) return;
-
-    e.preventDefault();
-
-    const id = cartaEl.dataset.id;
-    const enLinea = estado.linea.includes(id);
-
-    if (enLinea) {
-      devolverAlMazo(id);
-    } else {
-      colocarCartaAutomatica(id);
-    }
-  });
-
-  /* ============================================================
-     26. DRAG & DROP
-     ============================================================ */
-  document.addEventListener('dragstart', (e) => {
-    const cartaEl = e.target.closest('.carta');
-    if (!cartaEl || estado.resuelto) {
-      e.preventDefault();
-      return;
-    }
-
-    e.dataTransfer.setData('text/plain', cartaEl.dataset.id);
-    e.dataTransfer.effectAllowed = 'move';
-    cartaEl.classList.add('arrastrando');
-    dragEnProgreso = true;
-  });
-
-  document.addEventListener('dragend', (e) => {
-    const cartaEl = e.target.closest('.carta');
-    if (cartaEl) cartaEl.classList.remove('arrastrando');
-
-    document.querySelectorAll('.hueco.destino').forEach(h => h.classList.remove('destino'));
-
-    setTimeout(() => { dragEnProgreso = false; }, 80);
-  });
-
-  document.addEventListener('dragover', (e) => {
-    const huecoEl = e.target.closest('.hueco');
-    if (huecoEl) {
-      e.preventDefault();
-      huecoEl.classList.add('destino');
-      return;
-    }
-    if (e.target.closest('#mazo')) e.preventDefault();
-  });
-
-  document.addEventListener('dragleave', (e) => {
-    const huecoEl = e.target.closest('.hueco');
-    if (huecoEl) huecoEl.classList.remove('destino');
-  });
-
-  document.addEventListener('drop', (e) => {
-    e.preventDefault();
-
-    const id = e.dataTransfer.getData('text/plain');
-    if (!id) return;
-
-    const huecoEl = e.target.closest('.hueco');
-    if (huecoEl) {
-      const idx = parseInt(huecoEl.dataset.indice, 10);
-      colocarCarta(id, idx);
-      return;
-    }
-
-    if (e.target.closest('#mazo')) {
-      devolverAlMazo(id);
-    }
-  });
-
-  /* ============================================================
-     27. FILTROS
-     ============================================================ */
-  function aplicarFiltro(filtro) {
-    estado.filtro = filtro;
-
-    document.querySelectorAll('.filtro').forEach(btn => {
-      const activo = btn.dataset.filtro === filtro;
-      btn.classList.toggle('filtro--activo', activo);
-      btn.setAttribute('aria-selected', activo ? 'true' : 'false');
-    });
-
-    document.querySelectorAll('.cuento').forEach(c => {
-      const dif = c.dataset.dificultad;
-      const ocultar = filtro !== 'todos' && dif !== filtro;
-      c.classList.toggle('oculto', ocultar);
-    });
-  }
-
-  /* ============================================================
-     28. VISTAS AUXILIARES
-     ============================================================ */
-  function actualizarStatsInicio() {
-    document.getElementById('stats-estrellas').textContent = sumaEstrellas();
-    document.getElementById('stats-cuentos').textContent =
-      `${Object.keys(progreso.estrellasPorCuento).length}/6`;
-    document.getElementById('stats-logros').textContent =
-      `${progreso.logros.length}/${LOGROS_DEF.length}`;
-  }
-
-  function actualizarPanelSeleccion() {
-    document.querySelectorAll('.cuento').forEach(c => {
-      const key = c.dataset.cuento;
-      const mini = c.querySelector('.cuento__estrellas-mini');
-      if (!mini) return;
-
-      const e = progreso.estrellasPorCuento[key] || 0;
-      mini.textContent = '⭐'.repeat(e) + '☆'.repeat(3 - e);
-    });
-  }
-
-  /* ============================================================
-     29. PANTALLA COMPLETA
-     ============================================================ */
-  function toggleFullscreen() {
-    if (!document.fullscreenElement) {
-      const el = document.documentElement;
-      if (el.requestFullscreen) el.requestFullscreen();
-      else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-      else if (el.msRequestFullscreen) el.msRequestFullscreen();
-    } else {
-      if (document.exitFullscreen) document.exitFullscreen();
-      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-      else if (document.msExitFullscreen) document.msExitFullscreen();
-    }
-  }
-
-  /* ============================================================
-     30. CONFIRMAR SALIDA
-     ============================================================ */
-  function confirmarSalida(callback) {
-    const sinProgreso = estado.linea.every(x => x === null);
-
-    if (estado.resuelto || sinProgreso) {
-      detenerTimer();
-      callback();
-      return;
-    }
-
-    abrirModal({
-      emoji: '🚪',
-      titulo: '¿Salir del juego?',
-      texto: 'Perderás el progreso de esta partida.',
-      confirmar: 'Salir',
-      cancelar: 'Seguir jugando',
-      onConfirm: () => {
-        detenerTimer();
-        callback();
-      },
-      onCancel: () => {}
-    });
-  }
-
-  /* ============================================================
-     31. INICIALIZACIÓN
-     ============================================================ */
-  function inicializar() {
-    cargarProgreso();
-    actualizarStatsInicio();
-
-    // Video de fondo
-    inicializarVideoFondo();
-
-    // Pre-cargar imágenes (con pequeño delay para no bloquear el arranque)
-    setTimeout(precargarTodasLasImagenes, 800);
-
-    // Navegación con data-ir
-    document.querySelectorAll('[data-ir]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const destino = btn.dataset.ir;
-
-        if (estado.pantalla === 'juego' && destino !== 'juego') {
-          confirmarSalida(() => {
-            sonido.click();
-            irA(destino);
-          });
-          return;
-        }
-
-        sonido.click();
-        irA(destino);
-      });
-    });
-
-    // Selección de cuento
-    document.querySelectorAll('.cuento').forEach(btn => {
-      btn.addEventListener('click', () => {
-        sonido.click();
-        const key = btn.dataset.cuento;
-        if (key) iniciarCuento(key);
-      });
-    });
-
-    // Filtros
-    document.querySelectorAll('.filtro').forEach(btn => {
-      btn.addEventListener('click', () => {
-        sonido.click();
-        aplicarFiltro(btn.dataset.filtro);
-      });
-    });
-
-    // Botones del juego
-    const btnComprobar = document.getElementById('btn-comprobar');
-    if (btnComprobar) btnComprobar.addEventListener('click', () => { sonido.click(); comprobar(); });
-
-    const btnPista = document.getElementById('btn-pista');
-    if (btnPista) btnPista.addEventListener('click', () => darPista());
-
-    const btnUndo = document.getElementById('btn-undo');
-    if (btnUndo) btnUndo.addEventListener('click', () => deshacer());
-
-    const btnReiniciar = document.getElementById('btn-reiniciar');
-    if (btnReiniciar) {
-      btnReiniciar.addEventListener('click', () => {
-        abrirModal({
-          emoji: '🔄',
-          titulo: '¿Reiniciar el cuento?',
-          texto: 'Volverás a empezar desde el principio.',
-          confirmar: 'Sí, reiniciar',
-          cancelar: 'Cancelar',
-          onConfirm: () => { if (estado.cuentoKey) iniciarCuento(estado.cuentoKey); },
-          onCancel: () => {}
-        });
-      });
-    }
-
-    // Botón salir
-    const btnSalir = document.getElementById('btn-salir');
-    if (btnSalir) {
-      btnSalir.addEventListener('click', () => {
-        confirmarSalida(() => {
-          sonido.click();
-          irA('seleccion');
-        });
-      });
-    }
-
-    // Otra vez
-    const btnOtraVez = document.getElementById('btn-otra-vez');
-    if (btnOtraVez) {
-      btnOtraVez.addEventListener('click', () => {
-        sonido.click();
-        if (estado.cuentoKey) iniciarCuento(estado.cuentoKey);
-      });
-    }
-
-    // Controles flotantes
-    const btnSonido = document.getElementById('btn-sonido');
-    if (btnSonido) {
-      btnSonido.addEventListener('click', () => {
-        const activo = sonido.toggle();
-        document.getElementById('icono-sonido').textContent = activo ? '🔊' : '🔇';
-        btnSonido.classList.toggle('mudo', !activo);
-        if (activo) sonido.click();
-      });
-    }
-
-    const btnFull = document.getElementById('btn-pantalla-completa');
-    if (btnFull) {
-      btnFull.addEventListener('click', () => {
-        sonido.click();
-        toggleFullscreen();
-      });
-    }
-
-    const btnAyuda = document.getElementById('btn-ayuda-rapida');
-    if (btnAyuda) {
-      btnAyuda.addEventListener('click', () => {
-        sonido.click();
-        abrirModal({
-          emoji: '📖',
-          titulo: '¿Cómo se juega?',
-          texto: 'Toca una carta para colocarla automáticamente en el primer hueco, o arrástrala al hueco que quieras. Pulsa "¡Comprobar!" cuando termines. Usa "Pista" si te atascas… ¡pero gasta estrellas!',
-          confirmar: '¡Entendido!',
-          onConfirm: () => {}
-        });
-      });
-    }
-
-    // Atajos de teclado
-    document.addEventListener('keydown', (e) => {
-      if (estado.pantalla !== 'juego') return;
-      if (!modalEl.hidden) return;
-
-      const tag = (e.target.tagName || '').toLowerCase();
-      const enInput = tag === 'input' || tag === 'textarea';
-
-      if (e.key === 'Enter' && !enInput && !e.target.closest('.carta')) {
-        comprobar();
-      }
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        confirmarSalida(() => irA('seleccion'));
-      }
-      if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
-        e.preventDefault();
-        deshacer();
-      }
-      if ((e.key === 'h' || e.key === 'H') && !enInput) {
-        darPista();
-      }
-    });
-
-    // Prevenir gestos accidentales en pizarra
-    document.addEventListener('gesturestart', (e) => e.preventDefault());
-
-    document.addEventListener('dragover', (e) => {
-      if (e.target === document.documentElement) e.preventDefault();
-    });
-  }
-
-  /* ============================================================
-     32. ARRANQUE
-     ============================================================ */
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', inicializar);
-  } else {
-    inicializar();
-  }
-
 })();
+
+window.AE_Sound = Sound;
+
+
+/* ============================================================
+   3. BOTÓN FLOTANTE DE SONIDO
+   ============================================================ */
+(function initSoundToggle() {
+    const btn = $('#soundToggle');
+    if (!btn) return;
+
+    if (!Sound.isEnabled()) btn.classList.add('is-muted');
+
+    btn.addEventListener('click', () => {
+        const on = Sound.toggle();
+        btn.classList.toggle('is-muted', !on);
+        if (on) Sound.tone(880, 0.12, 'sine', 0.12);
+    });
+})();
+
+
+/* ============================================================
+   4. HEADER: SCROLL, PROGRESO Y AUTOHIDE
+   ============================================================ */
+(function initHeaderScroll() {
+    const header   = $('#siteHeader');
+    const progress = $('#scrollProgress');
+    if (!header) return;
+
+    let lastY = window.scrollY;
+    let ticking = false;
+
+    function onScroll() {
+        const y = window.scrollY;
+
+        header.classList.toggle('is-scrolled', y > 40);
+
+        if (progress) {
+            const docH = document.documentElement.scrollHeight - window.innerHeight;
+            const pct  = docH > 0 ? (y / docH) * 100 : 0;
+            progress.style.width = pct + '%';
+        }
+
+        if (y > 400 && y > lastY + 8) {
+            header.style.transform = 'translateY(-140%)';
+        } else if (y < lastY - 8 || y < 400) {
+            header.style.transform = 'translateY(0)';
+        }
+
+        lastY = y;
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            window.requestAnimationFrame(onScroll);
+            ticking = true;
+        }
+    }, { passive: true });
+
+    header.style.transition = 'transform .35s cubic-bezier(.22,.61,.36,1), background .3s, box-shadow .3s';
+    onScroll();
+})();
+
+
+/* ============================================================
+   5. MENÚ MÓVIL
+   ============================================================ */
+(function initMobileMenu() {
+    const toggle = $('#menuToggle');
+    const nav    = $('.main-nav');
+    if (!toggle || !nav) return;
+
+    function closeMenu() {
+        nav.classList.remove('is-open');
+        toggle.setAttribute('aria-expanded', 'false');
+    }
+
+    toggle.addEventListener('click', () => {
+        const open = nav.classList.toggle('is-open');
+        toggle.setAttribute('aria-expanded', String(open));
+        Sound.click();
+    });
+
+    $$('.nav-btn', nav).forEach(link => link.addEventListener('click', closeMenu));
+
+    document.addEventListener('click', (e) => {
+        if (!nav.classList.contains('is-open')) return;
+        if (!nav.contains(e.target) && !toggle.contains(e.target)) closeMenu();
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeMenu();
+    });
+})();
+
+
+/* ============================================================
+   6. SCROLL SUAVE
+   ------------------------------------------------------------
+   • Respeta target="_blank" (los juegos abren en nueva pestaña)
+   • Aplica offset del header
+   ============================================================ */
+(function initSmoothScroll() {
+    const header = $('#siteHeader');
+
+    function scrollTo(target) {
+        const el = typeof target === 'string' ? $(target) : target;
+        if (!el) return;
+        const headerH = header ? header.offsetHeight : 80;
+        const top = el.getBoundingClientRect().top + window.scrollY - headerH - 8;
+        window.scrollTo({ top, behavior: 'smooth' });
+    }
+
+    // Elementos con data-scroll="#selector"
+    $$('[data-scroll]').forEach(el => {
+        el.addEventListener('click', (e) => {
+            const target = el.dataset.scroll;
+            if (!target) return;
+            const el2 = $(target);
+            if (!el2) return;
+            e.preventDefault();
+            Sound.click();
+            scrollTo(el2);
+        });
+    });
+
+    // Enlaces internos (#...)
+    $$('a[href^="#"]').forEach(a => {
+        if (a.target === '_blank') return; // no interceptar juegos
+
+        a.addEventListener('click', (e) => {
+            const href = a.getAttribute('href');
+            if (!href || href === '#') return;
+            const target = $(href);
+            if (!target) return;
+            e.preventDefault();
+            Sound.click();
+            scrollTo(target);
+        });
+    });
+
+    window.AE_scrollTo = scrollTo;
+})();
+
+
+/* ============================================================
+   7. EFECTOS DE BOTONES (ripple + hover)
+   ============================================================ */
+(function initButtonEffects() {
+    function createRipple(btn, ev) {
+        const rect = btn.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height) * 1.2;
+
+        const ripple = document.createElement('span');
+        ripple.className = 'ripple';
+        Object.assign(ripple.style, {
+            position: 'absolute',
+            width: size + 'px',
+            height: size + 'px',
+            borderRadius: '50%',
+            background: 'rgba(255,255,255,.55)',
+            pointerEvents: 'none',
+            transform: 'translate(-50%,-50%) scale(0)',
+            transition: 'transform .6s ease, opacity .6s ease',
+            opacity: '1'
+        });
+
+        const x = (ev.clientX ?? (rect.left + rect.width  / 2)) - rect.left;
+        const y = (ev.clientY ?? (rect.top  + rect.height / 2)) - rect.top;
+        ripple.style.left = x + 'px';
+        ripple.style.top  = y + 'px';
+
+        if (getComputedStyle(btn).position === 'static') btn.style.position = 'relative';
+        btn.style.overflow = 'hidden';
+        btn.appendChild(ripple);
+
+        requestAnimationFrame(() => {
+            ripple.style.transform = 'translate(-50%,-50%) scale(1)';
+            ripple.style.opacity   = '0';
+        });
+        setTimeout(() => ripple.remove(), 650);
+    }
+
+    $$('.btn, .btn-hero-inicial, .nav-btn, .sound-toggle, .filter-btn, .footer-nav-link, .btn-show-all')
+        .forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                btn.classList.add('is-clicked');
+                setTimeout(() => btn.classList.remove('is-clicked'), 220);
+                createRipple(btn, e);
+            });
+
+            if (!isTouch) {
+                btn.addEventListener('mouseenter', () => Sound.hover());
+            }
+        });
+})();
+
+
+/* ============================================================
+   8. REVEAL ESCALONADO (reveal-child)
+   ============================================================ */
+(function initRevealOnScroll() {
+    const revealers = $$('.reveal-child');
+    if (!revealers.length) return;
+
+    const io = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                io.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.15,
+        rootMargin: '0px 0px -80px 0px'
+    });
+
+    revealers.forEach(el => io.observe(el));
+})();
+
+
+/* ============================================================
+   9. NAV INDICADOR DE SECCIÓN ACTIVA
+   ------------------------------------------------------------
+   Observa #hero, #juegos, #ayuda si existen.
+   ============================================================ */
+(function initActiveNav() {
+    const nav       = $('.main-nav');
+    const indicator = $('.nav-indicator');
+    const navLinks  = $$('.nav-btn');
+    if (!nav || !indicator || !navLinks.length) return;
+
+    const sectionIds = ['hero', 'juegos', 'ayuda'];
+    const sections = sectionIds
+        .map(id => document.getElementById(id))
+        .filter(Boolean);
+
+    function moveIndicator(link) {
+        if (window.matchMedia('(max-width: 1000px)').matches) return;
+        const navRect  = nav.getBoundingClientRect();
+        const linkRect = link.getBoundingClientRect();
+        indicator.style.transform = `translateX(${linkRect.left - navRect.left - 6}px)`;
+        indicator.style.width     = linkRect.width + 'px';
+    }
+
+    function setActive(link) {
+        navLinks.forEach(l => l.classList.remove('is-active'));
+        if (link) {
+            link.classList.add('is-active');
+            indicator.classList.add('is-active');
+            moveIndicator(link);
+        } else {
+            indicator.classList.remove('is-active');
+        }
+    }
+
+    if (sections.length) {
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                const link = navLinks.find(l => l.getAttribute('href') === '#' + entry.target.id);
+                if (link) setActive(link);
+            });
+        }, {
+            threshold: 0.4,
+            rootMargin: '-25% 0px -45% 0px'
+        });
+        sections.forEach(sec => io.observe(sec));
+    } else {
+        const current = navLinks.find(l => l.classList.contains('is-active'));
+        if (current) setActive(current);
+    }
+
+    window.addEventListener('resize', () => {
+        const active = $('.nav-btn.is-active');
+        if (active) moveIndicator(active);
+    });
+})();
+
+
+/* ============================================================
+   10. ACCESIBILIDAD POR TECLADO
+   ============================================================ */
+(function initKeyboardA11y() {
+    document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        const el = document.activeElement;
+        if (!el) return;
+        if (el.tagName === 'BUTTON' || el.tagName === 'A') return;
+        if (el.classList.contains('btn') || el.classList.contains('game-card-link')) {
+            e.preventDefault();
+            el.click();
+        }
+    });
+})();
+
+
+/* ============================================================
+   11. ROBOT IMAGES (marca .has-image si el PNG carga bien)
+   ------------------------------------------------------------
+   El HTML ya trae <img class="robot-img">. Solo verificamos.
+   ============================================================ */
+(function verifyRobotImages() {
+    const displays = $$('.robot-display[data-robot]');
+    if (!displays.length) return;
+
+    displays.forEach(display => {
+        const img = display.querySelector('.robot-img');
+        if (!img) return;
+
+        if (img.complete && img.naturalWidth > 0) {
+            display.classList.add('has-image');
+            return;
+        }
+        img.addEventListener('load',  () => display.classList.add('has-image'));
+        img.addEventListener('error', () => {
+            console.warn(
+                `[Aventuras de BeeBot] No se encontró assets/robots/${display.dataset.robot}.png`
+            );
+        });
+    });
+})();
+
+
+/* ============================================================
+   12. PORTAL DE JUEGOS — FILTROS, CONTADORES Y REVEAL
+   ------------------------------------------------------------
+   Estructura esperada en el HTML:
+     <section class="games-section" data-section="numeros">
+        <span class="games-section-count-num">6</span>
+        <article class="game-card" data-category="numeros">…</article>
+     </section>
+     <button class="filter-btn" data-filter="numeros">
+        <span class="filter-count" data-count="numeros">0</span>
+     </button>
+   ============================================================ */
+(function initGamesPortal() {
+    const gamesArea = $('#juegos');
+    if (!gamesArea) return;
+
+    const sections = $$('.games-section', gamesArea);   // secciones por categoría
+    const cards    = $$('.game-card', gamesArea);       // todas las tarjetas
+    const filterBtns = $$('.filter-btn', gamesArea);
+    const emptyBox   = $('#gamesEmpty', gamesArea);
+    const counters   = $$('.filter-count', gamesArea);
+
+    /* -------------------------------------------------------
+       12.1 CONTAR JUEGOS POR CATEGORÍA
+       ------------------------------------------------------- */
+    function countByCategory() {
+        const counts = { all: cards.length };
+        cards.forEach(card => {
+            const cat = card.dataset.category || 'otros';
+            counts[cat] = (counts[cat] || 0) + 1;
+        });
+        return counts;
+    }
+
+    /* -------------------------------------------------------
+       12.2 ACTUALIZAR CONTADORES DE LOS FILTROS
+       ------------------------------------------------------- */
+    function updateCounters() {
+        const counts = countByCategory();
+        counters.forEach(counter => {
+            const key = counter.dataset.count;
+            if (!key) return;
+            counter.textContent = counts[key] ?? 0;
+        });
+
+        // También actualizar el contador de cada sección
+        sections.forEach(section => {
+            const key = section.dataset.section;
+            const countEl = section.querySelector('.games-section-count-num');
+            if (countEl && key) {
+                countEl.textContent = counts[key] ?? 0;
+            }
+        });
+    }
+
+    /* -------------------------------------------------------
+       12.3 APLICAR FILTRO
+       ------------------------------------------------------- */
+    function applyFilter(filter) {
+        let totalVisible = 0;
+
+        // Mostrar / ocultar secciones completas
+        sections.forEach(section => {
+            const secKey = section.dataset.section;
+            const showSection = (filter === 'all') || (secKey === filter);
+            section.classList.toggle('is-hidden', !showSection);
+
+            // Dentro de cada sección, mostrar/ocultar tarjetas (doble seguridad)
+            const sectionCards = $$('.game-card', section);
+            sectionCards.forEach(card => {
+                const cat = card.dataset.category || '';
+                const showCard = (filter === 'all') || (cat === filter);
+                card.classList.toggle('is-filtered-out', !showCard);
+                if (showCard && showSection) totalVisible++;
+            });
+        });
+
+        // Estado vacío
+        if (emptyBox) emptyBox.hidden = totalVisible !== 0;
+
+        // Actualizar botones activos
+        filterBtns.forEach(btn => {
+            const isActive = btn.dataset.filter === filter;
+            btn.classList.toggle('is-active', isActive);
+            btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        });
+    }
+
+    /* -------------------------------------------------------
+       12.4 REVEAL DE TARJETAS
+       ------------------------------------------------------- */
+    function revealCards() {
+        // Delay escalonado según posición dentro de la sección
+        cards.forEach((card, i) => {
+            card.classList.add('reveal-card');
+            card.style.transitionDelay = `${(i % 6) * 0.05}s`;
+        });
+
+        if (!('IntersectionObserver' in window)) {
+            cards.forEach(c => c.classList.add('is-visible'));
+            return;
+        }
+
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    io.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.10,
+            rootMargin: '0px 0px -60px 0px'
+        });
+
+        cards.forEach(card => io.observe(card));
+    }
+
+    /* -------------------------------------------------------
+       12.5 EVENTOS DE FILTROS
+       ------------------------------------------------------- */
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const filter = btn.dataset.filter || 'all';
+            Sound.click();
+            applyFilter(filter);
+
+            // Scroll suave al inicio de la lista al cambiar de filtro
+            const target = $('#juegos');
+            if (target && window.scrollY > target.offsetTop + 200) {
+                const headerH = $('#siteHeader')?.offsetHeight || 80;
+                window.scrollTo({
+                    top: target.offsetTop - headerH - 20,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    /* -------------------------------------------------------
+       12.6 BOTÓN "VER TODOS" DEL ESTADO VACÍO
+       ------------------------------------------------------- */
+    const btnShowAll = $('.btn-show-all', gamesArea);
+    if (btnShowAll) {
+        btnShowAll.addEventListener('click', () => {
+            Sound.click();
+            applyFilter('all');
+        });
+    }
+
+    /* -------------------------------------------------------
+       12.7 SONIDO AL ABRIR UN JUEGO
+       ------------------------------------------------------- */
+    $$('.game-card-link', gamesArea).forEach(link => {
+        link.addEventListener('click', () => Sound.select());
+    });
+
+    /* -------------------------------------------------------
+       12.8 INICIALIZACIÓN
+       ------------------------------------------------------- */
+    updateCounters();
+    revealCards();
+    applyFilter('all');
+})();
+
+
+/* ============================================================
+   13. API GLOBAL
+   ============================================================ */
+window.AventuraEducativa = {
+    sound: Sound,
+    scrollTo: window.AE_scrollTo,
+    version: '1.0'
+};
+
+
+/* ============================================================
+   14. LOG DE BIENVENIDA
+   ============================================================ */
+console.log(
+    '%c🐝 AVENTURAS DE BEEBOT %c Portal Inicial cargado — ' + document.title,
+    'background: linear-gradient(90deg,#7ed957,#4ec0e0,#ffd93d); color:#0b3b1f; padding:6px 10px; border-radius:8px; font-weight:900;',
+    'color:#6b7280; font-weight:600; padding:4px;'
+);

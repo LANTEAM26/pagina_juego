@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="description" content="Aventuras de BeeBot — Portal de 34 minijuegos educativos para el nivel Inicial">
+    <meta name="description" content="Aventuras de BeeBot — Portal de minijuegos educativos para el nivel Inicial">
     <meta name="theme-color" content="#7ed957">
     <title>🐝 Aventuras de BeeBot | Inicial</title>
 
@@ -31,7 +31,6 @@
 
 <!-- ============================================================
      ENCABEZADO PRIMAVERAL — Glass blanco-verdoso
-     La clase .header--spring da el nuevo fondo y contraste
      ============================================================ -->
 <header class="site-header header--spring" id="siteHeader">
     <div class="header-inner">
@@ -131,36 +130,24 @@
     <!-- Contenido hero -->
     <div class="portal-hero-content">
 
-        <!-- =========================================================
-             BeeBot VOLANDO (lado izquierdo)
-             - .robot-display: contenedor base
-             - .beebot-flight: envoltorio del vuelo (figura-8)
-             - .bee-shadow: sombra que respira
-             - .robot-img: imagen con micro-rotación
-             ========================================================= -->
+        <!-- BeeBot VOLANDO -->
         <div class="hero-character reveal-child" data-reveal="1">
             <div class="character-platform platform-garden"></div>
 
             <div class="robot-display has-image" data-robot="beebot">
-
-                <!-- Sombra bajo la abeja (se sincroniza con el vuelo) -->
                 <span class="bee-shadow" aria-hidden="true"></span>
-
-                <!-- Envoltorio de vuelo: aquí va la animación tipo figura-8 -->
                 <div class="beebot-flight">
                     <img src="assets/robots/beebot.png"
                          alt="Robot BeeBot, guía del nivel Inicial"
                          class="robot-img">
                 </div>
-
-                <!-- Chispitas/aura brillante alrededor -->
                 <span class="bee-sparkle sparkle-1" aria-hidden="true">✨</span>
                 <span class="bee-sparkle sparkle-2" aria-hidden="true">✨</span>
                 <span class="bee-sparkle sparkle-3" aria-hidden="true">✨</span>
             </div>
         </div>
 
-        <!-- Texto (lado derecho) -->
+        <!-- Texto -->
         <div class="hero-text reveal-child" data-reveal="2">
             <div class="hero-badge hero-badge-inicial">
                 <span class="badge-dot"></span>
@@ -173,7 +160,6 @@
                 <span class="portal-hero-title-line portal-hero-title-accent">BEEBOT</span>
             </h2>
 
-            <!-- Burbuja de diálogo de BeeBot -->
             <div class="bubble bubble-inicial">
                 <span class="bubble-tail"></span>
                 <p class="bubble-text">
@@ -196,7 +182,6 @@
         </div>
     </div>
 
-    <!-- Indicador de scroll -->
     <div class="scroll-hint" aria-hidden="true">
         <span class="scroll-txt">Desliza para ver los juegos</span>
         <div class="scroll-mouse"><span class="scroll-wheel"></span></div>
@@ -205,7 +190,7 @@
 
 
 <!-- ============================================================
-     ÁREA DE JUEGOS — 34 juegos organizados por categorías
+     ÁREA DE JUEGOS — 23 juegos organizados por categorías
      ============================================================ -->
 <main id="juegos" class="games-area">
 
@@ -216,7 +201,7 @@
             <span class="section-title-txt">ELIGE TU JUEGO</span>
         </h2>
         <p class="section-subtitle">
-            34 aventuras te esperan organizadas por categorías. ¡Toca una tarjeta para comenzar!
+            23 aventuras te esperan organizadas por categorías. ¡Toca una tarjeta para comenzar!
         </p>
     </div>
 
@@ -227,31 +212,31 @@
         <button class="filter-btn is-active" data-filter="all" role="tab" aria-selected="true">
             <span class="filter-ico">🌈</span>
             <span class="filter-txt">Todos</span>
-            <span class="filter-count" data-count="all">34</span>
+            <span class="filter-count" data-count="all">23</span>
         </button>
 
         <button class="filter-btn" data-filter="numeros" role="tab" aria-selected="false">
             <span class="filter-ico">🔢</span>
             <span class="filter-txt">Números</span>
-            <span class="filter-count" data-count="numeros">6</span>
+            <span class="filter-count" data-count="numeros">4</span>
         </button>
 
         <button class="filter-btn" data-filter="colores" role="tab" aria-selected="false">
             <span class="filter-ico">🎨</span>
             <span class="filter-txt">Colores</span>
-            <span class="filter-count" data-count="colores">6</span>
+            <span class="filter-count" data-count="colores">4</span>
         </button>
 
         <button class="filter-btn" data-filter="letras" role="tab" aria-selected="false">
             <span class="filter-ico">🔤</span>
             <span class="filter-txt">Letras</span>
-            <span class="filter-count" data-count="letras">6</span>
+            <span class="filter-count" data-count="letras">2</span>
         </button>
 
         <button class="filter-btn" data-filter="logica" role="tab" aria-selected="false">
             <span class="filter-ico">🧩</span>
             <span class="filter-txt">Lógica</span>
-            <span class="filter-count" data-count="logica">12</span>
+            <span class="filter-count" data-count="logica">9</span>
         </button>
 
         <button class="filter-btn" data-filter="naturaleza" role="tab" aria-selected="false">
@@ -263,7 +248,7 @@
 
 
     <!-- ══════════════════════════════════════════════════════════════
-         SECCIÓN 1 · NÚMEROS
+         SECCIÓN 1 · NÚMEROS (4 juegos)
          ══════════════════════════════════════════════════════════════ -->
     <section class="games-section games-section-numeros" data-section="numeros" aria-labelledby="sec-numeros-title">
 
@@ -274,7 +259,7 @@
                 <p class="games-section-desc">Aprende a contar, sumar y reconocer números jugando</p>
             </div>
             <span class="games-section-count">
-                <span class="games-section-count-num">6</span>
+                <span class="games-section-count-num">4</span>
                 <span class="games-section-count-txt">juegos</span>
             </span>
         </header>
@@ -285,7 +270,7 @@
             <article class="game-card" data-category="numeros" data-difficulty="facil">
                 <a href="Juegos/numeros.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Cuenta Números">
                     <div class="game-card-thumb thumb-numeros has-image">
-                        <img src="assets/portada_juegos/cuenta_numeros.png" alt="Cuenta Números" class="game-thumb-img" loading="lazy">
+                        <img src="Juegos/imagen1.png" alt="Cuenta Números" class="game-thumb-img" loading="lazy">
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">01</span>
                         <div class="game-difficulty difficulty-facil">
@@ -299,7 +284,7 @@
                             <span class="game-age">4-6 años</span>
                         </div>
                         <h3 class="game-title">Cuenta Números</h3>
-                        <p class="game-desc">Recolecta los números del 1 al 5 en el orden correcto antes de la meta.</p>
+                        <p class="game-desc">Aprende a contar y reconocer los números del 1 al 10 en el jardín.</p>
                         <div class="game-card-bottom">
                             <span class="game-rating" aria-label="Dificultad 1 de 3">
                                 <span class="star is-filled">★</span>
@@ -315,14 +300,13 @@
                 </a>
             </article>
 
-            <!-- 02 · Suma Frutas -->
-            <article class="game-card game-card-new" data-category="numeros" data-difficulty="facil">
-                <a href="Juegos/sumaFrutas.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Suma Frutas">
+            <!-- 02 · Control Bee -->
+            <article class="game-card" data-category="numeros" data-difficulty="facil">
+                <a href="Juegos/controlBee.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Control Bee">
                     <div class="game-card-thumb thumb-numeros has-image">
-                        <img src="Juegos/imagen12.png" alt="Suma Frutas" class="game-thumb-img" loading="lazy">
+                        <img src="Juegos/imagen2.png" alt="Control Bee" class="game-thumb-img" loading="lazy">
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">02</span>
-                        <span class="game-badge-new">NUEVO</span>
                         <div class="game-difficulty difficulty-facil">
                             <span class="diff-dot"></span>
                             <span class="diff-txt">Fácil</span>
@@ -333,8 +317,8 @@
                             <span class="game-category-tag tag-numeros">🔢 Números</span>
                             <span class="game-age">4-6 años</span>
                         </div>
-                        <h3 class="game-title">Suma Frutas</h3>
-                        <p class="game-desc">Ayuda a BeeBot a sumar las frutas que encuentra por el jardín.</p>
+                        <h3 class="game-title">Control Bee</h3>
+                        <p class="game-desc">Controla a BeeBot y cuenta cada paso que da por el jardín.</p>
                         <div class="game-card-bottom">
                             <span class="game-rating" aria-label="Dificultad 1 de 3">
                                 <span class="star is-filled">★</span>
@@ -350,14 +334,13 @@
                 </a>
             </article>
 
-            <!-- 03 · Resta Manzanas -->
-            <article class="game-card game-card-new" data-category="numeros" data-difficulty="facil">
-                <a href="Juegos/restaManzanas.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Resta Manzanas">
+            <!-- 03 · Dance Bee -->
+            <article class="game-card" data-category="numeros" data-difficulty="facil">
+                <a href="Juegos/danceBee.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Dance Bee">
                     <div class="game-card-thumb thumb-numeros has-image">
-                        <img src="Juegos/imagen13.png" alt="Resta Manzanas" class="game-thumb-img" loading="lazy">
+                        <img src="Juegos/imagen3.png" alt="Dance Bee" class="game-thumb-img" loading="lazy">
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">03</span>
-                        <span class="game-badge-new">NUEVO</span>
                         <div class="game-difficulty difficulty-facil">
                             <span class="diff-dot"></span>
                             <span class="diff-txt">Fácil</span>
@@ -368,8 +351,8 @@
                             <span class="game-category-tag tag-numeros">🔢 Números</span>
                             <span class="game-age">4-6 años</span>
                         </div>
-                        <h3 class="game-title">Resta Manzanas</h3>
-                        <p class="game-desc">Quita las manzanas que indica el número y descubre el resultado.</p>
+                        <h3 class="game-title">Dance Bee</h3>
+                        <p class="game-desc">Sigue el ritmo y cuenta los movimientos que BeeBot debe hacer.</p>
                         <div class="game-card-bottom">
                             <span class="game-rating" aria-label="Dificultad 1 de 3">
                                 <span class="star is-filled">★</span>
@@ -385,49 +368,13 @@
                 </a>
             </article>
 
-            <!-- 04 · Contar Estrellas -->
-            <article class="game-card game-card-new" data-category="numeros" data-difficulty="facil">
-                <a href="Juegos/contarEstrellas.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Contar Estrellas">
+            <!-- 04 · Secuencia Mágica -->
+            <article class="game-card" data-category="numeros" data-difficulty="medio">
+                <a href="Juegos/Secuencia/secuencia.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Secuencia Mágica">
                     <div class="game-card-thumb thumb-numeros has-image">
-                        <img src="Juegos/imagen14.png" alt="Contar Estrellas" class="game-thumb-img" loading="lazy">
+                        <img src="Juegos/imagen4.png" alt="Secuencia Mágica" class="game-thumb-img" loading="lazy">
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">04</span>
-                        <span class="game-badge-new">NUEVO</span>
-                        <div class="game-difficulty difficulty-facil">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Fácil</span>
-                        </div>
-                    </div>
-                    <div class="game-card-body">
-                        <div class="game-card-top">
-                            <span class="game-category-tag tag-numeros">🔢 Números</span>
-                            <span class="game-age">4-6 años</span>
-                        </div>
-                        <h3 class="game-title">Contar Estrellas</h3>
-                        <p class="game-desc">Cuenta las estrellas del cielo nocturno y elige el número correcto.</p>
-                        <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 1 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
-                        </div>
-                    </div>
-                </a>
-            </article>
-
-            <!-- 05 · Familia de Números -->
-            <article class="game-card game-card-new" data-category="numeros" data-difficulty="medio">
-                <a href="Juegos/familiaNumeros.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Familia de Números">
-                    <div class="game-card-thumb thumb-numeros has-image">
-                        <img src="Juegos/imagen15.png" alt="Familia de Números" class="game-thumb-img" loading="lazy">
-                        <span class="game-thumb-bg"></span>
-                        <span class="game-number">05</span>
-                        <span class="game-badge-new">NUEVO</span>
                         <div class="game-difficulty difficulty-medio">
                             <span class="diff-dot"></span>
                             <span class="diff-txt">Medio</span>
@@ -438,43 +385,8 @@
                             <span class="game-category-tag tag-numeros">🔢 Números</span>
                             <span class="game-age">5-6 años</span>
                         </div>
-                        <h3 class="game-title">Familia de Números</h3>
-                        <p class="game-desc">Une los números con sus familias (del 1 al 10) por orden correcto.</p>
-                        <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 2 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
-                        </div>
-                    </div>
-                </a>
-            </article>
-
-            <!-- 06 · Números Perdidos -->
-            <article class="game-card game-card-new" data-category="numeros" data-difficulty="medio">
-                <a href="Juegos/numerosPerdidos.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Números Perdidos">
-                    <div class="game-card-thumb thumb-numeros has-image">
-                        <img src="Juegos/imagen16.png" alt="Números Perdidos" class="game-thumb-img" loading="lazy">
-                        <span class="game-thumb-bg"></span>
-                        <span class="game-number">06</span>
-                        <span class="game-badge-new">NUEVO</span>
-                        <div class="game-difficulty difficulty-medio">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Medio</span>
-                        </div>
-                    </div>
-                    <div class="game-card-body">
-                        <div class="game-card-top">
-                            <span class="game-category-tag tag-numeros">🔢 Números</span>
-                            <span class="game-age">5-6 años</span>
-                        </div>
-                        <h3 class="game-title">Números Perdidos</h3>
-                        <p class="game-desc">Encuentra los números que faltan en la secuencia mágica de BeeBot.</p>
+                        <h3 class="game-title">Secuencia Mágica</h3>
+                        <p class="game-desc">Completa la secuencia numérica siguiendo el orden correcto.</p>
                         <div class="game-card-bottom">
                             <span class="game-rating" aria-label="Dificultad 2 de 3">
                                 <span class="star is-filled">★</span>
@@ -495,7 +407,7 @@
 
 
     <!-- ══════════════════════════════════════════════════════════════
-         SECCIÓN 2 · COLORES
+         SECCIÓN 2 · COLORES (4 juegos)
          ══════════════════════════════════════════════════════════════ -->
     <section class="games-section games-section-colores" data-section="colores" aria-labelledby="sec-colores-title">
 
@@ -506,20 +418,20 @@
                 <p class="games-section-desc">Descubre, mezcla y reconoce los colores del mundo</p>
             </div>
             <span class="games-section-count">
-                <span class="games-section-count-num">6</span>
+                <span class="games-section-count-num">4</span>
                 <span class="games-section-count-txt">juegos</span>
             </span>
         </header>
 
         <div class="games-grid" aria-live="polite">
 
-            <!-- 07 · Misión Reciclaje -->
+            <!-- 05 · Misión Reciclaje -->
             <article class="game-card" data-category="colores" data-difficulty="medio">
                 <a href="Juegos/reciclaje.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Misión Reciclaje">
                     <div class="game-card-thumb thumb-colores has-image">
-                        <img src="Juegos/imagen9.png" alt="Misión Reciclaje" class="game-thumb-img" loading="lazy">
+                        <img src="Juegos/imagen5.png" alt="Misión Reciclaje" class="game-thumb-img" loading="lazy">
                         <span class="game-thumb-bg"></span>
-                        <span class="game-number">07</span>
+                        <span class="game-number">05</span>
                         <div class="game-difficulty difficulty-medio">
                             <span class="diff-dot"></span>
                             <span class="diff-txt">Medio</span>
@@ -547,154 +459,13 @@
                 </a>
             </article>
 
-            <!-- 08 · Pintar Colores -->
-            <article class="game-card game-card-new" data-category="colores" data-difficulty="facil">
-                <a href="Juegos/pintarColores.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Pintar Colores">
-                    <div class="game-card-thumb thumb-colores has-image">
-                        <img src="Juegos/imagen17.png" alt="Pintar Colores" class="game-thumb-img" loading="lazy">
-                        <span class="game-thumb-bg"></span>
-                        <span class="game-number">08</span>
-                        <span class="game-badge-new">NUEVO</span>
-                        <div class="game-difficulty difficulty-facil">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Fácil</span>
-                        </div>
-                    </div>
-                    <div class="game-card-body">
-                        <div class="game-card-top">
-                            <span class="game-category-tag tag-colores">🎨 Colores</span>
-                            <span class="game-age">4-6 años</span>
-                        </div>
-                        <h3 class="game-title">Pintar Colores</h3>
-                        <p class="game-desc">Pinta los dibujos con el color que te indica BeeBot en cada reto.</p>
-                        <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 1 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
-                        </div>
-                    </div>
-                </a>
-            </article>
-
-            <!-- 09 · Colores del Arcoíris -->
-            <article class="game-card game-card-new" data-category="colores" data-difficulty="facil">
-                <a href="Juegos/arcoiris.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Colores del Arcoíris">
-                    <div class="game-card-thumb thumb-colores has-image">
-                        <img src="Juegos/imagen18.png" alt="Colores del Arcoíris" class="game-thumb-img" loading="lazy">
-                        <span class="game-thumb-bg"></span>
-                        <span class="game-number">09</span>
-                        <span class="game-badge-new">NUEVO</span>
-                        <div class="game-difficulty difficulty-facil">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Fácil</span>
-                        </div>
-                    </div>
-                    <div class="game-card-body">
-                        <div class="game-card-top">
-                            <span class="game-category-tag tag-colores">🎨 Colores</span>
-                            <span class="game-age">4-6 años</span>
-                        </div>
-                        <h3 class="game-title">Colores del Arcoíris</h3>
-                        <p class="game-desc">Ordena los colores del arcoíris en la posición correcta para formarlo.</p>
-                        <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 1 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
-                        </div>
-                    </div>
-                </a>
-            </article>
-
-            <!-- 10 · Lluvia de Colores -->
-            <article class="game-card game-card-new" data-category="colores" data-difficulty="medio">
-                <a href="Juegos/lluviaColores.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Lluvia de Colores">
-                    <div class="game-card-thumb thumb-colores has-image">
-                        <img src="Juegos/imagen19.png" alt="Lluvia de Colores" class="game-thumb-img" loading="lazy">
-                        <span class="game-thumb-bg"></span>
-                        <span class="game-number">10</span>
-                        <span class="game-badge-new">NUEVO</span>
-                        <div class="game-difficulty difficulty-medio">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Medio</span>
-                        </div>
-                    </div>
-                    <div class="game-card-body">
-                        <div class="game-card-top">
-                            <span class="game-category-tag tag-colores">🎨 Colores</span>
-                            <span class="game-age">5-6 años</span>
-                        </div>
-                        <h3 class="game-title">Lluvia de Colores</h3>
-                        <p class="game-desc">Atrapa solo las gotas del color que pide BeeBot antes de que caigan.</p>
-                        <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 2 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
-                        </div>
-                    </div>
-                </a>
-            </article>
-
-            <!-- 11 · Burbujas Mágicas -->
-            <article class="game-card game-card-new" data-category="colores" data-difficulty="medio">
-                <a href="Juegos/burbujas.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Burbujas Mágicas">
-                    <div class="game-card-thumb thumb-colores has-image">
-                        <img src="Juegos/imagen20.png" alt="Burbujas Mágicas" class="game-thumb-img" loading="lazy">
-                        <span class="game-thumb-bg"></span>
-                        <span class="game-number">11</span>
-                        <span class="game-badge-new">NUEVO</span>
-                        <div class="game-difficulty difficulty-medio">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Medio</span>
-                        </div>
-                    </div>
-                    <div class="game-card-body">
-                        <div class="game-card-top">
-                            <span class="game-category-tag tag-colores">🎨 Colores</span>
-                            <span class="game-age">5-6 años</span>
-                        </div>
-                        <h3 class="game-title">Burbujas Mágicas</h3>
-                        <p class="game-desc">Revienta las burbujas del color correcto siguiendo la pista de BeeBot.</p>
-                        <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 2 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
-                        </div>
-                    </div>
-                </a>
-            </article>
-
-            <!-- 12 · Abeja Recolectora -->
-            <article class="game-card game-card-new" data-category="colores" data-difficulty="medio">
+            <!-- 06 · Abeja Recolectora -->
+            <article class="game-card" data-category="colores" data-difficulty="medio">
                 <a href="Juegos/AbejaRecolectora.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Abeja Recolectora">
                     <div class="game-card-thumb thumb-colores has-image">
-                        <img src="Juegos/imagen12.png" alt="Abeja Recolectora" class="game-thumb-img" loading="lazy" onerror="this.src='Juegos/imagen9.png'">
+                        <img src="Juegos/imagen6.png" alt="Abeja Recolectora" class="game-thumb-img" loading="lazy">
                         <span class="game-thumb-bg"></span>
-                        <span class="game-number">12</span>
-                        <span class="game-badge-new">NUEVO</span>
+                        <span class="game-number">06</span>
                         <div class="game-difficulty difficulty-medio">
                             <span class="diff-dot"></span>
                             <span class="diff-txt">Medio</span>
@@ -722,12 +493,80 @@
                 </a>
             </article>
 
+            <!-- 07 · Lluvia de Pétalos -->
+            <article class="game-card" data-category="colores" data-difficulty="facil">
+                <a href="Juegos/LluviaDePetalos/LluviaPetalo.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Lluvia de Pétalos">
+                    <div class="game-card-thumb thumb-colores has-image">
+                        <img src="Juegos/imagen7.png" alt="Lluvia de Pétalos" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">07</span>
+                        <div class="game-difficulty difficulty-facil">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Fácil</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-colores">🎨 Colores</span>
+                            <span class="game-age">4-6 años</span>
+                        </div>
+                        <h3 class="game-title">Lluvia de Pétalos</h3>
+                        <p class="game-desc">Atrapa los pétalos de colores que caen del cielo primaveral.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 1 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 08 · Pixel Art -->
+            <article class="game-card" data-category="colores" data-difficulty="medio">
+                <a href="Juegos/dibujar.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Pixel Art">
+                    <div class="game-card-thumb thumb-colores has-image">
+                        <img src="Juegos/imagen8.png" alt="Pixel Art" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">08</span>
+                        <div class="game-difficulty difficulty-medio">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Medio</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-colores">🎨 Colores</span>
+                            <span class="game-age">5-6 años</span>
+                        </div>
+                        <h3 class="game-title">Pixel Art</h3>
+                        <p class="game-desc">Utiliza el botón de pintar para replicar los dibujos del tablero con colores.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 2 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
         </div>
     </section>
 
 
     <!-- ══════════════════════════════════════════════════════════════
-         SECCIÓN 3 · LETRAS
+         SECCIÓN 3 · LETRAS (2 juegos)
          ══════════════════════════════════════════════════════════════ -->
     <section class="games-section games-section-letras" data-section="letras" aria-labelledby="sec-letras-title">
 
@@ -738,20 +577,20 @@
                 <p class="games-section-desc">Reconoce, escribe y juega con las letras y palabras</p>
             </div>
             <span class="games-section-count">
-                <span class="games-section-count-num">6</span>
+                <span class="games-section-count-num">2</span>
                 <span class="games-section-count-txt">juegos</span>
             </span>
         </header>
 
         <div class="games-grid" aria-live="polite">
 
-            <!-- 13 · Escribe tu Nombre -->
+            <!-- 09 · Escribe tu Nombre -->
             <article class="game-card" data-category="letras" data-difficulty="facil">
                 <a href="Juegos/nombres.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Escribe tu Nombre">
                     <div class="game-card-thumb thumb-letras has-image">
-                        <img src="Juegos/imagen3.png" alt="Escribe tu Nombre" class="game-thumb-img" loading="lazy">
+                        <img src="Juegos/imagen9.png" alt="Escribe tu Nombre" class="game-thumb-img" loading="lazy">
                         <span class="game-thumb-bg"></span>
-                        <span class="game-number">13</span>
+                        <span class="game-number">09</span>
                         <div class="game-difficulty difficulty-facil">
                             <span class="diff-dot"></span>
                             <span class="diff-txt">Fácil</span>
@@ -779,13 +618,13 @@
                 </a>
             </article>
 
-            <!-- 14 · Palabras Mágicas -->
+            <!-- 10 · Palabras Mágicas -->
             <article class="game-card" data-category="letras" data-difficulty="medio">
                 <a href="Juegos/Beebotpalabras.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Palabras Mágicas">
                     <div class="game-card-thumb thumb-letras has-image">
-                        <img src="Juegos/imagen4.png" alt="Palabras Mágicas" class="game-thumb-img" loading="lazy">
+                        <img src="Juegos/imagen10.png" alt="Palabras Mágicas" class="game-thumb-img" loading="lazy">
                         <span class="game-thumb-bg"></span>
-                        <span class="game-number">14</span>
+                        <span class="game-number">10</span>
                         <div class="game-difficulty difficulty-medio">
                             <span class="diff-dot"></span>
                             <span class="diff-txt">Medio</span>
@@ -813,152 +652,12 @@
                 </a>
             </article>
 
-            <!-- 15 · Vocales Divertidas -->
-            <article class="game-card game-card-new" data-category="letras" data-difficulty="facil">
-                <a href="Juegos/vocales.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Vocales Divertidas">
-                    <div class="game-card-thumb thumb-letras has-image">
-                        <img src="Juegos/imagen21.png" alt="Vocales Divertidas" class="game-thumb-img" loading="lazy">
-                        <span class="game-thumb-bg"></span>
-                        <span class="game-number">15</span>
-                        <span class="game-badge-new">NUEVO</span>
-                        <div class="game-difficulty difficulty-facil">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Fácil</span>
-                        </div>
-                    </div>
-                    <div class="game-card-body">
-                        <div class="game-card-top">
-                            <span class="game-category-tag tag-letras">🔤 Letras</span>
-                            <span class="game-age">4-6 años</span>
-                        </div>
-                        <h3 class="game-title">Vocales Divertidas</h3>
-                        <p class="game-desc">Aprende las vocales con divertidos dibujos y sonidos del jardín.</p>
-                        <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 1 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
-                        </div>
-                    </div>
-                </a>
-            </article>
-
-            <!-- 16 · Sopa de Letras -->
-            <article class="game-card game-card-new" data-category="letras" data-difficulty="medio">
-                <a href="Juegos/sopaLetras.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Sopa de Letras">
-                    <div class="game-card-thumb thumb-letras has-image">
-                        <img src="Juegos/imagen22.png" alt="Sopa de Letras" class="game-thumb-img" loading="lazy">
-                        <span class="game-thumb-bg"></span>
-                        <span class="game-number">16</span>
-                        <span class="game-badge-new">NUEVO</span>
-                        <div class="game-difficulty difficulty-medio">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Medio</span>
-                        </div>
-                    </div>
-                    <div class="game-card-body">
-                        <div class="game-card-top">
-                            <span class="game-category-tag tag-letras">🔤 Letras</span>
-                            <span class="game-age">5-6 años</span>
-                        </div>
-                        <h3 class="game-title">Sopa de Letras</h3>
-                        <p class="game-desc">Encuentra las palabras escondidas en la sopa de letras de BeeBot.</p>
-                        <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 2 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
-                        </div>
-                    </div>
-                </a>
-            </article>
-
-            <!-- 17 · Pesca de Letras -->
-            <article class="game-card game-card-new" data-category="letras" data-difficulty="medio">
-                <a href="Juegos/pescaLetras.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Pesca de Letras">
-                    <div class="game-card-thumb thumb-letras has-image">
-                        <img src="Juegos/imagen23.png" alt="Pesca de Letras" class="game-thumb-img" loading="lazy">
-                        <span class="game-thumb-bg"></span>
-                        <span class="game-number">17</span>
-                        <span class="game-badge-new">NUEVO</span>
-                        <div class="game-difficulty difficulty-medio">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Medio</span>
-                        </div>
-                    </div>
-                    <div class="game-card-body">
-                        <div class="game-card-top">
-                            <span class="game-category-tag tag-letras">🔤 Letras</span>
-                            <span class="game-age">5-6 años</span>
-                        </div>
-                        <h3 class="game-title">Pesca de Letras</h3>
-                        <p class="game-desc">Pesca solo las letras correctas para completar la palabra secreta.</p>
-                        <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 2 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
-                        </div>
-                    </div>
-                </a>
-            </article>
-
-            <!-- 18 · Abecedario Divertido -->
-            <article class="game-card game-card-new" data-category="letras" data-difficulty="facil">
-                <a href="Juegos/abecedario.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Abecedario Divertido">
-                    <div class="game-card-thumb thumb-letras has-image">
-                        <img src="Juegos/imagen24.png" alt="Abecedario Divertido" class="game-thumb-img" loading="lazy">
-                        <span class="game-thumb-bg"></span>
-                        <span class="game-number">18</span>
-                        <span class="game-badge-new">NUEVO</span>
-                        <div class="game-difficulty difficulty-facil">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Fácil</span>
-                        </div>
-                    </div>
-                    <div class="game-card-body">
-                        <div class="game-card-top">
-                            <span class="game-category-tag tag-letras">🔤 Letras</span>
-                            <span class="game-age">4-6 años</span>
-                        </div>
-                        <h3 class="game-title">Abecedario Divertido</h3>
-                        <p class="game-desc">Recorre el abecedario de la A a la Z con dibujos y sonidos únicos.</p>
-                        <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 1 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
-                        </div>
-                    </div>
-                </a>
-            </article>
-
         </div>
     </section>
 
 
     <!-- ══════════════════════════════════════════════════════════════
-         SECCIÓN 4 · LÓGICA
+         SECCIÓN 4 · LÓGICA (9 juegos)
          ══════════════════════════════════════════════════════════════ -->
     <section class="games-section games-section-logica" data-section="logica" aria-labelledby="sec-logica-title">
 
@@ -969,20 +668,20 @@
                 <p class="games-section-desc">Resuelve retos, puzzles y desafíos mentales con BeeBot</p>
             </div>
             <span class="games-section-count">
-                <span class="games-section-count-num">12</span>
+                <span class="games-section-count-num">9</span>
                 <span class="games-section-count-txt">juegos</span>
             </span>
         </header>
 
         <div class="games-grid" aria-live="polite">
 
-            <!-- 19 · Pasos Límite -->
+            <!-- 11 · Pasos Límite -->
             <article class="game-card" data-category="logica" data-difficulty="facil">
                 <a href="Juegos/PasosLimite.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Pasos Límite">
                     <div class="game-card-thumb thumb-logica has-image">
-                        <img src="Juegos/imagen1.png" alt="Pasos Límite" class="game-thumb-img" loading="lazy">
+                        <img src="Juegos/imagen11.png" alt="Pasos Límite" class="game-thumb-img" loading="lazy">
                         <span class="game-thumb-bg"></span>
-                        <span class="game-number">19</span>
+                        <span class="game-number">11</span>
                         <div class="game-difficulty difficulty-facil">
                             <span class="diff-dot"></span>
                             <span class="diff-txt">Fácil</span>
@@ -1010,13 +709,13 @@
                 </a>
             </article>
 
-            <!-- 20 · Esquiva las Rocas -->
+            <!-- 12 · Esquiva las Rocas -->
             <article class="game-card" data-category="logica" data-difficulty="medio">
                 <a href="Juegos/obstaculos.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Esquiva las Rocas">
                     <div class="game-card-thumb thumb-logica has-image">
-                        <img src="Juegos/imagen6.png" alt="Esquiva las Rocas" class="game-thumb-img" loading="lazy">
+                        <img src="Juegos/imagen12.png" alt="Esquiva las Rocas" class="game-thumb-img" loading="lazy">
                         <span class="game-thumb-bg"></span>
-                        <span class="game-number">20</span>
+                        <span class="game-number">12</span>
                         <div class="game-difficulty difficulty-medio">
                             <span class="diff-dot"></span>
                             <span class="diff-txt">Medio</span>
@@ -1044,13 +743,13 @@
                 </a>
             </article>
 
-            <!-- 21 · Pixel Art -->
+            <!-- 13 · Memoria -->
             <article class="game-card" data-category="logica" data-difficulty="medio">
-                <a href="Juegos/dibujar.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Pixel Art">
+                <a href="Juegos/memoria.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Memoria">
                     <div class="game-card-thumb thumb-logica has-image">
-                        <img src="Juegos/imagen7.png" alt="Pixel Art" class="game-thumb-img" loading="lazy">
+                        <img src="Juegos/imagen13.png" alt="Memoria" class="game-thumb-img" loading="lazy">
                         <span class="game-thumb-bg"></span>
-                        <span class="game-number">21</span>
+                        <span class="game-number">13</span>
                         <div class="game-difficulty difficulty-medio">
                             <span class="diff-dot"></span>
                             <span class="diff-txt">Medio</span>
@@ -1061,41 +760,7 @@
                             <span class="game-category-tag tag-logica">🧠 Lógica</span>
                             <span class="game-age">5-6 años</span>
                         </div>
-                        <h3 class="game-title">Pixel Art</h3>
-                        <p class="game-desc">Utiliza el botón de pintar para replicar los dibujos del tablero.</p>
-                        <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 2 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
-                        </div>
-                    </div>
-                </a>
-            </article>
-
-            <!-- 22 · Memoria Física -->
-            <article class="game-card" data-category="logica" data-difficulty="medio">
-                <a href="Juegos/memoria.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Memoria Física">
-                    <div class="game-card-thumb thumb-logica has-image">
-                        <img src="Juegos/imagen8.png" alt="Memoria de Abejita" class="game-thumb-img" loading="lazy">
-                        <span class="game-thumb-bg"></span>
-                        <span class="game-number">22</span>
-                        <div class="game-difficulty difficulty-medio">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Medio</span>
-                        </div>
-                    </div>
-                    <div class="game-card-body">
-                        <div class="game-card-top">
-                            <span class="game-category-tag tag-logica">🧠 Lógica</span>
-                            <span class="game-age">5-6 años</span>
-                        </div>
-                        <h3 class="game-title">Memoria Física</h3>
+                        <h3 class="game-title">Memoria</h3>
                         <p class="game-desc">Arrastra y suelta las fichas en su posición correcta para ganar.</p>
                         <div class="game-card-bottom">
                             <span class="game-rating" aria-label="Dificultad 2 de 3">
@@ -1112,13 +777,13 @@
                 </a>
             </article>
 
-            <!-- 23 · Portales Mágicos -->
+            <!-- 14 · Portales Mágicos -->
             <article class="game-card" data-category="logica" data-difficulty="dificil">
                 <a href="Juegos/portales.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Portales Mágicos">
                     <div class="game-card-thumb thumb-logica has-image">
-                        <img src="Juegos/imagen10.png" alt="Portales Mágicos" class="game-thumb-img" loading="lazy">
+                        <img src="Juegos/imagen14.png" alt="Portales Mágicos" class="game-thumb-img" loading="lazy">
                         <span class="game-thumb-bg"></span>
-                        <span class="game-number">23</span>
+                        <span class="game-number">14</span>
                         <div class="game-difficulty difficulty-dificil">
                             <span class="diff-dot"></span>
                             <span class="diff-txt">Difícil</span>
@@ -1146,189 +811,13 @@
                 </a>
             </article>
 
-            <!-- 24 · Formas Geométricas -->
-            <article class="game-card game-card-new" data-category="logica" data-difficulty="facil">
-                <a href="Juegos/formas.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Formas Geométricas">
+            <!-- 15 · Día de Supermercado -->
+            <article class="game-card" data-category="logica" data-difficulty="dificil">
+                <a href="Juegos/CarritoSúperMercado.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Día de Supermercado">
                     <div class="game-card-thumb thumb-logica has-image">
-                        <img src="Juegos/imagen25.png" alt="Formas Geométricas" class="game-thumb-img" loading="lazy">
+                        <img src="Juegos/imagen15.png" alt="Día de Supermercado" class="game-thumb-img" loading="lazy">
                         <span class="game-thumb-bg"></span>
-                        <span class="game-number">24</span>
-                        <span class="game-badge-new">NUEVO</span>
-                        <div class="game-difficulty difficulty-facil">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Fácil</span>
-                        </div>
-                    </div>
-                    <div class="game-card-body">
-                        <div class="game-card-top">
-                            <span class="game-category-tag tag-logica">🧠 Lógica</span>
-                            <span class="game-age">4-6 años</span>
-                        </div>
-                        <h3 class="game-title">Formas Geométricas</h3>
-                        <p class="game-desc">Reconoce círculos, cuadrados, triángulos y más formas escondidas.</p>
-                        <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 1 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
-                        </div>
-                    </div>
-                </a>
-            </article>
-
-            <!-- 25 · Los Opuestos -->
-            <article class="game-card game-card-new" data-category="logica" data-difficulty="medio">
-                <a href="Juegos/opuestos.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Los Opuestos">
-                    <div class="game-card-thumb thumb-logica has-image">
-                        <img src="Juegos/imagen26.png" alt="Los Opuestos" class="game-thumb-img" loading="lazy">
-                        <span class="game-thumb-bg"></span>
-                        <span class="game-number">25</span>
-                        <span class="game-badge-new">NUEVO</span>
-                        <div class="game-difficulty difficulty-medio">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Medio</span>
-                        </div>
-                    </div>
-                    <div class="game-card-body">
-                        <div class="game-card-top">
-                            <span class="game-category-tag tag-logica">🧠 Lógica</span>
-                            <span class="game-age">5-6 años</span>
-                        </div>
-                        <h3 class="game-title">Los Opuestos</h3>
-                        <p class="game-desc">Une cada imagen con su opuesto: grande/pequeño, día/noche y más.</p>
-                        <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 2 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
-                        </div>
-                    </div>
-                </a>
-            </article>
-
-            <!-- 26 · Rompecabezas -->
-            <article class="game-card game-card-new" data-category="logica" data-difficulty="medio">
-                <a href="Juegos/rompecabezas.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Rompecabezas">
-                    <div class="game-card-thumb thumb-logica has-image">
-                        <img src="Juegos/imagen27.png" alt="Rompecabezas" class="game-thumb-img" loading="lazy">
-                        <span class="game-thumb-bg"></span>
-                        <span class="game-number">26</span>
-                        <span class="game-badge-new">NUEVO</span>
-                        <div class="game-difficulty difficulty-medio">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Medio</span>
-                        </div>
-                    </div>
-                    <div class="game-card-body">
-                        <div class="game-card-top">
-                            <span class="game-category-tag tag-logica">🧠 Lógica</span>
-                            <span class="game-age">5-6 años</span>
-                        </div>
-                        <h3 class="game-title">Rompecabezas</h3>
-                        <p class="game-desc">Arma las piezas del rompecabezas y descubre la imagen oculta.</p>
-                        <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 2 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
-                        </div>
-                    </div>
-                </a>
-            </article>
-
-            <!-- 27 · Laberinto Abeja -->
-            <article class="game-card game-card-new" data-category="logica" data-difficulty="medio">
-                <a href="Juegos/laberinto.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Laberinto Abeja">
-                    <div class="game-card-thumb thumb-logica has-image">
-                        <img src="Juegos/imagen28.png" alt="Laberinto Abeja" class="game-thumb-img" loading="lazy">
-                        <span class="game-thumb-bg"></span>
-                        <span class="game-number">27</span>
-                        <span class="game-badge-new">NUEVO</span>
-                        <div class="game-difficulty difficulty-medio">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Medio</span>
-                        </div>
-                    </div>
-                    <div class="game-card-body">
-                        <div class="game-card-top">
-                            <span class="game-category-tag tag-logica">🧠 Lógica</span>
-                            <span class="game-age">5-6 años</span>
-                        </div>
-                        <h3 class="game-title">Laberinto Abeja</h3>
-                        <p class="game-desc">Guía a BeeBot por el laberinto hasta la colmena sin perderse.</p>
-                        <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 2 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
-                        </div>
-                    </div>
-                </a>
-            </article>
-
-            <!-- 28 · Ordena los Tamaños -->
-            <article class="game-card game-card-new" data-category="logica" data-difficulty="medio">
-                <a href="Juegos/tamanos.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Ordena los Tamaños">
-                    <div class="game-card-thumb thumb-logica has-image">
-                        <img src="Juegos/imagen29.png" alt="Ordena los Tamaños" class="game-thumb-img" loading="lazy">
-                        <span class="game-thumb-bg"></span>
-                        <span class="game-number">28</span>
-                        <span class="game-badge-new">NUEVO</span>
-                        <div class="game-difficulty difficulty-medio">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Medio</span>
-                        </div>
-                    </div>
-                    <div class="game-card-body">
-                        <div class="game-card-top">
-                            <span class="game-category-tag tag-logica">🧠 Lógica</span>
-                            <span class="game-age">5-6 años</span>
-                        </div>
-                        <h3 class="game-title">Ordena los Tamaños</h3>
-                        <p class="game-desc">Ordena los objetos del más pequeño al más grande en cada reto.</p>
-                        <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 2 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
-                        </div>
-                    </div>
-                </a>
-            </article>
-
-            <!-- 29 · Día de Supermercado -->
-            <article class="game-card game-card-new" data-category="logica" data-difficulty="dificil">
-                <a href="Juegos/CarritoSuperMercado.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Día de Supermercado">
-                    <div class="game-card-thumb thumb-logica has-image">
-                        <img src="Juegos/imagen13.png" alt="Día de Supermercado" class="game-thumb-img" loading="lazy" onerror="this.src='Juegos/imagen1.png'">
-                        <span class="game-thumb-bg"></span>
-                        <span class="game-number">29</span>
-                        <span class="game-badge-new">NUEVO</span>
+                        <span class="game-number">15</span>
                         <div class="game-difficulty difficulty-dificil">
                             <span class="diff-dot"></span>
                             <span class="diff-txt">Difícil</span>
@@ -1356,13 +845,47 @@
                 </a>
             </article>
 
-            <!-- 30 · Abejas Gemelas (RETO FINAL) -->
-            <article class="game-card game-card-featured" data-category="logica" data-difficulty="dificil">
-                <a href="Juegos/abejapa2.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Abejas Gemelas">
+            <!-- 16 · Carrera de Abejitas -->
+            <article class="game-card" data-category="logica" data-difficulty="medio">
+                <a href="Juegos/carreraDeAbejitas.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Carrera de Abejitas">
                     <div class="game-card-thumb thumb-logica has-image">
-                        <img src="Juegos/imagen11.png" alt="Abejas Gemelas" class="game-thumb-img" loading="lazy">
+                        <img src="Juegos/imagen16.png" alt="Carrera de Abejitas" class="game-thumb-img" loading="lazy">
                         <span class="game-thumb-bg"></span>
-                        <span class="game-number">30</span>
+                        <span class="game-number">16</span>
+                        <div class="game-difficulty difficulty-medio">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Medio</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-logica">🧠 Lógica</span>
+                            <span class="game-age">5-6 años</span>
+                        </div>
+                        <h3 class="game-title">Carrera de Abejitas</h3>
+                        <p class="game-desc">Compite contra otras abejas y llega primero a la meta esquivando obstáculos.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 2 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 17 · Reto BeeBot (RETO FINAL) -->
+            <article class="game-card game-card-featured" data-category="logica" data-difficulty="dificil">
+                <a href="Juegos/beebot.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Reto BeeBot">
+                    <div class="game-card-thumb thumb-logica has-image">
+                        <img src="Juegos/imagen17.png" alt="Reto BeeBot" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">17</span>
                         <div class="game-badge-featured">✨ RETO FINAL</div>
                         <div class="game-difficulty difficulty-dificil">
                             <span class="diff-dot"></span>
@@ -1374,8 +897,8 @@
                             <span class="game-category-tag tag-logica">🧠 Lógica</span>
                             <span class="game-age">6+ años</span>
                         </div>
-                        <h3 class="game-title">Abejas Gemelas</h3>
-                        <p class="game-desc">Reto dual extremo: Controla a dos abejas de manera simultánea sin chocar.</p>
+                        <h3 class="game-title">Reto BeeBot</h3>
+                        <p class="game-desc">Mezcla de todas las habilidades. ¡Demuestra todo lo que has aprendido!</p>
                         <div class="game-card-bottom">
                             <span class="game-rating" aria-label="Dificultad 3 de 3">
                                 <span class="star is-filled">★</span>
@@ -1391,12 +914,80 @@
                 </a>
             </article>
 
+            <!-- 18 · Abeja Programadora -->
+            <article class="game-card" data-category="logica" data-difficulty="medio">
+                <a href="Juegos/abejaProgramadora.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Abeja Programadora">
+                    <div class="game-card-thumb thumb-logica has-image">
+                        <img src="Juegos/imagen18.png" alt="Abeja Programadora" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">18</span>
+                        <div class="game-difficulty difficulty-medio">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Medio</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-logica">🧠 Lógica</span>
+                            <span class="game-age">5-6 años</span>
+                        </div>
+                        <h3 class="game-title">Abeja Programadora</h3>
+                        <p class="game-desc">Programa los movimientos de la abeja con bloques para llegar a su meta.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 2 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 19 · Arrastra la Dirección -->
+            <article class="game-card" data-category="logica" data-difficulty="facil">
+                <a href="Juegos/ArrastraLaDireccionCorrecta.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Arrastra la Dirección">
+                    <div class="game-card-thumb thumb-logica has-image">
+                        <img src="Juegos/imagen19.png" alt="Arrastra la Dirección" class="game-thumb-img" loading="lazy">
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">19</span>
+                        <div class="game-difficulty difficulty-facil">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Fácil</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-logica">🧠 Lógica</span>
+                            <span class="game-age">4-6 años</span>
+                        </div>
+                        <h3 class="game-title">Arrastra la Dirección</h3>
+                        <p class="game-desc">Arrastra las flechas correctas para guiar a BeeBot hacia su destino.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 1 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
         </div>
     </section>
 
 
     <!-- ══════════════════════════════════════════════════════════════
-         SECCIÓN 5 · NATURALEZA
+         SECCIÓN 5 · NATURALEZA (4 juegos)
          ══════════════════════════════════════════════════════════════ -->
     <section class="games-section games-section-naturaleza" data-section="naturaleza" aria-labelledby="sec-naturaleza-title">
 
@@ -1414,13 +1005,13 @@
 
         <div class="games-grid" aria-live="polite">
 
-            <!-- 31 · Abejita Chef -->
+            <!-- 20 · Abejita Chef -->
             <article class="game-card" data-category="naturaleza" data-difficulty="facil">
                 <a href="Juegos/abejachef.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Abejita Chef">
                     <div class="game-card-thumb thumb-naturaleza has-image">
-                        <img src="Juegos/imagen5.png" alt="Abejita Chef" class="game-thumb-img" loading="lazy">
+                        <img src="Juegos/imagen20.png" alt="Abejita Chef" class="game-thumb-img" loading="lazy">
                         <span class="game-thumb-bg"></span>
-                        <span class="game-number">31</span>
+                        <span class="game-number">20</span>
                         <div class="game-difficulty difficulty-facil">
                             <span class="diff-dot"></span>
                             <span class="diff-txt">Fácil</span>
@@ -1448,14 +1039,13 @@
                 </a>
             </article>
 
-            <!-- 32 · Sonidos Animales -->
-            <article class="game-card game-card-new" data-category="naturaleza" data-difficulty="facil">
-                <a href="Juegos/sonidosAnimales.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Sonidos Animales">
+            <!-- 21 · Explorador de Animales -->
+            <article class="game-card" data-category="naturaleza" data-difficulty="facil">
+                <a href="Juegos/explorador_animales.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Explorador de Animales">
                     <div class="game-card-thumb thumb-naturaleza has-image">
-                        <img src="Juegos/imagen30.png" alt="Sonidos Animales" class="game-thumb-img" loading="lazy">
+                        <img src="Juegos/imagen21.png" alt="Explorador de Animales" class="game-thumb-img" loading="lazy">
                         <span class="game-thumb-bg"></span>
-                        <span class="game-number">32</span>
-                        <span class="game-badge-new">NUEVO</span>
+                        <span class="game-number">21</span>
                         <div class="game-difficulty difficulty-facil">
                             <span class="diff-dot"></span>
                             <span class="diff-txt">Fácil</span>
@@ -1466,8 +1056,8 @@
                             <span class="game-category-tag tag-naturaleza">🌱 Naturaleza</span>
                             <span class="game-age">4-6 años</span>
                         </div>
-                        <h3 class="game-title">Sonidos Animales</h3>
-                        <p class="game-desc">Escucha el sonido y elige el animal correcto del jardín.</p>
+                        <h3 class="game-title">Explorador de Animales</h3>
+                        <p class="game-desc">Descubre y conoce los animales que viven en el jardín y la selva.</p>
                         <div class="game-card-bottom">
                             <span class="game-rating" aria-label="Dificultad 1 de 3">
                                 <span class="star is-filled">★</span>
@@ -1483,14 +1073,13 @@
                 </a>
             </article>
 
-            <!-- 33 · Animales y sus Casas -->
-            <article class="game-card game-card-new" data-category="naturaleza" data-difficulty="medio">
-                <a href="Juegos/casasAnimales.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Animales y sus Casas">
+            <!-- 22 · Picnic Mágico -->
+            <article class="game-card" data-category="naturaleza" data-difficulty="medio">
+                <a href="Juegos/picnic.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Picnic Mágico">
                     <div class="game-card-thumb thumb-naturaleza has-image">
-                        <img src="Juegos/imagen31.png" alt="Animales y sus Casas" class="game-thumb-img" loading="lazy">
+                        <img src="Juegos/imagen22.png" alt="Picnic Mágico" class="game-thumb-img" loading="lazy">
                         <span class="game-thumb-bg"></span>
-                        <span class="game-number">33</span>
-                        <span class="game-badge-new">NUEVO</span>
+                        <span class="game-number">22</span>
                         <div class="game-difficulty difficulty-medio">
                             <span class="diff-dot"></span>
                             <span class="diff-txt">Medio</span>
@@ -1501,8 +1090,8 @@
                             <span class="game-category-tag tag-naturaleza">🌱 Naturaleza</span>
                             <span class="game-age">5-6 años</span>
                         </div>
-                        <h3 class="game-title">Animales y sus Casas</h3>
-                        <p class="game-desc">Lleva cada animalito a su hogar: madriguera, nido, colmena y más.</p>
+                        <h3 class="game-title">Picnic Mágico</h3>
+                        <p class="game-desc">Prepara el picnic con BeeBot: elige los alimentos correctos y llega al parque.</p>
                         <div class="game-card-bottom">
                             <span class="game-rating" aria-label="Dificultad 2 de 3">
                                 <span class="star is-filled">★</span>
@@ -1518,14 +1107,13 @@
                 </a>
             </article>
 
-            <!-- 34 · Las Estaciones -->
-            <article class="game-card game-card-new" data-category="naturaleza" data-difficulty="medio">
-                <a href="Juegos/estaciones.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Las Estaciones">
+            <!-- 23 · Recolector de Basura -->
+            <article class="game-card" data-category="naturaleza" data-difficulty="medio">
+                <a href="Juegos/recolector_basura.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Recolector de Basura">
                     <div class="game-card-thumb thumb-naturaleza has-image">
-                        <img src="Juegos/imagen32.png" alt="Las Estaciones" class="game-thumb-img" loading="lazy">
+                        <img src="Juegos/imagen23.png" alt="Recolector de Basura" class="game-thumb-img" loading="lazy">
                         <span class="game-thumb-bg"></span>
-                        <span class="game-number">34</span>
-                        <span class="game-badge-new">NUEVO</span>
+                        <span class="game-number">23</span>
                         <div class="game-difficulty difficulty-medio">
                             <span class="diff-dot"></span>
                             <span class="diff-txt">Medio</span>
@@ -1536,8 +1124,8 @@
                             <span class="game-category-tag tag-naturaleza">🌱 Naturaleza</span>
                             <span class="game-age">5-6 años</span>
                         </div>
-                        <h3 class="game-title">Las Estaciones</h3>
-                        <p class="game-desc">Relaciona cada estación del año con su clima y sus colores.</p>
+                        <h3 class="game-title">Recolector de Basura</h3>
+                        <p class="game-desc">Ayuda a limpiar el jardín recogiendo los residuos con BeeBot.</p>
                         <div class="game-card-bottom">
                             <span class="game-rating" aria-label="Dificultad 2 de 3">
                                 <span class="star is-filled">★</span>
