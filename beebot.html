@@ -17,6 +17,34 @@
     <link rel="stylesheet" href="css/beebot.css">
 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐝</text></svg>">
+
+    <!-- CSS PARA MINIATURAS DINÁMICAS (iFrames) -->
+    <style>
+        /* Contenedor relativo para evitar desbordamientos */
+        .game-card-thumb {
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* iFrame Escalado (Carga el juego como miniatura) */
+        .dynamic-thumb {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 400%; /* Engaña al iframe haciéndole creer que tiene una pantalla 4 veces más grande */
+            height: 400%;
+            transform: scale(0.25); /* Lo encoge para que quepa perfectamente en la tarjeta */
+            transform-origin: top left;
+            pointer-events: none; /* BLOQUEA CLICS en el iframe para que puedas darle clic a la tarjeta entera */
+            border: none;
+            z-index: 1;
+            background-color: transparent;
+        }
+
+        /* Aseguramos que los adornos de UI queden flotando ENCIMA del iframe */
+        .game-thumb-bg { z-index: 2; }
+        .game-number, .game-difficulty, .game-badge-new, .game-badge-featured { z-index: 3; }
+    </style>
 </head>
 <body class="world-portal portal-inicial">
 
@@ -270,7 +298,7 @@
             <article class="game-card" data-category="numeros" data-difficulty="facil">
                 <a href="Juegos/numeros.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Cuenta Números">
                     <div class="game-card-thumb thumb-numeros has-image">
-                        <img src="Juegos/imagen1.png" alt="Cuenta Números" class="game-thumb-img" loading="lazy">
+                        <iframe src="Juegos/numeros.html" title="Cuenta Números" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">01</span>
                         <div class="game-difficulty difficulty-facil">
@@ -304,7 +332,7 @@
             <article class="game-card" data-category="numeros" data-difficulty="facil">
                 <a href="Juegos/controlBee.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Control Bee">
                     <div class="game-card-thumb thumb-numeros has-image">
-                        <img src="Juegos/imagen2.png" alt="Control Bee" class="game-thumb-img" loading="lazy">
+                        <iframe src="Juegos/controlBee.html" title="Control Bee" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">02</span>
                         <div class="game-difficulty difficulty-facil">
@@ -338,7 +366,7 @@
             <article class="game-card" data-category="numeros" data-difficulty="facil">
                 <a href="Juegos/danceBee.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Dance Bee">
                     <div class="game-card-thumb thumb-numeros has-image">
-                        <img src="Juegos/imagen3.png" alt="Dance Bee" class="game-thumb-img" loading="lazy">
+                        <iframe src="Juegos/danceBee.html" title="Dance Bee" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">03</span>
                         <div class="game-difficulty difficulty-facil">
@@ -372,7 +400,7 @@
             <article class="game-card" data-category="numeros" data-difficulty="medio">
                 <a href="Juegos/Secuencia/secuencia.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Secuencia Mágica">
                     <div class="game-card-thumb thumb-numeros has-image">
-                        <img src="Juegos/imagen4.png" alt="Secuencia Mágica" class="game-thumb-img" loading="lazy">
+                        <iframe src="Juegos/Secuencia/secuencia.html" title="Secuencia Mágica" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">04</span>
                         <div class="game-difficulty difficulty-medio">
@@ -429,7 +457,7 @@
             <article class="game-card" data-category="colores" data-difficulty="medio">
                 <a href="Juegos/reciclaje.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Misión Reciclaje">
                     <div class="game-card-thumb thumb-colores has-image">
-                        <img src="Juegos/imagen5.png" alt="Misión Reciclaje" class="game-thumb-img" loading="lazy">
+                        <iframe src="Juegos/reciclaje.html" title="Misión Reciclaje" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">05</span>
                         <div class="game-difficulty difficulty-medio">
@@ -463,7 +491,7 @@
             <article class="game-card" data-category="colores" data-difficulty="medio">
                 <a href="Juegos/AbejaRecolectora.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Abeja Recolectora">
                     <div class="game-card-thumb thumb-colores has-image">
-                        <img src="Juegos/imagen6.png" alt="Abeja Recolectora" class="game-thumb-img" loading="lazy">
+                        <iframe src="Juegos/AbejaRecolectora.html" title="Abeja Recolectora" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">06</span>
                         <div class="game-difficulty difficulty-medio">
@@ -497,7 +525,7 @@
             <article class="game-card" data-category="colores" data-difficulty="facil">
                 <a href="Juegos/LluviaDePetalos/LluviaPetalo.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Lluvia de Pétalos">
                     <div class="game-card-thumb thumb-colores has-image">
-                        <img src="Juegos/imagen7.png" alt="Lluvia de Pétalos" class="game-thumb-img" loading="lazy">
+                        <iframe src="Juegos/LluviaDePetalos/LluviaPetalo.html" title="Lluvia de Pétalos" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">07</span>
                         <div class="game-difficulty difficulty-facil">
@@ -531,7 +559,7 @@
             <article class="game-card" data-category="colores" data-difficulty="medio">
                 <a href="Juegos/dibujar.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Pixel Art">
                     <div class="game-card-thumb thumb-colores has-image">
-                        <img src="Juegos/imagen8.png" alt="Pixel Art" class="game-thumb-img" loading="lazy">
+                        <iframe src="Juegos/dibujar.html" title="Pixel Art" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">08</span>
                         <div class="game-difficulty difficulty-medio">
@@ -588,7 +616,7 @@
             <article class="game-card" data-category="letras" data-difficulty="facil">
                 <a href="Juegos/nombres.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Escribe tu Nombre">
                     <div class="game-card-thumb thumb-letras has-image">
-                        <img src="Juegos/imagen9.png" alt="Escribe tu Nombre" class="game-thumb-img" loading="lazy">
+                        <iframe src="Juegos/nombres.html" title="Escribe tu Nombre" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">09</span>
                         <div class="game-difficulty difficulty-facil">
@@ -622,7 +650,7 @@
             <article class="game-card" data-category="letras" data-difficulty="medio">
                 <a href="Juegos/Beebotpalabras.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Palabras Mágicas">
                     <div class="game-card-thumb thumb-letras has-image">
-                        <img src="Juegos/imagen10.png" alt="Palabras Mágicas" class="game-thumb-img" loading="lazy">
+                        <iframe src="Juegos/Beebotpalabras.html" title="Palabras Mágicas" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">10</span>
                         <div class="game-difficulty difficulty-medio">
@@ -679,7 +707,7 @@
             <article class="game-card" data-category="logica" data-difficulty="facil">
                 <a href="Juegos/PasosLimite.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Pasos Límite">
                     <div class="game-card-thumb thumb-logica has-image">
-                        <img src="Juegos/imagen11.png" alt="Pasos Límite" class="game-thumb-img" loading="lazy">
+                        <iframe src="Juegos/PasosLimite.html" title="Pasos Límite" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">11</span>
                         <div class="game-difficulty difficulty-facil">
@@ -713,7 +741,7 @@
             <article class="game-card" data-category="logica" data-difficulty="medio">
                 <a href="Juegos/obstaculos.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Esquiva las Rocas">
                     <div class="game-card-thumb thumb-logica has-image">
-                        <img src="Juegos/imagen12.png" alt="Esquiva las Rocas" class="game-thumb-img" loading="lazy">
+                        <iframe src="Juegos/obstaculos.html" title="Esquiva las Rocas" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">12</span>
                         <div class="game-difficulty difficulty-medio">
@@ -743,11 +771,11 @@
                 </a>
             </article>
 
-            <!-- 13 · Memoria -->
+            <!-- 13 · Memoria Física -->
             <article class="game-card" data-category="logica" data-difficulty="medio">
-                <a href="Juegos/memoria.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Memoria">
+                <a href="Juegos/memoria.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Memoria Física">
                     <div class="game-card-thumb thumb-logica has-image">
-                        <img src="Juegos/imagen13.png" alt="Memoria" class="game-thumb-img" loading="lazy">
+                        <iframe src="Juegos/memoria.html" title="Memoria Física" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">13</span>
                         <div class="game-difficulty difficulty-medio">
@@ -760,7 +788,7 @@
                             <span class="game-category-tag tag-logica">🧠 Lógica</span>
                             <span class="game-age">5-6 años</span>
                         </div>
-                        <h3 class="game-title">Memoria</h3>
+                        <h3 class="game-title">Memoria Física</h3>
                         <p class="game-desc">Arrastra y suelta las fichas en su posición correcta para ganar.</p>
                         <div class="game-card-bottom">
                             <span class="game-rating" aria-label="Dificultad 2 de 3">
@@ -781,7 +809,7 @@
             <article class="game-card" data-category="logica" data-difficulty="dificil">
                 <a href="Juegos/portales.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Portales Mágicos">
                     <div class="game-card-thumb thumb-logica has-image">
-                        <img src="Juegos/imagen14.png" alt="Portales Mágicos" class="game-thumb-img" loading="lazy">
+                        <iframe src="Juegos/portales.html" title="Portales Mágicos" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">14</span>
                         <div class="game-difficulty difficulty-dificil">
@@ -815,7 +843,7 @@
             <article class="game-card" data-category="logica" data-difficulty="dificil">
                 <a href="Juegos/CarritoSúperMercado.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Día de Supermercado">
                     <div class="game-card-thumb thumb-logica has-image">
-                        <img src="Juegos/imagen15.png" alt="Día de Supermercado" class="game-thumb-img" loading="lazy">
+                        <iframe src="Juegos/CarritoSúperMercado.html" title="Día de Supermercado" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">15</span>
                         <div class="game-difficulty difficulty-dificil">
@@ -849,7 +877,7 @@
             <article class="game-card" data-category="logica" data-difficulty="medio">
                 <a href="Juegos/carreraDeAbejitas.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Carrera de Abejitas">
                     <div class="game-card-thumb thumb-logica has-image">
-                        <img src="Juegos/imagen16.png" alt="Carrera de Abejitas" class="game-thumb-img" loading="lazy">
+                        <iframe src="Juegos/carreraDeAbejitas.html" title="Carrera de Abejitas" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">16</span>
                         <div class="game-difficulty difficulty-medio">
@@ -883,6 +911,7 @@
             <article class="game-card game-card-featured" data-category="logica" data-difficulty="dificil">
                 <a href="Juegos/beebot.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Reto BeeBot">
                     <div class="game-card-thumb thumb-logica has-image">
+                        <!-- Aquí sí mostramos imagen porque apuntar un iframe a beebot.html dentro de beebot.html haría un bucle infinito que crashearía la web -->
                         <img src="Juegos/imagen17.png" alt="Reto BeeBot" class="game-thumb-img" loading="lazy">
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">17</span>
@@ -918,7 +947,7 @@
             <article class="game-card" data-category="logica" data-difficulty="medio">
                 <a href="Juegos/abejaProgramadora.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Abeja Programadora">
                     <div class="game-card-thumb thumb-logica has-image">
-                        <img src="Juegos/imagen18.png" alt="Abeja Programadora" class="game-thumb-img" loading="lazy">
+                        <iframe src="Juegos/abejaProgramadora.html" title="Abeja Programadora" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">18</span>
                         <div class="game-difficulty difficulty-medio">
@@ -952,7 +981,7 @@
             <article class="game-card" data-category="logica" data-difficulty="facil">
                 <a href="Juegos/ArrastraLaDireccionCorrecta.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Arrastra la Dirección">
                     <div class="game-card-thumb thumb-logica has-image">
-                        <img src="Juegos/imagen19.png" alt="Arrastra la Dirección" class="game-thumb-img" loading="lazy">
+                        <iframe src="Juegos/ArrastraLaDireccionCorrecta.html" title="Arrastra la Dirección" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">19</span>
                         <div class="game-difficulty difficulty-facil">
@@ -1009,7 +1038,7 @@
             <article class="game-card" data-category="naturaleza" data-difficulty="facil">
                 <a href="Juegos/abejachef.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Abejita Chef">
                     <div class="game-card-thumb thumb-naturaleza has-image">
-                        <img src="Juegos/imagen20.png" alt="Abejita Chef" class="game-thumb-img" loading="lazy">
+                        <iframe src="Juegos/abejachef.html" title="Abejita Chef" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">20</span>
                         <div class="game-difficulty difficulty-facil">
@@ -1043,7 +1072,7 @@
             <article class="game-card" data-category="naturaleza" data-difficulty="facil">
                 <a href="Juegos/explorador_animales.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Explorador de Animales">
                     <div class="game-card-thumb thumb-naturaleza has-image">
-                        <img src="Juegos/imagen21.png" alt="Explorador de Animales" class="game-thumb-img" loading="lazy">
+                        <iframe src="Juegos/explorador_animales.html" title="Explorador de Animales" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">21</span>
                         <div class="game-difficulty difficulty-facil">
@@ -1077,7 +1106,7 @@
             <article class="game-card" data-category="naturaleza" data-difficulty="medio">
                 <a href="Juegos/picnic.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Picnic Mágico">
                     <div class="game-card-thumb thumb-naturaleza has-image">
-                        <img src="Juegos/imagen22.png" alt="Picnic Mágico" class="game-thumb-img" loading="lazy">
+                        <iframe src="Juegos/picnic.html" title="Picnic Mágico" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">22</span>
                         <div class="game-difficulty difficulty-medio">
@@ -1111,7 +1140,7 @@
             <article class="game-card" data-category="naturaleza" data-difficulty="medio">
                 <a href="Juegos/recolector_basura.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Recolector de Basura">
                     <div class="game-card-thumb thumb-naturaleza has-image">
-                        <img src="Juegos/imagen23.png" alt="Recolector de Basura" class="game-thumb-img" loading="lazy">
+                        <iframe src="Juegos/recolector_basura.html" title="Recolector de Basura" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">23</span>
                         <div class="game-difficulty difficulty-medio">
