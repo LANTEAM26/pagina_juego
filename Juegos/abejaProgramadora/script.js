@@ -1,820 +1,1039 @@
-// ============================================================
-//  ABEJA PROGRAMADORA – Juego educativo de pensamiento computacional
-//  Versión mejorada con estrellas, niveles y persistencia
-// ============================================================
+/* ============================================================
+   ABEJA PROGRAMADORA – script.js
+   Tablero 5×5 · Niveles progresivos · Estrellas · Sonidos
+   Pensamiento computacional para niños 🐝
+   ============================================================ */
 
-'use strict';
+(() => {
+  'use strict';
 
-// ---------- Constantes ----------
-const GRID_SIZE = 6;
-const DIRS = [
-  [-1, 0],  // 0 = arriba
-  [0, 1],   // 1 = derecha
-  [1, 0],   // 2 = abajo
-  [0, -1]   // 3 = izquierda
-];
-const ROT_DEG = [0, 90, 180, 270]; // rotación visual según dirección
-const CMD_LABELS = {
-  forward:  { icon: '⬆️', text: 'Adelante' },
-  backward: { icon: '⬇️', text: 'Atrás' },
-  left:     { icon: '↩️', text: 'Izq.' },
-  right:    { icon: '↪️', text: 'Der.' }
-};
+  // ============================================================
+  //  CONSTANTES
+  // ============================================================
+  const GRID_SIZE     = 5;                          // 👈 tablero 5×5
+  const DIRS          = [[-1,0],[0,1],[1,0],[0,-1]]; // ↑ → ↓ ←
+  const DIR_ROTATION  = [0, 90, 180, 270];
+  const STORAGE_KEY   = 'abeja-programadora-v1';
+  const MAX_LEVEL     = 20;
 
-const BEE_SVG = `
-  <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-    <!-- Alas -->
-    <ellipse cx="28" cy="34" rx="16" ry="26" fill="#fff9c4" opacity="0.9"
-             transform="rotate(-25 28 34)">
-      <animate attributeName="ry" values="26;18;26" dur="0.35s" repeatCount="indefinite"/>
-    </ellipse>
-    <ellipse cx="72" cy="34" rx="16" ry="26" fill="#fff9c4" opacity="0.9"
-             transform="rotate(25 72 34)">
-      <animate attributeName="ry" values="26;18;26" dur="0.35s" repeatCount="indefinite"/>
-    </ellipse>
-    <!-- Cuerpo -->
-    <ellipse cx="50" cy="58" rx="27" ry="31" fill="#ffca28" stroke="#e0a800" stroke-width="1.5"/>
-    <!-- Rayas -->
-    <path d="M23 46 Q50 52 77 46" stroke="#3b2f2f" stroke-width="6" fill="none" stroke-linecap="round"/>
-    <path d="M23 60 Q50 66 77 60" stroke="#3b2f2f" stroke-width="6" fill="none" stroke-linecap="round"/>
-    <path d="M26 73 Q50 78 74 73" stroke="#3b2f2f" stroke-width="6" fill="none" stroke-linecap="round"/>
-    <!-- Cabeza -->
-    <circle cx="50" cy="27" r="17" fill="#ffca28" stroke="#e0a800" stroke-width="1.5"/>
-    <!-- Ojos -->
-    <circle cx="43" cy="25" r="4.5" fill="#3b2f2f"/>
-    <circle cx="57" cy="25" r="4.5" fill="#3b2f2f"/>
-    <circle cx="44" cy="23" r="1.7" fill="white"/>
-    <circle cx="58" cy="23" r="1.7" fill="white"/>
-    <!-- Mejillas -->
-    <circle cx="38" cy="31" r="3" fill="#ff8fa3" opacity="0.75"/>
-    <circle cx="62" cy="31" r="3" fill="#ff8fa3" opacity="0.75"/>
-    <!-- Antenas -->
-    <line x1="42" y1="12" x2="34" y2="2" stroke="#3b2f2f" stroke-width="2.6" stroke-linecap="round"/>
-    <line x1="58" y1="12" x2="66" y2="2" stroke="#3b2f2f" stroke-width="2.6" stroke-linecap="round"/>
-    <circle cx="34" cy="2" r="3" fill="#3b2f2f"/>
-    <circle cx="66" cy="2" r="3" fill="#3b2f2f"/>
-    <!-- Sonrisa -->
-    <path d="M43 33 Q50 38 57 33" stroke="#3b2f2f" stroke-width="2.4" fill="none" stroke-linecap="round"/>
-  </svg>
-`;
+  const CMD_LABELS = {
+    forward:  { icon: '⬆️', text: 'Adelante' },
+    backward: { icon: '⬇️', text: 'Atrás'    },
+    left:     { icon: '↩️', text: 'Izq.'     },
+    right:    { icon: '↪️', text: 'Der.'     }
+  };
 
-// ---------- Estado del juego ----------
-const state = {
-  bee:      { row: 5, col: 0, dir: 0 },
-  goal:     { row: 0, col: 5 },
-  sequence: [],
-  running:  false,
-  paused:   false,
-  currentStep: 0,
-  soundEnabled: true,
-  level: 1,
-  stars: 0,
-  totalStars: 0,
-  optimalSteps: 0,
-  bestStars: {},
-  dragging: false,
-};
+  // ============================================================
+  //  ESTADO
+  // ============================================================
+  const state = {
+    bee:        { row: 0, col: 0, dir: 2 },
+    goal:       { row: 4, col: 4 },
+    obstacles:  new Set(),
+    optimal:    0,
+    sequence:   [],
+    visited:    new Set(),
+    isRunning:  false,
+    isPaused:   false,
+    currentStep: 0,
+    soundEnabled: true,
+    level:      1,
+    totalStars: 0,
+    bestStars:  {}     // { "1": 3, "2": 2, ... }
+  };
 
-// ---------- DOM ----------
-const $ = (id) => document.getElementById(id);
+  // ============================================================
+  //  DOM
+  // ============================================================
+  const $ = (id) => document.getElementById(id);
 
-const dom = {
-  grid:          $('grid'),
-  sequenceBox:   $('sequenceBox'),
-  chipCounter:   $('chipCounter'),
-  statusBar:     $('statusBar'),
-  levelValue:    $('levelValue'),
-  starsValue:    $('starsValue'),
-  movesValue:    $('movesValue'),
-  btnGo:         $('btnGo'),
-  btnPause:      $('btnPause'),
-  btnClear:      $('btnClear'),
-  btnNew:        $('btnNew'),
-  btnSound:      $('btnSound'),
-  btnHelp:       $('btnHelp'),
-  feedback:      $('feedback'),
-  feedbackEmoji: $('feedbackEmoji'),
-  feedbackMsg:   $('feedbackMsg'),
-  confettiLayer: $('confettiLayer'),
-  startOverlay:  $('startOverlay'),
-  helpOverlay:   $('helpOverlay'),
-  winOverlay:    $('winOverlay'),
-  btnStart:      $('btnStart'),
-  btnCloseHelp:  $('btnCloseHelp'),
-  btnCloseHelp2: $('btnCloseHelp2'),
-  btnNextLevel:  $('btnNextLevel'),
-  winSteps:      $('winSteps'),
-  winLevel:      $('winLevel'),
-  winStars:      $('winStars'),
-  winMsg:        $('winMsg'),
-};
+  const gridEl        = $('grid');
+  const sequenceBox   = $('sequenceBox');
+  const statusBar     = $('statusBar');
+  const btnGo         = $('btnGo');
+  const btnPause      = $('btnPause');
+  const btnClear      = $('btnClear');
+  const btnNew        = $('btnNew');
+  const btnSound      = $('btnSound');
+  const btnHelp       = $('btnHelp');
+  const btnCloseHelp  = $('btnCloseHelp');
+  const btnCloseHelp2 = $('btnCloseHelp2');
+  const btnStart      = $('btnStart');
+  const btnNextLevel  = $('btnNextLevel');
+  const startOverlay  = $('startOverlay');
+  const helpOverlay   = $('helpOverlay');
+  const winOverlay    = $('winOverlay');
+  const levelValue    = $('levelValue');
+  const starsValue    = $('starsValue');
+  const movesValue    = $('movesValue');
+  const chipCounter   = $('chipCounter');
+  const feedback      = $('feedback');
+  const feedbackEmoji = $('feedbackEmoji');
+  const feedbackMsg   = $('feedbackMsg');
+  const confettiLayer = $('confettiLayer');
+  const winStars      = $('winStars');
+  const winSteps      = $('winSteps');
+  const winLevel      = $('winLevel');
+  const winMsg        = $('winMsg');
 
-let beeEl = null;
-let beeLayer = null;
-let audioCtx = null;
+  // ============================================================
+  //  SVG DE LA ABEJA
+  // ============================================================
+  const BEE_SVG = `
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="beeBodyGrad" cx="45%" cy="35%">
+          <stop offset="0%"  stop-color="#ffe680"/>
+          <stop offset="70%" stop-color="#ffc107"/>
+          <stop offset="100%" stop-color="#f39c00"/>
+        </radialGradient>
+        <radialGradient id="beeHeadGrad" cx="40%" cy="30%">
+          <stop offset="0%"  stop-color="#ffe680"/>
+          <stop offset="100%" stop-color="#f5a300"/>
+        </radialGradient>
+      </defs>
 
-// ============================================================
-//  UTILIDADES
-// ============================================================
-const sleep = (ms) => new Promise(r => setTimeout(r, ms));
-const clamp = (n, min, max) => Math.min(max, Math.max(min, n));
+      <!-- Alas con aleteo (SMIL) -->
+      <g>
+        <ellipse cx="27" cy="33" rx="13" ry="21" fill="#e9f7ff" opacity="0.92"
+                 transform="rotate(-28 27 33)" stroke="#a5d8f3" stroke-width="1.4">
+          <animate attributeName="ry" values="21;13;21" dur="0.22s" repeatCount="indefinite"/>
+        </ellipse>
+        <ellipse cx="73" cy="33" rx="13" ry="21" fill="#e9f7ff" opacity="0.92"
+                 transform="rotate(28 73 33)" stroke="#a5d8f3" stroke-width="1.4">
+          <animate attributeName="ry" values="21;13;21" dur="0.22s" repeatCount="indefinite"/>
+        </ellipse>
+      </g>
 
-function getCell(row, col) {
-  return dom.grid.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
-}
+      <!-- Cuerpo -->
+      <ellipse cx="50" cy="62" rx="25" ry="29"
+               fill="url(#beeBodyGrad)" stroke="#c77d00" stroke-width="2"/>
 
-// ============================================================
-//  AUDIO (Web Audio API – sin archivos)
-// ============================================================
-function ensureAudio() {
-  if (!audioCtx) {
-    const Ctx = window.AudioContext || window.webkitAudioContext;
-    if (!Ctx) return;
-    audioCtx = new Ctx();
+      <!-- Rayas -->
+      <path d="M27 50 Q50 56 73 50" stroke="#3b2f2f" stroke-width="7"
+            fill="none" stroke-linecap="round"/>
+      <path d="M27 66 Q50 72 73 66" stroke="#3b2f2f" stroke-width="7"
+            fill="none" stroke-linecap="round"/>
+
+      <!-- Cabeza -->
+      <circle cx="50" cy="29" r="17"
+              fill="url(#beeHeadGrad)" stroke="#c77d00" stroke-width="2"/>
+
+      <!-- Ojos -->
+      <circle cx="43" cy="26" r="4.6" fill="#3b2f2f"/>
+      <circle cx="57" cy="26" r="4.6" fill="#3b2f2f"/>
+      <circle cx="44.4" cy="24.2" r="1.7" fill="#fff"/>
+      <circle cx="58.4" cy="24.2" r="1.7" fill="#fff"/>
+
+      <!-- Mejillas -->
+      <circle cx="36" cy="33" r="3.4" fill="#ff8a8a" opacity="0.65"/>
+      <circle cx="64" cy="33" r="3.4" fill="#ff8a8a" opacity="0.65"/>
+
+      <!-- Sonrisa -->
+      <path d="M44 34 Q50 39.5 56 34" stroke="#3b2f2f" stroke-width="2.3"
+            fill="none" stroke-linecap="round"/>
+
+      <!-- Antenas -->
+      <line x1="43" y1="15" x2="37" y2="5" stroke="#3b2f2f"
+            stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="57" y1="15" x2="63" y2="5" stroke="#3b2f2f"
+            stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="37" cy="5" r="3.2" fill="#3b2f2f"/>
+      <circle cx="63" cy="5" r="3.2" fill="#3b2f2f"/>
+    </svg>
+  `;
+
+  // ============================================================
+  //  ESTILOS EXTRA INYECTADOS
+  //  (obstáculo + temblor de la abeja + grid 5×5 por si acaso)
+  // ============================================================
+  const extraStyle = document.createElement('style');
+  extraStyle.textContent = `
+    .cell.obstacle {
+      background:
+        radial-gradient(circle at 30% 25%, rgba(255,255,255,.25), transparent 55%),
+        linear-gradient(145deg, #b08a6a, #6b4a2e);
+      box-shadow: inset 0 -3px 0 rgba(0,0,0,.25),
+                  inset 0 2px 0 rgba(255,255,255,.15);
+    }
+    .cell.obstacle::after {
+      content: '🪨';
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      font-size: clamp(18px, 3vw, 36px);
+      filter: drop-shadow(0 2px 2px rgba(0,0,0,.3));
+    }
+    .cell.obstacle.highlight { transform: none !important; }
+
+    .bee.shake {
+      animation: bee-shake .45s ease-in-out;
+    }
+    @keyframes bee-shake {
+      0%,100% { transform: translate(-50%,-55%) rotate(var(--rot,0deg)); }
+      15%     { transform: translate(calc(-50% - 9px),-55%) rotate(var(--rot,0deg)); }
+      30%     { transform: translate(calc(-50% + 9px),-55%) rotate(var(--rot,0deg)); }
+      45%     { transform: translate(calc(-50% - 7px),-55%) rotate(var(--rot,0deg)); }
+      60%     { transform: translate(calc(-50% + 7px),-55%) rotate(var(--rot,0deg)); }
+      80%     { transform: translate(calc(-50% - 4px),-55%) rotate(var(--rot,0deg)); }
+    }
+  `;
+  document.head.appendChild(extraStyle);
+
+  // ============================================================
+  //  AUDIO (Web Audio API)
+  // ============================================================
+  let audioCtx = null;
+
+  function ensureAudio() {
+    if (!audioCtx) {
+      try {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      } catch (e) { /* sin audio */ }
+    }
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
   }
-  if (audioCtx.state === 'suspended') audioCtx.resume();
-}
 
-function tone(freq, dur, type = 'sine', vol = 0.15, when = 0) {
-  if (!state.soundEnabled) return;
-  ensureAudio();
-  if (!audioCtx) return;
-  const t0 = audioCtx.currentTime + when;
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.type = type;
-  osc.frequency.setValueAtTime(freq, t0);
-  gain.gain.setValueAtTime(0.0001, t0);
-  gain.gain.exponentialRampToValueAtTime(vol, t0 + 0.015);
-  gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-  osc.connect(gain).connect(audioCtx.destination);
-  osc.start(t0);
-  osc.stop(t0 + dur + 0.02);
-}
+  function blip(freq, dur, type = 'sine', vol = 0.12, delay = 0) {
+    if (!audioCtx) return;
+    const t0   = audioCtx.currentTime + delay;
+    const osc  = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, t0);
+    gain.gain.setValueAtTime(0, t0);
+    gain.gain.linearRampToValueAtTime(vol, t0 + 0.012);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start(t0);
+    osc.stop(t0 + dur + 0.05);
+  }
 
-const sfx = {
-  click:  () => tone(660, 0.07, 'triangle', 0.10),
-  add:    () => { tone(520, 0.09, 'sine', 0.13); tone(780, 0.10, 'sine', 0.11, 0.07); },
-  remove: () => { tone(320, 0.10, 'sine', 0.10); tone(220, 0.10, 'sine', 0.08, 0.05); },
-  move:   () => tone(440, 0.11, 'sine', 0.13),
-  turn:   () => { tone(330, 0.08, 'triangle', 0.11); tone(400, 0.09, 'triangle', 0.10, 0.06); },
-  go:     () => { tone(523, 0.10, 'sine', 0.14); tone(659, 0.10, 'sine', 0.14, 0.09); tone(784, 0.14, 'sine', 0.14, 0.18); },
-  pause:  () => tone(400, 0.14, 'triangle', 0.11),
-  clear:  () => { tone(300, 0.08, 'sawtooth', 0.07); tone(200, 0.14, 'sawtooth', 0.06, 0.07); },
-  error:  () => { tone(200, 0.18, 'triangle', 0.11); tone(160, 0.26, 'triangle', 0.09, 0.14); },
-  star:   (i) => tone(660 + i * 220, 0.22, 'sine', 0.16),
-  win:    () => {
-    const notes = [523, 659, 784, 1046, 1318];
-    notes.forEach((f, i) => tone(f, 0.25, 'sine', 0.15, i * 0.11));
-    tone(1568, 0.4, 'sine', 0.13, notes.length * 0.11);
-  },
-};
+  function melody(notes, step, type = 'sine', vol = 0.14) {
+    notes.forEach((f, i) => blip(f, step * 1.7, type, vol, i * step));
+  }
 
-// ============================================================
-//  TABLERO
-// ============================================================
-function buildGrid() {
-  dom.grid.innerHTML = '';
+  function playSound(name) {
+    if (!state.soundEnabled) return;
+    ensureAudio();
+    if (!audioCtx) return;
 
-  for (let r = 0; r < GRID_SIZE; r++) {
-    for (let c = 0; c < GRID_SIZE; c++) {
-      const cell = document.createElement('div');
-      cell.className = 'cell';
-      cell.dataset.row = r;
-      cell.dataset.col = c;
-      cell.setAttribute('role', 'gridcell');
-      dom.grid.appendChild(cell);
+    switch (name) {
+      case 'click':  blip(520, 0.06, 'triangle', 0.08); break;
+      case 'add':    blip(620, 0.08, 'sine', 0.12);
+                     blip(880, 0.10, 'sine', 0.10, 0.06); break;
+      case 'move':   blip(520, 0.10, 'sine', 0.12);
+                     blip(700, 0.08, 'sine', 0.08, 0.05); break;
+      case 'turn':   blip(430, 0.08, 'triangle', 0.10);
+                     blip(570, 0.10, 'triangle', 0.09, 0.06); break;
+      case 'go':     melody([523, 659, 784], 0.09, 'sine', 0.13); break;
+      case 'pause':  blip(400, 0.14, 'triangle', 0.12); break;
+      case 'clear':  blip(340, 0.08, 'sawtooth', 0.07);
+                     blip(240, 0.14, 'sawtooth', 0.06, 0.07); break;
+      case 'win':    melody([523, 659, 784, 1047], 0.13, 'sine', 0.15); break;
+      case 'error':  blip(220, 0.15, 'triangle', 0.11);
+                     blip(160, 0.22, 'triangle', 0.09, 0.13); break;
     }
   }
 
-  // Capa para la abeja (para poder animarla suavemente)
-  beeLayer = document.createElement('div');
-  beeLayer.className = 'bee-layer';
-  Object.assign(beeLayer.style, {
-    position: 'absolute',
-    inset: '0',
-    pointerEvents: 'none',
-    zIndex: '6',
-    overflow: 'visible'
-  });
-  dom.grid.appendChild(beeLayer);
+  // ============================================================
+  //  UTILIDADES
+  // ============================================================
+  const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+  const randInt = (n) => Math.floor(Math.random() * n);
+  const cellKey = (r, c) => `${r},${c}`;
+  const manhattan = (a, b) => Math.abs(a.row - b.row) + Math.abs(a.col - b.col);
+  const inBounds = (r, c) => r >= 0 && r < GRID_SIZE && c >= 0 && c < GRID_SIZE;
 
-  // Abeja
-  beeEl = document.createElement('div');
-  beeEl.className = 'bee';
-  beeEl.innerHTML = BEE_SVG;
-  Object.assign(beeEl.style, {
-    position: 'absolute',
-    top: '0',
-    left: '0',
-    transformOrigin: '50% 55%',
-    transition: 'left .45s cubic-bezier(.34,1.4,.64,1), top .45s cubic-bezier(.34,1.4,.64,1), transform .45s cubic-bezier(.34,1.4,.64,1)',
-    willChange: 'left, top, transform'
-  });
-  beeLayer.appendChild(beeEl);
-}
+  function getCell(row, col) {
+    return gridEl.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+  }
 
-function positionBee(animate = true) {
-  if (!beeEl) return;
-  const cell = getCell(state.bee.row, state.bee.col);
-  if (!cell) return;
+  // ============================================================
+  //  BFS – Camino óptimo sobre el espacio (r, c, dir)
+  //  Cada comando cuesta 1 (avanzar, retroceder o girar).
+  // ============================================================
+  function bfsOptimal(start, startDir, goal, obstacles) {
+    const key = (r, c, d) => (r * 100) + (c * 10) + d;
+    const queue = [[start.row, start.col, startDir, 0]];
+    const seen  = new Set([key(start.row, start.col, startDir)]);
 
-  const gridRect = dom.grid.getBoundingClientRect();
-  const cellRect = cell.getBoundingClientRect();
+    while (queue.length) {
+      const [r, c, d, dist] = queue.shift();
+      if (r === goal.row && c === goal.col) return dist;
 
-  const x = cellRect.left - gridRect.left + cellRect.width  / 2;
-  const y = cellRect.top  - gridRect.top  + cellRect.height / 2;
+      // Avanzar
+      const [fdr, fdc] = DIRS[d];
+      const fr = r + fdr, fc = c + fdc;
+      if (inBounds(fr, fc) && !obstacles.has(cellKey(fr, fc))) {
+        const k = key(fr, fc, d);
+        if (!seen.has(k)) { seen.add(k); queue.push([fr, fc, d, dist + 1]); }
+      }
 
-  const w = cellRect.width  * 0.88;
-  const h = cellRect.height * 0.88;
+      // Retroceder (sin girar)
+      const [bdr, bdc] = DIRS[(d + 2) % 4];
+      const br = r + bdr, bc = c + bdc;
+      if (inBounds(br, bc) && !obstacles.has(cellKey(br, bc))) {
+        const k = key(br, bc, d);
+        if (!seen.has(k)) { seen.add(k); queue.push([br, bc, d, dist + 1]); }
+      }
 
-  if (!animate) {
+      // Girar izquierda
+      const dl = (d + 3) % 4;
+      const kl = key(r, c, dl);
+      if (!seen.has(kl)) { seen.add(kl); queue.push([r, c, dl, dist + 1]); }
+
+      // Girar derecha
+      const dr = (d + 1) % 4;
+      const kr = key(r, c, dr);
+      if (!seen.has(kr)) { seen.add(kr); queue.push([r, c, dr, dist + 1]); }
+    }
+    return Infinity;
+  }
+
+  // ============================================================
+  //  GENERADOR DE NIVELES
+  // ============================================================
+  function generateLevel(level) {
+    // Obstáculos crecen con el nivel (0 en nivel 1 y 2)
+    const obstacleTarget =
+      level <= 2 ? 0 :
+      level <= 4 ? 1 :
+      level <= 6 ? 2 :
+      level <= 9 ? 3 : 4;
+
+    for (let attempt = 0; attempt < 250; attempt++) {
+      // ---- Abeja en un borde ----
+      const side = randInt(4);
+      let bee;
+      if (side === 0)      bee = { row: 0,            col: randInt(GRID_SIZE), dir: 2 }; // arriba → mira abajo
+      else if (side === 1) bee = { row: GRID_SIZE - 1, col: randInt(GRID_SIZE), dir: 0 }; // abajo → mira arriba
+      else if (side === 2) bee = { row: randInt(GRID_SIZE), col: 0,            dir: 1 }; // izq → mira derecha
+      else                 bee = { row: randInt(GRID_SIZE), col: GRID_SIZE - 1, dir: 3 }; // der → mira izquierda
+
+      // ---- Meta alejada ----
+      const goal = { row: randInt(GRID_SIZE), col: randInt(GRID_SIZE) };
+      if (goal.row === bee.row && goal.col === bee.col) continue;
+      if (manhattan(bee, goal) < 4) continue;
+
+      // ---- Obstáculos ----
+      const obstacles = new Set();
+      let placed = 0, tries = 0;
+      while (placed < obstacleTarget && tries < 120) {
+        tries++;
+        const r = randInt(GRID_SIZE), c = randInt(GRID_SIZE);
+        const k = cellKey(r, c);
+        if (k === cellKey(bee.row, bee.col))   continue;
+        if (k === cellKey(goal.row, goal.col)) continue;
+        if (obstacles.has(k))                  continue;
+        obstacles.add(k);
+        placed++;
+      }
+
+      // ---- Comprobar que hay camino ----
+      const optimal = bfsOptimal(bee, bee.dir, goal, obstacles);
+      if (optimal !== Infinity && optimal >= 3 && optimal <= 22) {
+        return { bee, goal, obstacles, optimal };
+      }
+    }
+
+    // Fallback garantizado
+    const bee   = { row: 0, col: 0, dir: 2 };
+    const goal  = { row: 4, col: 4 };
+    const optimal = bfsOptimal(bee, 2, goal, new Set());
+    return { bee, goal, obstacles: new Set(), optimal };
+  }
+
+  // ============================================================
+  //  CREAR EL TABLERO 5×5
+  // ============================================================
+  function createGrid() {
+    gridEl.innerHTML = '';
+    gridEl.style.gridTemplateColumns = `repeat(${GRID_SIZE}, 1fr)`;
+    gridEl.style.gridTemplateRows    = `repeat(${GRID_SIZE}, 1fr)`;
+
+    for (let r = 0; r < GRID_SIZE; r++) {
+      for (let c = 0; c < GRID_SIZE; c++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        cell.dataset.row = r;
+        cell.dataset.col = c;
+        gridEl.appendChild(cell);
+      }
+    }
+  }
+
+  // ============================================================
+  //  RENDER DEL NIVEL
+  // ============================================================
+  function renderLevel() {
+    // Limpiar celdas
+    document.querySelectorAll('.cell').forEach((c) => {
+      c.classList.remove('goal', 'obstacle', 'visited', 'highlight');
+    });
+
+    // Obstáculos
+    state.obstacles.forEach((k) => {
+      const [r, c] = k.split(',').map(Number);
+      const cell = getCell(r, c);
+      if (cell) cell.classList.add('obstacle');
+    });
+
+    // Meta
+    const goalCell = getCell(state.goal.row, state.goal.col);
+    if (goalCell) goalCell.classList.add('goal');
+
+    // Abeja
+    placeBee();
+    highlightCell(state.bee.row, state.bee.col, true);
+    setTimeout(() => highlightCell(state.bee.row, state.bee.col, false), 500);
+
+    updateHUD();
+    updateSequenceUI();
+  }
+
+  // ============================================================
+  //  ABEJA
+  // ============================================================
+  function placeBee() {
+    const old = gridEl.querySelector('.bee');
+    if (old) old.remove();
+
+    const cell = getCell(state.bee.row, state.bee.col);
+    if (!cell) return;
+
+    const beeEl = document.createElement('div');
+    beeEl.className = 'bee';
+    beeEl.style.setProperty('--rot', DIR_ROTATION[state.bee.dir] + 'deg');
+    beeEl.innerHTML = BEE_SVG;
+    cell.appendChild(beeEl);
+  }
+
+  /* Movimiento FLIP: reparenta y anima la transición entre celdas */
+  function moveBeeTo(newRow, newCol) {
+    const beeEl = gridEl.querySelector('.bee');
+    if (!beeEl) return;
+
+    const oldRect = beeEl.getBoundingClientRect();
+    const newCell = getCell(newRow, newCol);
+    if (!newCell) return;
+
+    newCell.appendChild(beeEl);
+
+    const newRect = beeEl.getBoundingClientRect();
+    const dx = oldRect.left - newRect.left;
+    const dy = oldRect.top  - newRect.top;
+    if (dx === 0 && dy === 0) return;
+
     beeEl.style.transition = 'none';
+    beeEl.style.transform  =
+      `translate(-50%, -55%) translate(${dx}px, ${dy}px) rotate(var(--rot, 0deg))`;
+    void beeEl.offsetWidth; // forzar reflow
+
     requestAnimationFrame(() => {
       beeEl.style.transition = '';
+      beeEl.style.transform  = '';
     });
   }
 
-  beeEl.style.width  = w + 'px';
-  beeEl.style.height = h + 'px';
-  beeEl.style.left   = x + 'px';
-  beeEl.style.top    = y + 'px';
-  beeEl.style.transform = `translate(-50%, -55%) rotate(${ROT_DEG[state.bee.dir]}deg)`;
-}
-
-// ============================================================
-//  NIVELES
-// ============================================================
-// Definición de niveles: dificultad progresiva.
-// Sin obstáculos por ahora; las distancias crecen con el nivel.
-function levelConfig(level) {
-  // Niveles fijos iniciales
-  const presets = [
-    { bee: { row: 3, col: 0, dir: 1 }, goal: { row: 3, col: 3 } }, // 1 – misma fila
-    { bee: { row: 5, col: 0, dir: 0 }, goal: { row: 2, col: 0 } }, // 2 – misma columna
-    { bee: { row: 5, col: 5, dir: 0 }, goal: { row: 1, col: 2 } }, // 3
-    { bee: { row: 0, col: 0, dir: 1 }, goal: { row: 4, col: 5 } }, // 4
-    { bee: { row: 2, col: 4, dir: 2 }, goal: { row: 5, col: 1 } }, // 5
-  ];
-  if (level <= presets.length) return presets[level - 1];
-
-  // Generación aleatoria para niveles avanzados
-  const bee = {
-    row: Math.floor(Math.random() * 2) === 0 ? 0 : 5,
-    col: Math.floor(Math.random() * GRID_SIZE),
-    dir: 2,
-  };
-  const goal = {
-    row: 2 + Math.floor(Math.random() * 4),
-    col: Math.floor(Math.random() * GRID_SIZE),
-  };
-  if (bee.row === 0) bee.dir = 2; else bee.dir = 0;
-  return { bee, goal };
-}
-
-function computeOptimalSteps(bee, goal) {
-  const dr = goal.row - bee.row;
-  const dc = goal.col - bee.col;
-
-  // Direcciones objetivo necesarias
-  // 0=arriba, 1=derecha, 2=abajo, 3=izquierda
-  let neededDir;
-  if (Math.abs(dr) >= Math.abs(dc)) {
-    neededDir = dr >= 0 ? 2 : 0;
-  } else {
-    neededDir = dc >= 0 ? 1 : 3;
+  function shakeBee() {
+    const beeEl = gridEl.querySelector('.bee');
+    if (!beeEl) return;
+    beeEl.classList.remove('shake');
+    void beeEl.offsetWidth;
+    beeEl.classList.add('shake');
+    setTimeout(() => beeEl.classList.remove('shake'), 500);
   }
 
-  const moves = Math.abs(dr) + Math.abs(dc);
-
-  // Giros mínimos (0, 1 o 2)
-  let diff = (neededDir - bee.dir + 4) % 4;
-  const turns = diff <= 2 ? diff : 0; // si necesita 3, mejor girar al otro lado (1 giro? no, sería 1 también)
-
-  // En realidad si diff === 3, es más óptimo girar al otro lado: 1 giro equivale a 3 giros en sentido contrario
-  // Así que el número mínimo de giros es min(diff, 4-diff)
-  const minTurns = Math.min(diff, 4 - diff);
-
-  // Pero solo necesitamos girar UNA VEZ hacia la dirección inicial, luego caminar.
-  // Como mucho 2 giros son necesarios (una vez al inicio).
-  // Simplificamos: giros mínimos al inicio.
-  return minTurns + moves;
-}
-
-// ============================================================
-//  SECUENCIA
-// ============================================================
-function updateSequenceUI() {
-  dom.sequenceBox.innerHTML = '';
-  dom.chipCounter.textContent = `${state.sequence.length} paso${state.sequence.length === 1 ? '' : 's'}`;
-  dom.movesValue.textContent = state.sequence.length;
-
-  if (state.sequence.length === 0) {
-    dom.sequenceBox.innerHTML = `
-      <div class="seq-empty">
-        <span class="seq-empty-icon">✨</span>
-        <span>Aquí aparecen tus pasos…</span>
-      </div>`;
-    return;
+  // ============================================================
+  //  CELDAS
+  // ============================================================
+  function highlightCell(row, col, on) {
+    const cell = getCell(row, col);
+    if (!cell) return;
+    cell.classList.toggle('highlight', on);
   }
 
-  state.sequence.forEach((cmd, i) => {
-    const chip = document.createElement('div');
-    chip.className = 'seq-chip';
-    if (state.running) {
-      if (i < state.currentStep) chip.classList.add('done');
-      else if (i === state.currentStep) chip.classList.add('executing');
+  function markVisited(row, col) {
+    const cell = getCell(row, col);
+    if (cell) cell.classList.add('visited');
+  }
+
+  // ============================================================
+  //  HUD
+  // ============================================================
+  function updateHUD() {
+    levelValue.textContent = state.level;
+    starsValue.textContent = state.totalStars;
+    movesValue.textContent = state.sequence.length;
+    chipCounter.textContent = state.sequence.length === 1
+      ? '1 paso'
+      : `${state.sequence.length} pasos`;
+  }
+
+  // ============================================================
+  //  SECUENCIA
+  // ============================================================
+  function addCommand(cmd) {
+    if (state.isRunning) return;
+    if (state.sequence.length >= 40) {
+      statusBar.textContent = '⚠️ ¡Demasiados pasos! Borra algunos.';
+      return;
     }
-    chip.innerHTML = `
-      <span class="chip-icon">${CMD_LABELS[cmd].icon}</span>
-      <span class="chip-label">${CMD_LABELS[cmd].text}</span>`;
-    dom.sequenceBox.appendChild(chip);
-  });
+    state.sequence.push(cmd);
+    updateSequenceUI();
+    updateHUD();
+    playSound('add');
 
-  // Autoscroll al chip activo o al final
-  const target = dom.sequenceBox.querySelector('.seq-chip.executing') ||
-                 dom.sequenceBox.querySelector('.seq-chip:last-child');
-  if (target) {
-    dom.sequenceBox.scrollTo({
-      left: target.offsetLeft - dom.sequenceBox.clientWidth / 2 + target.clientWidth / 2,
-      behavior: 'smooth'
+    statusBar.classList.remove('error', 'running');
+    statusBar.textContent = `➕ ${CMD_LABELS[cmd].text}`;
+    setTimeout(() => {
+      if (!state.isRunning) {
+        statusBar.textContent = `Pasos: ${state.sequence.length}`;
+      }
+    }, 700);
+  }
+
+  function updateSequenceUI() {
+    sequenceBox.innerHTML = '';
+
+    if (state.sequence.length === 0) {
+      sequenceBox.innerHTML = `
+        <div class="seq-empty">
+          <span class="seq-empty-icon">✨</span>
+          <span>Aquí aparecen tus pasos…</span>
+        </div>`;
+      return;
+    }
+
+    state.sequence.forEach((cmd, i) => {
+      const chip = document.createElement('div');
+      chip.className = 'seq-chip';
+      if (state.isRunning && i < state.currentStep)  chip.classList.add('done');
+      if (state.isRunning && i === state.currentStep) chip.classList.add('executing');
+      chip.innerHTML = `
+        <span class="chip-icon">${CMD_LABELS[cmd].icon}</span>
+        <span class="chip-label">${CMD_LABELS[cmd].text}</span>`;
+      sequenceBox.appendChild(chip);
     });
+
+    // Auto-scroll al chip activo
+    const active = sequenceBox.querySelector('.seq-chip.executing');
+    if (active) {
+      active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    } else {
+      sequenceBox.scrollLeft = sequenceBox.scrollWidth;
+    }
   }
-}
 
-function addCommand(cmd) {
-  if (state.running) return;
-  if (state.sequence.length >= 60) return; // límite amable
-  state.sequence.push(cmd);
-  updateSequenceUI();
-  sfx.add();
-  setStatus(`➕ ${CMD_LABELS[cmd].text}`, 'info', 700);
-}
-
-function clearSequence() {
-  if (state.running) return;
-  state.sequence = [];
-  updateSequenceUI();
-  sfx.clear();
-  setStatus('Memoria borrada ✨', 'info', 1200);
-}
-
-function setStatus(text, type = 'info', duration = 0) {
-  clearTimeout(setStatus._t);
-  dom.statusBar.textContent = text;
-  dom.statusBar.classList.remove('running', 'error');
-  if (type === 'running') dom.statusBar.classList.add('running');
-  if (type === 'error')   dom.statusBar.classList.add('error');
-
-  if (duration) {
-    setStatus._t = setTimeout(() => {
-      dom.statusBar.textContent = '¡Programa el camino de la abeja!';
-      dom.statusBar.classList.remove('running', 'error');
-    }, duration);
+  function clearSequence() {
+    if (state.isRunning) return;
+    state.sequence = [];
+    updateSequenceUI();
+    updateHUD();
+    playSound('clear');
+    statusBar.classList.remove('error');
+    statusBar.textContent = '🧹 Memoria borrada';
+    setTimeout(() => {
+      if (!state.isRunning) {
+        statusBar.textContent = '¡Programa el camino de la abeja!';
+      }
+    }, 1200);
   }
-}
 
-// ============================================================
-//  EJECUCIÓN
-// ============================================================
-async function runSequence() {
-  if (state.running || state.sequence.length === 0) return;
+  // ============================================================
+  //  EJECUCIÓN
+  // ============================================================
+  function setControlsRunning(running) {
+    btnGo.disabled    = running;
+    btnPause.disabled = !running;
+    btnClear.disabled = running;
+    btnNew.disabled   = running;
+    document.querySelectorAll('.cmd-btn').forEach((b) => (b.disabled = running));
+  }
 
-  state.running = true;
-  state.paused = false;
-  state.currentStep = 0;
+  async function runSequence() {
+    if (state.isRunning || state.sequence.length === 0) return;
 
-  lockControls(true);
-  sfx.go();
-  setStatus('🚀 ¡La abeja está volando!', 'running');
-  updateSequenceUI();
+    state.isRunning   = true;
+    state.isPaused    = false;
+    state.currentStep = 0;
+    state.visited     = new Set([cellKey(state.bee.row, state.bee.col)]);
+    markVisited(state.bee.row, state.bee.col);
 
-  // Limpiar marcas previas
-  document.querySelectorAll('.cell.highlight, .cell.visited')
-    .forEach(c => c.classList.remove('highlight', 'visited'));
-
-  const startCell = getCell(state.bee.row, state.bee.col);
-  if (startCell) startCell.classList.add('visited');
-
-  for (let i = 0; i < state.sequence.length; i++) {
-    if (!state.running) break;
-
-    state.currentStep = i;
+    setControlsRunning(true);
+    btnPause.innerHTML = '<span class="action-icon">⏸️</span><span>Pausa</span>';
+    playSound('go');
+    statusBar.classList.remove('error');
+    statusBar.classList.add('running');
+    statusBar.textContent = '🚀 ¡La abeja está volando!';
     updateSequenceUI();
 
-    while (state.paused && state.running) await sleep(120);
-    if (!state.running) break;
+    let aborted = false;
 
-    await executeCommand(state.sequence[i]);
-    await sleep(340);
+    for (let i = 0; i < state.sequence.length; i++) {
+      // Pausa
+      while (state.isPaused && state.isRunning) await sleep(100);
+      if (!state.isRunning) return; // cancelado
+
+      state.currentStep = i;
+      updateSequenceUI();
+
+      const ok = await executeCommand(state.sequence[i]);
+      if (!ok) { aborted = true; break; }
+
+      await sleep(300);
+    }
+
+    finishRun(aborted);
   }
 
-  if (state.running) finishRun();
-}
+  async function executeCommand(cmd) {
+    const beeEl = gridEl.querySelector('.bee');
+    if (!beeEl) return false;
 
-function finishRun() {
-  state.running = false;
-  state.paused = false;
-  lockControls(false);
-  dom.statusBar.classList.remove('running');
+    // ---- Girar ----
+    if (cmd === 'left' || cmd === 'right') {
+      state.bee.dir = cmd === 'left'
+        ? (state.bee.dir + 3) % 4
+        : (state.bee.dir + 1) % 4;
+      beeEl.style.setProperty('--rot', DIR_ROTATION[state.bee.dir] + 'deg');
+      beeEl.classList.add('turning');
+      playSound('turn');
+      setTimeout(() => beeEl.classList.remove('turning'), 500);
+      return true;
+    }
 
-  const arrived = state.bee.row === state.goal.row && state.bee.col === state.goal.col;
-
-  updateSequenceUI();
-
-  if (arrived) {
-    win();
-  } else {
-    sfx.error();
-    setStatus('La abeja no llegó a la flor. ¡Intenta otra vez!', 'error');
-    showToast('😅', 'Casi… ¡prueba otra vez!', true);
-  }
-}
-
-async function executeCommand(cmd) {
-  if (cmd === 'forward' || cmd === 'backward') {
-    const dirIdx = cmd === 'forward' ? state.bee.dir : (state.bee.dir + 2) % 4;
+    // ---- Avanzar / retroceder ----
+    const dirIdx = cmd === 'forward'
+      ? state.bee.dir
+      : (state.bee.dir + 2) % 4;
     const [dr, dc] = DIRS[dirIdx];
     const nr = state.bee.row + dr;
     const nc = state.bee.col + dc;
 
-    if (nr >= 0 && nr < GRID_SIZE && nc >= 0 && nc < GRID_SIZE) {
-      state.bee.row = nr;
-      state.bee.col = nc;
-      positionBee(true);
-      sfx.move();
+    // Borde
+    if (!inBounds(nr, nc)) {
+      playSound('error');
+      shakeBee();
+      statusBar.classList.remove('running');
+      statusBar.classList.add('error');
+      statusBar.textContent = '🚧 ¡Ups! La abeja chocó con el borde';
+      await sleep(700);
+      return false;
+    }
 
-      const cell = getCell(nr, nc);
-      cell.classList.add('highlight');
-      setTimeout(() => cell.classList.remove('highlight'), 420);
-      cell.classList.add('visited');
-      await sleep(460);
+    // Obstáculo
+    if (state.obstacles.has(cellKey(nr, nc))) {
+      playSound('error');
+      shakeBee();
+      statusBar.classList.remove('running');
+      statusBar.classList.add('error');
+      statusBar.textContent = '🪨 ¡Hay una piedra en el camino!';
+      await sleep(700);
+      return false;
+    }
+
+    // Mover
+    const prevRow = state.bee.row;
+    const prevCol = state.bee.col;
+    state.bee.row = nr;
+    state.bee.col = nc;
+
+    moveBeeTo(nr, nc);
+    playSound('move');
+
+    highlightCell(prevRow, prevCol, false);
+    highlightCell(nr, nc, true);
+    markVisited(nr, nc);
+    state.visited.add(cellKey(nr, nc));
+
+    await sleep(320);
+    highlightCell(nr, nc, false);
+    return true;
+  }
+
+  function finishRun(aborted) {
+    state.isRunning = false;
+    state.isPaused  = false;
+    setControlsRunning(false);
+    btnPause.innerHTML = '<span class="action-icon">⏸️</span><span>Pausa</span>';
+    statusBar.classList.remove('running');
+    updateSequenceUI();
+
+    if (aborted) {
+      // El error ya se mostró; solo feedback suave
+      setTimeout(() => {
+        if (state.bee.row === state.goal.row && state.bee.col === state.goal.col) {
+          onWin();
+        } else {
+          showFeedback('😅', '¡Casi! Prueba otra vez', true);
+        }
+      }, 900);
+      return;
+    }
+
+    if (state.bee.row === state.goal.row && state.bee.col === state.goal.col) {
+      onWin();
     } else {
-      // Borde: rebote
-      sfx.error();
-      if (beeEl) {
-        beeEl.style.filter = 'drop-shadow(0 5px 5px rgba(0,0,0,.25)) hue-rotate(-25deg)';
-        beeEl.animate(
-          [
-            { transform: `translate(-50%, -55%) rotate(${ROT_DEG[state.bee.dir]}deg) translateX(0)` },
-            { transform: `translate(-50%, -55%) rotate(${ROT_DEG[state.bee.dir]}deg) translateX(-8px)` },
-            { transform: `translate(-50%, -55%) rotate(${ROT_DEG[state.bee.dir]}deg) translateX(0)` },
-          ],
-          { duration: 380, easing: 'ease-out' }
-        );
-        setTimeout(() => { beeEl.style.filter = ''; }, 420);
-      }
-      await sleep(400);
+      playSound('error');
+      statusBar.classList.add('error');
+      statusBar.textContent = '🤔 La abeja no llegó a la flor. ¡Inténtalo de nuevo!';
+      showFeedback('😅', '¡Casi! Prueba otra vez', true);
     }
-  } else if (cmd === 'left' || cmd === 'right') {
-    state.bee.dir = (state.bee.dir + (cmd === 'right' ? 1 : 3)) % 4;
-    positionBee(true);
-    sfx.turn();
-    if (beeEl) {
-      beeEl.classList.add('turning');
-      setTimeout(() => beeEl.classList.remove('turning'), 500);
+  }
+
+  function togglePause() {
+    if (!state.isRunning) return;
+    state.isPaused = !state.isPaused;
+
+    if (state.isPaused) {
+      btnPause.innerHTML = '<span class="action-icon">▶️</span><span>Seguir</span>';
+      statusBar.classList.remove('running');
+      statusBar.textContent = '⏸️ En pausa…';
+      playSound('pause');
+    } else {
+      btnPause.innerHTML = '<span class="action-icon">⏸️</span><span>Pausa</span>';
+      statusBar.classList.add('running');
+      statusBar.textContent = '🚀 ¡La abeja está volando!';
+      playSound('go');
     }
-    await sleep(380);
-  }
-}
-
-function togglePause() {
-  if (!state.running) return;
-  state.paused = !state.paused;
-
-  if (state.paused) {
-    dom.btnPause.innerHTML = '<span class="action-icon">▶️</span><span>Seguir</span>';
-    setStatus('⏸️ En pausa…');
-    sfx.pause();
-  } else {
-    dom.btnPause.innerHTML = '<span class="action-icon">⏸️</span><span>Pausa</span>';
-    setStatus('🚀 ¡La abeja está volando!', 'running');
-    sfx.go();
-  }
-}
-
-function lockControls(lock) {
-  dom.btnGo.disabled     = lock;
-  dom.btnPause.disabled  = !lock;
-  dom.btnClear.disabled  = lock;
-  dom.btnNew.disabled    = lock;
-  document.querySelectorAll('.cmd-btn').forEach(b => b.disabled = lock);
-}
-
-// ============================================================
-//  VICTORIA Y NIVELES
-// ============================================================
-function win() {
-  const usedSteps = state.sequence.length;
-  const optimal = state.optimalSteps;
-
-  // Estrellas según eficiencia
-  let stars = 1;
-  if (usedSteps <= optimal + 1) stars = 3;
-  else if (usedSteps <= optimal + 4) stars = 2;
-
-  state.stars = stars;
-  state.totalStars += stars;
-
-  // Mejor marca del nivel
-  const key = `bee_level_${state.level}`;
-  const prevBest = state.bestStars[key] || 0;
-  if (stars > prevBest) state.bestStars[key] = stars;
-
-  // Persistir
-  persist();
-
-  // Actualizar HUD
-  dom.starsValue.textContent = state.totalStars;
-
-  // Animación abeja
-  if (beeEl) {
-    beeEl.classList.add('celebrating');
-    setTimeout(() => beeEl.classList.remove('celebrating'), 2400);
   }
 
-  sfx.win();
-  // Pequeños ding para cada estrella
-  for (let i = 0; i < stars; i++) setTimeout(() => sfx.star(i), 500 + i * 260);
-
-  launchConfetti();
-
-  // Mostrar overlay
-  dom.winSteps.textContent = usedSteps;
-  dom.winLevel.textContent = state.level;
-  dom.winMsg.textContent = stars === 3
-    ? '¡Ruta perfecta! Eres un genio programando 🧠'
-    : stars === 2
-    ? '¡Muy bien! Puedes hacerlo aún más corto 💪'
-    : '¡Lo lograste! Intenta usar menos pasos 🌟';
-
-  // Estrellas
-  const starEls = dom.winStars.querySelectorAll('.win-star');
-  starEls.forEach((s, i) => {
-    s.classList.toggle('hidden', i >= stars);
-  });
-
-  setTimeout(() => showOverlay(dom.winOverlay), 900);
-}
-
-function nextLevel() {
-  state.level++;
-  startLevel(state.level);
-  hideOverlay(dom.winOverlay);
-}
-
-// ============================================================
-//  INICIO DE NIVEL
-// ============================================================
-function startLevel(level) {
-  const config = levelConfig(level);
-
-  state.bee = { ...config.bee };
-  state.goal = { ...config.goal };
-  state.sequence = [];
-  state.currentStep = 0;
-  state.running = false;
-  state.paused = false;
-
-  lockControls(false);
-
-  // Limpiar celdas
-  document.querySelectorAll('.cell').forEach(c => {
-    c.classList.remove('goal', 'highlight', 'visited');
-  });
-
-  // Meta
-  const goalCell = getCell(state.goal.row, state.goal.col);
-  if (goalCell) goalCell.classList.add('goal');
-
-  // Abeja
-  positionBee(false);
-
-  // Óptimo para estrellas
-  state.optimalSteps = computeOptimalSteps(state.bee, state.goal);
-
-  // HUD
-  dom.levelValue.textContent = state.level;
-  dom.starsValue.textContent = state.totalStars;
-
-  updateSequenceUI();
-  setStatus('¡Programa el camino de la abeja!');
-}
-
-// ============================================================
-//  OVERLAYS Y TOAST
-// ============================================================
-function showOverlay(el) {
-  el.classList.add('show');
-}
-function hideOverlay(el) {
-  el.classList.remove('show');
-}
-
-function showToast(emoji, msg, isError = false) {
-  dom.feedbackEmoji.textContent = emoji;
-  dom.feedbackMsg.textContent = msg;
-  dom.feedback.classList.toggle('error', isError);
-  dom.feedback.classList.add('show');
-  clearTimeout(showToast._t);
-  showToast._t = setTimeout(() => dom.feedback.classList.remove('show'), 2600);
-}
-
-// ============================================================
-//  CONFETI
-// ============================================================
-function launchConfetti() {
-  const colors = ['#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff', '#ff9ff3', '#feca57', '#ff8fa3', '#b28bea'];
-  const count = 70;
-  for (let i = 0; i < count; i++) {
-    const c = document.createElement('div');
-    c.className = 'confetti';
-    const size = 8 + Math.random() * 10;
-    c.style.left = (Math.random() * 100) + 'vw';
-    c.style.width = size + 'px';
-    c.style.height = (size * (0.6 + Math.random() * 0.8)) + 'px';
-    c.style.background = colors[Math.floor(Math.random() * colors.length)];
-    c.style.animationDelay = (Math.random() * 0.5) + 's';
-    c.style.animationDuration = (1.8 + Math.random() * 1.2) + 's';
-    if (Math.random() > 0.5) c.style.borderRadius = '50%';
-    dom.confettiLayer.appendChild(c);
-    setTimeout(() => c.remove(), 3400);
+  // ============================================================
+  //  VICTORIA · ESTRELLAS
+  // ============================================================
+  function computeStars(used, optimal) {
+    if (used <= optimal + 2) return 3;
+    if (used <= optimal + 6) return 2;
+    return 1;
   }
-}
 
-// ============================================================
-//  PERSISTENCIA
-// ============================================================
-function persist() {
-  try {
-    localStorage.setItem('abeja_state', JSON.stringify({
-      level: state.level,
-      totalStars: state.totalStars,
-      bestStars: state.bestStars,
-      sound: state.soundEnabled,
-    }));
-  } catch (_) {}
-}
+  function onWin() {
+    playSound('win');
+    statusBar.classList.remove('error');
+    statusBar.classList.add('running');
+    statusBar.textContent = '🎉 ¡Lo lograste! La abeja llegó a la flor';
 
-function restore() {
-  try {
-    const raw = localStorage.getItem('abeja_state');
-    if (!raw) return;
-    const data = JSON.parse(raw);
-    if (typeof data.level === 'number')      state.level = data.level;
-    if (typeof data.totalStars === 'number') state.totalStars = data.totalStars;
-    if (data.bestStars && typeof data.bestStars === 'object') state.bestStars = data.bestStars;
-    if (typeof data.sound === 'boolean') {
-      state.soundEnabled = data.sound;
-      dom.btnSound.textContent = state.soundEnabled ? '🔊' : '🔇';
-      dom.btnSound.classList.toggle('muted', !state.soundEnabled);
+    const beeEl = gridEl.querySelector('.bee');
+    if (beeEl) beeEl.classList.add('celebrating');
+
+    const stars = computeStars(state.sequence.length, state.optimal);
+
+    // Actualizar récord del nivel
+    const prevBest = state.bestStars[state.level] || 0;
+    if (stars > prevBest) {
+      state.totalStars += (stars - prevBest);
+      state.bestStars[state.level] = stars;
+      saveProgress();
     }
-  } catch (_) {}
-}
 
-// ============================================================
-//  EVENTOS
-// ============================================================
-function bindEvents() {
-  // Botones de comando (con manejo táctil y click)
-  document.querySelectorAll('.cmd-btn').forEach(btn => {
-    const handler = (e) => {
+    updateHUD();
+    launchConfetti();
+
+    // Mostrar overlay tras un pequeño delay para ver la celebración
+    setTimeout(() => {
+      showWinOverlay(stars);
+    }, 900);
+  }
+
+  function showWinOverlay(stars) {
+    // Estrellas del overlay
+    const starEls = winStars.querySelectorAll('.win-star');
+    starEls.forEach((el, i) => {
+      el.classList.toggle('hidden', i >= stars);
+      el.style.animation = 'none';
+      void el.offsetWidth;
+      el.style.animation = '';
+    });
+
+    winSteps.textContent = state.sequence.length;
+    winLevel.textContent = state.level;
+    winMsg.textContent   = stars === 3
+      ? '¡Perfecto! Usaste los pasos justos 🌟'
+      : stars === 2
+        ? '¡Muy bien! Puedes usar menos pasos 💪'
+        : '¡Lo lograste! Intenta ser más eficiente 🐝';
+
+    showOverlay(winOverlay);
+  }
+
+  // ============================================================
+  //  OVERLAYS
+  // ============================================================
+  function showOverlay(el) { el.classList.add('show'); }
+  function hideOverlay(el) { el.classList.remove('show'); }
+
+  function showFeedback(emoji, msg, isError = false) {
+    feedbackEmoji.textContent = emoji;
+    feedbackMsg.textContent   = msg;
+    feedback.classList.toggle('error', isError);
+    feedback.classList.add('show');
+    setTimeout(() => feedback.classList.remove('show'), 2200);
+  }
+
+  // ============================================================
+  //  CONFETI
+  // ============================================================
+  function launchConfetti() {
+    const colors = ['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#ff9ff3','#feca57','#fb8500'];
+    const count  = 70;
+
+    for (let i = 0; i < count; i++) {
+      const piece = document.createElement('div');
+      piece.className = 'confetti';
+      piece.style.left            = (Math.random() * 100) + 'vw';
+      piece.style.background      = colors[randInt(colors.length)];
+      piece.style.animationDelay  = (Math.random() * 0.5) + 's';
+      piece.style.animationDuration= (1.8 + Math.random() * 1.4) + 's';
+      piece.style.width           = (8 + Math.random() * 8) + 'px';
+      piece.style.height          = piece.style.width;
+      if (Math.random() > 0.6) piece.style.borderRadius = '50%';
+      confettiLayer.appendChild(piece);
+      setTimeout(() => piece.remove(), 3600);
+    }
+  }
+
+  // ============================================================
+  //  NUEVO RETO / SIGUIENTE NIVEL
+  // ============================================================
+  function loadLevel(level, { resetStars = false } = {}) {
+    if (resetStars) {
+      state.totalStars = 0;
+      state.bestStars  = {};
+      saveProgress();
+    }
+    state.level = level;
+    const lvl = generateLevel(level);
+
+    state.bee       = { ...lvl.bee };
+    state.goal      = { ...lvl.goal };
+    state.obstacles = lvl.obstacles;
+    state.optimal   = lvl.optimal;
+
+    state.sequence  = [];
+    state.visited   = new Set();
+    state.isRunning = false;
+    state.isPaused  = false;
+    state.currentStep = 0;
+
+    renderLevel();
+    statusBar.classList.remove('error', 'running');
+    statusBar.textContent = `¡Nivel ${level}! Programa el camino 🐝`;
+  }
+
+  function newChallenge() {
+    if (state.isRunning) return;
+    // Mismo nivel, nuevo layout
+    const lvl = generateLevel(state.level);
+    state.bee       = { ...lvl.bee };
+    state.goal      = { ...lvl.goal };
+    state.obstacles = lvl.obstacles;
+    state.optimal   = lvl.optimal;
+    state.sequence  = [];
+    state.visited   = new Set();
+
+    renderLevel();
+    playSound('click');
+    statusBar.classList.remove('error', 'running');
+    statusBar.textContent = '🔄 ¡Nuevo reto! Programa el camino';
+  }
+
+  function nextLevel() {
+    hideOverlay(winOverlay);
+    const next = Math.min(state.level + 1, MAX_LEVEL);
+    if (next === state.level && state.level === MAX_LEVEL) {
+      // Reiniciar progresión
+      loadLevel(1, { resetStars: true });
+    } else {
+      loadLevel(next);
+    }
+  }
+
+  // ============================================================
+  //  PERSISTENCIA
+  // ============================================================
+  function saveProgress() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        level:      state.level,
+        totalStars: state.totalStars,
+        bestStars:  state.bestStars,
+        sound:      state.soundEnabled
+      }));
+    } catch (e) { /* ignora */ }
+  }
+
+  function loadProgress() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      if (typeof data.level === 'number')      state.level      = data.level;
+      if (typeof data.totalStars === 'number') state.totalStars = data.totalStars;
+      if (data.bestStars && typeof data.bestStars === 'object') state.bestStars = data.bestStars;
+      if (typeof data.sound === 'boolean')     state.soundEnabled = data.sound;
+    } catch (e) { /* ignora */ }
+  }
+
+  // ============================================================
+  //  EVENTOS
+  // ============================================================
+  function bindEvents() {
+    // --- Botones de movimiento ---
+    document.querySelectorAll('.cmd-btn').forEach((btn) => {
+      const handler = (e) => {
+        e.preventDefault();
+        if (state.isRunning) return;
+        btn.classList.add('pressed');
+        setTimeout(() => btn.classList.remove('pressed'), 130);
+        playSound('click');
+        addCommand(btn.dataset.cmd);
+      };
+      btn.addEventListener('click', handler);
+      btn.addEventListener('touchend', handler, { passive: false });
+    });
+
+    // --- GO ---
+    const goHandler = (e) => {
       e.preventDefault();
-      if (state.running) return;
-      btn.classList.add('pressed');
-      setTimeout(() => btn.classList.remove('pressed'), 130);
-      sfx.click();
-      addCommand(btn.dataset.cmd);
+      btnGo.classList.add('pressed');
+      setTimeout(() => btnGo.classList.remove('pressed'), 130);
+      runSequence();
     };
-    btn.addEventListener('click', handler);
-  });
+    btnGo.addEventListener('click', goHandler);
+    btnGo.addEventListener('touchend', goHandler, { passive: false });
 
-  // GO
-  dom.btnGo.addEventListener('click', (e) => {
-    e.preventDefault();
-    dom.btnGo.classList.add('pressed');
-    setTimeout(() => dom.btnGo.classList.remove('pressed'), 130);
-    runSequence();
-  });
+    // --- PAUSA ---
+    const pauseHandler = (e) => {
+      e.preventDefault();
+      btnPause.classList.add('pressed');
+      setTimeout(() => btnPause.classList.remove('pressed'), 130);
+      togglePause();
+    };
+    btnPause.addEventListener('click', pauseHandler);
+    btnPause.addEventListener('touchend', pauseHandler, { passive: false });
 
-  // PAUSA
-  dom.btnPause.addEventListener('click', (e) => {
-    e.preventDefault();
-    dom.btnPause.classList.add('pressed');
-    setTimeout(() => dom.btnPause.classList.remove('pressed'), 130);
-    togglePause();
-  });
+    // --- BORRAR ---
+    const clearHandler = (e) => {
+      e.preventDefault();
+      btnClear.classList.add('pressed');
+      setTimeout(() => btnClear.classList.remove('pressed'), 130);
+      clearSequence();
+    };
+    btnClear.addEventListener('click', clearHandler);
+    btnClear.addEventListener('touchend', clearHandler, { passive: false });
 
-  // BORRAR
-  dom.btnClear.addEventListener('click', (e) => {
-    e.preventDefault();
-    dom.btnClear.classList.add('pressed');
-    setTimeout(() => dom.btnClear.classList.remove('pressed'), 130);
-    clearSequence();
-  });
+    // --- NUEVO RETO ---
+    const newHandler = (e) => {
+      e.preventDefault();
+      btnNew.classList.add('pressed');
+      setTimeout(() => btnNew.classList.remove('pressed'), 130);
+      newChallenge();
+    };
+    btnNew.addEventListener('click', newHandler);
+    btnNew.addEventListener('touchend', newHandler, { passive: false });
 
-  // NUEVO RETO
-  dom.btnNew.addEventListener('click', (e) => {
-    e.preventDefault();
-    dom.btnNew.classList.add('pressed');
-    setTimeout(() => dom.btnNew.classList.remove('pressed'), 130);
-    if (state.running) return;
-    sfx.click();
-    startLevel(state.level);
-    setStatus('¡Nuevo reto! Programa el camino 🐝', 'info', 1600);
-  });
+    // --- SONIDO ---
+    const soundHandler = (e) => {
+      e.preventDefault();
+      state.soundEnabled = !state.soundEnabled;
+      btnSound.classList.toggle('muted', !state.soundEnabled);
+      btnSound.querySelector('span').textContent = state.soundEnabled ? '🔊' : '🔇';
+      if (state.soundEnabled) playSound('click');
+      saveProgress();
+    };
+    btnSound.addEventListener('click', soundHandler);
+    btnSound.addEventListener('touchend', soundHandler, { passive: false });
 
-  // SONIDO
-  dom.btnSound.addEventListener('click', (e) => {
-    e.preventDefault();
-    state.soundEnabled = !state.soundEnabled;
-    dom.btnSound.textContent = state.soundEnabled ? '🔊' : '🔇';
-    dom.btnSound.classList.toggle('muted', !state.soundEnabled);
-    if (state.soundEnabled) sfx.click();
-    persist();
-  });
+    // --- AYUDA ---
+    btnHelp.addEventListener('click', (e) => {
+      e.preventDefault();
+      playSound('click');
+      showOverlay(helpOverlay);
+    });
+    btnCloseHelp.addEventListener('click',  () => hideOverlay(helpOverlay));
+    btnCloseHelp2.addEventListener('click', () => hideOverlay(helpOverlay));
 
-  // AYUDA
-  dom.btnHelp.addEventListener('click', (e) => {
-    e.preventDefault();
-    sfx.click();
-    showOverlay(dom.helpOverlay);
-  });
-  dom.btnCloseHelp.addEventListener('click', () => hideOverlay(dom.helpOverlay));
-  dom.btnCloseHelp2.addEventListener('click', () => hideOverlay(dom.helpOverlay));
+    // --- START ---
+    btnStart.addEventListener('click', (e) => {
+      e.preventDefault();
+      ensureAudio();
+      playSound('click');
+      hideOverlay(startOverlay);
+      // pequeño retardo para que se vea la animación de salida
+      setTimeout(() => loadLevel(state.level || 1), 250);
+    });
 
-  // INICIO
-  dom.btnStart.addEventListener('click', () => {
-    sfx.click();
-    ensureAudio();
-    hideOverlay(dom.startOverlay);
-    startLevel(state.level);
-  });
+    // --- SIGUIENTE NIVEL ---
+    btnNextLevel.addEventListener('click', (e) => {
+      e.preventDefault();
+      playSound('click');
+      nextLevel();
+    });
 
-  // SIGUIENTE NIVEL
-  dom.btnNextLevel.addEventListener('click', () => {
-    sfx.click();
-    nextLevel();
-  });
+    // --- Audio al primer toque ---
+    document.body.addEventListener('click',      () => ensureAudio(), { once: true });
+    document.body.addEventListener('touchstart', () => ensureAudio(), { once: true, passive: true });
 
-  // Cerrar overlay al hacer clic fuera de la tarjeta (solo ayuda)
-  dom.helpOverlay.addEventListener('click', (e) => {
-    if (e.target === dom.helpOverlay) hideOverlay(dom.helpOverlay);
-  });
+    // --- Teclado (útil en pizarra / teclado físico) ---
+    window.addEventListener('keydown', (e) => {
+      if (startOverlay.classList.contains('show')) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          btnStart.click();
+        }
+        return;
+      }
+      if (helpOverlay.classList.contains('show')) {
+        if (e.key === 'Escape') hideOverlay(helpOverlay);
+        return;
+      }
+      if (winOverlay.classList.contains('show')) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          btnNextLevel.click();
+        }
+        return;
+      }
+      switch (e.key) {
+        case 'ArrowUp':    e.preventDefault(); addCommand('forward');  break;
+        case 'ArrowDown':  e.preventDefault(); addCommand('backward'); break;
+        case 'ArrowLeft':  e.preventDefault(); addCommand('left');     break;
+        case 'ArrowRight': e.preventDefault(); addCommand('right');    break;
+        case 'Enter':      e.preventDefault(); runSequence();          break;
+        case 'Backspace':  e.preventDefault(); clearSequence();        break;
+        case ' ':
+          if (state.isRunning) { e.preventDefault(); togglePause(); }
+          break;
+      }
+    });
+  }
 
-  // Reposicionar abeja al cambiar tamaño / orientación
-  let resizeT;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeT);
-    resizeT = setTimeout(() => positionBee(false), 120);
-  });
+  // ============================================================
+  //  INIT
+  // ============================================================
+  function init() {
+    loadProgress();
 
-  // AudioContext en la primera interacción (política de navegadores)
-  const initAudioOnce = () => {
-    ensureAudio();
-    window.removeEventListener('pointerdown', initAudioOnce);
-    window.removeEventListener('keydown', initAudioOnce);
-  };
-  window.addEventListener('pointerdown', initAudioOnce, { once: true });
-  window.addEventListener('keydown', initAudioOnce, { once: true });
+    // Reflejar sonido guardado
+    btnSound.classList.toggle('muted', !state.soundEnabled);
+    btnSound.querySelector('span').textContent = state.soundEnabled ? '🔊' : '🔇';
 
-  // Atajos de teclado
-  window.addEventListener('keydown', (e) => {
-    if (state.running) return;
-    switch (e.key) {
-      case 'ArrowUp':    e.preventDefault(); addCommand('forward'); break;
-      case 'ArrowDown':  e.preventDefault(); addCommand('backward'); break;
-      case 'ArrowLeft':  e.preventDefault(); addCommand('left'); break;
-      case 'ArrowRight': e.preventDefault(); addCommand('right'); break;
-      case 'Enter':      e.preventDefault(); runSequence(); break;
-      case 'Backspace':  e.preventDefault(); clearSequence(); break;
-      case 'Escape':     e.preventDefault(); hideOverlay(dom.helpOverlay); break;
-    }
-  });
-}
+    createGrid();
+    // Nivel de muestra detrás del overlay de inicio
+    loadLevel(state.level, { resetStars: false });
+    bindEvents();
+    // El overlay de inicio se muestra por defecto (clase show en HTML no está…)
+    showOverlay(startOverlay);
+  }
 
-// ============================================================
-//  INICIALIZACIÓN
-// ============================================================
-function init() {
-  buildGrid();
-  bindEvents();
-  restore();
+  // Arrancar
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 
-  // Mostrar overlay de inicio tras un pequeño delay
-  setTimeout(() => showOverlay(dom.startOverlay), 350);
-
-  // Pintar estado inicial por si el overlay tarda
-  dom.levelValue.textContent = state.level;
-  dom.starsValue.textContent = state.totalStars;
-
-  // Nivel de fondo por si acaso (el botón Start llama a startLevel)
-  startLevel(state.level);
-}
-
-// Arranque
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
-} else {
-  init();
-}
+})();
