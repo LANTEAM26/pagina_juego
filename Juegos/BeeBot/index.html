@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-    <title>🐝 BeeBot - Niveles y Dificultades</title>
+    <title>🐝 BeeBot - Aprende a programar</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -21,41 +21,74 @@
     </div>
 
     <!-- ============================================================ -->
-    <!-- PANTALLA 1 · INICIO / PORTADA                                -->
+    <!-- PANTALLA 1 · PRESENTACIÓN                                    -->
     <!-- ============================================================ -->
-    <section id="pantalla-inicio" class="pantalla activa">
-        <div class="panel panel-inicio">
-            <h1 class="titulo-juego">🐝 BeeBot 🌸</h1>
-            <p class="subtitulo">¡Ayuda a BeeBot a llevar todas las flores al panal!</p>
+    <section id="pantalla-presentacion" class="pantalla activa">
+        <div class="panel panel-presentacion">
 
-            <div class="decoracion-inicio">
-                <img src="abeja.png" alt="BeeBot" class="img-deco img-deco-abeja">
-                <img src="flor.png" alt="Flor" class="img-deco img-deco-flor">
-                <img src="panal.png" alt="Panal" class="img-deco img-deco-panal">
+            <div class="presentacion-hero">
+                <img src="abeja.png" alt="BeeBot" class="hero-abeja">
+                <div class="hero-texto">
+                    <h1 class="titulo-juego">BeeBot</h1>
+                    <p class="subtitulo">¡Guía a la abejita por el prado y lleva todas las flores al panal!</p>
+                </div>
+                <img src="panal.png" alt="Panal" class="hero-panal">
+            </div>
+
+            <div class="presentacion-elementos">
+                <div class="elemento">
+                    <img src="flor.png" alt="Flor">
+                    <span>Recoge flores</span>
+                </div>
+                <div class="elemento">
+                    <img src="panal.png" alt="Panal">
+                    <span>Llévalas al panal</span>
+                </div>
+                <div class="elemento">
+                    <img src="obstaculo.png" alt="Obstáculo">
+                    <span>Esquiva obstáculos</span>
+                </div>
             </div>
 
             <div class="botones-menu">
-                <button id="btn-ir-reglas" class="btn-panel">📖 Cómo se juega</button>
-                <button id="btn-ir-config" class="btn-panel btn-primario">🎮 Jugar</button>
+                <button id="btn-comenzar" class="btn-panel btn-primario">▶️ Comenzar</button>
             </div>
         </div>
     </section>
 
     <!-- ============================================================ -->
-    <!-- PANTALLA 2 · REGLAS / CÓMO SE JUEGA                          -->
+    <!-- PANTALLA 2 · CÓMO JUGAR (OBLIGATORIA ANTES DE ELEGIR NIVEL)  -->
     <!-- ============================================================ -->
-    <section id="pantalla-reglas" class="pantalla">
+    <section id="pantalla-como-jugar" class="pantalla">
         <div class="panel panel-reglas">
             <h2>📖 ¿Cómo se juega?</h2>
 
-            <ul class="lista-reglas">
-                <li><span class="num">1</span> Mueve a <strong>BeeBot</strong> por el prado con las flechas ⬆️ ⬇️ ⬅️ ➡️ (o los botones táctiles).</li>
-                <li><span class="num">2</span> <strong>⬆️ Avanzar</strong> y <strong>⬇️ Retroceder</strong> mueven a la abeja una casilla en la dirección en la que mira.</li>
-                <li><span class="num">3</span> <strong>⬅️ ➡️</strong> sirven para <strong>girar</strong> sobre la misma casilla, sin avanzar.</li>
-                <li><span class="num">4</span> Colócate <strong>mirando directamente a una flor</strong> y pulsa <strong>[Espacio]</strong> para recogerla.</li>
-                <li><span class="num">5</span> Lleva la flor hasta el panal, míralo de frente y pulsa <strong>[Espacio]</strong> para entregarla.</li>
-                <li><span class="num">6</span> ¡Consigue entregar <strong>todas las flores</strong> antes de que se acabe el tiempo o los movimientos!</li>
-            </ul>
+            <ol class="lista-reglas">
+                <li>
+                    <span class="num">1</span>
+                    <div><strong>Muévete</strong> con los botones del panel o con las flechas del teclado.</div>
+                </li>
+                <li>
+                    <span class="num">2</span>
+                    <div><strong>⬆️ Avanzar</strong> y <strong>⬇️ Retroceder</strong> mueven a BeeBot una casilla en la dirección que mira.</div>
+                </li>
+                <li>
+                    <span class="num">3</span>
+                    <div><strong>⬅️ ➡️ Girar</strong> cambia la dirección sin cambiar de casilla.</div>
+                </li>
+                <li>
+                    <span class="num">4</span>
+                    <div><strong>Recoge automáticamente</strong> la flor cuando BeeBot pisa su casilla. Solo puede llevar <strong>una flor a la vez</strong>.</div>
+                </li>
+                <li>
+                    <span class="num">5</span>
+                    <div><strong>Entrega al pisar el panal.</strong> ¡Si llevas una flor y hay otra en el camino, esa flor bloquea el paso como un obstáculo!</div>
+                </li>
+                <li>
+                    <span class="num">6</span>
+                    <div>¡Entrega <strong>todas las flores</strong> antes de que se acabe el tiempo o los movimientos!</div>
+                </li>
+            </ol>
 
             <div class="leyenda">
                 <div class="leyenda-item">
@@ -64,29 +97,29 @@
                 </div>
                 <div class="leyenda-item">
                     <img src="flor.png" alt="Flor">
-                    <span>Flor 🌼</span>
+                    <span>Flor</span>
                 </div>
                 <div class="leyenda-item">
                     <img src="panal.png" alt="Panal">
-                    <span>Panal 🍯</span>
+                    <span>Panal</span>
                 </div>
                 <div class="leyenda-item">
                     <img src="obstaculo.png" alt="Obstáculo">
-                    <span>Obstáculo 🌿</span>
+                    <span>Obstáculo</span>
                 </div>
             </div>
 
             <div class="botones-menu">
-                <button id="btn-reglas-volver" class="btn-panel">⬅️ Volver</button>
-                <button id="btn-reglas-continuar" class="btn-panel btn-primario">▶️ Continuar</button>
+                <button id="btn-jugar-volver" class="btn-panel">⬅️ Volver</button>
+                <button id="btn-jugar-continuar" class="btn-panel btn-primario">▶️ Elegir nivel</button>
             </div>
         </div>
     </section>
 
     <!-- ============================================================ -->
-    <!-- PANTALLA 3 · CONFIGURACIÓN (DIFICULTAD + CUADRÍCULA)         -->
+    <!-- PANTALLA 3 · SELECCIÓN DE NIVEL Y CUADRÍCULA                 -->
     <!-- ============================================================ -->
-    <section id="pantalla-configuracion" class="pantalla">
+    <section id="pantalla-seleccion" class="pantalla">
         <div class="panel panel-config">
             <h2>⚙️ Configura tu partida</h2>
 
@@ -115,7 +148,7 @@
             </div>
 
             <div class="botones-menu">
-                <button id="btn-config-volver" class="btn-panel">⬅️ Volver</button>
+                <button id="btn-seleccion-volver" class="btn-panel">⬅️ Volver</button>
                 <button id="btn-empezar" class="btn-empezar">▶️ Empezar</button>
             </div>
         </div>
@@ -127,18 +160,18 @@
     <section id="pantalla-juego" class="pantalla">
         <div id="contenedor-juego">
 
-            <!-- ====== COLUMNA IZQUIERDA: TABLERO ====== -->
+            <!-- ===== COLUMNA IZQUIERDA: TABLERO ===== -->
             <div id="area-tablero">
                 <canvas id="lienzo-juego" width="700" height="700">
                     Tu navegador no soporta canvas.
                 </canvas>
             </div>
 
-            <!-- ====== COLUMNA DERECHA: PANEL BEEBOT ====== -->
+            <!-- ===== COLUMNA DERECHA: PANEL BEEBOT ===== -->
             <div id="panel-derecho">
 
                 <div id="barra-superior-panel">
-                    <button id="btn-menu" class="btn-mini" title="Volver al menú">🏠 Menú</button>
+                    <button id="btn-menu" class="btn-mini" title="Volver al menú">🏠</button>
                     <h1>🐝 BeeBot 🌸</h1>
                     <button id="btn-reiniciar-nivel" class="btn-mini" title="Reiniciar nivel">🔄</button>
                 </div>
@@ -168,18 +201,25 @@
                     <span id="mensaje-flotante">🌸 ¡Vamos allá!</span>
                 </div>
 
-                <!-- ===== BOTONES TÁCTILES ===== -->
-                <div id="botones-tactiles">
-                    <button id="btn-arriba" class="btn-movimiento btn-arriba" disabled>⬆️ Avanzar</button>
-                    <button id="btn-izquierda" class="btn-movimiento btn-giro" disabled>⬅️ Girar Izquierda</button>
-                    <button id="btn-abajo" class="btn-movimiento btn-abajo" disabled>⬇️ Retroceder</button>
-                    <button id="btn-derecha" class="btn-movimiento btn-giro" disabled>➡️ Girar Derecha</button>
-                    <button id="btn-espacio" class="btn-movimiento btn-accion" disabled>🌸 Recoger / Soltar</button>
+                <!-- ===== CRUCETA DE CONTROLES (BOTONES CON IMÁGENES) ===== -->
+                <div id="cruceta-controles">
+                    <button id="btn-arriba" class="btn-cruz btn-cruz-arriba" disabled aria-label="Avanzar">
+                        <img src="arriba.png" alt="Avanzar">
+                    </button>
+                    <button id="btn-izquierda" class="btn-cruz btn-cruz-izquierda" disabled aria-label="Girar izquierda">
+                        <img src="izquierda.png" alt="Girar izquierda">
+                    </button>
+                    <button id="btn-derecha" class="btn-cruz btn-cruz-derecha" disabled aria-label="Girar derecha">
+                        <img src="derecha.png" alt="Girar derecha">
+                    </button>
+                    <button id="btn-abajo" class="btn-cruz btn-cruz-abajo" disabled aria-label="Retroceder">
+                        <img src="abajo.png" alt="Retroceder">
+                    </button>
                 </div>
 
                 <!-- ===== AYUDA DE TECLADO ===== -->
                 <div id="ayuda-teclado">
-                    ⌨️ Flechas del teclado · [Espacio] para recoger/entregar
+                    ⌨️ Flechas del teclado · Pisa la flor para recogerla 🌸
                 </div>
             </div>
 
@@ -202,7 +242,7 @@
             </div>
             <div id="modal-consejo">
                 <strong>💡 Aprendizaje:</strong>
-                <span id="modal-consejo-texto">Recuerda mirar directamente a la flor o al panal.</span>
+                <span id="modal-consejo-texto">Recuerda pisar la flor y luego el panal.</span>
             </div>
             <button id="boton-reiniciar">🔄 Siguiente nivel</button>
         </div>

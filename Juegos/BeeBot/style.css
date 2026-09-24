@@ -1,10 +1,10 @@
 /* ============================================================ */
 /*  BEEBOT · ESTILOS COMPLETOS                                  */
-/*  Pantallas: Inicio · Reglas · Configuración · Juego          */
-/*  Optimizado para 1920x1080 · Responsive · Primaveral         */
+/*  Pantallas: Presentación · Cómo jugar · Selección · Juego    */
+/*  Cruceta con imágenes · Responsive · Primaveral              */
 /* ============================================================ */
 
-/* ---------- RESET Y CONFIGURACIÓN GLOBAL ---------- */
+/* ---------- RESET Y GLOBAL ---------- */
 * {
     margin: 0;
     padding: 0;
@@ -30,17 +30,20 @@ body {
 button {
     font-family: inherit;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+img {
+    -webkit-user-drag: none;
+    user-select: none;
 }
 
 /* ============================================================ */
-/*  PÉTALOS CAYENDO (FONDO PRIMAVERAL)                          */
+/*  PÉTALOS CAYENDO                                              */
 /* ============================================================ */
 .petals-container {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     pointer-events: none;
     z-index: 0;
     overflow: hidden;
@@ -55,7 +58,6 @@ button {
     border-radius: 50% 0 50% 50%;
     opacity: 0.7;
     animation: caerPetalo linear infinite;
-    transform-origin: center;
     box-shadow: 0 0 10px rgba(255, 182, 193, 0.3);
 }
 
@@ -69,8 +71,8 @@ button {
 .petal:nth-child(8) { left: 95%; animation-duration: 9s;  animation-delay: 3.5s; width: 15px; height: 20px; background: #FFA07A; opacity: 0.5; }
 
 @keyframes caerPetalo {
-    0%   { transform: translateY(0) rotate(0deg) scale(1);      opacity: 0.8; }
-    100% { transform: translateY(110dvh) rotate(720deg) scale(0.4); opacity: 0.2; }
+    0%   { transform: translateY(0) rotate(0deg) scale(1);           opacity: 0.8; }
+    100% { transform: translateY(110dvh) rotate(720deg) scale(0.4);  opacity: 0.2; }
 }
 
 /* ============================================================ */
@@ -101,7 +103,7 @@ button {
 /*  PANELES ESTILO VIDEOJUEGO                                   */
 /* ============================================================ */
 .panel {
-    background: rgba(255, 248, 235, 0.95);
+    background: rgba(255, 248, 235, 0.96);
     backdrop-filter: blur(14px);
     border-radius: 3rem;
     border: 6px solid #FFD700;
@@ -111,11 +113,10 @@ button {
         inset 0 -6px 20px rgba(184, 134, 11, 0.15);
     padding: 3.5rem 3.5rem;
     position: relative;
-    max-width: 900px;
+    max-width: 920px;
     width: 100%;
 }
 
-/* Doble borde decorativo tipo videojuego */
 .panel::before {
     content: '';
     position: absolute;
@@ -126,69 +127,113 @@ button {
 }
 
 /* ============================================================ */
-/*  PANTALLA 1 · INICIO / PORTADA                               */
+/*  PANTALLA 1 · PRESENTACIÓN                                   */
 /* ============================================================ */
-.panel-inicio {
+.panel-presentacion {
+    max-width: 900px;
     text-align: center;
-    max-width: 780px;
 }
 
-.titulo-juego {
-    font-size: clamp(3rem, 7vmin, 6rem);
-    color: #2E4A2E;
-    text-shadow:
-        3px 3px 0 #FFD700,
-        6px 6px 0 rgba(46, 74, 46, 0.25),
-        0 12px 25px rgba(0, 0, 0, 0.15);
-    letter-spacing: 2px;
-    margin-bottom: 1rem;
-    line-height: 1.05;
-}
-
-.subtitulo {
-    font-size: clamp(1.1rem, 2.4vmin, 1.7rem);
-    color: #4A5D4A;
-    font-weight: 600;
-    margin-bottom: 2rem;
-    font-style: italic;
-}
-
-.decoracion-inicio {
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
+.presentacion-hero {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
     gap: 2rem;
-    margin: 1.5rem 0 2.5rem;
-    height: 180px;
+    margin-bottom: 2.5rem;
 }
 
-.img-deco {
+.hero-abeja,
+.hero-panal {
+    height: 150px;
+    width: auto;
     object-fit: contain;
-    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.25));
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.25));
     animation: flotar 3s ease-in-out infinite;
 }
 
-.img-deco-abeja { height: 150px; animation-delay: 0s; }
-.img-deco-flor  { height: 100px; animation-delay: 0.5s; }
-.img-deco-panal { height: 120px; animation-delay: 1s; }
+.hero-abeja { animation-delay: 0s; }
+.hero-panal { animation-delay: 0.8s; }
 
 @keyframes flotar {
     0%, 100% { transform: translateY(0); }
     50%      { transform: translateY(-12px); }
 }
 
+.hero-texto {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.titulo-juego {
+    font-size: clamp(3rem, 7vmin, 5.5rem);
+    color: #2E4A2E;
+    text-shadow:
+        3px 3px 0 #FFD700,
+        6px 6px 0 rgba(46, 74, 46, 0.25),
+        0 12px 25px rgba(0, 0, 0, 0.15);
+    letter-spacing: 2px;
+    line-height: 1;
+}
+
+.subtitulo {
+    font-size: clamp(1rem, 2.2vmin, 1.5rem);
+    color: #4A5D4A;
+    font-weight: 600;
+    font-style: italic;
+    line-height: 1.4;
+}
+
+.presentacion-elementos {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.2rem;
+    margin-bottom: 2.5rem;
+}
+
+.elemento {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1.2rem 0.8rem;
+    background: linear-gradient(180deg, #FFF9E8 0%, #FFF1CE 100%);
+    border-radius: 1.5rem;
+    border: 3px solid #E8C46A;
+    box-shadow: 0 6px 0 #D4A93C, inset 0 2px 6px rgba(255, 255, 255, 0.9);
+    transition: transform 0.2s ease;
+}
+
+.elemento:hover {
+    transform: translateY(-4px);
+}
+
+.elemento img {
+    height: 70px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.2));
+}
+
+.elemento span {
+    font-size: clamp(0.85rem, 1.5vmin, 1.05rem);
+    font-weight: 700;
+    color: #4A3B1F;
+    text-align: center;
+}
+
 /* ============================================================ */
-/*  PANTALLA 2 · REGLAS                                         */
+/*  PANTALLA 2 · CÓMO JUGAR                                     */
 /* ============================================================ */
 .panel-reglas {
     max-width: 950px;
 }
 
 .panel-reglas h2 {
-    font-size: clamp(1.8rem, 4vmin, 3rem);
+    font-size: clamp(1.8rem, 4vmin, 2.8rem);
     color: #2E4A2E;
     text-align: center;
-    margin-bottom: 1.8rem;
+    margin-bottom: 2rem;
     text-shadow: 2px 2px 0 #FFD700;
 }
 
@@ -204,13 +249,13 @@ button {
     display: flex;
     align-items: center;
     gap: 1rem;
-    background: rgba(46, 74, 46, 0.08);
+    background: rgba(46, 74, 46, 0.07);
     border-left: 6px solid #6FCF97;
-    padding: 0.9rem 1.3rem;
+    padding: 1rem 1.3rem;
     border-radius: 1.2rem;
-    font-size: clamp(0.95rem, 1.8vmin, 1.25rem);
+    font-size: clamp(0.9rem, 1.7vmin, 1.15rem);
     color: #22321F;
-    line-height: 1.4;
+    line-height: 1.45;
 }
 
 .lista-reglas .num {
@@ -220,7 +265,7 @@ button {
     flex-shrink: 0;
     width: 2.4rem;
     height: 2.4rem;
-    background: #FFD700;
+    background: linear-gradient(180deg, #FFE55C 0%, #FFD700 100%);
     color: #2E4A2E;
     border-radius: 50%;
     font-weight: 800;
@@ -238,7 +283,7 @@ button {
     grid-template-columns: repeat(4, 1fr);
     gap: 1rem;
     margin-bottom: 2rem;
-    padding: 1.2rem;
+    padding: 1.3rem 1rem;
     background: #FFF6DC;
     border-radius: 1.5rem;
     border: 3px dashed #E8C46A;
@@ -256,21 +301,21 @@ button {
 }
 
 .leyenda-item img {
-    width: 55px;
-    height: 55px;
+    width: 60px;
+    height: 60px;
     object-fit: contain;
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
 }
 
 /* ============================================================ */
-/*  PANTALLA 3 · CONFIGURACIÓN                                  */
+/*  PANTALLA 3 · SELECCIÓN                                      */
 /* ============================================================ */
 .panel-config {
     max-width: 880px;
 }
 
 .panel-config h2 {
-    font-size: clamp(1.8rem, 4vmin, 3rem);
+    font-size: clamp(1.8rem, 4vmin, 2.8rem);
     color: #2E4A2E;
     text-align: center;
     margin-bottom: 2rem;
@@ -278,7 +323,7 @@ button {
 }
 
 .etiqueta-seccion {
-    font-size: clamp(1rem, 2vmin, 1.35rem);
+    font-size: clamp(1rem, 2vmin, 1.3rem);
     font-weight: 700;
     color: #2E4A2E;
     margin-bottom: 0.9rem;
@@ -342,10 +387,9 @@ button {
     min-height: 1.4em;
 }
 
-/* --- Selector de cuadrícula --- */
 #selector-cuadricula {
     background: rgba(86, 204, 242, 0.12);
-    padding: 1.5rem 1.5rem 1.5rem;
+    padding: 1.5rem;
     border-radius: 1.8rem;
     margin-bottom: 1.5rem;
     border: 3px dashed rgba(31, 122, 156, 0.4);
@@ -390,7 +434,7 @@ button {
 }
 
 /* ============================================================ */
-/*  BOTONES DE MENÚ (navegación entre pantallas)                */
+/*  BOTONES DE MENÚ                                             */
 /* ============================================================ */
 .botones-menu {
     display: flex;
@@ -441,7 +485,6 @@ button {
     box-shadow: 0 2px 0 #2D7A4E;
 }
 
-/* --- Botón Empezar (destacado) --- */
 .btn-empezar {
     flex: 1;
     min-width: 180px;
@@ -466,7 +509,6 @@ button {
 .btn-empezar:hover {
     transform: translateY(-3px);
     background: linear-gradient(180deg, #FFEF8A 0%, #FFD54F 100%);
-    box-shadow: 0 10px 0 #B38F2C, 0 0 45px rgba(255, 215, 0, 0.9);
 }
 
 .btn-empezar:active {
@@ -492,7 +534,6 @@ button {
     justify-content: center;
 }
 
-/* ===== COLUMNA IZQUIERDA: TABLERO ===== */
 #area-tablero {
     flex: 0 0 auto;
     background: rgba(222, 210, 190, 0.9);
@@ -518,7 +559,6 @@ button {
     touch-action: none;
 }
 
-/* ===== COLUMNA DERECHA: PANEL ===== */
 #panel-derecho {
     flex: 1;
     min-width: 260px;
@@ -527,7 +567,7 @@ button {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    background: rgba(255, 248, 235, 0.95);
+    background: rgba(255, 248, 235, 0.96);
     backdrop-filter: blur(12px);
     border-radius: 2rem;
     padding: 1.5rem 1.5rem 1.2rem;
@@ -560,13 +600,14 @@ button {
     background: #E8DCCC;
     border: 2px solid #B0A18A;
     border-radius: 0.8rem;
-    padding: 0.4rem 0.7rem;
-    font-size: clamp(0.8rem, 1.5vmin, 1.05rem);
+    padding: 0.45rem 0.75rem;
+    font-size: clamp(0.9rem, 1.6vmin, 1.1rem);
     font-weight: 700;
     color: #2E4A2E;
     box-shadow: 0 3px 0 #B0A18A;
     transition: all 0.1s ease;
     white-space: nowrap;
+    line-height: 1;
 }
 
 .btn-mini:hover {
@@ -581,7 +622,7 @@ button {
 }
 
 /* ============================================================ */
-/*  INDICADORES, ESTADÍSTICAS Y MENSAJES                        */
+/*  INDICADORES DEL JUEGO                                       */
 /* ============================================================ */
 #info-nivel {
     display: flex;
@@ -696,82 +737,66 @@ button {
 }
 
 /* ============================================================ */
-/*  BOTONES TÁCTILES                                            */
+/*  CRUCETA DE CONTROLES (BOTONES CON IMÁGENES)                 */
 /* ============================================================ */
-#botones-tactiles {
+#cruceta-controles {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: auto auto auto;
-    gap: 0.6rem;
+    grid-template-rows: 1fr 1fr;
+    gap: 0.7rem;
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+    aspect-ratio: 3 / 2;
+    flex-shrink: 0;
 }
 
-.btn-movimiento {
-    font-weight: 800;
-    border: none;
-    border-radius: 1.1rem;
-    padding: 0.9rem 0.5rem;
-    font-size: clamp(0.85rem, 1.7vmin, 1.25rem);
-    color: #1F2A36;
-    background: #F5EFE6;
-    box-shadow: 0 5px 0 #B0A18A, 0 8px 16px rgba(0, 0, 0, 0.18);
-    transition: all 0.06s linear;
-    text-align: center;
-    line-height: 1.15;
-    min-height: 3.2rem;
+.btn-cruz {
+    background: linear-gradient(180deg, #FFF9E8 0%, #F5E6C0 100%);
+    border: 3px solid #B38F2C;
+    border-radius: 1rem;
+    padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    touch-action: manipulation;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    box-shadow: 0 5px 0 #B38F2C, 0 8px 16px rgba(0, 0, 0, 0.18);
+    overflow: hidden;
 }
 
-.btn-movimiento:hover:not(:disabled) {
-    filter: brightness(1.06);
+.btn-cruz img {
+    width: 75%;
+    height: 75%;
+    object-fit: contain;
+    pointer-events: none;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
+}
+
+.btn-cruz:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 7px 0 #B0A18A, 0 10px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 7px 0 #B38F2C, 0 10px 20px rgba(0, 0, 0, 0.22);
+    background: linear-gradient(180deg, #FFFBEE 0%, #FCEEC8 100%);
 }
 
-.btn-movimiento:active:not(:disabled) {
+.btn-cruz:active:not(:disabled) {
     transform: translateY(3px);
-    box-shadow: 0 1px 0 #B0A18A;
+    box-shadow: 0 2px 0 #B38F2C;
 }
 
-.btn-movimiento:disabled {
+.btn-cruz:disabled {
     opacity: 0.4;
     cursor: not-allowed;
-    transform: none !important;
-    box-shadow: 0 4px 0 #B0A18A !important;
+    transform: none;
+    box-shadow: 0 4px 0 #B38F2C;
+    filter: grayscale(0.5);
 }
 
-.btn-arriba {
-    grid-column: 1 / 4;
-    grid-row: 1;
-    background: linear-gradient(180deg, #7FE0A8 0%, #6FCF97 100%);
-    color: #0F3D2A;
-    box-shadow: 0 5px 0 #2D7A4E, 0 8px 16px rgba(0, 0, 0, 0.18);
-    font-size: clamp(1rem, 2vmin, 1.4rem);
-    min-height: 3.4rem;
-}
-
-.btn-arriba:hover:not(:disabled) {
-    box-shadow: 0 7px 0 #2D7A4E, 0 10px 20px rgba(0, 0, 0, 0.2);
-}
-
-.btn-izquierda { grid-column: 1; grid-row: 2; background: linear-gradient(180deg, #7FDBFA 0%, #56CCF2 100%); box-shadow: 0 5px 0 #1F7A9C, 0 8px 16px rgba(0, 0, 0, 0.18); }
-.btn-abajo     { grid-column: 2; grid-row: 2; background: linear-gradient(180deg, #FFB26B 0%, #F2994A 100%); box-shadow: 0 5px 0 #A8671F, 0 8px 16px rgba(0, 0, 0, 0.18); }
-.btn-derecha   { grid-column: 3; grid-row: 2; background: linear-gradient(180deg, #7FDBFA 0%, #56CCF2 100%); box-shadow: 0 5px 0 #1F7A9C, 0 8px 16px rgba(0, 0, 0, 0.18); }
-
-.btn-accion {
-    grid-column: 1 / 4;
-    grid-row: 3;
-    background: linear-gradient(180deg, #FFE55C 0%, #F2C94C 100%);
-    box-shadow: 0 5px 0 #B38F2C, 0 8px 16px rgba(0, 0, 0, 0.18);
-    font-size: clamp(1rem, 1.9vmin, 1.35rem);
-    min-height: 3.4rem;
-}
-
-.btn-accion:hover:not(:disabled) {
-    box-shadow: 0 7px 0 #B38F2C, 0 10px 20px rgba(0, 0, 0, 0.2);
-}
+/* Posiciones en la cruceta */
+.btn-cruz-arriba    { grid-column: 2; grid-row: 1; }
+.btn-cruz-izquierda { grid-column: 1; grid-row: 2; }
+.btn-cruz-derecha   { grid-column: 3; grid-row: 2; }
+.btn-cruz-abajo     { grid-column: 2; grid-row: 2; }
 
 #ayuda-teclado {
     text-align: center;
@@ -784,14 +809,11 @@ button {
 }
 
 /* ============================================================ */
-/*  MODAL DE FIN DE NIVEL / PARTIDA                             */
+/*  MODAL                                                       */
 /* ============================================================ */
 #modal-fin {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100dvh;
+    inset: 0;
     background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(8px);
     display: flex;
@@ -816,6 +838,8 @@ button {
     box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 0 6px #FFD700;
     text-align: center;
     animation: latidoSuave 2.5s infinite ease-in-out;
+    max-height: 95dvh;
+    overflow-y: auto;
 }
 
 @keyframes latidoSuave {
@@ -918,19 +942,24 @@ button {
 /*  RESPONSIVE                                                  */
 /* ============================================================ */
 
-/* --- Tablets y pantallas medianas (hasta 1200px) --- */
+/* --- Tablets grandes y portátiles --- */
 @media (max-width: 1200px) {
     #contenedor-juego {
         gap: 1vw;
     }
 
     #panel-derecho {
-        max-width: 400px;
+        max-width: 420px;
         padding: 1.2rem;
+    }
+
+    .hero-abeja,
+    .hero-panal {
+        height: 120px;
     }
 }
 
-/* --- Apilado vertical (hasta 950px) --- */
+/* --- Apilado vertical --- */
 @media (max-width: 950px) {
     #pantalla-juego {
         padding: 1vh 2vw;
@@ -960,7 +989,7 @@ button {
         height: auto;
         border-radius: 1.5rem;
         padding: 1rem;
-        gap: 0.7rem;
+        gap: 0.75rem;
     }
 
     .panel {
@@ -968,20 +997,31 @@ button {
         border-radius: 2rem;
     }
 
+    .presentacion-hero {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .hero-abeja,
+    .hero-panal {
+        height: 100px;
+        margin: 0 auto;
+    }
+
+    .hero-texto {
+        order: -1;
+    }
+
     .leyenda {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .decoracion-inicio {
-        height: 130px;
+    #cruceta-controles {
+        max-width: 280px;
     }
-
-    .img-deco-abeja { height: 110px; }
-    .img-deco-flor  { height: 75px; }
-    .img-deco-panal { height: 90px; }
 }
 
-/* --- Móviles (hasta 600px) --- */
+/* --- Móviles --- */
 @media (max-width: 600px) {
     .pantalla {
         padding: 2vh 3vw;
@@ -1003,19 +1043,35 @@ button {
     }
 
     .subtitulo {
-        font-size: 1rem;
-        margin-bottom: 1.2rem;
+        font-size: 0.95rem;
     }
 
-    .decoracion-inicio {
-        height: 100px;
+    .presentacion-hero {
+        gap: 0.7rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .hero-abeja,
+    .hero-panal {
+        height: 80px;
+    }
+
+    .presentacion-elementos {
+        grid-template-columns: 1fr;
+        gap: 0.7rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .elemento {
+        flex-direction: row;
+        justify-content: flex-start;
         gap: 1rem;
-        margin: 1rem 0 1.5rem;
+        padding: 0.8rem 1rem;
     }
 
-    .img-deco-abeja { height: 80px; }
-    .img-deco-flor  { height: 55px; }
-    .img-deco-panal { height: 65px; }
+    .elemento img {
+        height: 45px;
+    }
 
     .panel-reglas h2,
     .panel-config h2 {
@@ -1080,8 +1136,8 @@ button {
     }
 
     .btn-mini {
-        padding: 0.35rem 0.5rem;
-        font-size: 0.75rem;
+        padding: 0.35rem 0.55rem;
+        font-size: 0.85rem;
     }
 
     #info-nivel {
@@ -1114,17 +1170,14 @@ button {
         font-size: 0.78rem;
     }
 
-    .btn-movimiento {
-        padding: 0.7rem 0.3rem;
-        font-size: 0.8rem;
-        min-height: 2.8rem;
-        border-radius: 0.9rem;
+    #cruceta-controles {
+        max-width: 240px;
+        gap: 0.5rem;
     }
 
-    .btn-arriba,
-    .btn-accion {
-        min-height: 3rem;
-        font-size: 0.9rem;
+    .btn-cruz {
+        border-radius: 0.8rem;
+        box-shadow: 0 4px 0 #B38F2C, 0 6px 12px rgba(0, 0, 0, 0.18);
     }
 
     #ayuda-teclado {
@@ -1153,7 +1206,7 @@ button {
     }
 }
 
-/* --- Pantallas muy bajas (landscape móvil) --- */
+/* --- Landscape móvil --- */
 @media (max-height: 520px) and (orientation: landscape) {
     #pantalla-juego {
         padding: 0.8vh 1.5vw;
@@ -1199,15 +1252,9 @@ button {
         padding: 0.4rem;
     }
 
-    .btn-movimiento {
-        min-height: 2.2rem;
-        padding: 0.4rem 0.3rem;
-        font-size: 0.75rem;
-    }
-
-    .btn-arriba,
-    .btn-accion {
-        min-height: 2.4rem;
+    #cruceta-controles {
+        max-width: 220px;
+        gap: 0.4rem;
     }
 
     #ayuda-teclado {
@@ -1215,9 +1262,7 @@ button {
     }
 }
 
-/* ============================================================ */
-/*  OPTIMIZACIÓN PARA 1920x1080 (pantallas grandes)             */
-/* ============================================================ */
+/* --- Pantallas grandes 1920x1080 --- */
 @media (min-width: 1600px) and (min-height: 900px) {
     #lienzo-juego {
         width: min(82vh, 62vw, 780px);
@@ -1229,6 +1274,10 @@ button {
         max-width: 520px;
         padding: 1.8rem 1.8rem 1.5rem;
         gap: 1.15rem;
+    }
+
+    #cruceta-controles {
+        max-width: 340px;
     }
 
     .panel {
