@@ -27,10 +27,6 @@
        ║       → Recomendado 1920×1080, formato MP4, sin audio    ║
        ║     · Recursos/fondo.webm  (opcional, respaldo)          ║
        ║                                                          ║
-       ║  🦉 MASCOTA                                              ║
-       ║     · Recursos/beebot.png                                ║
-       ║       → Búho cuentacuentos (PNG transparente, 500×500)   ║
-       ║                                                          ║
        ║  🃏 CARTAS (6 por cuento · dentro de Recursos/)          ║
        ║                                                          ║
        ║  Caperucita Roja:                                        ║
@@ -42,71 +38,46 @@
        ║     · Recursos/caperuza6.png                             ║
        ║                                                          ║
        ║  Los Tres Cerditos:                                      ║
-       ║     · Recursos/tres1.png                                 ║
-       ║     · Recursos/tres2.png                                 ║
-       ║     · Recursos/tres3.png                                 ║
-       ║     · Recursos/tres4.png                                 ║
-       ║     · Recursos/tres5.png                                 ║
-       ║     · Recursos/tres6.png                                 ║
+       ║     · Recursos/tres1.png … Recursos/tres6.png            ║
        ║                                                          ║
        ║  Ricitos de Oro:                                         ║
-       ║     · Recursos/ricito1.png                               ║
-       ║     · Recursos/ricito2.png                               ║
-       ║     · Recursos/ricito3.png                               ║
-       ║     · Recursos/ricito4.png                               ║
-       ║     · Recursos/ricito5.png                               ║
-       ║     · Recursos/ricito6.png                               ║
+       ║     · Recursos/ricito1.png … Recursos/ricito6.png        ║
        ║                                                          ║
        ║  El Patito Feo:                                          ║
-       ║     · Recursos/patito1.png                               ║
-       ║     · Recursos/patito2.png                               ║
-       ║     · Recursos/patito3.png                               ║
-       ║     · Recursos/patito4.png                               ║
-       ║     · Recursos/patito5.png                               ║
-       ║     · Recursos/patito6.png                               ║
+       ║     · Recursos/patito1.png … Recursos/patito6.png        ║
        ║                                                          ║
        ║  Hansel y Gretel:                                        ║
-       ║     · Recursos/hansel1.png                               ║
-       ║     · Recursos/hansel2.png                               ║
-       ║     · Recursos/hansel3.png                               ║
-       ║     · Recursos/hansel4.png                               ║
-       ║     · Recursos/hansel5.png                               ║
-       ║     · Recursos/hansel6.png                               ║
+       ║     · Recursos/hansel1.png … Recursos/hansel6.png        ║
        ║                                                          ║
        ║  Pinocho:                                                ║
-       ║     · Recursos/pinocho1.png                              ║
-       ║     · Recursos/pinocho2.png                              ║
-       ║     · Recursos/pinocho3.png                              ║
-       ║     · Recursos/pinocho4.png                              ║
-       ║     · Recursos/pinocho5.png                              ║
-       ║     · Recursos/pinocho6.png                              ║
+       ║     · Recursos/pinocho1.png … Recursos/pinocho6.png      ║
        ║                                                          ║
        ║  📐 TAMAÑO SUGERIDO DE CARTAS: 400×400 px (PNG)          ║
        ║  📐 TAMAÑO SUGERIDO DE VIDEO:  1920×1080 px (MP4)        ║
-       ║  📐 TAMAÑO SUGERIDO DE BÚHO:   500×500 px (PNG)          ║
        ╚══════════════════════════════════════════════════════════╝
        ============================================================ -->
 
 
   <!-- ============================================================
-       FONDO DEL JUEGO · Video en loop
-       🎬 El video se reproduce automáticamente, en silencio y en loop
+       FONDO DEL JUEGO · Video en loop (sin estirar)
+       🎬 El video se centra y se recorta si es necesario (object-fit: cover)
        📁 Ubicación: Recursos/fondo.mp4
        ============================================================ -->
   <div class="fondo" aria-hidden="true">
-    <!-- Video de fondo -->
-    <video
-      class="fondo__video"
-      autoplay
-      muted
-      loop
-      playsinline
-      preload="auto"
-      poster=""
-    >
-      <source src="Recursos/fondo.mp4" type="video/mp4">
-      <source src="Recursos/fondo.webm" type="video/webm">
-    </video>
+    <!-- Contenedor del video (mantiene el aspect ratio) -->
+    <div class="fondo__video-contenedor">
+      <video
+        class="fondo__video"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+      >
+        <source src="Recursos/fondo.mp4" type="video/mp4">
+        <source src="Recursos/fondo.webm" type="video/webm">
+      </video>
+    </div>
 
     <!-- Velo decorativo encima (da ambiente de cuento) -->
     <div class="fondo__velo"></div>
@@ -128,7 +99,9 @@
 
 
   <!-- ============================================================
-       CONTROLES GLOBALES FLOTANTES (arriba a la derecha)
+       CONTROLES GLOBALES FLOTANTES
+       📍 Movidos de la esquina superior derecha a la IZQUIERDA-ABAJO
+       (porque arriba a la derecha habrá un botón externo)
        ============================================================ -->
   <div class="controles-globales" aria-label="Controles del juego">
     <button id="btn-sonido" class="btn-flotante" aria-label="Activar o desactivar sonido" title="Sonido">
@@ -142,7 +115,7 @@
     </button>
   </div>
 
-  <!-- Toasts -->
+  <!-- Toasts (los movemos también para que no choquen con el botón externo) -->
   <div id="toasts" class="toasts" aria-live="polite" aria-atomic="true"></div>
 
   <!-- Confeti -->
@@ -170,6 +143,9 @@
 
     <!-- ==========================================================
          PANTALLA 1 · PORTADA
+         ⚠️ Se eliminó la mascota y su burbuja.
+         El hueco a la derecha queda libre para que la animación
+         del video de fondo se vea sin interrupciones.
          ========================================================== -->
     <section id="pantalla-inicio" class="pantalla pantalla--activa" data-pantalla="inicio">
 
@@ -217,36 +193,12 @@
       </div>
 
       <!-- ============================================
-           MASCOTA · Beebot
-           📁 Imagen: Recursos/beebot.png
-           Si el archivo no existe, se muestra el emoji 🦉
+           HUECO RESERVADO PARA LA ANIMACIÓN DEL FONDO
+           No se coloca ningún elemento encima.
+           Este div mantiene el espacio con flex: 1
+           para que la animación del video se vea libre.
            ============================================ -->
-      <div class="inicio__mascota" aria-hidden="true">
-
-        <div class="mascota__escena">
-          <div class="mascota__halo"></div>
-
-          <!-- Imagen del búho (reemplazable) -->
-          <img
-            class="mascota__img"
-            src="Recursos/beebot.png"
-            alt="Beebot, el búho cuentacuentos"
-            onerror="this.classList.add('mascota__img--error')"
-          >
-          <!-- Fallback emoji si no hay imagen -->
-          <span class="mascota__emoji mascota__emoji--fallback">🦉</span>
-
-          <div class="mascota__libro">📖</div>
-          <span class="mascota__chispa mascota__chispa--1">✨</span>
-          <span class="mascota__chispa mascota__chispa--2">✨</span>
-          <span class="mascota__chispa mascota__chispa--3">✨</span>
-        </div>
-
-        <!-- Burbuja de diálogo (al lado del búho, alineada a la izquierda) -->
-        <div class="mascota__burbuja">
-          ¡Hola! Soy <strong>Beebot</strong>, tu amigo cuentacuentos 🦉
-        </div>
-      </div>
+      <div class="inicio__espacio-animacion" aria-hidden="true"></div>
     </section>
 
 
@@ -433,7 +385,6 @@
 
       <div class="juego__cuerpo">
 
-        <!-- LÍNEA DEL CUENTO -->
         <section class="zona zona--linea" aria-label="Línea del cuento">
           <span class="zona__decoracion zona__decoracion--tl" aria-hidden="true">📜</span>
           <span class="zona__decoracion zona__decoracion--tr" aria-hidden="true">✨</span>
@@ -446,12 +397,9 @@
             <span class="zona__contador" id="linea-contador">0/6</span>
           </div>
 
-          <div id="linea" class="linea linea--horizontal">
-            <!-- El JS colocará aquí los huecos numerados -->
-          </div>
+          <div id="linea" class="linea linea--horizontal"></div>
         </section>
 
-        <!-- TUS CARTAS -->
         <section class="zona zona--mazo" aria-label="Mazo de cartas">
           <span class="zona__decoracion zona__decoracion--tl" aria-hidden="true">🃏</span>
           <span class="zona__decoracion zona__decoracion--tr" aria-hidden="true">⭐</span>
@@ -464,14 +412,11 @@
             <span class="zona__contador" id="mazo-contador">6 cartas</span>
           </div>
 
-          <div id="mazo" class="mazo mazo--horizontal">
-            <!-- El JS colocará aquí las cartas desordenadas -->
-          </div>
+          <div id="mazo" class="mazo mazo--horizontal"></div>
         </section>
 
       </div>
 
-      <!-- BOTONES DEL JUEGO -->
       <footer class="juego__acciones">
 
         <button id="btn-undo" class="btn btn--accion" title="Quitar la última carta colocada (Ctrl+Z)">
@@ -583,7 +528,6 @@
 
   <!-- ============================================================
        DATOS DE LOS CUENTOS
-       📁 Todas las imágenes van con el prefijo "Recursos/"
        ============================================================ -->
   <script id="datos-cuentos" type="application/json">
   {
@@ -592,9 +536,9 @@
       "emoji": "🧺",
       "color": "rojo",
       "cartas": [
-        { "emoji": "👩‍🍳", "imagen": "Recursos/caperuza1.png", "texto": "La mamá le da a Caperucita una cesta con pan y miel para su abuelita." },
-        { "emoji": "🌳",  "imagen": "Recursos/caperuza2.png", "texto": "Caperucita camina por el bosque y se encuentra con el lobo feroz." },
-        { "emoji": "🐺",  "imagen": "Recursos/caperuza3.png", "texto": "El lobo corre a la casa de la abuelita y se disfraza de ella." },
+        { "emoji": "👩‍🍳", "imagen": "Recursos/caperuza1.png", "texto": "Caperucita tomó su canasta y salió a visitar a su abuelita." },
+        { "emoji": "🌳",  "imagen": "Recursos/caperuza2.png", "texto": "Caperucita caminó por el bosque siguiendo el sendero hacia la casa de su abuelita." },
+        { "emoji": "🐺",  "imagen": "Recursos/caperuza3.png", "texto": "En el camino apareció un lobo muy astuto que quiso saber adónde iba Caperucita." },
         { "emoji": "👀",  "imagen": "Recursos/caperuza4.png", "texto": "Caperucita llega y nota que su abuelita tiene orejas y dientes muy grandes." },
         { "emoji": "🪓",  "imagen": "Recursos/caperuza5.png", "texto": "Un leñador entra a la casa y ahuyenta al lobo para siempre." },
         { "emoji": "🥰",  "imagen": "Recursos/caperuza6.png", "texto": "Caperucita y su abuelita comen juntas la cesta. ¡Todo termina bien!" }
