@@ -1,8 +1,8 @@
 // ============================================================
 //  🐝 BEEBOT - LÓGICA COMPLETA
-//  Pantallas: Inicio · Reglas · Configuración · Juego
+//  Pantallas: Presentación · Cómo jugar · Selección · Juego
 //  Cuadrículas: 4x4, 5x5, 5x7, 6x7
-//  Dificultades: Fácil, Medio, Difícil
+//  Recogida AUTOMÁTICA al pisar la flor · Solo 1 flor a la vez
 // ============================================================
 
 // ---------- DEFINICIÓN DE NIVELES POR DIFICULTAD ----------
@@ -56,41 +56,39 @@ const modalConsejo = document.getElementById('modal-consejo-texto');
 const botonReiniciar = document.getElementById('boton-reiniciar');
 
 // Pantallas
-const pantallaInicio = document.getElementById('pantalla-inicio');
-const pantallaReglas = document.getElementById('pantalla-reglas');
-const pantallaConfig = document.getElementById('pantalla-configuracion');
+const pantallaPresentacion = document.getElementById('pantalla-presentacion');
+const pantallaComoJugar = document.getElementById('pantalla-como-jugar');
+const pantallaSeleccion = document.getElementById('pantalla-seleccion');
 const pantallaJuego = document.getElementById('pantalla-juego');
 
 // Botones de navegación
-const btnIrReglas = document.getElementById('btn-ir-reglas');
-const btnIrConfig = document.getElementById('btn-ir-config');
-const btnReglasVolver = document.getElementById('btn-reglas-volver');
-const btnReglasContinuar = document.getElementById('btn-reglas-continuar');
-const btnConfigVolver = document.getElementById('btn-config-volver');
+const btnComenzar = document.getElementById('btn-comenzar');
+const btnJugarVolver = document.getElementById('btn-jugar-volver');
+const btnJugarContinuar = document.getElementById('btn-jugar-continuar');
+const btnSeleccionVolver = document.getElementById('btn-seleccion-volver');
 const btnEmpezar = document.getElementById('btn-empezar');
 const btnMenu = document.getElementById('btn-menu');
 const btnReiniciarNivel = document.getElementById('btn-reiniciar-nivel');
 
-// Botones de dificultad y cuadrícula
+// Dificultad y cuadrícula
 const btnFacil = document.getElementById('btn-facil');
 const btnMedio = document.getElementById('btn-medio');
 const btnDificil = document.getElementById('btn-dificil');
 const descripcionDificultad = document.getElementById('descripcion-dificultad');
 const botonesCuadricula = document.querySelectorAll('.btn-cuadricula');
 
-// Botones de movimiento
+// Botones de movimiento (solo 4 ahora)
 const btnArriba = document.getElementById('btn-arriba');
 const btnAbajo = document.getElementById('btn-abajo');
 const btnIzquierda = document.getElementById('btn-izquierda');
 const btnDerecha = document.getElementById('btn-derecha');
-const btnEspacio = document.getElementById('btn-espacio');
 
 // ---------- SELECCIONES ACTUALES ----------
 let modoSeleccionado = 'facil';
 let colsSeleccionado = 4;
 let filasSeleccionado = 4;
 
-// ---------- SISTEMA DE SONIDOS (Web Audio API) ----------
+// ---------- SISTEMA DE SONIDOS ----------
 let audioCtx = null;
 
 function initAudio() {
@@ -212,7 +210,7 @@ function hayObstaculoEn(x, y, obstaculos) {
     return obstaculos.some(o => o.x === x && o.y === y);
 }
 
-// ---------- CÁLCULO DE GEOMETRÍA DEL TABLERO ----------
+// ---------- GEOMETRÍA DEL TABLERO ----------
 function calcularGeometria(cols, filas) {
     const cellSize = Math.min(canvas.width / cols, canvas.height / filas);
     const ancho = cols * cellSize;
@@ -224,7 +222,7 @@ function calcularGeometria(cols, filas) {
     };
 }
 
-// ---------- BFS: ¿HAY CAMINO? ----------
+// ---------- BFS ----------
 function hayCamino(inicioX, inicioY, destinoX, destinoY, cols, filas, obstaculos) {
     const visited = Array.from({ length: filas }, () => Array(cols).fill(false));
     const queue = [{ x: inicioX, y: inicioY }];
@@ -254,7 +252,7 @@ function verificarCaminos(flores, obstaculos, cols, filas, panalX, panalY, inici
     return true;
 }
 
-// ---------- ESCALAR CONFIGURACIÓN SEGÚN CUADRÍCULA ----------
+// ---------- ESCALAR CONFIG SEGÚN CUADRÍCULA ----------
 function escalarConfig(config, cols, filas) {
     const totalCells = cols * filas;
     const maxFlores = Math.max(1, Math.floor(totalCells / 5));
@@ -280,7 +278,7 @@ function generarNivelValido(config, cols, filas, inicioX, inicioY) {
         ocupadas.add(`${inicioX},${inicioY}`);
         ocupadas.add(`${panalX},${panalY}`);
 
-        // Colocar obstáculos
+        // Obstáculos
         let obsColocados = 0;
         let obsIntentos = 0;
         while (obsColocados < config.obstaculos && obsIntentos < 500) {
@@ -295,7 +293,7 @@ function generarNivelValido(config, cols, filas, inicioX, inicioY) {
             }
         }
 
-        // Colocar flores
+        // Flores
         let floresColocadas = 0;
         let florIntentos = 0;
         while (floresColocadas < config.flores && florIntentos < 500) {
@@ -311,7 +309,6 @@ function generarNivelValido(config, cols, filas, inicioX, inicioY) {
         }
 
         if (floresColocadas < config.flores) continue;
-
         if (verificarCaminos(flores, obstaculos, cols, filas, panalX, panalY, inicioX, inicioY)) {
             return { flores, obstaculos, panalX, panalY };
         }
@@ -321,13 +318,12 @@ function generarNivelValido(config, cols, filas, inicioX, inicioY) {
 
 // ---------- INICIAR NIVEL ----------
 function iniciarNivel(modo, cols, filas, nivelIndex) {
-    // Detener temporizador si existía
     if (juego.intervaloId) {
         clearInterval(juego.intervaloId);
         juego.intervaloId = null;
     }
 
-    let configs, inicioX = 0, inicioY = 0, movMax = Infinity, tiempoMax = 0;
+    let configs, inicioX = 0, inicioY = 0, tiempoMax = 0;
 
     if (modo === 'facil') {
         configs = NIVELES_FACIL;
@@ -342,7 +338,6 @@ function iniciarNivel(modo, cols, filas, nivelIndex) {
     const config = escalarConfig(configBase, cols, filas);
     const data = generarNivelValido(config, cols, filas, inicioX, inicioY);
 
-    // Asignar estado
     juego.modo = modo;
     juego.cols = cols;
     juego.filas = filas;
@@ -366,7 +361,7 @@ function iniciarNivel(modo, cols, filas, nivelIndex) {
     juego.empezado = true;
     juego.movMax = config.movMax || Infinity;
 
-    // Configurar temporizador (modo medio)
+    // Temporizador (medio)
     if (modo === 'medio') {
         juego.tiempoMaximo = tiempoMax;
         juego.tiempoRestante = tiempoMax;
@@ -397,14 +392,13 @@ function iniciarNivel(modo, cols, filas, nivelIndex) {
         temporizadorSpan.textContent = '';
     }
 
-    // Actualizar UI
+    // UI
     totalFloresSpan.textContent = juego.totalFloresNivel;
     nivelActualSpan.textContent = nivelIndex + 1;
     const nombres = { facil: 'Fácil', medio: 'Medio', dificil: 'Difícil' };
     dificultadActualSpan.textContent = nombres[modo];
     totalNivelesSpan.textContent = configs.length;
 
-    // Mensaje dinámico
     const nFlores = juego.totalFloresNivel;
     let msg = `🌸 Nivel ${nivelIndex + 1}: lleva ${nFlores} flor${nFlores > 1 ? 'es' : ''} al panal.`;
     if (modo !== 'facil') {
@@ -420,7 +414,7 @@ function iniciarNivel(modo, cols, filas, nivelIndex) {
     dibujar();
 }
 
-// ---------- REINICIAR NIVEL ACTUAL ----------
+// ---------- REINICIAR NIVEL ----------
 function reiniciarNivel() {
     if (juego.modo && juego.empezado) {
         iniciarNivel(juego.modo, juego.cols, juego.filas, juego.nivelIndex);
@@ -428,7 +422,7 @@ function reiniciarNivel() {
     modalFin.style.display = 'none';
 }
 
-// ---------- ACCIONES DE MOVIMIENTO ----------
+// ---------- GIROS ----------
 function girarIzquierda() {
     if (!juego.empezado || juego.terminado) return;
     juego.direccion = (juego.direccion + 3) % 4;
@@ -447,33 +441,47 @@ function girarDerecha() {
     dibujar();
 }
 
-function avanzar() {
-    if (!juego.empezado || juego.terminado) return;
-    const d = obtenerDelta(juego.direccion, false);
-    const nx = juego.abejaX + d.dx;
-    const ny = juego.abejaY + d.dy;
-
+// ---------- MOVIMIENTOS CON RECOGIDA AUTOMÁTICA ----------
+function moverA(nx, ny, esAvance) {
+    // Validar límites
     if (!dentro(nx, ny, juego.cols, juego.filas)) {
         mensajeFlotante.textContent = '🚫 ¡No salgas del prado!';
         sonidoError();
         return;
     }
-    if (nx === juego.panalX && ny === juego.panalY) {
-        mensajeFlotante.textContent = '🍯 ¡No puedes pisar el panal! Míralo para entregar.';
-        sonidoError();
-        return;
-    }
+    // Panal: bloquea el paso si NO es el destino final (se entrega al pisar, así que SÍ puede pisar)
+    // → Decisión: al pisar el panal, se entrega automáticamente si lleva carga.
+    // Si no lleva carga, el panal se comporta como casilla normal (puede pisar).
+    // Pero si no lleva carga y pisa el panal, no pasa nada especial.
+
+    // Obstáculo
     if (hayObstaculoEn(nx, ny, juego.obstaculos)) {
         mensajeFlotante.textContent = '🌿 ¡Hay un obstáculo! No puedes pasar.';
         sonidoError();
         return;
     }
-    if (hayFlorEn(nx, ny, juego.flores)) {
-        mensajeFlotante.textContent = '🌼 ¡Hay una flor! Gira o recógela (Espacio).';
-        sonidoError();
-        return;
+
+    // Flor en la casilla destino
+    const idxFlor = indiceFlorEn(nx, ny, juego.flores);
+
+    if (idxFlor !== -1) {
+        // Hay flor en la celda
+        if (juego.cargaIndex === null) {
+            // Recoger automáticamente
+            juego.cargaIndex = idxFlor;
+            juego.flores[idxFlor].recogida = true;
+            juego.recogidas++;
+            sonidoRecoger();
+            mensajeFlotante.textContent = '🌼 ¡Flor recogida! Llévala al panal.';
+        } else {
+            // Ya lleva una flor → la segunda actúa como obstáculo
+            mensajeFlotante.textContent = '🌸 ¡Ya llevas una flor! Esa flor bloquea el paso.';
+            sonidoError();
+            return;
+        }
     }
 
+    // Mover abeja (y carga)
     if (juego.cargaIndex !== null) {
         const f = juego.flores[juego.cargaIndex];
         f.x = nx;
@@ -483,124 +491,55 @@ function avanzar() {
     juego.abejaY = ny;
     juego.movimientos++;
     sonidoMovimiento();
-    mensajeFlotante.textContent = '✅ Avanzaste.';
+
+    if (idxFlor === -1) {
+        mensajeFlotante.textContent = esAvance ? '✅ Avanzaste.' : '🔙 Retrocediste.';
+    }
+
     actualizarUI();
     dibujar();
+
+    // Entrega automática si está en el panal con carga
+    if (juego.abejaX === juego.panalX && juego.abejaY === juego.panalY && juego.cargaIndex !== null) {
+        entregarFlor();
+    }
+
     verificarFinNivel();
+}
+
+function avanzar() {
+    if (!juego.empezado || juego.terminado) return;
+    const d = obtenerDelta(juego.direccion, false);
+    moverA(juego.abejaX + d.dx, juego.abejaY + d.dy, true);
 }
 
 function retroceder() {
     if (!juego.empezado || juego.terminado) return;
     const d = obtenerDelta(juego.direccion, true);
-    const nx = juego.abejaX + d.dx;
-    const ny = juego.abejaY + d.dy;
+    moverA(juego.abejaX + d.dx, juego.abejaY + d.dy, false);
+}
 
-    if (!dentro(nx, ny, juego.cols, juego.filas)) {
-        mensajeFlotante.textContent = '🚫 ¡No salgas del prado!';
-        sonidoError();
-        return;
-    }
-    if (nx === juego.panalX && ny === juego.panalY) {
-        mensajeFlotante.textContent = '🍯 ¡No puedes pisar el panal!';
-        sonidoError();
-        return;
-    }
-    if (hayObstaculoEn(nx, ny, juego.obstaculos)) {
-        mensajeFlotante.textContent = '🌿 ¡Hay un obstáculo!';
-        sonidoError();
-        return;
-    }
-    if (hayFlorEn(nx, ny, juego.flores)) {
-        mensajeFlotante.textContent = '🌼 ¡Hay una flor atrás!';
-        sonidoError();
-        return;
+// ---------- ENTREGAR FLOR ----------
+function entregarFlor() {
+    const idx = juego.cargaIndex;
+    juego.flores[idx].entregada = true;
+    juego.flores[idx].recogida = false;
+    juego.entregadas++;
+    juego.cargaIndex = null;
+    sonidoEntregar();
+    mensajeFlotante.textContent = '🍯 ¡Flor entregada en el panal! 🎉';
+
+    if (juego.modo === 'medio') {
+        juego.tiempoRestante = Math.min(juego.tiempoRestante + 10, juego.tiempoMaximo);
+        temporizadorSpan.textContent = `⏱️ ${juego.tiempoRestante}s`;
+        if (juego.tiempoRestante > 5) temporizadorSpan.style.color = 'white';
     }
 
-    if (juego.cargaIndex !== null) {
-        const f = juego.flores[juego.cargaIndex];
-        f.x = nx;
-        f.y = ny;
-    }
-    juego.abejaX = nx;
-    juego.abejaY = ny;
-    juego.movimientos++;
-    sonidoMovimiento();
-    mensajeFlotante.textContent = '🔙 Retrocediste.';
     actualizarUI();
     dibujar();
-    verificarFinNivel();
 }
 
-function accionRecogerSoltar() {
-    if (!juego.empezado || juego.terminado) return;
-    initAudio();
-
-    const d = obtenerDelta(juego.direccion, false);
-    const fx = juego.abejaX + d.dx;
-    const fy = juego.abejaY + d.dy;
-
-    if (juego.cargaIndex === null) {
-        // Recoger
-        if (!dentro(fx, fy, juego.cols, juego.filas)) {
-            mensajeFlotante.textContent = '😅 No hay nada delante.';
-            juego.errores++;
-            sonidoError();
-            actualizarUI();
-            return;
-        }
-        if (hayObstaculoEn(fx, fy, juego.obstaculos)) {
-            mensajeFlotante.textContent = '🌿 Hay un obstáculo, no puedes recoger ahí.';
-            juego.errores++;
-            sonidoError();
-            actualizarUI();
-            return;
-        }
-
-        const idx = indiceFlorEn(fx, fy, juego.flores);
-        if (idx !== -1) {
-            juego.cargaIndex = idx;
-            juego.flores[idx].recogida = true;
-            juego.recogidas++;
-            sonidoRecoger();
-            mensajeFlotante.textContent = '🌼 ¡Flor recogida! Llévala al panal.';
-        } else {
-            mensajeFlotante.textContent = '❌ No hay flor delante. Gira.';
-            juego.errores++;
-            sonidoError();
-        }
-        actualizarUI();
-        dibujar();
-    } else {
-        // Entregar
-        if (fx === juego.panalX && fy === juego.panalY) {
-            const idx = juego.cargaIndex;
-            juego.flores[idx].entregada = true;
-            juego.flores[idx].recogida = false;
-            juego.entregadas++;
-            juego.cargaIndex = null;
-            sonidoEntregar();
-            mensajeFlotante.textContent = '🍯 ¡Flor entregada en el panal! 🎉';
-
-            if (juego.modo === 'medio') {
-                juego.tiempoRestante = Math.min(juego.tiempoRestante + 10, juego.tiempoMaximo);
-                temporizadorSpan.textContent = `⏱️ ${juego.tiempoRestante}s`;
-                if (juego.tiempoRestante > 5) temporizadorSpan.style.color = 'white';
-            }
-
-            actualizarUI();
-            dibujar();
-            verificarFinNivel();
-        } else {
-            mensajeFlotante.textContent = '⚠️ Debes mirar DIRECTAMENTE al panal para entregar.';
-            juego.errores++;
-            sonidoError();
-            actualizarUI();
-            dibujar();
-        }
-    }
-}
-
-// ---------- VERIFICAR FIN DE NIVEL ----------
+// ---------- FIN DE NIVEL ----------
 function verificarFinNivel() {
     if (juego.terminado) return;
 
@@ -670,12 +609,12 @@ function mostrarModal(ganaste) {
 
     let consejo = '';
     if (ganaste) {
-        if (juego.errores === 0) consejo = '🌟 ¡Perfecto! Sin errores. Recuerda: mira directamente a la flor o al panal.';
+        if (juego.errores === 0) consejo = '🌟 ¡Perfecto! Sin errores. Recuerda pisar la flor y luego el panal.';
         else if (juego.errores <= 3) consejo = '👍 Muy bien. Practica tus giros para alinear mejor.';
         else consejo = '🧭 Ganaste, pero revisa tus giros. Asegúrate de mirar exactamente.';
     } else {
         if (juego.entregadas >= juego.totalFloresNivel - 1) consejo = '💪 ¡Casi! Solo te faltó una flor. Planea mejor la ruta.';
-        else if (juego.entregadas === 0) consejo = '🤔 Intenta: recoge una flor, gira hacia el panal y avanza para soltar.';
+        else if (juego.entregadas === 0) consejo = '🤔 Intenta: pisa una flor para recogerla, gira hacia el panal y avanza.';
         else consejo = '🔄 Revisa tus giros. Cada paso cuenta. Evita repetir caminos.';
     }
     modalConsejo.textContent = consejo;
@@ -689,7 +628,6 @@ function manejarBotonModal() {
     const esUltimoNivel = (juego.nivelIndex === getNivelesTotal(juego.modo) - 1);
 
     if (ganaste && esUltimoNivel) {
-        // Volver al menú
         modalFin.style.display = 'none';
         volverAlMenu();
     } else if (ganaste && !esUltimoNivel) {
@@ -709,7 +647,7 @@ function volverAlMenu() {
     juego.empezado = false;
     juego.terminado = false;
     modalFin.style.display = 'none';
-    mostrarPantalla('pantalla-inicio');
+    mostrarPantalla('pantalla-presentacion');
 }
 
 // ---------- UI ----------
@@ -726,7 +664,6 @@ function actualizarUI() {
     const nombres = ['Norte', 'Este', 'Sur', 'Oeste'];
     orientacionSpan.textContent = `${emojis[juego.direccion]} ${nombres[juego.direccion]}`;
 
-    // Mostrar movimientos restantes en difícil
     const statItems = document.querySelectorAll('.stat-item');
     if (statItems.length >= 3) {
         if (juego.modo === 'dificil' && juego.empezado) {
@@ -757,7 +694,7 @@ function dibujar() {
         }
     }
 
-    // Borde del tablero
+    // Borde
     ctx.strokeStyle = '#8c7e64';
     ctx.lineWidth = 4;
     ctx.strokeRect(offsetX, offsetY, juego.cols * cellSize, juego.filas * cellSize);
@@ -794,7 +731,7 @@ function dibujar() {
         ctx.fillText('🍯', cx + cellSize / 2, cy + cellSize / 2);
     }
 
-    // Flores
+    // Flores (solo las no recogidas y no entregadas)
     juego.flores.forEach(f => {
         if (f.entregada || f.recogida) return;
         const px = offsetX + f.x * cellSize;
@@ -859,12 +796,11 @@ function dibujar() {
     }
 }
 
-// ---------- BOTONES DE MOVIMIENTO ----------
+// ---------- BOTONES ----------
 function habilitarBotonesMovimiento(estado) {
-    [btnArriba, btnAbajo, btnIzquierda, btnDerecha, btnEspacio].forEach(b => b.disabled = !estado);
+    [btnArriba, btnAbajo, btnIzquierda, btnDerecha].forEach(b => b.disabled = !estado);
 }
 
-// ---------- SELECCIÓN DE DIFICULTAD ----------
 function seleccionarDificultad(modo) {
     modoSeleccionado = modo;
     [btnFacil, btnMedio, btnDificil].forEach(b => b.classList.remove('seleccionado'));
@@ -880,7 +816,6 @@ function seleccionarDificultad(modo) {
     descripcionDificultad.textContent = descripciones[modo];
 }
 
-// ---------- SELECCIÓN DE CUADRÍCULA ----------
 function seleccionarCuadricula(boton) {
     botonesCuadricula.forEach(b => b.classList.remove('seleccionado'));
     boton.classList.add('seleccionado');
@@ -888,7 +823,7 @@ function seleccionarCuadricula(boton) {
     filasSeleccionado = parseInt(boton.dataset.filas);
 }
 
-// ---------- EMPEZAR JUEGO ----------
+// ---------- EMPEZAR ----------
 function empezarJuego() {
     modalFin.style.display = 'none';
     mostrarPantalla('pantalla-juego');
@@ -897,11 +832,10 @@ function empezarJuego() {
 
 // ---------- EVENTOS ----------
 // Navegación
-btnIrReglas.addEventListener('click', () => mostrarPantalla('pantalla-reglas'));
-btnIrConfig.addEventListener('click', () => mostrarPantalla('pantalla-configuracion'));
-btnReglasVolver.addEventListener('click', () => mostrarPantalla('pantalla-inicio'));
-btnReglasContinuar.addEventListener('click', () => mostrarPantalla('pantalla-configuracion'));
-btnConfigVolver.addEventListener('click', () => mostrarPantalla('pantalla-reglas'));
+btnComenzar.addEventListener('click', () => mostrarPantalla('pantalla-como-jugar'));
+btnJugarVolver.addEventListener('click', () => mostrarPantalla('pantalla-presentacion'));
+btnJugarContinuar.addEventListener('click', () => mostrarPantalla('pantalla-seleccion'));
+btnSeleccionVolver.addEventListener('click', () => mostrarPantalla('pantalla-como-jugar'));
 btnEmpezar.addEventListener('click', empezarJuego);
 btnMenu.addEventListener('click', volverAlMenu);
 btnReiniciarNivel.addEventListener('click', reiniciarNivel);
@@ -921,14 +855,12 @@ btnArriba.addEventListener('click', avanzar);
 btnAbajo.addEventListener('click', retroceder);
 btnIzquierda.addEventListener('click', girarIzquierda);
 btnDerecha.addEventListener('click', girarDerecha);
-btnEspacio.addEventListener('click', accionRecogerSoltar);
 
 // Modal
 botonReiniciar.addEventListener('click', manejarBotonModal);
 
 // Teclado
 document.addEventListener('keydown', (e) => {
-    if (e.key === ' ' || e.key === 'Spacebar' || e.keyCode === 32) e.preventDefault();
     if (!juego.empezado || juego.terminado) return;
     if (!pantallaJuego.classList.contains('activa')) return;
 
@@ -937,18 +869,11 @@ document.addEventListener('keydown', (e) => {
         case 'ArrowDown': e.preventDefault(); retroceder(); break;
         case 'ArrowLeft': e.preventDefault(); girarIzquierda(); break;
         case 'ArrowRight': e.preventDefault(); girarDerecha(); break;
-        case ' ':
-        case 'Spacebar':
-        case 'Space':
-            e.preventDefault();
-            accionRecogerSoltar();
-            break;
     }
 });
 
 // ---------- INICIALIZACIÓN ----------
 function inicializar() {
-    // Leer estado inicial de los botones
     const btnCuadriculaInicial = document.querySelector('.btn-cuadricula.seleccionado');
     if (btnCuadriculaInicial) {
         colsSeleccionado = parseInt(btnCuadriculaInicial.dataset.cols);
@@ -959,10 +884,7 @@ function inicializar() {
         modoSeleccionado = btnDificultadInicial.id.replace('btn-', '');
     }
 
-    // Deshabilitar botones de movimiento hasta empezar
     habilitarBotonesMovimiento(false);
-
-    // Descripción inicial
     seleccionarDificultad(modoSeleccionado);
 }
 
