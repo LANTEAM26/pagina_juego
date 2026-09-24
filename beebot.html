@@ -1276,4 +1276,69 @@
 <script src="js/beebot.js"></script>
 
 </body>
+<!-- ============================================================
+     SISTEMA DE PANTALLA COMPLETA CENTRALIZADO
+     (Intercepta los juegos y los abre en un Visor Inmersivo)
+     ============================================================ -->
+<style>
+    /* Contenedor oscuro que ocupará toda la pantalla */
+    #visor-juego {
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        background: #000; z-index: 9999999; display: none; flex-direction: column;
+    }
+    #visor-juego.activo { display: flex; }
+    
+    /* El juego se estirará a tamaño real */
+    #frame-juego { width: 100%; height: 100%; border: none; background: #fff; }
+    
+    /* Botón flotante para salir del juego y volver al portal */
+    .btn-cerrar-juego {
+        position: absolute; top: 15px; right: 15px; z-index: 10000000;
+        background: #e74c3c; color: white; border: 3px solid #c0392b;
+        padding: 10px 20px; border-radius: 15px; font-family: 'Fredoka', sans-serif;
+        font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 5px 0 #c0392b;
+        transition: transform 0.1s;
+    }
+    .btn-cerrar-juego:active { transform: translateY(4px); box-shadow: none; }
+</style>
+
+<div id="visor-juego">
+    <button class="btn-cerrar-juego" onclick="cerrarJuego()">❌ Volver al Portal</button>
+    <iframe id="frame-juego" src="" allowfullscreen></iframe>
+</div>
+
+<script>
+    // 1. Buscamos todas las tarjetas de los juegos
+    document.querySelectorAll('.game-card-link').forEach(enlace => {
+        enlace.addEventListener('click', function(e) {
+            e.preventDefault(); // Bloqueamos que se abra una pestaña nueva
+            
+            // 2. Cargamos el juego en el visor oculto
+            const urlJuego = this.getAttribute('href');
+            const visor = document.getElementById('visor-juego');
+            document.getElementById('frame-juego').src = urlJuego;
+            
+            // 3. Mostramos el visor
+            visor.classList.add('activo');
+            
+            // 4. Activamos la Pantalla Completa usando el clic que el niño acaba de hacer
+            if (visor.requestFullscreen) { visor.requestFullscreen(); } 
+            else if (visor.webkitRequestFullscreen) { visor.webkitRequestFullscreen(); } // Safari
+        });
+    });
+
+    // Función para salir
+    function cerrarJuego() {
+        const visor = document.getElementById('visor-juego');
+        // Salir de pantalla completa si sigue activa
+        if (document.fullscreenElement || document.webkitFullscreenElement) { 
+            if(document.exitFullscreen) document.exitFullscreen();
+            else if(document.webkitExitFullscreen) document.webkitExitFullscreen();
+        }
+        // Ocultar y apagar el juego
+        visor.classList.remove('activo');
+        document.getElementById('frame-juego').src = ""; 
+    }
+</script>
+<!-- ============================================================ -->
 </html>

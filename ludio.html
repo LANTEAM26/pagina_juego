@@ -17,6 +17,34 @@
     <link rel="stylesheet" href="css/ludio.css">
 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+
+    <!-- CSS PARA MINIATURAS DINÁMICAS (iFrames) -->
+    <style>
+        /* Contenedor relativo para evitar desbordamientos */
+        .game-card-thumb {
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* iFrame Escalado (Carga el juego como miniatura) */
+        .dynamic-thumb {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 400%; /* Engaña al iframe haciéndole creer que tiene una pantalla 4 veces más grande */
+            height: 400%;
+            transform: scale(0.25); /* Lo encoge para que quepa perfectamente en la tarjeta */
+            transform-origin: top left;
+            pointer-events: none; /* BLOQUEA CLICS en el iframe para que puedas darle clic a la tarjeta entera */
+            border: none;
+            z-index: 1;
+            background-color: transparent;
+        }
+
+        /* Aseguramos que los adornos de UI queden flotando ENCIMA del iframe */
+        .game-thumb-bg { z-index: 2; }
+        .game-number, .game-difficulty, .game-badge-new, .game-badge-featured { z-index: 3; }
+    </style>
 </head>
 <body class="world-portal portal-secundaria">
 
@@ -282,7 +310,7 @@
                    rel="noopener noreferrer"
                    aria-label="Abrir juego Ecuaciones Cuadráticas">
                     <div class="game-card-thumb thumb-matematicas has-image">
-                        <img src="JuegosSecundaria/imagen1.png" alt="Ecuaciones Cuadráticas" class="game-thumb-img" loading="lazy">
+                        <iframe src="JuegosSecundaria/ecuaciones.html" title="Ecuaciones Cuadráticas" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">01</span>
                         <div class="game-difficulty difficulty-medio">
@@ -320,7 +348,7 @@
                    rel="noopener noreferrer"
                    aria-label="Abrir juego Geometría Analítica">
                     <div class="game-card-thumb thumb-matematicas has-image">
-                        <img src="JuegosSecundaria/imagen2.png" alt="Geometría Analítica" class="game-thumb-img" loading="lazy">
+                        <iframe src="JuegosSecundaria/geometria.html" title="Geometría Analítica" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">02</span>
                         <span class="game-badge-new">NUEVO</span>
@@ -359,7 +387,7 @@
                    rel="noopener noreferrer"
                    aria-label="Abrir juego Estadística y Probabilidad">
                     <div class="game-card-thumb thumb-matematicas has-image">
-                        <img src="JuegosSecundaria/imagen3.png" alt="Estadística y Probabilidad" class="game-thumb-img" loading="lazy">
+                        <iframe src="JuegosSecundaria/estadistica.html" title="Estadística y Probabilidad" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">03</span>
                         <span class="game-badge-new">NUEVO</span>
@@ -398,7 +426,7 @@
                    rel="noopener noreferrer"
                    aria-label="Abrir juego Funciones y Gráficas">
                     <div class="game-card-thumb thumb-matematicas has-image">
-                        <img src="JuegosSecundaria/imagen4.png" alt="Funciones y Gráficas" class="game-thumb-img" loading="lazy">
+                        <iframe src="JuegosSecundaria/funciones.html" title="Funciones y Gráficas" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">04</span>
                         <span class="game-badge-new">NUEVO</span>
@@ -460,7 +488,7 @@
                    rel="noopener noreferrer"
                    aria-label="Abrir juego Algoritmos Básicos">
                     <div class="game-card-thumb thumb-programacion has-image">
-                        <img src="JuegosSecundaria/imagen5.png" alt="Algoritmos Básicos" class="game-thumb-img" loading="lazy">
+                        <iframe src="JuegosSecundaria/algoritmos.html" title="Algoritmos Básicos" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">05</span>
                         <div class="game-difficulty difficulty-medio">
@@ -498,7 +526,7 @@
                    rel="noopener noreferrer"
                    aria-label="Abrir juego Bucles y Condicionales">
                     <div class="game-card-thumb thumb-programacion has-image">
-                        <img src="JuegosSecundaria/imagen6.png" alt="Bucles y Condicionales" class="game-thumb-img" loading="lazy">
+                        <iframe src="JuegosSecundaria/bucles.html" title="Bucles y Condicionales" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">06</span>
                         <span class="game-badge-new">NUEVO</span>
@@ -537,7 +565,7 @@
                    rel="noopener noreferrer"
                    aria-label="Abrir juego Variables y Tipos">
                     <div class="game-card-thumb thumb-programacion has-image">
-                        <img src="JuegosSecundaria/imagen7.png" alt="Variables y Tipos de Datos" class="game-thumb-img" loading="lazy">
+                        <iframe src="JuegosSecundaria/variables.html" title="Variables y Tipos de Datos" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">07</span>
                         <span class="game-badge-new">NUEVO</span>
@@ -576,7 +604,7 @@
                    rel="noopener noreferrer"
                    aria-label="Abrir juego Funciones y Parámetros">
                     <div class="game-card-thumb thumb-programacion has-image">
-                        <img src="JuegosSecundaria/imagen8.png" alt="Funciones y Parámetros" class="game-thumb-img" loading="lazy">
+                        <iframe src="JuegosSecundaria/funcionescodigo.html" title="Funciones y Parámetros" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">08</span>
                         <span class="game-badge-new">NUEVO</span>
@@ -615,7 +643,7 @@
                    rel="noopener noreferrer"
                    aria-label="Abrir juego Depuración de Código">
                     <div class="game-card-thumb thumb-programacion has-image">
-                        <img src="JuegosSecundaria/imagen9.png" alt="Depuración de Código" class="game-thumb-img" loading="lazy">
+                        <iframe src="JuegosSecundaria/debug.html" title="Depuración de Código" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">09</span>
                         <span class="game-badge-new">NUEVO</span>
@@ -677,7 +705,7 @@
                    rel="noopener noreferrer"
                    aria-label="Abrir juego Tabla Periódica">
                     <div class="game-card-thumb thumb-ciencias has-image">
-                        <img src="JuegosSecundaria/imagen10.png" alt="Tabla Periódica" class="game-thumb-img" loading="lazy">
+                        <iframe src="JuegosSecundaria/tablaperiodica.html" title="Tabla Periódica" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">10</span>
                         <div class="game-difficulty difficulty-medio">
@@ -715,7 +743,7 @@
                    rel="noopener noreferrer"
                    aria-label="Abrir juego Física del Movimiento">
                     <div class="game-card-thumb thumb-ciencias has-image">
-                        <img src="JuegosSecundaria/imagen11.png" alt="Física del Movimiento" class="game-thumb-img" loading="lazy">
+                        <iframe src="JuegosSecundaria/fisica.html" title="Física del Movimiento" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">11</span>
                         <span class="game-badge-new">NUEVO</span>
@@ -754,7 +782,7 @@
                    rel="noopener noreferrer"
                    aria-label="Abrir juego Genética y ADN">
                     <div class="game-card-thumb thumb-ciencias has-image">
-                        <img src="JuegosSecundaria/imagen12.png" alt="Genética y ADN" class="game-thumb-img" loading="lazy">
+                        <iframe src="JuegosSecundaria/genetica.html" title="Genética y ADN" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">12</span>
                         <span class="game-badge-new">NUEVO</span>
@@ -793,7 +821,7 @@
                    rel="noopener noreferrer"
                    aria-label="Abrir juego Astronomía">
                     <div class="game-card-thumb thumb-ciencias has-image">
-                        <img src="JuegosSecundaria/imagen13.png" alt="Astronomía" class="game-thumb-img" loading="lazy">
+                        <iframe src="JuegosSecundaria/astronomia.html" title="Astronomía" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">13</span>
                         <span class="game-badge-new">NUEVO</span>
@@ -855,7 +883,7 @@
                    rel="noopener noreferrer"
                    aria-label="Abrir juego Línea del Tiempo">
                     <div class="game-card-thumb thumb-historia has-image">
-                        <img src="JuegosSecundaria/imagen14.png" alt="Línea del Tiempo" class="game-thumb-img" loading="lazy">
+                        <iframe src="JuegosSecundaria/timeline.html" title="Línea del Tiempo" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">14</span>
                         <div class="game-difficulty difficulty-medio">
@@ -893,7 +921,7 @@
                    rel="noopener noreferrer"
                    aria-label="Abrir juego Geografía Mundial">
                     <div class="game-card-thumb thumb-historia has-image">
-                        <img src="JuegosSecundaria/imagen15.png" alt="Geografía Mundial" class="game-thumb-img" loading="lazy">
+                        <iframe src="JuegosSecundaria/geografia.html" title="Geografía Mundial" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">15</span>
                         <span class="game-badge-new">NUEVO</span>
@@ -932,7 +960,7 @@
                    rel="noopener noreferrer"
                    aria-label="Abrir juego Civilizaciones Antiguas">
                     <div class="game-card-thumb thumb-historia has-image">
-                        <img src="JuegosSecundaria/imagen16.png" alt="Civilizaciones Antiguas" class="game-thumb-img" loading="lazy">
+                        <iframe src="JuegosSecundaria/civilizaciones.html" title="Civilizaciones Antiguas" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">16</span>
                         <span class="game-badge-new">NUEVO</span>
@@ -994,7 +1022,7 @@
                    rel="noopener noreferrer"
                    aria-label="Abrir juego Hackathon Educativo">
                     <div class="game-card-thumb thumb-retos has-image">
-                        <img src="JuegosSecundaria/imagen17.png" alt="Hackathon Educativo" class="game-thumb-img" loading="lazy">
+                        <iframe src="JuegosSecundaria/hackathon.html" title="Hackathon Educativo" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">17</span>
                         <div class="game-difficulty difficulty-dificil">
@@ -1032,7 +1060,7 @@
                    rel="noopener noreferrer"
                    aria-label="Abrir juego Olimpiada del Saber">
                     <div class="game-card-thumb thumb-retos has-image">
-                        <img src="JuegosSecundaria/imagen18.png" alt="Olimpiada del Saber" class="game-thumb-img" loading="lazy">
+                        <iframe src="JuegosSecundaria/olimpiada.html" title="Olimpiada del Saber" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">18</span>
                         <span class="game-badge-new">NUEVO</span>
@@ -1071,7 +1099,7 @@
                    rel="noopener noreferrer"
                    aria-label="Abrir juego Laboratorio Virtual">
                     <div class="game-card-thumb thumb-retos has-image">
-                        <img src="JuegosSecundaria/imagen19.png" alt="Laboratorio Virtual" class="game-thumb-img" loading="lazy">
+                        <iframe src="JuegosSecundaria/laboratorio.html" title="Laboratorio Virtual" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">19</span>
                         <span class="game-badge-new">NUEVO</span>
@@ -1110,7 +1138,8 @@
                    rel="noopener noreferrer"
                    aria-label="Abrir juego Torneo Final">
                     <div class="game-card-thumb thumb-retos has-image">
-                        <img src="JuegosSecundaria/imagen20.png" alt="Torneo Final" class="game-thumb-img" loading="lazy">
+                        <!-- Mantenemos IMG para el Reto Final para evitar bucles de carga -->
+                        <img src="JuegosSecundaria/imagen20.png" alt="Torneo Final" class="game-thumb-img" loading="lazy" onerror="this.src='JuegosSecundaria/imagen1.png'">
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">20</span>
                         <div class="game-badge-featured">👑 TORNEO FINAL</div>
@@ -1245,6 +1274,72 @@
      SCRIPT
      ============================================================ -->
 <script src="js/ludio.js"></script>
+
+<!-- ============================================================
+     SISTEMA DE PANTALLA COMPLETA CENTRALIZADO
+     (Intercepta los juegos y los abre en un Visor Inmersivo)
+     ============================================================ -->
+<style>
+    /* Contenedor oscuro que ocupará toda la pantalla */
+    #visor-juego {
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        background: #000; z-index: 9999999; display: none; flex-direction: column;
+    }
+    #visor-juego.activo { display: flex; }
+    
+    /* El juego se estirará a tamaño real */
+    #frame-juego { width: 100%; height: 100%; border: none; background: #fff; }
+    
+    /* Botón flotante para salir del juego y volver al portal */
+    .btn-cerrar-juego {
+        position: absolute; top: 15px; right: 15px; z-index: 10000000;
+        background: #e74c3c; color: white; border: 3px solid #c0392b;
+        padding: 10px 20px; border-radius: 15px; font-family: 'Fredoka', sans-serif;
+        font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 5px 0 #c0392b;
+        transition: transform 0.1s;
+    }
+    .btn-cerrar-juego:active { transform: translateY(4px); box-shadow: none; }
+</style>
+
+<div id="visor-juego">
+    <button class="btn-cerrar-juego" onclick="cerrarJuego()">❌ Volver al Portal</button>
+    <iframe id="frame-juego" src="" allowfullscreen></iframe>
+</div>
+
+<script>
+    // 1. Buscamos todas las tarjetas de los juegos
+    document.querySelectorAll('.game-card-link').forEach(enlace => {
+        enlace.addEventListener('click', function(e) {
+            e.preventDefault(); // Bloqueamos que se abra una pestaña nueva
+            
+            // 2. Cargamos el juego en el visor oculto
+            const urlJuego = this.getAttribute('href');
+            const visor = document.getElementById('visor-juego');
+            document.getElementById('frame-juego').src = urlJuego;
+            
+            // 3. Mostramos el visor
+            visor.classList.add('activo');
+            
+            // 4. Activamos la Pantalla Completa usando el clic que el niño acaba de hacer
+            if (visor.requestFullscreen) { visor.requestFullscreen(); } 
+            else if (visor.webkitRequestFullscreen) { visor.webkitRequestFullscreen(); } // Safari
+        });
+    });
+
+    // Función para salir
+    function cerrarJuego() {
+        const visor = document.getElementById('visor-juego');
+        // Salir de pantalla completa si sigue activa
+        if (document.fullscreenElement || document.webkitFullscreenElement) { 
+            if(document.exitFullscreen) document.exitFullscreen();
+            else if(document.webkitExitFullscreen) document.webkitExitFullscreen();
+        }
+        // Ocultar y apagar el juego
+        visor.classList.remove('activo');
+        document.getElementById('frame-juego').src = ""; 
+    }
+</script>
+<!-- ============================================================ -->
 
 </body>
 </html>
