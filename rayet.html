@@ -17,6 +17,34 @@
     <link rel="stylesheet" href="css/rayet.css">
 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏎️</text></svg>">
+
+    <!-- CSS PARA MINIATURAS DINÁMICAS (iFrames) -->
+    <style>
+        /* Contenedor relativo para evitar desbordamientos */
+        .game-card-thumb {
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* iFrame Escalado (Carga el juego como miniatura) */
+        .dynamic-thumb {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 400%; /* Engaña al iframe haciéndole creer que tiene una pantalla 4 veces más grande */
+            height: 400%;
+            transform: scale(0.25); /* Lo encoge para que quepa perfectamente en la tarjeta */
+            transform-origin: top left;
+            pointer-events: none; /* BLOQUEA CLICS en el iframe para que puedas darle clic a la tarjeta entera */
+            border: none;
+            z-index: 1;
+            background-color: transparent;
+        }
+
+        /* Aseguramos que los adornos de UI queden flotando ENCIMA del iframe */
+        .game-thumb-bg { z-index: 2; }
+        .game-number, .game-difficulty, .game-badge-new, .game-badge-featured { z-index: 3; }
+    </style>
 </head>
 <body class="world-portal portal-primaria">
 
@@ -330,7 +358,7 @@
                 <article class="game-card" data-category="matematicas" data-difficulty="facil">
                     <a href="JuegosPrimaria/sumas.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Carrera de Sumas">
                         <div class="game-card-thumb thumb-matematicas has-image">
-                            <img src="JuegosPrimaria/imagen1.png" alt="Carrera de Sumas" class="game-thumb-img" loading="lazy">
+                            <iframe src="JuegosPrimaria/sumas.html" title="Carrera de Sumas" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">01</span>
                             <div class="game-difficulty difficulty-facil">
@@ -364,7 +392,7 @@
                 <article class="game-card game-card-new" data-category="matematicas" data-difficulty="medio">
                     <a href="JuegosPrimaria/multiplicar.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Multiplica Rápido">
                         <div class="game-card-thumb thumb-matematicas has-image">
-                            <img src="JuegosPrimaria/imagen2.png" alt="Multiplica Rápido" class="game-thumb-img" loading="lazy">
+                            <iframe src="JuegosPrimaria/multiplicar.html" title="Multiplica Rápido" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">02</span>
                             <span class="game-badge-new">NUEVO</span>
@@ -399,7 +427,7 @@
                 <article class="game-card game-card-new" data-category="matematicas" data-difficulty="medio">
                     <a href="JuegosPrimaria/fracciones.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Fracciones en Pista">
                         <div class="game-card-thumb thumb-matematicas has-image">
-                            <img src="JuegosPrimaria/imagen3.png" alt="Fracciones en Pista" class="game-thumb-img" loading="lazy">
+                            <iframe src="JuegosPrimaria/fracciones.html" title="Fracciones en Pista" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">03</span>
                             <span class="game-badge-new">NUEVO</span>
@@ -434,7 +462,7 @@
                 <article class="game-card game-card-new" data-category="matematicas" data-difficulty="dificil">
                     <a href="JuegosPrimaria/problemas.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Problemas de Velocidad">
                         <div class="game-card-thumb thumb-matematicas has-image">
-                            <img src="JuegosPrimaria/imagen4.png" alt="Problemas de Velocidad" class="game-thumb-img" loading="lazy">
+                            <iframe src="JuegosPrimaria/problemas.html" title="Problemas de Velocidad" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">04</span>
                             <span class="game-badge-new">NUEVO</span>
@@ -492,7 +520,7 @@
                 <article class="game-card" data-category="lenguaje" data-difficulty="facil">
                     <a href="JuegosPrimaria/ortografia.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Ortografía Rally">
                         <div class="game-card-thumb thumb-lenguaje has-image">
-                            <img src="JuegosPrimaria/imagen5.png" alt="Ortografía Rally" class="game-thumb-img" loading="lazy">
+                            <iframe src="JuegosPrimaria/ortografia.html" title="Ortografía Rally" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">05</span>
                             <div class="game-difficulty difficulty-facil">
@@ -526,7 +554,7 @@
                 <article class="game-card game-card-new" data-category="lenguaje" data-difficulty="facil">
                     <a href="JuegosPrimaria/sinonimos.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Sinónimos y Antónimos">
                         <div class="game-card-thumb thumb-lenguaje has-image">
-                            <img src="JuegosPrimaria/imagen6.png" alt="Sinónimos y Antónimos" class="game-thumb-img" loading="lazy">
+                            <iframe src="JuegosPrimaria/sinonimos.html" title="Sinónimos y Antónimos" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">06</span>
                             <span class="game-badge-new">NUEVO</span>
@@ -561,7 +589,7 @@
                 <article class="game-card game-card-new" data-category="lenguaje" data-difficulty="medio">
                     <a href="JuegosPrimaria/oraciones.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Constructor de Oraciones">
                         <div class="game-card-thumb thumb-lenguaje has-image">
-                            <img src="JuegosPrimaria/imagen7.png" alt="Constructor de Oraciones" class="game-thumb-img" loading="lazy">
+                            <iframe src="JuegosPrimaria/oraciones.html" title="Constructor de Oraciones" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">07</span>
                             <span class="game-badge-new">NUEVO</span>
@@ -596,7 +624,7 @@
                 <article class="game-card game-card-new" data-category="lenguaje" data-difficulty="dificil">
                     <a href="JuegosPrimaria/comprension.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Comprensión Lectora">
                         <div class="game-card-thumb thumb-lenguaje has-image">
-                            <img src="JuegosPrimaria/imagen8.png" alt="Comprensión Lectora" class="game-thumb-img" loading="lazy">
+                            <iframe src="JuegosPrimaria/comprension.html" title="Comprensión Lectora" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">08</span>
                             <span class="game-badge-new">NUEVO</span>
@@ -652,9 +680,9 @@
 
                 <!-- 09 · EcomoCamion -->
                 <article class="game-card" data-category="ciencias" data-difficulty="facil">
-                    <a href="Juegos/recolector_basura.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Sistema Solar">
+                    <a href="Juegos/recolector_basura.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego EcoCamion">
                         <div class="game-card-thumb thumb-ciencias has-image">
-                            <img src="assets/img_Rayet/EcoCamion.png" alt="Sistema Solar" class="game-thumb-img" loading="lazy">
+                            <iframe src="Juegos/recolector_basura.html" title="EcoCamion" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">09</span>
                             <div class="game-difficulty difficulty-facil">
@@ -686,9 +714,9 @@
 
                 <!-- 10 · Explorador de Animales -->
                 <article class="game-card game-card-new" data-category="ciencias" data-difficulty="facil">
-                    <a href="Juegos/explorador_animales.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Cuerpo Humano">
+                    <a href="Juegos/explorador_animales.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Explorador de Animales">
                         <div class="game-card-thumb thumb-ciencias has-image">
-                            <img src="assets/img_Rayet/Explorador de Animales.png" alt="Cuerpo Humano" class="game-thumb-img" loading="lazy">
+                            <iframe src="Juegos/explorador_animales.html" title="Explorador de Animales" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">10</span>
                             <span class="game-badge-new">NUEVO</span>
@@ -723,7 +751,7 @@
                 <article class="game-card game-card-new" data-category="ciencias" data-difficulty="medio">
                     <a href="JuegosPrimaria/ecosistemas.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Ecosistemas">
                         <div class="game-card-thumb thumb-ciencias has-image">
-                            <img src="JuegosPrimaria/imagen11.png" alt="Ecosistemas" class="game-thumb-img" loading="lazy">
+                            <iframe src="JuegosPrimaria/ecosistemas.html" title="Ecosistemas" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">11</span>
                             <span class="game-badge-new">NUEVO</span>
@@ -758,7 +786,7 @@
                 <article class="game-card game-card-new" data-category="ciencias" data-difficulty="medio">
                     <a href="JuegosPrimaria/agua.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Estados del Agua">
                         <div class="game-card-thumb thumb-ciencias has-image">
-                            <img src="JuegosPrimaria/imagen12.png" alt="Estados del Agua" class="game-thumb-img" loading="lazy">
+                            <iframe src="JuegosPrimaria/agua.html" title="Estados del Agua" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">12</span>
                             <span class="game-badge-new">NUEVO</span>
@@ -816,7 +844,7 @@
                 <article class="game-card" data-category="logica" data-difficulty="medio">
                     <a href="JuegosPrimaria/sudoku.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Sudoku Junior">
                         <div class="game-card-thumb thumb-logica has-image">
-                            <img src="JuegosPrimaria/imagen13.png" alt="Sudoku Junior" class="game-thumb-img" loading="lazy">
+                            <iframe src="JuegosPrimaria/sudoku.html" title="Sudoku Junior" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">13</span>
                             <div class="game-difficulty difficulty-medio">
@@ -850,7 +878,7 @@
                 <article class="game-card game-card-new" data-category="logica" data-difficulty="facil">
                     <a href="JuegosPrimaria/patrones.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Patrones">
                         <div class="game-card-thumb thumb-logica has-image">
-                            <img src="JuegosPrimaria/imagen14.png" alt="Patrones" class="game-thumb-img" loading="lazy">
+                            <iframe src="JuegosPrimaria/patrones.html" title="Patrones" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">14</span>
                             <span class="game-badge-new">NUEVO</span>
@@ -885,7 +913,7 @@
                 <article class="game-card game-card-new" data-category="logica" data-difficulty="medio">
                     <a href="JuegosPrimaria/laberinto.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Laberinto del Piloto">
                         <div class="game-card-thumb thumb-logica has-image">
-                            <img src="JuegosPrimaria/imagen15.png" alt="Laberinto del Piloto" class="game-thumb-img" loading="lazy">
+                            <iframe src="JuegosPrimaria/laberinto.html" title="Laberinto del Piloto" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">15</span>
                             <span class="game-badge-new">NUEVO</span>
@@ -920,7 +948,7 @@
                 <article class="game-card game-card-new" data-category="logica" data-difficulty="medio">
                     <a href="JuegosPrimaria/codigo.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Código Secreto">
                         <div class="game-card-thumb thumb-logica has-image">
-                            <img src="JuegosPrimaria/imagen16.png" alt="Código Secreto" class="game-thumb-img" loading="lazy">
+                            <iframe src="JuegosPrimaria/codigo.html" title="Código Secreto" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">16</span>
                             <span class="game-badge-new">NUEVO</span>
@@ -955,7 +983,7 @@
                 <article class="game-card game-card-new" data-category="logica" data-difficulty="dificil">
                     <a href="JuegosPrimaria/programacion.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Programación Básica">
                         <div class="game-card-thumb thumb-logica has-image">
-                            <img src="JuegosPrimaria/imagen17.png" alt="Programación Básica" class="game-thumb-img" loading="lazy">
+                            <iframe src="JuegosPrimaria/programacion.html" title="Programación Básica" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">17</span>
                             <span class="game-badge-new">NUEVO</span>
@@ -1013,7 +1041,7 @@
                 <article class="game-card" data-category="retos" data-difficulty="dificil">
                     <a href="JuegosPrimaria/granpremio.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Gran Premio Matemático">
                         <div class="game-card-thumb thumb-retos has-image">
-                            <img src="JuegosPrimaria/imagen18.png" alt="Gran Premio Matemático" class="game-thumb-img" loading="lazy">
+                            <iframe src="JuegosPrimaria/granpremio.html" title="Gran Premio Matemático" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">18</span>
                             <div class="game-difficulty difficulty-dificil">
@@ -1047,7 +1075,7 @@
                 <article class="game-card game-card-new" data-category="retos" data-difficulty="dificil">
                     <a href="JuegosPrimaria/maraton.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Maratón del Saber">
                         <div class="game-card-thumb thumb-retos has-image">
-                            <img src="JuegosPrimaria/imagen19.png" alt="Maratón del Saber" class="game-thumb-img" loading="lazy">
+                            <iframe src="JuegosPrimaria/maraton.html" title="Maratón del Saber" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">19</span>
                             <span class="game-badge-new">NUEVO</span>
@@ -1082,7 +1110,8 @@
                 <article class="game-card game-card-featured" data-category="retos" data-difficulty="dificil">
                     <a href="JuegosPrimaria/campeonato.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Campeonato Final">
                         <div class="game-card-thumb thumb-retos has-image">
-                            <img src="JuegosPrimaria/imagen20.png" alt="Campeonato Final" class="game-thumb-img" loading="lazy">
+                            <!-- Si este juego no está creado aún, puedes usar iframe o imagen de placeholder -->
+                            <img src="JuegosPrimaria/imagen20.png" alt="Campeonato Final" class="game-thumb-img" loading="lazy" onerror="this.src='JuegosPrimaria/imagen1.png'">
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">20</span>
                             <div class="game-badge-featured">👑 CAMPEONATO</div>
