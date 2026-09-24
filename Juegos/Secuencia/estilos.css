@@ -207,7 +207,6 @@ img { max-width: 100%; display: block; }
 
 /* ------------------------------------------------------------
    4. FONDO · VIDEO EN LOOP CENTRADO
-   El video NO se estira: se centra y se recorta con object-fit.
    ------------------------------------------------------------ */
 .fondo {
   position: fixed;
@@ -218,20 +217,14 @@ img { max-width: 100%; display: block; }
   background: linear-gradient(180deg, var(--cielo-1) 0%, var(--cielo-2) 35%, var(--cielo-3) 65%, var(--cielo-4) 100%);
 }
 
-/* Contenedor centrado del video */
 .fondo__video-contenedor {
   position: absolute;
   inset: 0;
   overflow: hidden;
   z-index: 0;
-  /* Fondo de respaldo por si el video no carga */
   background: linear-gradient(180deg, var(--cielo-1) 0%, var(--cielo-2) 35%, var(--cielo-3) 65%, var(--cielo-4) 100%);
 }
 
-/* 🎬 VIDEO DE FONDO — Recursos/fondo.mp4
-   object-fit: contain  → muestra el video completo sin recortar
-   object-position: center → lo centra horizontal y verticalmente
-*/
 .fondo__video {
   position: absolute;
   top: 50%;
@@ -239,14 +232,13 @@ img { max-width: 100%; display: block; }
   transform: translate(-50%, -50%);
   width: 100%;
   height: 100%;
-  object-fit: contain;      /* ⬅️ El video se muestra COMPLETO, sin estirar */
-  object-position: center;  /* ⬅️ Centrado horizontal y verticalmente */
+  object-fit: contain;
+  object-position: center;
   z-index: 0;
   pointer-events: none;
   background-color: transparent;
 }
 
-/* Velo decorativo encima del video */
 .fondo__velo {
   position: absolute;
   inset: 0;
@@ -257,7 +249,6 @@ img { max-width: 100%; display: block; }
   z-index: 1;
 }
 
-/* Nubes */
 .fondo__nube {
   position: absolute;
   font-size: clamp(3rem, 6vw, 5rem);
@@ -270,7 +261,6 @@ img { max-width: 100%; display: block; }
 .fondo__nube--2 { top: 10%; left: 55%; animation-delay: -6s; font-size: clamp(2.4rem, 4.5vw, 3.6rem); }
 .fondo__nube--3 { top: 22%; left: 25%; animation-delay: -12s; font-size: clamp(2rem, 3.5vw, 3rem); opacity: 0.55; }
 
-/* Pájaros */
 .fondo__pajaro {
   position: absolute;
   font-size: clamp(1.2rem, 2vw, 1.7rem);
@@ -281,7 +271,6 @@ img { max-width: 100%; display: block; }
 .fondo__pajaro--1 { top: 14%; left: -10%; animation-delay: 0s; }
 .fondo__pajaro--2 { top: 22%; left: -10%; animation-delay: -13s; font-size: clamp(1rem, 1.6vw, 1.3rem); }
 
-/* Estrellitas */
 .fondo__estrella {
   position: absolute;
   color: #fff;
@@ -295,56 +284,21 @@ img { max-width: 100%; display: block; }
 .fondo__estrella--2 { top: 26%; left: 88%; animation-delay: 0.6s; }
 .fondo__estrella--3 { top: 46%; left: 20%; animation-delay: 1.2s; }
 
-/* ------------------------------------------------------------
-   5. CONTROLES FLOTANTES
-   📍 Reubicados a la ESQUINA INFERIOR IZQUIERDA
-   (arriba a la derecha irá el botón externo de la pizarra)
-   ------------------------------------------------------------ */
-.controles-globales {
-  position: fixed;
-  bottom: clamp(16px, 2vh, 24px);
-  left: clamp(16px, 1.4vw, 24px);
-  display: flex;
-  gap: 10px;
-  z-index: 60;
-}
-
-.btn-flotante {
-  width: clamp(46px, 3.2vw, 56px);
-  height: clamp(46px, 3.2vw, 56px);
-  border-radius: 50%;
-  background: linear-gradient(180deg, #fff8e7 0%, #f5deb3 100%);
-  border: 3px solid var(--pergamino-borde);
-  box-shadow: 0 5px 0 rgba(107, 68, 35, 0.25), 0 8px 16px rgba(74, 53, 32, 0.18);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  font-size: clamp(1rem, 1.5vw, 1.35rem);
-  color: var(--tinta);
-}
-
-.btn-flotante:hover {
-  transform: translateY(-3px) rotate(-8deg);
-  box-shadow: 0 8px 0 rgba(107, 68, 35, 0.25), 0 12px 22px rgba(74, 53, 32, 0.25);
-}
-
-.btn-flotante:active {
-  transform: translateY(2px);
-  box-shadow: 0 3px 0 rgba(107, 68, 35, 0.25);
-}
-
-.btn-flotante.mudo { opacity: 0.6; }
-.btn-flotante__icono { line-height: 1; }
+/* ============================================================
+   NOTA: Se eliminaron por completo los estilos de:
+   · .controles-globales
+   · .btn-flotante
+   · .btn-flotante__icono
+   · .btn-flotante.mudo
+   Ya no se usan en el HTML.
+   ============================================================ */
 
 /* ------------------------------------------------------------
-   6. TOASTS
-   📍 Reubicados a la IZQUIERDA (entran desde la izquierda)
-   porque arriba a la derecha habrá un botón externo
+   5. TOASTS (entran desde la izquierda)
    ------------------------------------------------------------ */
 .toasts {
   position: fixed;
-  top: clamp(80px, 9vh, 100px);
+  top: clamp(20px, 3vh, 40px);
   left: clamp(10px, 1.4vw, 22px);
   display: flex;
   flex-direction: column;
@@ -401,7 +355,7 @@ img { max-width: 100%; display: block; }
 }
 
 /* ------------------------------------------------------------
-   7. MODAL
+   6. MODAL
    ------------------------------------------------------------ */
 .modal {
   position: fixed;
@@ -476,7 +430,7 @@ img { max-width: 100%; display: block; }
 }
 
 /* ------------------------------------------------------------
-   8. APP Y PANTALLAS
+   7. APP Y PANTALLAS
    ------------------------------------------------------------ */
 .app {
   position: relative;
@@ -485,7 +439,7 @@ img { max-width: 100%; display: block; }
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(30px, 4vh, 50px) clamp(14px, 2vw, 32px) clamp(80px, 10vh, 100px);
+  padding: clamp(20px, 3vh, 40px) clamp(14px, 2vw, 32px) clamp(20px, 3vh, 40px);
 }
 
 .pantalla {
@@ -501,7 +455,7 @@ img { max-width: 100%; display: block; }
 }
 
 /* ------------------------------------------------------------
-   9. BOTONES
+   8. BOTONES
    ------------------------------------------------------------ */
 .btn {
   font-family: var(--fuente-titulo);
@@ -578,10 +532,7 @@ img { max-width: 100%; display: block; }
 }
 
 /* ------------------------------------------------------------
-   10. PANTALLA 1 · INICIO
-   Estructura: [Contenido a la izquierda] [Espacio libre derecha]
-   El espacio a la derecha queda vacío para que la animación
-   del video de fondo se vea sin interrupciones.
+   9. PANTALLA 1 · INICIO
    ------------------------------------------------------------ */
 #pantalla-inicio.pantalla--activa {
   flex-direction: row;
@@ -598,14 +549,10 @@ img { max-width: 100%; display: block; }
   z-index: 2;
 }
 
-/* ✨ Espacio reservado para la animación del video de fondo
-   NO contiene nada, solo mantiene el espacio libre a la derecha */
 .inicio__espacio-animacion {
   flex: 1 1 min(400px, 100%);
   min-height: 420px;
-  /* Sin fondo, sin contenido: solo el hueco */
   pointer-events: none;
-  /* Asegura que no capture clics ni tape el video */
 }
 
 .inicio__etiqueta {
@@ -733,7 +680,7 @@ img { max-width: 100%; display: block; }
 }
 
 /* ------------------------------------------------------------
-   11. CABECERA COMPARTIDA
+   10. CABECERA COMPARTIDA
    ------------------------------------------------------------ */
 .cabecera {
   display: flex;
@@ -759,7 +706,7 @@ img { max-width: 100%; display: block; }
 .cabecera__hueco { width: 48px; flex-shrink: 0; }
 
 /* ------------------------------------------------------------
-   12. PANTALLA 2 · INSTRUCCIONES
+   11. PANTALLA 2 · INSTRUCCIONES
    ------------------------------------------------------------ */
 .pasos {
   display: grid;
@@ -909,7 +856,7 @@ img { max-width: 100%; display: block; }
 }
 
 /* ------------------------------------------------------------
-   13. PANTALLA 3 · SELECCIÓN
+   12. PANTALLA 3 · SELECCIÓN
    ------------------------------------------------------------ */
 .seleccion__ayuda {
   text-align: center;
@@ -1146,13 +1093,14 @@ img { max-width: 100%; display: block; }
 .cuento--madera:hover .cuento__btn  { background: linear-gradient(180deg, var(--madera-1) 0%, var(--madera-oscura) 100%); box-shadow: 0 4px 0 var(--madera-oscura); }
 
 /* ------------------------------------------------------------
-   14. PANTALLA 4 · JUEGO
+   13. PANTALLA 4 · JUEGO
+   Se amplía el espacio disponible al eliminar los botones flotantes
    ------------------------------------------------------------ */
 #pantalla-juego.pantalla--activa {
-  gap: clamp(8px, 1.2vh, 14px);
-  max-width: 1700px;
-  height: min(calc(100vh - 140px), 900px);
-  max-height: calc(100vh - 140px);
+  gap: clamp(10px, 1.4vh, 16px);
+  max-width: 1750px;
+  height: min(calc(100vh - 80px), 950px);
+  max-height: calc(100vh - 80px);
   overflow: hidden;
 }
 
@@ -1326,7 +1274,7 @@ img { max-width: 100%; display: block; }
 .juego__cuerpo {
   display: flex;
   flex-direction: column;
-  gap: clamp(8px, 1.2vh, 14px);
+  gap: clamp(10px, 1.4vh, 16px);
   flex: 1;
   min-height: 0;
   overflow: hidden;
@@ -1578,13 +1526,14 @@ img { max-width: 100%; display: block; }
 }
 
 /* ------------------------------------------------------------
-   15. CARTAS
+   14. CARTAS · Sin texto, solo imagen
+   Se aprovecha más espacio para la imagen al quitar el texto
    ------------------------------------------------------------ */
 .carta {
   position: relative;
   background: linear-gradient(180deg, #ffffff 0%, #fff6e6 100%);
   border-radius: var(--radio-md);
-  padding: clamp(0.4rem, 0.7vh, 0.6rem);
+  padding: clamp(0.35rem, 0.6vh, 0.5rem);
   box-shadow:
     0 4px 0 rgba(107, 68, 35, 0.22),
     0 8px 14px rgba(74, 53, 32, 0.14),
@@ -1594,7 +1543,6 @@ img { max-width: 100%; display: block; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(0.15rem, 0.3vh, 0.3rem);
   text-align: center;
   border: 3px solid rgba(255, 210, 63, 0.65);
   animation: pop 0.35s ease both;
@@ -1660,6 +1608,7 @@ img { max-width: 100%; display: block; }
 .carta__imagen-contenedor {
   position: relative;
   width: 100%;
+  height: 100%;
   flex: 1;
   min-height: 0;
   display: flex;
@@ -1679,6 +1628,11 @@ img { max-width: 100%; display: block; }
   pointer-events: none;
   -webkit-user-drag: none;
   filter: drop-shadow(0 2px 0 rgba(107, 68, 35, 0.12));
+  transition: transform 0.25s ease;
+}
+
+.carta:hover .carta__imagen {
+  transform: scale(1.04);
 }
 
 .carta__imagen[src=""] { display: none; }
@@ -1689,7 +1643,7 @@ img { max-width: 100%; display: block; }
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: clamp(1.8rem, 2.6vw, 2.8rem);
+  font-size: clamp(2rem, 3vw, 3.2rem);
   filter: drop-shadow(0 3px 0 rgba(107, 68, 35, 0.15));
   z-index: 1;
   pointer-events: none;
@@ -1703,18 +1657,8 @@ img { max-width: 100%; display: block; }
 .carta__imagen--error { display: none; }
 .carta__imagen--error + .carta__emoji { display: flex; }
 
-.carta__texto {
-  font-size: clamp(0.58rem, 0.78vw, 0.74rem);
-  font-weight: 700;
-  color: var(--tinta);
-  line-height: 1.15;
-  max-width: 100%;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  padding: 0 0.15rem;
-}
+/* NOTA: se eliminaron los estilos de .carta__texto
+   porque las cartas ya no muestran texto (la imagen lo incluye) */
 
 .carta__asa {
   position: absolute;
@@ -1729,27 +1673,22 @@ img { max-width: 100%; display: block; }
 .hueco .carta {
   width: 100%;
   height: 100%;
-  padding: clamp(0.3rem, 0.5vh, 0.45rem);
+  padding: clamp(0.25rem, 0.4vh, 0.4rem);
   border-color: transparent;
   box-shadow: 0 2px 0 rgba(107, 68, 35, 0.15);
   animation: none;
   justify-content: center;
-  gap: 0.1rem;
   background: linear-gradient(180deg, #ffffff 0%, #fff8e8 100%);
 }
 
 .hueco .carta:hover { transform: translateY(-2px); border-color: transparent; }
 
-.hueco .carta .carta__imagen-contenedor { min-height: 0; flex: 1.5; }
-.hueco .carta .carta__texto {
-  font-size: clamp(0.55rem, 0.72vw, 0.68rem);
-  -webkit-line-clamp: 2;
-}
+.hueco .carta .carta__imagen-contenedor { min-height: 0; flex: 1; }
 .hueco .carta .carta__adorno,
 .hueco .carta .carta__asa { display: none; }
 
 /* ------------------------------------------------------------
-   16. BOTONES DEL JUEGO · Los 4 CENTRADOS
+   15. BOTONES DEL JUEGO · Los 4 CENTRADOS
    ------------------------------------------------------------ */
 .juego__acciones {
   display: flex;
@@ -1903,7 +1842,7 @@ img { max-width: 100%; display: block; }
 .mensaje.info   { background: linear-gradient(180deg, var(--azul) 0%, var(--azul-oscuro) 100%); }
 
 /* ------------------------------------------------------------
-   17. PANTALLA FINAL
+   16. PANTALLA FINAL
    ------------------------------------------------------------ */
 #pantalla-final.pantalla--activa {
   align-items: center;
@@ -2081,7 +2020,7 @@ img { max-width: 100%; display: block; }
 }
 
 /* ------------------------------------------------------------
-   18. CONFETI
+   17. CONFETI
    ------------------------------------------------------------ */
 .confeti {
   position: fixed;
@@ -2101,11 +2040,11 @@ img { max-width: 100%; display: block; }
 }
 
 /* ------------------------------------------------------------
-   19. RESPONSIVE
+   18. RESPONSIVE
    ------------------------------------------------------------ */
 @media (min-width: 1900px) {
   body { font-size: 17px; }
-  #pantalla-juego.pantalla--activa { height: min(calc(100vh - 160px), 950px); }
+  #pantalla-juego.pantalla--activa { height: min(calc(100vh - 90px), 1000px); }
 }
 
 @media (max-width: 1400px) {
@@ -2116,7 +2055,6 @@ img { max-width: 100%; display: block; }
 @media (max-width: 1200px) {
   .linea--horizontal,
   .mazo--horizontal { gap: 6px; }
-  .carta__texto { -webkit-line-clamp: 3; }
 }
 
 @media (max-width: 1024px) {
@@ -2178,19 +2116,6 @@ img { max-width: 100%; display: block; }
   .juego__acciones { flex-direction: column; }
   .btn--accion { justify-content: center; }
 
-  /* Controles flotantes: se quedan abajo a la izquierda pero más pequeños */
-  .controles-globales {
-    bottom: 10px;
-    left: 10px;
-    gap: 6px;
-  }
-
-  .btn-flotante {
-    width: 42px;
-    height: 42px;
-    font-size: 1rem;
-  }
-
   .toasts {
     top: 10px;
     left: 10px;
@@ -2211,17 +2136,16 @@ img { max-width: 100%; display: block; }
   .mensaje {
     white-space: normal;
     max-width: 85vw;
-    bottom: 80px;
+    bottom: 90px;
   }
 }
 
 @media (max-width: 400px) {
   .inicio__titulo-linea { font-size: 2.4rem; }
-  .carta__texto { -webkit-line-clamp: 2; }
 }
 
 @media (max-height: 560px) and (orientation: landscape) {
-  .app { padding-top: 60px; align-items: flex-start; }
+  .app { padding-top: 20px; align-items: flex-start; }
 
   #pantalla-juego.pantalla--activa {
     height: auto;
@@ -2231,7 +2155,7 @@ img { max-width: 100%; display: block; }
 }
 
 /* ------------------------------------------------------------
-   20. ACCESIBILIDAD
+   19. ACCESIBILIDAD
    ------------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
   *,

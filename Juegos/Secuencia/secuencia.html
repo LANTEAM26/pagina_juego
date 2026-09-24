@@ -28,14 +28,11 @@
        ║     · Recursos/fondo.webm  (opcional, respaldo)          ║
        ║                                                          ║
        ║  🃏 CARTAS (6 por cuento · dentro de Recursos/)          ║
+       ║     IMPORTANTE: cada imagen ya debe contener el texto    ║
+       ║     del cuento dentro del propio dibujo.                 ║
        ║                                                          ║
        ║  Caperucita Roja:                                        ║
-       ║     · Recursos/caperuza1.png                             ║
-       ║     · Recursos/caperuza2.png                             ║
-       ║     · Recursos/caperuza3.png                             ║
-       ║     · Recursos/caperuza4.png                             ║
-       ║     · Recursos/caperuza5.png                             ║
-       ║     · Recursos/caperuza6.png                             ║
+       ║     · Recursos/caperuza1.png … Recursos/caperuza6.png    ║
        ║                                                          ║
        ║  Los Tres Cerditos:                                      ║
        ║     · Recursos/tres1.png … Recursos/tres6.png            ║
@@ -59,12 +56,9 @@
 
 
   <!-- ============================================================
-       FONDO DEL JUEGO · Video en loop (sin estirar)
-       🎬 El video se centra y se recorta si es necesario (object-fit: cover)
-       📁 Ubicación: Recursos/fondo.mp4
+       FONDO DEL JUEGO · Video en loop centrado
        ============================================================ -->
   <div class="fondo" aria-hidden="true">
-    <!-- Contenedor del video (mantiene el aspect ratio) -->
     <div class="fondo__video-contenedor">
       <video
         class="fondo__video"
@@ -79,19 +73,15 @@
       </video>
     </div>
 
-    <!-- Velo decorativo encima (da ambiente de cuento) -->
     <div class="fondo__velo"></div>
 
-    <!-- Nubes flotantes (decoración opcional encima del video) -->
     <span class="fondo__nube fondo__nube--1">☁️</span>
     <span class="fondo__nube fondo__nube--2">☁️</span>
     <span class="fondo__nube fondo__nube--3">☁️</span>
 
-    <!-- Pájaros -->
     <span class="fondo__pajaro fondo__pajaro--1">🕊️</span>
     <span class="fondo__pajaro fondo__pajaro--2">🕊️</span>
 
-    <!-- Destellos -->
     <span class="fondo__estrella fondo__estrella--1">✦</span>
     <span class="fondo__estrella fondo__estrella--2">✦</span>
     <span class="fondo__estrella fondo__estrella--3">✧</span>
@@ -99,23 +89,13 @@
 
 
   <!-- ============================================================
-       CONTROLES GLOBALES FLOTANTES
-       📍 Movidos de la esquina superior derecha a la IZQUIERDA-ABAJO
-       (porque arriba a la derecha habrá un botón externo)
+       NOTA: Se eliminaron los 3 botones flotantes
+       (sonido, pantalla completa, ayuda rápida) para dejar más
+       espacio en pantalla.
        ============================================================ -->
-  <div class="controles-globales" aria-label="Controles del juego">
-    <button id="btn-sonido" class="btn-flotante" aria-label="Activar o desactivar sonido" title="Sonido">
-      <span class="btn-flotante__icono" id="icono-sonido">🔊</span>
-    </button>
-    <button id="btn-pantalla-completa" class="btn-flotante" aria-label="Pantalla completa" title="Pantalla completa">
-      <span class="btn-flotante__icono">⛶</span>
-    </button>
-    <button id="btn-ayuda-rapida" class="btn-flotante" aria-label="Ayuda rápida" title="Ayuda rápida">
-      <span class="btn-flotante__icono">❓</span>
-    </button>
-  </div>
 
-  <!-- Toasts (los movemos también para que no choquen con el botón externo) -->
+
+  <!-- Toasts -->
   <div id="toasts" class="toasts" aria-live="polite" aria-atomic="true"></div>
 
   <!-- Confeti -->
@@ -143,9 +123,6 @@
 
     <!-- ==========================================================
          PANTALLA 1 · PORTADA
-         ⚠️ Se eliminó la mascota y su burbuja.
-         El hueco a la derecha queda libre para que la animación
-         del video de fondo se vea sin interrupciones.
          ========================================================== -->
     <section id="pantalla-inicio" class="pantalla pantalla--activa" data-pantalla="inicio">
 
@@ -192,12 +169,7 @@
         </div>
       </div>
 
-      <!-- ============================================
-           HUECO RESERVADO PARA LA ANIMACIÓN DEL FONDO
-           No se coloca ningún elemento encima.
-           Este div mantiene el espacio con flex: 1
-           para que la animación del video se vea libre.
-           ============================================ -->
+      <!-- Hueco reservado para la animación del fondo -->
       <div class="inicio__espacio-animacion" aria-hidden="true"></div>
     </section>
 
@@ -224,7 +196,7 @@
           <span class="paso__numero">2</span>
           <span class="paso__emoji">🃏</span>
           <h3 class="paso__titulo">Mira tus cartas</h3>
-          <p class="paso__texto">Cada carta tiene un dibujo y un trocito de la historia.</p>
+          <p class="paso__texto">Cada carta tiene un dibujo con un trocito de la historia.</p>
         </article>
         <article class="paso paso--3">
           <span class="paso__numero">3</span>
@@ -494,6 +466,7 @@
        PLANTILLAS
        ============================================================ -->
 
+  <!-- Plantilla de CARTA · sin texto (las imágenes ya incluyen el texto) -->
   <template id="plantilla-carta">
     <article class="carta" draggable="true" tabindex="0" role="button">
       <span class="carta__adorno" aria-hidden="true">✦</span>
@@ -503,7 +476,6 @@
         <span class="carta__emoji" aria-hidden="true"></span>
       </div>
 
-      <p class="carta__texto"></p>
       <span class="carta__asa" aria-hidden="true">⋮⋮</span>
     </article>
   </template>
@@ -528,6 +500,10 @@
 
   <!-- ============================================================
        DATOS DE LOS CUENTOS
+       ⚠️ El campo "texto" se mantiene solo para:
+          · alt de la imagen (accesibilidad)
+          · aria-label de la carta (accesibilidad)
+       NO se muestra visualmente en la carta.
        ============================================================ -->
   <script id="datos-cuentos" type="application/json">
   {
@@ -536,12 +512,12 @@
       "emoji": "🧺",
       "color": "rojo",
       "cartas": [
-        { "imagen": "Recursos/caperuza1.png" },
-        { "imagen": "Recursos/caperuza2.png"},
-        { "imagen": "Recursos/caperuza3.png"},
-        { "imagen": "Recursos/caperuza4.png"},
-        { "imagen": "Recursos/caperuza5.png"},
-        { "imagen": "Recursos/caperuza6.png" }
+        { "emoji": "👩‍🍳", "imagen": "Recursos/caperuza1.png", "texto": "La mamá le da a Caperucita una cesta con pan y miel para su abuelita." },
+        { "emoji": "🌳",  "imagen": "Recursos/caperuza2.png", "texto": "Caperucita camina por el bosque y se encuentra con el lobo feroz." },
+        { "emoji": "🐺",  "imagen": "Recursos/caperuza3.png", "texto": "El lobo corre a la casa de la abuelita y se disfraza de ella." },
+        { "emoji": "👀",  "imagen": "Recursos/caperuza4.png", "texto": "Caperucita llega y nota que su abuelita tiene orejas y dientes muy grandes." },
+        { "emoji": "🪓",  "imagen": "Recursos/caperuza5.png", "texto": "Un leñador entra a la casa y ahuyenta al lobo para siempre." },
+        { "emoji": "🥰",  "imagen": "Recursos/caperuza6.png", "texto": "Caperucita y su abuelita comen juntas la cesta. ¡Todo termina bien!" }
       ]
     },
 
