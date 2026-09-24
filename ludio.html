@@ -18,12 +18,15 @@
 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
 
-    <!-- CSS PARA MINIATURAS DINÁMICAS (iFrames) -->
+    <!-- CSS PARA MINIATURAS DINÁMICAS Y TODAS LAS CORRECCIONES VISUALES -->
     <style>
         /* Contenedor relativo para evitar desbordamientos */
         .game-card-thumb {
             position: relative;
             overflow: hidden;
+            /* CORRECCIÓN: Elimina el margen inferior invisible de los iframes/imágenes */
+            display: block;
+            line-height: 0;
         }
 
         /* iFrame Escalado (Carga el juego como miniatura) */
@@ -44,6 +47,63 @@
         /* Aseguramos que los adornos de UI queden flotando ENCIMA del iframe */
         .game-thumb-bg { z-index: 2; }
         .game-number, .game-difficulty, .game-badge-new, .game-badge-featured { z-index: 3; }
+
+        /* ============================================================
+           CORRECCIONES ESTRUCTURALES Y TEXTOS FLOTANTES
+           ============================================================ */
+        /* Evitar scroll horizontal accidental */
+        body, html { overflow-x: hidden; }
+
+        /* Control de textos flotantes para que no se desborden en móviles */
+        .bubble, .bubble-secundaria {
+            max-width: 95%;
+            word-wrap: break-word;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Consistencia en los márgenes de los textos de las tarjetas */
+        .game-title { margin: 12px 0 6px 0; line-height: 1.2; }
+        .game-desc { margin: 0 0 12px 0; line-height: 1.4; }
+
+        /* ============================================================
+           CORRECCIONES DE CONTRASTE Y FORMATO (TEXTOS HERO)
+           ============================================================ */
+        /* Subtítulo: Lo convertimos en una píldora blanca para que resalte */
+        .hero-text .portal-hero-subtitle {
+            background-color: rgba(255, 255, 255, 0.95);
+            color: #0a0e27 !important; /* Azul oscuro cyber para contrastar */
+            padding: 10px 25px;
+            border-radius: 30px;
+            display: inline-block;
+            font-weight: 700;
+            margin-top: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        /* ============================================================
+           SISTEMA DE PANTALLA COMPLETA (Visor Inmersivo)
+           ============================================================ */
+        #visor-juego {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #000; z-index: 9999999; display: none; flex-direction: column;
+        }
+        #visor-juego.activo { display: flex; }
+        
+        #frame-juego { width: 100%; height: 100%; border: none; background: #fff; display: block; }
+        
+        .btn-cerrar-juego {
+            position: absolute; 
+            top: max(15px, env(safe-area-inset-top)); 
+            right: max(15px, env(safe-area-inset-right)); 
+            z-index: 10000000;
+            background: #e74c3c; color: white; border: 3px solid #c0392b;
+            padding: 10px 20px; border-radius: 15px; font-family: 'Fredoka', sans-serif;
+            font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 5px 0 #c0392b;
+            transition: transform 0.1s;
+        }
+        .btn-cerrar-juego:active { transform: translateY(4px); box-shadow: none; }
     </style>
 </head>
 <body class="world-portal portal-secundaria">
@@ -1269,38 +1329,10 @@
     </div>
 </footer>
 
-
-<!-- ============================================================
-     SCRIPT
-     ============================================================ -->
-<script src="js/ludio.js"></script>
-
 <!-- ============================================================
      SISTEMA DE PANTALLA COMPLETA CENTRALIZADO
      (Intercepta los juegos y los abre en un Visor Inmersivo)
      ============================================================ -->
-<style>
-    /* Contenedor oscuro que ocupará toda la pantalla */
-    #visor-juego {
-        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-        background: #000; z-index: 9999999; display: none; flex-direction: column;
-    }
-    #visor-juego.activo { display: flex; }
-    
-    /* El juego se estirará a tamaño real */
-    #frame-juego { width: 100%; height: 100%; border: none; background: #fff; }
-    
-    /* Botón flotante para salir del juego y volver al portal */
-    .btn-cerrar-juego {
-        position: absolute; top: 15px; right: 15px; z-index: 10000000;
-        background: #e74c3c; color: white; border: 3px solid #c0392b;
-        padding: 10px 20px; border-radius: 15px; font-family: 'Fredoka', sans-serif;
-        font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 5px 0 #c0392b;
-        transition: transform 0.1s;
-    }
-    .btn-cerrar-juego:active { transform: translateY(4px); box-shadow: none; }
-</style>
-
 <div id="visor-juego">
     <button class="btn-cerrar-juego" onclick="cerrarJuego()">❌ Volver al Portal</button>
     <iframe id="frame-juego" src="" allowfullscreen></iframe>
@@ -1339,7 +1371,11 @@
         document.getElementById('frame-juego').src = ""; 
     }
 </script>
-<!-- ============================================================ -->
+
+<!-- ============================================================
+     SCRIPT PRINCIPAL
+     ============================================================ -->
+<script src="js/ludio.js"></script>
 
 </body>
 </html>
