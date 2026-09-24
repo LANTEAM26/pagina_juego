@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <title>🐝 BeeBot - Niveles y Dificultades</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ===== PÉTALOS CAYENDO (FONDO PRIMAVERAL) ===== -->
+    <div class="petals-container" aria-hidden="true">
+        <div class="petal"></div>
+        <div class="petal"></div>
+        <div class="petal"></div>
+        <div class="petal"></div>
+        <div class="petal"></div>
+        <div class="petal"></div>
+        <div class="petal"></div>
+        <div class="petal"></div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- PANTALLA 1 · INICIO / PORTADA                                -->
+    <!-- ============================================================ -->
+    <section id="pantalla-inicio" class="pantalla activa">
+        <div class="panel panel-inicio">
+            <h1 class="titulo-juego">🐝 BeeBot 🌸</h1>
+            <p class="subtitulo">¡Ayuda a BeeBot a llevar todas las flores al panal!</p>
+
+            <div class="decoracion-inicio">
+                <img src="abeja.png" alt="BeeBot" class="img-deco img-deco-abeja">
+                <img src="flor.png" alt="Flor" class="img-deco img-deco-flor">
+                <img src="panal.png" alt="Panal" class="img-deco img-deco-panal">
+            </div>
+
+            <div class="botones-menu">
+                <button id="btn-ir-reglas" class="btn-panel">📖 Cómo se juega</button>
+                <button id="btn-ir-config" class="btn-panel btn-primario">🎮 Jugar</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- PANTALLA 2 · REGLAS / CÓMO SE JUEGA                          -->
+    <!-- ============================================================ -->
+    <section id="pantalla-reglas" class="pantalla">
+        <div class="panel panel-reglas">
+            <h2>📖 ¿Cómo se juega?</h2>
+
+            <ul class="lista-reglas">
+                <li><span class="num">1</span> Mueve a <strong>BeeBot</strong> por el prado con las flechas ⬆️ ⬇️ ⬅️ ➡️ (o los botones táctiles).</li>
+                <li><span class="num">2</span> <strong>⬆️ Avanzar</strong> y <strong>⬇️ Retroceder</strong> mueven a la abeja una casilla en la dirección en la que mira.</li>
+                <li><span class="num">3</span> <strong>⬅️ ➡️</strong> sirven para <strong>girar</strong> sobre la misma casilla, sin avanzar.</li>
+                <li><span class="num">4</span> Colócate <strong>mirando directamente a una flor</strong> y pulsa <strong>[Espacio]</strong> para recogerla.</li>
+                <li><span class="num">5</span> Lleva la flor hasta el panal, míralo de frente y pulsa <strong>[Espacio]</strong> para entregarla.</li>
+                <li><span class="num">6</span> ¡Consigue entregar <strong>todas las flores</strong> antes de que se acabe el tiempo o los movimientos!</li>
+            </ul>
+
+            <div class="leyenda">
+                <div class="leyenda-item">
+                    <img src="abeja.png" alt="BeeBot">
+                    <span>BeeBot</span>
+                </div>
+                <div class="leyenda-item">
+                    <img src="flor.png" alt="Flor">
+                    <span>Flor 🌼</span>
+                </div>
+                <div class="leyenda-item">
+                    <img src="panal.png" alt="Panal">
+                    <span>Panal 🍯</span>
+                </div>
+                <div class="leyenda-item">
+                    <img src="obstaculo.png" alt="Obstáculo">
+                    <span>Obstáculo 🌿</span>
+                </div>
+            </div>
+
+            <div class="botones-menu">
+                <button id="btn-reglas-volver" class="btn-panel">⬅️ Volver</button>
+                <button id="btn-reglas-continuar" class="btn-panel btn-primario">▶️ Continuar</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- PANTALLA 3 · CONFIGURACIÓN (DIFICULTAD + CUADRÍCULA)         -->
+    <!-- ============================================================ -->
+    <section id="pantalla-configuracion" class="pantalla">
+        <div class="panel panel-config">
+            <h2>⚙️ Configura tu partida</h2>
+
+            <!-- ===== SELECTOR DE DIFICULTAD ===== -->
+            <div id="selector-dificultad">
+                <p class="etiqueta-seccion">🎯 Nivel de dificultad:</p>
+                <div class="botones-dificultad">
+                    <button id="btn-facil" class="btn-dificultad seleccionado">🌟 Fácil</button>
+                    <button id="btn-medio" class="btn-dificultad">⚡ Medio</button>
+                    <button id="btn-dificil" class="btn-dificultad">🔥 Difícil</button>
+                </div>
+                <p id="descripcion-dificultad" class="descripcion">
+                    Sin obstáculos · Sin tiempo · 5 niveles
+                </p>
+            </div>
+
+            <!-- ===== SELECTOR DE CUADRÍCULA ===== -->
+            <div id="selector-cuadricula">
+                <p class="etiqueta-seccion">🔲 Tamaño del prado:</p>
+                <div class="botones-cuadricula">
+                    <button class="btn-cuadricula seleccionado" data-cols="4" data-filas="4">4 × 4</button>
+                    <button class="btn-cuadricula" data-cols="5" data-filas="5">5 × 5</button>
+                    <button class="btn-cuadricula" data-cols="5" data-filas="7">5 × 7</button>
+                    <button class="btn-cuadricula" data-cols="6" data-filas="7">6 × 7</button>
+                </div>
+            </div>
+
+            <div class="botones-menu">
+                <button id="btn-config-volver" class="btn-panel">⬅️ Volver</button>
+                <button id="btn-empezar" class="btn-empezar">▶️ Empezar</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- PANTALLA 4 · JUEGO                                           -->
+    <!-- ============================================================ -->
+    <section id="pantalla-juego" class="pantalla">
+        <div id="contenedor-juego">
+
+            <!-- ====== COLUMNA IZQUIERDA: TABLERO ====== -->
+            <div id="area-tablero">
+                <canvas id="lienzo-juego" width="700" height="700">
+                    Tu navegador no soporta canvas.
+                </canvas>
+            </div>
+
+            <!-- ====== COLUMNA DERECHA: PANEL BEEBOT ====== -->
+            <div id="panel-derecho">
+
+                <div id="barra-superior-panel">
+                    <button id="btn-menu" class="btn-mini" title="Volver al menú">🏠 Menú</button>
+                    <h1>🐝 BeeBot 🌸</h1>
+                    <button id="btn-reiniciar-nivel" class="btn-mini" title="Reiniciar nivel">🔄</button>
+                </div>
+
+                <!-- ===== INFORMACIÓN DE NIVEL ===== -->
+                <div id="info-nivel">
+                    <span>🏆 Nivel <span id="nivel-actual">1</span> / <span id="total-niveles">5</span></span>
+                    <span>📌 <span id="dificultad-actual">Fácil</span></span>
+                    <span id="temporizador" style="display:none;">⏱️ 30s</span>
+                </div>
+
+                <!-- ===== ESTADÍSTICAS ===== -->
+                <div id="estadisticas">
+                    <div class="stat-item">🌼 Recogidas: <strong id="cajas-recogidas">0</strong></div>
+                    <div class="stat-item">🍯 Entregadas: <strong id="cajas-entregadas">0</strong> / <span id="total-cajas">0</span></div>
+                    <div class="stat-item">🚀 Movimientos: <strong id="contador-movimientos">0</strong></div>
+                </div>
+
+                <!-- ===== ESTADO DE BEEBOT ===== -->
+                <div id="estado-robot">
+                    🧭 <span id="orientacion-texto">⬆️ Norte</span> ·
+                    🌸 Carga: <span id="carga-actual">No</span>
+                </div>
+
+                <!-- ===== MENSAJE DE AYUDA ===== -->
+                <div id="mensaje-accion">
+                    <span id="mensaje-flotante">🌸 ¡Vamos allá!</span>
+                </div>
+
+                <!-- ===== BOTONES TÁCTILES ===== -->
+                <div id="botones-tactiles">
+                    <button id="btn-arriba" class="btn-movimiento btn-arriba" disabled>⬆️ Avanzar</button>
+                    <button id="btn-izquierda" class="btn-movimiento btn-giro" disabled>⬅️ Girar Izquierda</button>
+                    <button id="btn-abajo" class="btn-movimiento btn-abajo" disabled>⬇️ Retroceder</button>
+                    <button id="btn-derecha" class="btn-movimiento btn-giro" disabled>➡️ Girar Derecha</button>
+                    <button id="btn-espacio" class="btn-movimiento btn-accion" disabled>🌸 Recoger / Soltar</button>
+                </div>
+
+                <!-- ===== AYUDA DE TECLADO ===== -->
+                <div id="ayuda-teclado">
+                    ⌨️ Flechas del teclado · [Espacio] para recoger/entregar
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ============================================= -->
+    <!-- MODAL DE FIN DE NIVEL / PARTIDA              -->
+    <!-- ============================================= -->
+    <div id="modal-fin" style="display: none;">
+        <div id="modal-contenido">
+            <h2 id="modal-titulo">🎉 ¡Nivel completado!</h2>
+            <p id="modal-mensaje-refuerzo">🐝 ¡BeeBot es increíble!</p>
+            <div id="modal-estadisticas">
+                <p>🌼 Flores recogidas: <span id="modal-recogidas">0</span></p>
+                <p>🍯 Flores entregadas: <span id="modal-entregadas">0</span></p>
+                <p>🚀 Movimientos totales: <span id="modal-movimientos">0</span></p>
+                <p>🔄 Giros realizados: <span id="modal-giros">0</span></p>
+                <p>❌ Intentos fallidos: <span id="modal-errores">0</span></p>
+            </div>
+            <div id="modal-consejo">
+                <strong>💡 Aprendizaje:</strong>
+                <span id="modal-consejo-texto">Recuerda mirar directamente a la flor o al panal.</span>
+            </div>
+            <button id="boton-reiniciar">🔄 Siguiente nivel</button>
+        </div>
+    </div>
+
+    <!-- ===== JAVASCRIPT ===== -->
+    <script src="script.js"></script>
+</body>
+</html>
