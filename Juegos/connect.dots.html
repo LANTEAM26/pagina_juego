@@ -1,0 +1,3009 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Connect Dots</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;900&family=Poppins:wght@400;500;600;700&display=swap');
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+:root{
+    --cyan:#00f5ff;
+    --blue:#477cff;
+    --purple:#a855f7;
+    --pink:#ff29d9;
+    --green:#39ff88;
+    --yellow:#ffe45c;
+    --red:#ff416c;
+    --bg:#020611;
+}
+
+html,body{
+    width:100%;
+    height:100%;
+}
+
+body{
+    overflow:hidden;
+    font-family:Poppins,sans-serif;
+    color:#fff;
+    background:
+        radial-gradient(circle at 15% 15%,rgba(0,245,255,.13),transparent 30%),
+        radial-gradient(circle at 85% 85%,rgba(168,85,247,.14),transparent 30%),
+        var(--bg);
+}
+
+/* FONDO */
+
+.grid{
+    position:fixed;
+    inset:-50%;
+    width:200%;
+    height:200%;
+    z-index:-10;
+
+    background-image:
+        linear-gradient(rgba(0,245,255,.035) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(0,245,255,.035) 1px,transparent 1px);
+
+    background-size:50px 50px;
+
+    transform:perspective(600px) rotateX(60deg);
+
+    animation:gridMove 12s linear infinite;
+}
+
+@keyframes gridMove{
+    from{
+        transform:perspective(600px) rotateX(60deg) translateY(0);
+    }
+    to{
+        transform:perspective(600px) rotateX(60deg) translateY(50px);
+    }
+}
+
+.orb{
+    position:fixed;
+    width:400px;
+    height:400px;
+    border-radius:50%;
+    filter:blur(130px);
+    opacity:.12;
+    z-index:-5;
+}
+
+.orb.one{
+    left:-200px;
+    top:-100px;
+    background:var(--cyan);
+}
+
+.orb.two{
+    right:-200px;
+    bottom:-200px;
+    background:var(--purple);
+}
+
+/* APP */
+
+.app{
+    width:100%;
+    height:100vh;
+    padding:14px;
+
+    display:flex;
+    flex-direction:column;
+}
+
+header{
+    width:min(1300px,100%);
+    margin:0 auto 12px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+}
+
+.logo{
+    font-family:Orbitron,sans-serif;
+    font-size:clamp(20px,3vw,32px);
+    font-weight:900;
+    letter-spacing:2px;
+
+    text-shadow:
+        0 0 12px var(--cyan),
+        0 0 35px rgba(0,245,255,.4);
+}
+
+.logo span{
+    color:var(--cyan);
+}
+
+.stats{
+    display:flex;
+    align-items:center;
+    gap:7px;
+}
+
+.stat{
+    min-width:80px;
+    min-height:56px;
+
+    padding:7px 11px;
+
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:12px;
+
+    background:rgba(7,13,34,.75);
+    backdrop-filter:blur(15px);
+}
+
+.stat small{
+    display:block;
+    color:#6e7a9f;
+    font-size:9px;
+    text-transform:uppercase;
+}
+
+.stat strong{
+    display:block;
+    margin-top:2px;
+    font-family:Orbitron;
+    font-size:14px;
+}
+
+#score{
+    color:var(--cyan);
+}
+
+#combo{
+    color:var(--pink);
+}
+
+#lives{
+    color:var(--red);
+}
+
+/* RELOJ DE ARENA */
+
+.timeBox{
+    min-width:78px;
+    height:56px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+
+    padding:5px 9px;
+
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:12px;
+
+    background:rgba(7,13,34,.78);
+    backdrop-filter:blur(15px);
+
+    transition:.3s;
+}
+
+.hourglass{
+    position:relative;
+    width:27px;
+    height:36px;
+
+    color:var(--green);
+
+    font-size:30px;
+    line-height:36px;
+
+    filter:drop-shadow(0 0 8px currentColor);
+
+    transition:.3s;
+}
+
+.hourglass.flip{
+    animation:hourglassFlip .7s ease;
+}
+
+@keyframes hourglassFlip{
+    0%{transform:rotate(0deg)}
+    45%{transform:rotate(180deg)}
+    100%{transform:rotate(360deg)}
+}
+
+.timeInfo{
+    display:flex;
+    flex-direction:column;
+}
+
+.timeInfo small{
+    color:#6e7a9f;
+    font-size:8px;
+    text-transform:uppercase;
+}
+
+.timeInfo strong{
+    color:var(--green);
+    font-family:Orbitron;
+    font-size:12px;
+}
+
+.timeBox.warning{
+    border-color:rgba(255,228,92,.45);
+}
+
+.timeBox.warning .hourglass,
+.timeBox.warning .timeInfo strong{
+    color:var(--yellow);
+}
+
+.timeBox.danger{
+    border-color:rgba(255,65,108,.55);
+    animation:dangerPulse .8s infinite;
+}
+
+.timeBox.danger .hourglass,
+.timeBox.danger .timeInfo strong{
+    color:var(--red);
+}
+
+@keyframes dangerPulse{
+    0%,100%{transform:scale(1)}
+    50%{transform:scale(1.04)}
+}
+
+/* JUEGO */
+
+.game{
+    width:min(1300px,100%);
+    flex:1;
+    min-height:0;
+
+    margin:auto;
+    padding:1px;
+
+    border-radius:27px;
+
+    background:
+        linear-gradient(
+            130deg,
+            rgba(0,245,255,.5),
+            rgba(168,85,247,.15),
+            rgba(255,41,217,.45)
+        );
+}
+
+.arena{
+    position:relative;
+
+    width:100%;
+    height:100%;
+    min-height:400px;
+
+    overflow:hidden;
+
+    border-radius:26px;
+
+    background:
+        radial-gradient(circle at center,#101a3c,#030713 78%);
+}
+
+canvas{
+    position:absolute;
+    inset:0;
+
+    width:100%;
+    height:100%;
+
+    touch-action:none;
+}
+
+/* HUD */
+
+.hud{
+    position:absolute;
+    left:18px;
+    top:17px;
+
+    z-index:20;
+    pointer-events:none;
+}
+
+.badge{
+    display:flex;
+    align-items:center;
+    gap:8px;
+
+    width:max-content;
+
+    padding:8px 13px;
+
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:30px;
+
+    background:rgba(0,0,0,.38);
+    backdrop-filter:blur(10px);
+
+    font-family:Orbitron;
+    font-size:10px;
+    font-weight:700;
+}
+
+.badge b{
+    color:var(--cyan);
+}
+
+.figure-name{
+    color:#aab4d0;
+}
+
+.progress{
+    width:220px;
+    height:5px;
+
+    margin-top:7px;
+
+    overflow:hidden;
+    border-radius:20px;
+
+    background:rgba(255,255,255,.08);
+}
+
+.progress-bar{
+    width:0%;
+    height:100%;
+
+    background:linear-gradient(90deg,var(--cyan),var(--pink));
+
+    box-shadow:0 0 15px var(--cyan);
+
+    transition:width .25s ease;
+}
+
+/* BOTONES */
+
+.controls{
+    position:absolute;
+    right:17px;
+    top:16px;
+
+    z-index:30;
+
+    display:flex;
+    gap:7px;
+}
+
+.icon{
+    width:40px;
+    height:37px;
+
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:10px;
+
+    color:white;
+    background:rgba(2,8,25,.78);
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.icon:hover{
+    color:var(--cyan);
+
+    border-color:var(--cyan);
+
+    box-shadow:0 0 20px rgba(0,245,255,.2);
+
+    transform:translateY(-2px);
+}
+
+/* AYUDA */
+
+.help{
+    position:absolute;
+
+    left:50%;
+    bottom:17px;
+
+    z-index:15;
+
+    transform:translateX(-50%);
+
+    padding:7px 15px;
+
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:20px;
+
+    color:#7581a3;
+    background:rgba(0,0,0,.3);
+
+    font-size:10px;
+
+    pointer-events:none;
+
+    white-space:nowrap;
+}
+
+/* MENSAJES */
+
+.message{
+    position:absolute;
+
+    left:50%;
+    top:50%;
+
+    z-index:100;
+
+    width:min(530px,calc(100% - 30px));
+
+    padding:32px;
+
+    transform:translate(-50%,-50%) scale(.9);
+
+    text-align:center;
+
+    border:1px solid rgba(0,245,255,.22);
+    border-radius:25px;
+
+    background:rgba(3,7,20,.95);
+
+    backdrop-filter:blur(25px);
+
+    box-shadow:0 0 90px rgba(0,245,255,.12);
+
+    opacity:0;
+    visibility:hidden;
+
+    transition:.3s;
+}
+
+.message.show{
+    opacity:1;
+    visibility:visible;
+
+    transform:translate(-50%,-50%) scale(1);
+}
+
+.message h1{
+    margin-bottom:12px;
+
+    font-family:Orbitron;
+    font-size:clamp(25px,5vw,40px);
+    font-weight:900;
+
+    color:var(--cyan);
+
+    text-shadow:0 0 25px rgba(0,245,255,.5);
+}
+
+.message p{
+    color:#9ca8c8;
+    font-size:14px;
+    line-height:1.75;
+}
+
+.main-btn{
+    margin-top:20px;
+
+    padding:13px 28px;
+
+    border:0;
+    border-radius:12px;
+
+    color:#001016;
+
+    background:linear-gradient(90deg,var(--cyan),#9fffff);
+
+    font-weight:800;
+
+    cursor:pointer;
+
+    box-shadow:0 0 25px rgba(0,245,255,.3);
+
+    transition:.2s;
+}
+
+.main-btn:hover{
+    transform:scale(1.05);
+
+    box-shadow:0 0 45px rgba(0,245,255,.55);
+}
+
+/* RESPONSIVE */
+
+@media(max-width:700px){
+
+    .app{
+        padding:8px;
+    }
+
+    header{
+        margin-bottom:8px;
+    }
+
+    .logo{
+        font-size:17px;
+    }
+
+    .stats{
+        gap:3px;
+    }
+
+    .stat{
+        min-width:54px;
+        min-height:50px;
+        padding:5px 6px;
+    }
+
+    .stat small{
+        font-size:7px;
+    }
+
+    .stat strong{
+        font-size:9px;
+    }
+
+    .timeBox{
+        min-width:65px;
+        height:50px;
+    }
+
+    .hourglass{
+        font-size:24px;
+    }
+
+    .timeInfo strong{
+        font-size:9px;
+    }
+
+    .progress{
+        width:140px;
+    }
+
+    .help{
+        font-size:8px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="grid"></div>
+<div class="orb one"></div>
+<div class="orb two"></div>
+
+<div class="app">
+
+<header>
+
+    <div class="logo">
+        CONNECT<span>.</span>DOTS
+    </div>
+
+    <div class="stats">
+
+        <div class="stat">
+            <small>Puntos</small>
+            <strong id="score">000000</strong>
+        </div>
+
+        <div class="stat">
+            <small>Combo</small>
+            <strong id="combo">x1</strong>
+        </div>
+
+        <div class="timeBox" id="timeBox">
+
+            <div class="hourglass" id="hourglass">
+                ⌛
+            </div>
+
+            <div class="timeInfo">
+                <small>Tiempo</small>
+                <strong id="timer">60</strong>
+            </div>
+
+        </div>
+
+        <div class="stat">
+            <small>Vidas</small>
+            <strong id="lives">♥♥♥</strong>
+        </div>
+
+    </div>
+
+</header>
+
+<div class="game">
+
+<div class="arena" id="arena">
+
+<canvas id="canvas"></canvas>
+
+<div class="hud">
+
+    <div class="badge">
+
+        NIVEL
+        <b id="level">1</b>
+
+        <span>•</span>
+
+        <span class="figure-name" id="figureName">
+            TRIÁNGULO
+        </span>
+
+        <span>•</span>
+
+        <b id="percent">
+            0%
+        </b>
+
+    </div>
+
+    <div class="progress">
+        <div class="progress-bar" id="progress"></div>
+    </div>
+
+</div>
+
+<div class="controls">
+
+    <button class="icon" id="sound">🔊</button>
+
+    <button class="icon" id="pause">Ⅱ</button>
+
+    <!-- AHORA REPITE SOLO EL NIVEL ACTUAL -->
+    <button
+        class="icon"
+        id="repeat"
+        title="Repetir figura"
+    >
+        ↻
+    </button>
+
+</div>
+
+<div class="help">
+    Empieza donde quieras • Sigue las líneas • No repitas líneas
+</div>
+
+<div class="message show" id="message">
+
+    <h1>
+        CONNECT DOTS
+    </h1>
+
+    <p>
+
+        Descubre la figura escondida.
+
+        <br><br>
+
+        Puedes empezar desde
+        <strong style="color:#00f5ff">
+            cualquier punto
+        </strong>.
+
+        <br>
+
+        Después continúa solamente
+        por una línea conectada.
+
+        <br>
+
+        No puedes saltar ni repetir
+        una línea.
+
+    </p>
+
+    <button class="main-btn" id="start">
+        COMENZAR
+    </button>
+
+</div>
+
+</div>
+</div>
+</div>
+
+
+<script>
+
+/* ============================================================
+   ESTADO
+============================================================ */
+
+const canvas =
+    document.getElementById("canvas");
+
+const ctx =
+    canvas.getContext("2d");
+
+const arena =
+    document.getElementById("arena");
+
+const scoreEl =
+    document.getElementById("score");
+
+const comboEl =
+    document.getElementById("combo");
+
+const timerEl =
+    document.getElementById("timer");
+
+const livesEl =
+    document.getElementById("lives");
+
+const levelEl =
+    document.getElementById("level");
+
+const figureNameEl =
+    document.getElementById("figureName");
+
+const percentEl =
+    document.getElementById("percent");
+
+const progressEl =
+    document.getElementById("progress");
+
+const message =
+    document.getElementById("message");
+
+const timeBox =
+    document.getElementById("timeBox");
+
+const hourglass =
+    document.getElementById("hourglass");
+
+let W=0;
+let H=0;
+
+let level=1;
+let score=0;
+let combo=1;
+let lives=3;
+
+let timeLeft=60;
+
+let running=false;
+let paused=false;
+
+let soundEnabled=true;
+
+let nodes=[];
+let edges=[];
+
+let currentNode=null;
+let drawing=false;
+
+let mouse={
+    x:0,
+    y:0
+};
+
+let particles=[];
+let texts=[];
+
+let timerInterval=null;
+
+let audioCtx=null;
+
+
+/* ============================================================
+   FIGURAS
+============================================================ */
+
+const FIGURES=[
+
+{
+    name:"TRIÁNGULO",
+
+    points:[
+        [.50,.15],
+        [.20,.78],
+        [.80,.78]
+    ],
+
+    edges:[
+        [0,1],
+        [1,2],
+        [2,0]
+    ]
+},
+
+{
+    name:"CUADRADO",
+
+    points:[
+        [.22,.22],
+        [.78,.22],
+        [.78,.78],
+        [.22,.78]
+    ],
+
+    edges:[
+        [0,1],
+        [1,2],
+        [2,3],
+        [3,0]
+    ]
+},
+
+{
+    name:"ROMBO",
+
+    points:[
+        [.50,.12],
+        [.86,.50],
+        [.50,.88],
+        [.14,.50]
+    ],
+
+    edges:[
+        [0,1],
+        [1,2],
+        [2,3],
+        [3,0]
+    ]
+},
+
+{
+    name:"PENTÁGONO",
+
+    points:[
+        [.50,.10],
+        [.88,.38],
+        [.72,.84],
+        [.28,.84],
+        [.12,.38]
+    ],
+
+    edges:[
+        [0,1],
+        [1,2],
+        [2,3],
+        [3,4],
+        [4,0]
+    ]
+},
+
+/* ESTRELLA */
+
+{
+    name:"ESTRELLA",
+
+    points:(()=>{
+
+        const result=[];
+
+        for(let i=0;i<10;i++){
+
+            const angle=
+                -Math.PI/2+
+                i*Math.PI/5;
+
+            const radius=
+                i%2===0
+                ?0.43
+                :0.18;
+
+            result.push([
+                .5+
+                Math.cos(angle)*radius,
+
+                .5+
+                Math.sin(angle)*radius
+            ]);
+        }
+
+        return result;
+
+    })(),
+
+    edges:[
+        [0,1],
+        [1,2],
+        [2,3],
+        [3,4],
+        [4,5],
+        [5,6],
+        [6,7],
+        [7,8],
+        [8,9],
+        [9,0]
+    ]
+},
+
+{
+    name:"CORAZÓN",
+
+    points:[
+        [.50,.87],
+        [.26,.68],
+        [.10,.44],
+        [.12,.23],
+        [.29,.12],
+        [.50,.29],
+        [.71,.12],
+        [.88,.23],
+        [.90,.44],
+        [.74,.68]
+    ],
+
+    edges:[
+        [0,1],
+        [1,2],
+        [2,3],
+        [3,4],
+        [4,5],
+        [5,6],
+        [6,7],
+        [7,8],
+        [8,9],
+        [9,0]
+    ]
+},
+
+{
+    name:"MARIPOSA",
+
+    points:[
+        [.50,.50],
+
+        [.34,.34],
+        [.16,.17],
+        [.06,.30],
+        [.13,.50],
+        [.06,.70],
+        [.16,.83],
+        [.34,.66],
+
+        [.66,.34],
+        [.84,.17],
+        [.94,.30],
+        [.87,.50],
+        [.94,.70],
+        [.84,.83],
+        [.66,.66]
+    ],
+
+    edges:[
+        [0,1],
+        [1,2],
+        [2,3],
+        [3,4],
+        [4,5],
+        [5,6],
+        [6,7],
+        [7,0],
+
+        [0,8],
+        [8,9],
+        [9,10],
+        [10,11],
+        [11,12],
+        [12,13],
+        [13,14],
+        [14,0]
+    ]
+},
+
+{
+    name:"CASA",
+
+    points:[
+        [.50,.10],
+        [.86,.45],
+        [.86,.84],
+        [.60,.84],
+        [.60,.60],
+        [.40,.60],
+        [.40,.84],
+        [.14,.84],
+        [.14,.45]
+    ],
+
+    edges:[
+        [0,1],
+        [1,2],
+        [2,3],
+        [3,4],
+        [4,5],
+        [5,6],
+        [6,7],
+        [7,8],
+        [8,0]
+    ]
+},
+
+{
+    name:"HEXAGRAMA",
+
+    points:[
+        [.50,.08],
+        [.87,.71],
+        [.13,.71],
+
+        [.13,.29],
+        [.87,.29],
+        [.50,.92]
+    ],
+
+    edges:[
+        [0,1],
+        [1,2],
+        [2,0],
+
+        [3,4],
+        [4,5],
+        [5,3]
+    ]
+},
+
+{
+    name:"ESTRELLA COMPLEJA",
+
+    points:[
+        [.50,.07],
+        [.60,.37],
+        [.90,.37],
+        [.66,.55],
+        [.76,.86],
+        [.50,.67],
+        [.24,.86],
+        [.34,.55],
+        [.10,.37],
+        [.40,.37]
+    ],
+
+    edges:[
+        [0,1],
+        [1,2],
+        [2,3],
+        [3,4],
+        [4,5],
+        [5,6],
+        [6,7],
+        [7,8],
+        [8,9],
+        [9,0],
+
+        [0,5],
+        [2,7],
+        [4,9],
+        [6,1],
+        [8,3]
+    ]
+}
+
+];
+
+
+/* ============================================================
+   AUDIO
+============================================================ */
+
+function initAudio(){
+
+    if(!audioCtx){
+
+        audioCtx=
+            new(
+                window.AudioContext||
+                window.webkitAudioContext
+            )();
+    }
+
+    if(audioCtx.state==="suspended"){
+        audioCtx.resume();
+    }
+}
+
+function beep(
+    frequency,
+    duration=.08,
+    type="sine"
+){
+
+    if(!soundEnabled)return;
+
+    initAudio();
+
+    const osc=
+        audioCtx.createOscillator();
+
+    const gain=
+        audioCtx.createGain();
+
+    osc.type=type;
+    osc.frequency.value=frequency;
+
+    gain.gain.setValueAtTime(
+        .001,
+        audioCtx.currentTime
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        .08,
+        audioCtx.currentTime+.01
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        .001,
+        audioCtx.currentTime+duration
+    );
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.start();
+
+    osc.stop(
+        audioCtx.currentTime+duration
+    );
+}
+
+function correctSound(){
+
+    beep(600,.06);
+
+    setTimeout(
+        ()=>beep(850,.07),
+        45
+    );
+}
+
+function errorSound(){
+    beep(130,.16,"sawtooth");
+}
+
+function victorySound(){
+
+    beep(600,.08);
+
+    setTimeout(
+        ()=>beep(800,.08),
+        80
+    );
+
+    setTimeout(
+        ()=>beep(1000,.10),
+        160
+    );
+
+    setTimeout(
+        ()=>beep(1300,.16),
+        250
+    );
+}
+
+
+/* ============================================================
+   RESIZE
+============================================================ */
+
+function resizeCanvas(){
+
+    const rect=
+        arena.getBoundingClientRect();
+
+    W=rect.width;
+    H=rect.height;
+
+    const dpr=
+        Math.min(
+            window.devicePixelRatio||1,
+            2
+        );
+
+    canvas.width=W*dpr;
+    canvas.height=H*dpr;
+
+    canvas.style.width=W+"px";
+    canvas.style.height=H+"px";
+
+    ctx.setTransform(
+        dpr,
+        0,
+        0,
+        dpr,
+        0,
+        0
+    );
+
+    if(running){
+        createLevel();
+    }
+}
+
+window.addEventListener(
+    "resize",
+    resizeCanvas
+);
+
+
+/* ============================================================
+   COLORES
+============================================================ */
+
+function getNodeColor(i){
+
+    const colors=[
+        "#00f5ff",
+        "#477cff",
+        "#a855f7",
+        "#ff29d9",
+        "#39ff88",
+        "#ffe45c"
+    ];
+
+    return colors[
+        i%colors.length
+    ];
+}
+
+function getEdgeColor(i){
+
+    const colors=[
+        "#00f5ff",
+        "#39ff88",
+        "#ffe45c",
+        "#ff29d9",
+        "#a855f7",
+        "#477cff"
+    ];
+
+    return colors[
+        i%colors.length
+    ];
+}
+
+
+/* ============================================================
+   CREAR NIVEL
+============================================================ */
+
+function createLevel(){
+
+    const figure=
+        FIGURES[
+            Math.min(
+                level-1,
+                FIGURES.length-1
+            )
+        ];
+
+    const scale=
+        Math.min(W,H)*.76;
+
+    const cx=W/2;
+    const cy=H/2+10;
+
+    nodes=
+        figure.points.map(
+            (p,index)=>({
+
+                id:index,
+
+                x:
+                    cx+
+                    (p[0]-.5)*scale,
+
+                y:
+                    cy+
+                    (p[1]-.5)*scale,
+
+                radius:
+                    level>=5
+                    ?11
+                    :13,
+
+                color:getNodeColor(index),
+
+                phase:
+                    Math.random()*
+                    Math.PI*2
+            })
+        );
+
+    edges=
+        figure.edges.map(
+            (e,index)=>({
+
+                id:index,
+
+                a:e[0],
+                b:e[1],
+
+                used:false,
+
+                color:getEdgeColor(index)
+            })
+        );
+
+    currentNode=null;
+    drawing=false;
+
+    updateHUD();
+}
+
+
+/* ============================================================
+   HUD
+============================================================ */
+
+function updateHUD(){
+
+    scoreEl.textContent=
+        String(score).padStart(6,"0");
+
+    comboEl.textContent=
+        "x"+combo;
+
+    timerEl.textContent=
+        Math.ceil(timeLeft);
+
+    livesEl.textContent=
+        "♥".repeat(lives)+
+        "♡".repeat(3-lives);
+
+    levelEl.textContent=level;
+
+    const figure=
+        FIGURES[
+            Math.min(
+                level-1,
+                FIGURES.length-1
+            )
+        ];
+
+    figureNameEl.textContent=
+        figure.name;
+
+    const used=
+        edges.filter(
+            e=>e.used
+        ).length;
+
+    const percentage=
+        edges.length
+        ?used/edges.length*100
+        :0;
+
+    percentEl.textContent=
+        Math.floor(percentage)+"%";
+
+    progressEl.style.width=
+        percentage+"%";
+
+    updateTimerVisual();
+}
+
+
+/* ============================================================
+   RELOJ
+============================================================ */
+
+function updateTimerVisual(){
+
+    timeBox.classList.remove(
+        "warning",
+        "danger"
+    );
+
+    if(timeLeft<=10){
+
+        timeBox.classList.add(
+            "danger"
+        );
+
+    }else if(timeLeft<=30){
+
+        timeBox.classList.add(
+            "warning"
+        );
+    }
+}
+
+
+/* ============================================================
+   REFERENCIA
+============================================================ */
+
+function drawReference(){
+
+    ctx.save();
+
+    edges.forEach(edge=>{
+
+        const a=nodes[edge.a];
+        const b=nodes[edge.b];
+
+        ctx.beginPath();
+
+        ctx.moveTo(a.x,a.y);
+        ctx.lineTo(b.x,b.y);
+
+        ctx.strokeStyle=
+            "rgba(90,150,255,.07)";
+
+        ctx.lineWidth=12;
+
+        ctx.shadowBlur=30;
+
+        ctx.shadowColor=
+            "rgba(0,245,255,.15)";
+
+        ctx.stroke();
+
+        ctx.beginPath();
+
+        ctx.moveTo(a.x,a.y);
+        ctx.lineTo(b.x,b.y);
+
+        ctx.strokeStyle=
+            "rgba(120,170,255,.25)";
+
+        ctx.lineWidth=2;
+
+        ctx.setLineDash([5,7]);
+
+        ctx.shadowBlur=0;
+
+        ctx.stroke();
+    });
+
+    ctx.restore();
+}
+
+
+/* ============================================================
+   LÍNEAS USADAS
+============================================================ */
+
+function drawUsedEdges(){
+
+    edges.forEach(edge=>{
+
+        if(!edge.used)return;
+
+        const a=nodes[edge.a];
+        const b=nodes[edge.b];
+
+        ctx.save();
+
+        ctx.beginPath();
+
+        ctx.moveTo(a.x,a.y);
+        ctx.lineTo(b.x,b.y);
+
+        ctx.strokeStyle=edge.color;
+        ctx.lineWidth=16;
+
+        ctx.globalAlpha=.16;
+
+        ctx.shadowBlur=35;
+        ctx.shadowColor=edge.color;
+
+        ctx.stroke();
+
+        ctx.beginPath();
+
+        ctx.moveTo(a.x,a.y);
+        ctx.lineTo(b.x,b.y);
+
+        ctx.strokeStyle=edge.color;
+        ctx.lineWidth=4;
+
+        ctx.globalAlpha=1;
+
+        ctx.shadowBlur=20;
+        ctx.shadowColor=edge.color;
+
+        ctx.stroke();
+
+        ctx.beginPath();
+
+        ctx.moveTo(a.x,a.y);
+        ctx.lineTo(b.x,b.y);
+
+        ctx.strokeStyle="rgba(255,255,255,.82)";
+        ctx.lineWidth=1;
+
+        ctx.shadowBlur=0;
+
+        ctx.stroke();
+
+        ctx.restore();
+    });
+}
+
+
+/* ============================================================
+   ARRASTRE
+============================================================ */
+
+function drawDragLine(){
+
+    if(!drawing||!currentNode){
+        return;
+    }
+
+    ctx.save();
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        currentNode.x,
+        currentNode.y
+    );
+
+    ctx.lineTo(
+        mouse.x,
+        mouse.y
+    );
+
+    ctx.strokeStyle=
+        "rgba(0,245,255,.9)";
+
+    ctx.lineWidth=3;
+
+    ctx.setLineDash([8,7]);
+
+    ctx.shadowBlur=18;
+    ctx.shadowColor="#00f5ff";
+
+    ctx.stroke();
+
+    ctx.restore();
+}
+
+
+/* ============================================================
+   PUNTOS
+============================================================ */
+
+function drawNodes(time){
+
+    nodes.forEach(node=>{
+
+        const active=
+            currentNode===node;
+
+        const pulse=
+            Math.sin(
+                time*.004+
+                node.phase
+            );
+
+        const radius=
+            node.radius+
+            (active?pulse*2:0);
+
+        ctx.save();
+
+        ctx.beginPath();
+
+        ctx.arc(
+            node.x,
+            node.y,
+            radius+10,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fillStyle=
+            active
+            ?"rgba(57,255,136,.28)"
+            :"rgba(0,245,255,.10)";
+
+        ctx.shadowBlur=
+            active?40:20;
+
+        ctx.shadowColor=
+            active
+            ?"#39ff88"
+            :node.color;
+
+        ctx.fill();
+
+        const gradient=
+            ctx.createRadialGradient(
+                node.x-radius*.35,
+                node.y-radius*.35,
+                1,
+                node.x,
+                node.y,
+                radius
+            );
+
+        gradient.addColorStop(
+            0,
+            "#ffffff"
+        );
+
+        gradient.addColorStop(
+            .35,
+            active
+            ?"#39ff88"
+            :node.color
+        );
+
+        gradient.addColorStop(
+            1,
+            "#061126"
+        );
+
+        ctx.beginPath();
+
+        ctx.arc(
+            node.x,
+            node.y,
+            radius,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fillStyle=gradient;
+        ctx.fill();
+
+        ctx.beginPath();
+
+        ctx.arc(
+            node.x,
+            node.y,
+            radius+4,
+            0,
+            Math.PI*2
+        );
+
+        ctx.strokeStyle=
+            active
+            ?"#39ff88"
+            :node.color;
+
+        ctx.lineWidth=2;
+
+        ctx.stroke();
+
+        ctx.restore();
+    });
+}
+
+
+/* ============================================================
+   EFECTOS
+============================================================ */
+
+function particlesCreate(
+    x,
+    y,
+    color,
+    count=20
+){
+
+    for(let i=0;i<count;i++){
+
+        const angle=
+            Math.random()*Math.PI*2;
+
+        const speed=
+            1+Math.random()*4;
+
+        particles.push({
+
+            x,y,
+
+            vx:
+                Math.cos(angle)*speed,
+
+            vy:
+                Math.sin(angle)*speed,
+
+            size:
+                1+Math.random()*3,
+
+            life:1,
+
+            color
+        });
+    }
+}
+
+function textCreate(
+    x,
+    y,
+    text,
+    color
+){
+
+    texts.push({
+        x,
+        y,
+        text,
+        color,
+        life:1
+    });
+}
+
+function updateEffects(){
+
+    particles.forEach(p=>{
+
+        p.x+=p.vx;
+        p.y+=p.vy;
+
+        p.vx*=.98;
+        p.vy*=.98;
+
+        p.vy+=.025;
+
+        p.life-=.018;
+    });
+
+    particles=
+        particles.filter(
+            p=>p.life>0
+        );
+
+    texts.forEach(t=>{
+
+        t.y-=.6;
+        t.life-=.018;
+    });
+
+    texts=
+        texts.filter(
+            t=>t.life>0
+        );
+}
+
+function drawEffects(){
+
+    particles.forEach(p=>{
+
+        ctx.save();
+
+        ctx.globalAlpha=p.life;
+        ctx.fillStyle=p.color;
+
+        ctx.shadowBlur=15;
+        ctx.shadowColor=p.color;
+
+        ctx.beginPath();
+
+        ctx.arc(
+            p.x,
+            p.y,
+            p.size,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+
+        ctx.restore();
+    });
+
+    texts.forEach(t=>{
+
+        ctx.save();
+
+        ctx.globalAlpha=t.life;
+        ctx.fillStyle=t.color;
+
+        ctx.font="800 16px Poppins";
+        ctx.textAlign="center";
+
+        ctx.shadowBlur=15;
+        ctx.shadowColor=t.color;
+
+        ctx.fillText(
+            t.text,
+            t.x,
+            t.y
+        );
+
+        ctx.restore();
+    });
+}
+
+
+/* ============================================================
+   RENDER
+============================================================ */
+
+function render(time){
+
+    ctx.clearRect(
+        0,
+        0,
+        W,
+        H
+    );
+
+    drawReference();
+    drawUsedEdges();
+    drawDragLine();
+    drawNodes(time);
+    drawEffects();
+
+    updateEffects();
+
+    requestAnimationFrame(render);
+}
+
+requestAnimationFrame(render);
+
+
+/* ============================================================
+   POSICIÓN DEL PUNTERO
+============================================================ */
+
+function pointerPosition(event){
+
+    const rect=
+        canvas.getBoundingClientRect();
+
+    return {
+
+        x:
+            event.clientX-
+            rect.left,
+
+        y:
+            event.clientY-
+            rect.top
+    };
+}
+
+
+/* ============================================================
+   BUSCAR PUNTO
+============================================================ */
+
+function findNode(x,y){
+
+    for(
+        let i=nodes.length-1;
+        i>=0;
+        i--
+    ){
+
+        const node=nodes[i];
+
+        const distance=
+            Math.hypot(
+                x-node.x,
+                y-node.y
+            );
+
+        if(
+            distance<
+            Math.max(
+                34,
+                node.radius+18
+            )
+        ){
+            return node;
+        }
+    }
+
+    return null;
+}
+
+
+/* ============================================================
+   CONEXIONES
+============================================================ */
+
+function areConnected(a,b){
+
+    return edges.some(
+        edge=>
+            (
+                edge.a===a.id&&
+                edge.b===b.id
+            )
+            ||
+            (
+                edge.a===b.id&&
+                edge.b===a.id
+            )
+    );
+}
+
+function findEdge(a,b){
+
+    return edges.find(
+        edge=>
+            !edge.used&&
+            (
+                (
+                    edge.a===a.id&&
+                    edge.b===b.id
+                )
+                ||
+                (
+                    edge.a===b.id&&
+                    edge.b===a.id
+                )
+            )
+    );
+}
+
+function hasAvailableMove(){
+
+    if(!currentNode){
+        return false;
+    }
+
+    return edges.some(
+        edge=>
+            !edge.used&&
+            (
+                edge.a===currentNode.id||
+                edge.b===currentNode.id
+            )
+    );
+}
+
+
+/* ============================================================
+   POINTER DOWN
+============================================================ */
+
+canvas.addEventListener(
+    "pointerdown",
+    event=>{
+
+        if(!running||paused){
+            return;
+        }
+
+        initAudio();
+
+        mouse=
+            pointerPosition(event);
+
+        const node=
+            findNode(
+                mouse.x,
+                mouse.y
+            );
+
+        if(!node){
+            return;
+        }
+
+        /*
+           La primera vez:
+           cualquier punto es válido.
+        */
+
+        if(!currentNode){
+
+            currentNode=node;
+            drawing=true;
+
+            particlesCreate(
+                node.x,
+                node.y,
+                "#00f5ff",
+                12
+            );
+
+            canvas.setPointerCapture(
+                event.pointerId
+            );
+
+            return;
+        }
+
+        /*
+           Después solamente podemos
+           continuar desde el último punto.
+        */
+
+        if(
+            node.id===
+            currentNode.id
+        ){
+
+            drawing=true;
+
+            canvas.setPointerCapture(
+                event.pointerId
+            );
+
+            return;
+        }
+
+        error(
+            node.x,
+            node.y,
+            "CONTINÚA DESDE EL ÚLTIMO PUNTO"
+        );
+    }
+);
+
+
+/* ============================================================
+   POINTER MOVE
+============================================================ */
+
+canvas.addEventListener(
+    "pointermove",
+    event=>{
+
+        mouse=
+            pointerPosition(event);
+
+        if(
+            !drawing||
+            !currentNode
+        ){
+            return;
+        }
+
+        const target=
+            findNode(
+                mouse.x,
+                mouse.y
+            );
+
+        if(
+            target&&
+            target.id!==currentNode.id
+        ){
+
+            attemptConnection(
+                currentNode,
+                target
+            );
+
+            drawing=false;
+
+            try{
+                canvas.releasePointerCapture(
+                    event.pointerId
+                );
+            }catch(e){}
+
+            return;
+        }
+    }
+);
+
+
+/* ============================================================
+   POINTER UP
+============================================================ */
+
+canvas.addEventListener(
+    "pointerup",
+    event=>{
+
+        if(!drawing){
+            return;
+        }
+
+        const target=
+            findNode(
+                mouse.x,
+                mouse.y
+            );
+
+        drawing=false;
+
+        try{
+            canvas.releasePointerCapture(
+                event.pointerId
+            );
+        }catch(e){}
+
+        if(
+            target&&
+            currentNode&&
+            target.id!==currentNode.id
+        ){
+
+            attemptConnection(
+                currentNode,
+                target
+            );
+        }
+    }
+);
+
+
+/* ============================================================
+   CONEXIÓN
+============================================================ */
+
+function attemptConnection(
+    from,
+    to
+){
+
+    if(
+        !areConnected(
+            from,
+            to
+        )
+    ){
+
+        error(
+            to.x,
+            to.y,
+            "NO HAY LÍNEA"
+        );
+
+        return;
+    }
+
+    const edge=
+        findEdge(
+            from,
+            to
+        );
+
+    if(!edge){
+
+        error(
+            to.x,
+            to.y,
+            "LÍNEA YA USADA"
+        );
+
+        return;
+    }
+
+    edge.used=true;
+
+    currentNode=to;
+
+    const x=
+        (from.x+to.x)/2;
+
+    const y=
+        (from.y+to.y)/2;
+
+    particlesCreate(
+        x,
+        y,
+        edge.color,
+        25
+    );
+
+    textCreate(
+        x,
+        y-12,
+        "✓",
+        "#39ff88"
+    );
+
+    score+=
+        100+
+        combo*20;
+
+    combo++;
+
+    correctSound();
+
+    updateHUD();
+
+    const complete=
+        edges.every(
+            edge=>edge.used
+        );
+
+    if(complete){
+
+        completeLevel();
+
+        return;
+    }
+
+    if(!hasAvailableMove()){
+
+        textCreate(
+            currentNode.x,
+            currentNode.y-25,
+            "SIN SALIDA",
+            "#ffe45c"
+        );
+    }
+}
+
+
+/* ============================================================
+   ERROR
+============================================================ */
+
+function error(
+    x,
+    y,
+    text="INCORRECTO"
+){
+
+    lives--;
+
+    combo=1;
+
+    timeLeft=
+        Math.max(
+            0,
+            timeLeft-2
+        );
+
+    errorSound();
+
+    textCreate(
+        x,
+        y-20,
+        text,
+        "#ff416c"
+    );
+
+    particlesCreate(
+        x,
+        y,
+        "#ff416c",
+        15
+    );
+
+    arena.animate(
+        [
+            {transform:"translateX(0)"},
+            {transform:"translateX(-7px)"},
+            {transform:"translateX(7px)"},
+            {transform:"translateX(-4px)"},
+            {transform:"translateX(0)"}
+        ],
+        {
+            duration:220
+        }
+    );
+
+    updateHUD();
+
+    if(lives<=0){
+        gameOver();
+    }
+}
+
+
+/* ============================================================
+   COMPLETAR NIVEL
+============================================================ */
+
+function completeLevel(){
+
+    running=false;
+
+    clearInterval(
+        timerInterval
+    );
+
+    nodes.forEach(node=>{
+
+        particlesCreate(
+            node.x,
+            node.y,
+            "#00f5ff",
+            22
+        );
+
+        particlesCreate(
+            node.x,
+            node.y,
+            "#ff29d9",
+            12
+        );
+    });
+
+    const bonus=
+        Math.floor(
+            timeLeft*20+
+            combo*100+
+            level*150
+        );
+
+    score+=bonus;
+
+    victorySound();
+
+    updateHUD();
+
+    setTimeout(
+        ()=>{
+
+            if(
+                level<
+                FIGURES.length
+            ){
+
+                levelCompleteScreen(
+                    bonus
+                );
+
+            }else{
+
+                victoryScreen();
+            }
+
+        },
+        900
+    );
+}
+
+
+/* ============================================================
+   PANTALLA DE NIVEL COMPLETADO
+============================================================ */
+
+function levelCompleteScreen(
+    bonus
+){
+
+    const figure=
+        FIGURES[level-1];
+
+    message.innerHTML=`
+
+        <h1
+            style="
+                color:#39ff88;
+                text-shadow:
+                0 0 25px
+                rgba(57,255,136,.5)
+            "
+        >
+            ¡COMPLETADO!
+        </h1>
+
+        <p>
+
+            Descubriste:
+
+            <br>
+
+            <strong
+                style="
+                    color:#00f5ff;
+                    font-size:20px;
+                "
+            >
+                ${figure.name}
+            </strong>
+
+            <br><br>
+
+            Bonus:
+
+            <strong style="color:#ffe45c">
+                +${bonus}
+            </strong>
+
+        </p>
+
+        <button
+            class="main-btn"
+            id="nextLevel"
+        >
+            SIGUIENTE FIGURA
+        </button>
+    `;
+
+    message.classList.add("show");
+
+    document
+        .getElementById("nextLevel")
+        .onclick=
+        nextLevel;
+}
+
+
+/* ============================================================
+   SIGUIENTE NIVEL
+============================================================ */
+
+function nextLevel(){
+
+    level++;
+
+    lives=
+        Math.min(
+            3,
+            lives+1
+        );
+
+    timeLeft=
+        Math.max(
+            32,
+            60-(level-1)*2
+        );
+
+    paused=false;
+    running=true;
+
+    message.classList.remove(
+        "show"
+    );
+
+    createLevel();
+
+    startTimer();
+
+    updateHUD();
+}
+
+
+/* ============================================================
+   REPETIR SOLAMENTE EL NIVEL ACTUAL
+============================================================ */
+
+function repeatCurrentLevel(){
+
+    /*
+       Si no estamos jugando todavía,
+       no hacemos nada.
+    */
+
+    if(!running){
+        return;
+    }
+
+    initAudio();
+
+    /*
+       Pausamos temporalmente el juego
+       mientras reiniciamos la figura.
+    */
+
+    running=false;
+
+    clearInterval(
+        timerInterval
+    );
+
+    message.innerHTML=`
+
+        <h1
+            style="
+                color:#00f5ff;
+                font-size:30px;
+            "
+        >
+            REPETIR FIGURA
+        </h1>
+
+        <p>
+
+            ¿Quieres volver a intentar
+            <strong style="color:#39ff88">
+                ${FIGURES[level-1].name}
+            </strong>?
+
+            <br><br>
+
+            Tu puntuación y tu nivel
+            se mantienen.
+
+        </p>
+
+        <button
+            class="main-btn"
+            id="confirmRepeat"
+        >
+            REPETIR
+        </button>
+
+        <button
+            class="main-btn"
+            id="cancelRepeat"
+            style="
+                margin-left:8px;
+                color:white;
+                background:
+                rgba(255,255,255,.10);
+                box-shadow:none;
+            "
+        >
+            CANCELAR
+        </button>
+    `;
+
+    message.classList.add(
+        "show"
+    );
+
+    document
+        .getElementById(
+            "confirmRepeat"
+        )
+        .onclick=
+        ()=>{
+            actuallyRepeatLevel();
+        };
+
+    document
+        .getElementById(
+            "cancelRepeat"
+        )
+        .onclick=
+        ()=>{
+            message.classList.remove(
+                "show"
+            );
+
+            running=true;
+
+            startTimer();
+        };
+}
+
+
+/* ============================================================
+   REINICIAR FIGURA
+============================================================ */
+
+function actuallyRepeatLevel(){
+
+    /*
+       IMPORTANTE:
+
+       NO hacemos:
+
+       level=1
+       score=0
+
+       porque solamente queremos
+       repetir la figura actual.
+    */
+
+    combo=1;
+
+    /*
+       Reiniciamos el tiempo del nivel.
+    */
+
+    timeLeft=
+        Math.max(
+            32,
+            60-(level-1)*2
+        );
+
+    /*
+       Las vidas NO se reinician.
+       El jugador conserva las vidas
+       que tenía.
+    */
+
+    running=true;
+    paused=false;
+
+    message.classList.remove(
+        "show"
+    );
+
+    /*
+       Esto crea nuevamente:
+
+       - puntos
+       - líneas
+       - conexiones
+       - progreso
+
+       pero mantiene:
+
+       - nivel
+       - puntuación
+       - vidas
+    */
+
+    createLevel();
+
+    startTimer();
+
+    updateHUD();
+
+    textCreate(
+        W/2,
+        H/2-130,
+        "NUEVO INTENTO",
+        "#00f5ff"
+    );
+
+    beep(700,.08);
+}
+
+
+/* ============================================================
+   GAME OVER
+============================================================ */
+
+function gameOver(){
+
+    running=false;
+
+    clearInterval(
+        timerInterval
+    );
+
+    message.innerHTML=`
+
+        <h1
+            style="color:#ff416c"
+        >
+            GAME OVER
+        </h1>
+
+        <p>
+
+            Llegaste al nivel:
+
+            <strong style="color:#00f5ff">
+                ${level}
+            </strong>
+
+            <br><br>
+
+            Puntuación:
+
+            <strong style="color:#ffe45c">
+                ${score}
+            </strong>
+
+        </p>
+
+        <button
+            class="main-btn"
+            id="retry"
+        >
+            VOLVER A JUGAR
+        </button>
+    `;
+
+    message.classList.add(
+        "show"
+    );
+
+    document
+        .getElementById("retry")
+        .onclick=
+        restartGame;
+}
+
+
+/* ============================================================
+   VICTORIA
+============================================================ */
+
+function victoryScreen(){
+
+    message.innerHTML=`
+
+        <h1
+            style="
+                color:#ffe45c;
+                text-shadow:
+                0 0 30px
+                rgba(255,228,92,.5)
+            "
+        >
+            ¡MAESTRO!
+        </h1>
+
+        <p>
+
+            Has completado
+            todas las figuras.
+
+            <br><br>
+
+            Puntuación final:
+
+            <strong style="color:#ffe45c">
+                ${score}
+            </strong>
+
+        </p>
+
+        <button
+            class="main-btn"
+            id="again"
+        >
+            JUGAR DE NUEVO
+        </button>
+    `;
+
+    message.classList.add(
+        "show"
+    );
+
+    document
+        .getElementById("again")
+        .onclick=
+        restartGame;
+}
+
+
+/* ============================================================
+   TEMPORIZADOR
+============================================================ */
+
+function startTimer(){
+
+    clearInterval(
+        timerInterval
+    );
+
+    timerInterval=
+        setInterval(
+            ()=>{
+
+                if(
+                    !running||
+                    paused
+                ){
+                    return;
+                }
+
+                timeLeft-=.1;
+
+                if(
+                    Math.ceil(timeLeft)!==
+                    Math.ceil(timeLeft+.1)
+                ){
+
+                    hourglass.classList.remove(
+                        "flip"
+                    );
+
+                    void hourglass.offsetWidth;
+
+                    hourglass.classList.add(
+                        "flip"
+                    );
+                }
+
+                if(timeLeft<=0){
+
+                    timeLeft=0;
+
+                    updateHUD();
+
+                    gameOver();
+
+                    return;
+                }
+
+                updateHUD();
+
+            },
+            100
+        );
+}
+
+
+/* ============================================================
+   INICIAR PARTIDA COMPLETA
+============================================================ */
+
+function startGame(){
+
+    initAudio();
+
+    level=1;
+
+    score=0;
+    combo=1;
+    lives=3;
+
+    timeLeft=60;
+
+    paused=false;
+    running=true;
+
+    message.classList.remove(
+        "show"
+    );
+
+    createLevel();
+
+    startTimer();
+
+    updateHUD();
+}
+
+
+/* ============================================================
+   VOLVER A EMPEZAR TODO
+============================================================ */
+
+function restartGame(){
+
+    initAudio();
+
+    level=1;
+
+    score=0;
+    combo=1;
+    lives=3;
+
+    timeLeft=60;
+
+    paused=false;
+    running=true;
+
+    message.classList.remove(
+        "show"
+    );
+
+    createLevel();
+
+    startTimer();
+
+    updateHUD();
+}
+
+
+/* ============================================================
+   PAUSA
+============================================================ */
+
+function togglePause(){
+
+    if(!running){
+        return;
+    }
+
+    paused=!paused;
+
+    const button=
+        document.getElementById(
+            "pause"
+        );
+
+    if(paused){
+
+        button.textContent="▶";
+
+        message.innerHTML=`
+
+            <h1>PAUSA</h1>
+
+            <p>
+                El puzzle está pausado.
+            </p>
+
+            <button
+                class="main-btn"
+                id="resume"
+            >
+                CONTINUAR
+            </button>
+        `;
+
+        message.classList.add(
+            "show"
+        );
+
+        document
+            .getElementById("resume")
+            .onclick=
+            togglePause;
+
+    }else{
+
+        button.textContent="Ⅱ";
+
+        message.classList.remove(
+            "show"
+        );
+    }
+}
+
+
+/* ============================================================
+   BOTONES
+============================================================ */
+
+document
+    .getElementById("start")
+    .onclick=
+    startGame;
+
+document
+    .getElementById("repeat")
+    .onclick=
+    repeatCurrentLevel;
+
+document
+    .getElementById("pause")
+    .onclick=
+    togglePause;
+
+document
+    .getElementById("sound")
+    .onclick=
+    ()=>{
+
+        soundEnabled=
+            !soundEnabled;
+
+        document
+            .getElementById("sound")
+            .textContent=
+            soundEnabled
+            ?"🔊"
+            :"🔇";
+
+        if(soundEnabled){
+            beep(700,.08);
+        }
+    };
+
+
+/* ============================================================
+   TECLADO
+============================================================ */
+
+document.addEventListener(
+    "keydown",
+    event=>{
+
+        if(
+            event.key==="Escape"
+        ){
+            togglePause();
+        }
+
+        /*
+           R = REPETIR NIVEL ACTUAL
+
+           Ya NO reinicia toda la partida.
+        */
+
+        if(
+            event.key.toLowerCase()==="r"
+        ){
+
+            if(
+                running&&
+                !paused
+            ){
+                repeatCurrentLevel();
+            }
+        }
+    }
+);
+
+
+/* ============================================================
+   INICIO
+============================================================ */
+
+resizeCanvas();
+
+createLevel();
+
+updateHUD();
+
+</script>
+
+</body>
+</html>
