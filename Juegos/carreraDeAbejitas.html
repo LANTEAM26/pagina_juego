@@ -35,38 +35,40 @@
         .decorations::before { content: ''; position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg width='60' height='104' viewBox='0 0 60 104' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 52l15-26 15 26v52l-15 26-15-26zM0 0l15 26v52L0 104V0zm60 0v104L45 78V26z' fill='%23ffffff' fill-opacity='0.15' fill-rule='evenodd'/%3E%3C/svg%3E"); z-index: 1; }
         .sun { position: absolute; top: 3%; right: 5%; font-size: 70px; z-index: 2; filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.8)); animation: pulse-sun 3s infinite alternate; }
         @keyframes pulse-sun { 0% { transform: scale(1) rotate(0deg); } 100% { transform: scale(1.1) rotate(10deg); } }
-        .cloud { position: absolute; font-size: 60px; opacity: 0.8; z-index: 2; filter: drop-shadow(0 5px 15px rgba(255,255,255,0.5)); }
-        .c1 { top: 8%; left: -20%; animation: drift 35s linear infinite; } .c2 { top: 20%; left: -20%; animation: drift 45s linear infinite 15s; font-size: 45px;} .c3 { top: 5%; left: -20%; animation: drift 55s linear infinite 25s; font-size: 80px;}
-        @keyframes drift { 0% { transform: translateX(-20vw); } 100% { transform: translateX(120vw); } }
         .grass { position: absolute; bottom: -5vh; left: -10vw; width: 120vw; height: 25vh; background: #a9dfbf; border-radius: 50% 50% 0 0; z-index: 2; box-shadow: inset 0 15px 0 #82e0aa, 0 -30px 50px rgba(46,204,113,0.3); }
 
-        .flower { position: absolute; font-size: 35px; bottom: 15vh; z-index: 3; transform-origin: bottom center; animation: sway 2.5s ease-in-out infinite alternate; }
-        .f1 { left: 12%; animation-delay: 0s; font-size: 45px; } .f2 { left: 28%; animation-delay: 1s; bottom: 12vh; font-size: 30px;} .f3 { right: 25%; animation-delay: 0.5s; bottom: 18vh; font-size: 40px; } .f4 { right: 8%; animation-delay: 1.5s; font-size: 50px;}
-        @keyframes sway { 0% { transform: rotate(-12deg); } 100% { transform: rotate(12deg); } }
-
         h1 { color: #2c3e50; margin: 5px 0; text-align: center; font-size: 28px; text-shadow: 2px 2px 0px #fff; position: relative; }
-        p.instrucciones { text-align: center; background: rgba(255, 255, 255, 0.85); padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 600; max-width: 550px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; }
+        
+        .difficulty-selector { display: flex; gap: 10px; margin-bottom: 10px; position: relative; z-index: 10; }
+        .diff-btn { background-color: rgba(255, 255, 255, 0.9); border: 2px solid transparent; padding: 8px 15px; border-radius: 20px; font-size: 14px; font-weight: bold; color: #333; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: all 0.2s; }
+        .diff-btn.active { background-color: #f1c40f; border-color: #f39c12; color: #d35400; box-shadow: 0 4px 0 #f39c12; transform: translateY(-2px); }
 
-        .grid-wrapper { position: relative; margin-bottom: 15px; padding: 10px; background: #ffe0b2; border-radius: 15px; box-shadow: 0 8px 0 #ffb74d, 0 15px 25px rgba(0,0,0,0.25); }
-        #grid { display: grid; grid-template-columns: repeat(4, 70px); grid-template-rows: repeat(4, 70px); gap: 6px; background-color: var(--grid-bg); border-radius: 10px; padding: 6px; }
+        .grid-wrapper { position: relative; margin-bottom: 15px; padding: 10px; background: #ffe0b2; border-radius: 15px; box-shadow: 0 8px 0 #ffb74d, 0 15px 25px rgba(0,0,0,0.25); z-index: 10;}
+        
+        /* Grid dinámico que se adapta desde JS */
+        #grid { display: grid; gap: 6px; background-color: var(--grid-bg); border-radius: 10px; padding: 6px; transition: all 0.3s;}
         #drawing-canvas { position: absolute; top: 10px; left: 10px; z-index: 10; cursor: crosshair; border-radius: 10px; }
 
         .cell { background-color: #fff9c4; border-radius: 8px; display: flex; justify-content: center; align-items: center; position: relative; user-select: none; box-shadow: inset 0 -4px 0 rgba(0,0,0,0.1); }
 
         .blue, .green { animation: pulse 1.5s infinite alternate; }
-        .blue::after, .green::after { content: '💧'; font-size: 32px; position: absolute; }
+        .blue::after, .green::after { content: '💧'; font-size: 24px; position: absolute; }
         .blue { background-color: #aed6f1; box-shadow: inset 0 0 15px var(--p1-main); }
         .green::after { content: '🍃'; }
         .green { background-color: #a9dfbf; box-shadow: inset 0 0 15px var(--p2-main); }
 
+        /* Obstáculos Nuevos */
+        .obstacle-cell { background-color: #95a5a6 !important; box-shadow: inset 0 -4px 0 #7f8c8d !important; }
+        .obstacle-cell::after { content: '🪨'; font-size: 28px; position: absolute; }
+
         @keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(0.92); } }
 
-        .bee-container { position: absolute; z-index: 5; width: 55px; height: 55px; display: flex; justify-content: center; align-items: center; }
-        .bee-orientation { transition: transform 0.2s ease; display: flex; justify-content: center; align-items: center; }
-        .bee-sprite { display: flex; justify-content: center; align-items: center; animation: float 2s ease-in-out infinite; }
+        .bee-container { position: absolute; z-index: 5; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
+        .bee-orientation { transition: transform 0.2s ease; display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; }
+        .bee-sprite { display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; animation: float 2s ease-in-out infinite; }
         @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-5px); } }
 
-        .panels-container { display: flex; flex-direction: row !important; flex-wrap: nowrap !important; justify-content: space-between; width: 98%; max-width: 900px; margin-bottom: 20px; position: relative; }
+        .panels-container { display: flex; flex-direction: row !important; flex-wrap: nowrap !important; justify-content: space-between; width: 98%; max-width: 900px; margin-bottom: 20px; position: relative; z-index: 10; }
         .panel { box-sizing: border-box; background: rgba(255, 255, 255, 0.95); padding: 10px; border-radius: 18px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); width: 49%; max-width: 400px; display: flex; flex-direction: column; align-items: center; }
         .panel.player1 { border: 4px solid var(--p1-main); }
         .panel.player2 { border: 4px solid var(--p2-main); }
@@ -75,25 +77,25 @@
         .player1 h3 { color: var(--p1-dark); }
         .player2 h3 { color: var(--p2-dark); }
 
-        .btn-group { display: flex; gap: 4px; justify-content: space-between; width: 100%; margin-bottom: 10px; }
-        button { font-family: 'Fredoka', sans-serif; font-weight: 700; border: none; border-radius: 10px; cursor: pointer; transition: all 0.1s; user-select: none; }
+        .btn-group { display: flex; gap: 4px; justify-content: space-between; width: 100%; margin-bottom: 5px; }
+        button { font-family: 'Fredoka', sans-serif; font-weight: 700; border: none; border-radius: 8px; cursor: pointer; transition: all 0.1s; user-select: none; }
         button:active { transform: translateY(4px); box-shadow: 0 0px 0 transparent !important; }
-        button.cmd-btn { padding: 8px 2px; font-size: 11px; color: white; flex: 1; white-space: nowrap; }
+        button.cmd-btn { padding: 6px 2px; font-size: 11px; color: white; flex: 1; white-space: nowrap; }
         
         .player1 button.cmd-btn { background-color: var(--p1-main); box-shadow: 0 4px 0 var(--p1-dark); }
         .player2 button.cmd-btn { background-color: var(--p2-main); box-shadow: 0 4px 0 var(--p2-dark); }
         
-        /* Botón de Borrar */
+        /* Botón de Borrar (Deshacer) */
         .undo-btn { background-color: #e74c3c !important; box-shadow: 0 4px 0 #c0392b !important; }
 
-        .seq-container { display: flex; flex-wrap: wrap; gap: 4px; min-height: 40px; background: rgba(255,255,255,0.7); padding: 6px; border-radius: 10px; width: 90%; border: 2px dashed rgba(0,0,0,0.1); }
-        .cmd-block { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 6px; color: white; font-weight: bold; font-size: 14px; box-shadow: 0 3px 0 rgba(0,0,0,0.2); animation: popIn 0.2s ease-out; }
+        .seq-container { display: flex; flex-wrap: wrap; gap: 4px; min-height: 35px; background: rgba(255,255,255,0.7); padding: 6px; border-radius: 10px; width: 90%; border: 2px dashed rgba(0,0,0,0.1); margin-top: 5px;}
+        .cmd-block { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 6px; color: white; font-weight: bold; font-size: 13px; box-shadow: 0 3px 0 rgba(0,0,0,0.2); animation: popIn 0.2s ease-out; }
         @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
 
         .player1 .cmd-block { background: var(--p1-main); }
         .player2 .cmd-block { background: var(--p2-main); }
 
-        .global-controls { display: flex; gap: 15px; margin-bottom: 20px; position: relative; }
+        .global-controls { display: flex; gap: 15px; margin-bottom: 20px; position: relative; z-index: 10; }
         button.global-btn { padding: 12px 20px; font-size: 18px; color: white; border-radius: 15px; }
         button#go-btn { background-color: #ff9800; box-shadow: 0 5px 0 #f57c00; }
         button.reset-btn { background-color: #e74c3c; box-shadow: 0 5px 0 #c0392b; }
@@ -110,12 +112,18 @@
 <body>
 
     <div class="decorations">
-        <div class="sun">☀️</div><div class="cloud c1">☁️</div><div class="cloud c2">☁️</div><div class="cloud c3">☁️</div>
-        <div class="grass"></div><div class="flower f1">🌻</div><div class="flower f2">🌸</div><div class="flower f3">🌷</div><div class="flower f4">🌼</div>
+        <div class="sun">☀️</div>
+        <div class="grass"></div>
     </div>
 
     <h1>¡Carrera de Abejitas! 🐝</h1>
-    <p class="instrucciones">1. Dibuja el camino.<br> 2. Programa con los botones.<br> 3. ¡Presiona <b>VOLAR</b> para comer!</p>
+    
+    <!-- Selector de Dificultad Dinámico -->
+    <div class="difficulty-selector">
+        <button id="diff-1" class="diff-btn active" onclick="setDifficulty(1)">⭐ Pequeño (4x4)</button>
+        <button id="diff-2" class="diff-btn" onclick="setDifficulty(2)">⭐⭐ Mediano (5x5)</button>
+        <button id="diff-3" class="diff-btn" onclick="setDifficulty(3)">⭐⭐⭐ Grande (6x6)</button>
+    </div>
 
     <div class="grid-wrapper">
         <div id="grid"></div>
@@ -125,31 +133,37 @@
     <div class="panels-container">
         <!-- Panel Azul -->
         <div class="panel player1">
-            <h3>🐝 Azul</h3>
+            <h3>🐝 Equipo Azul</h3>
+            <div class="btn-group">
+                <button class="cmd-btn" onclick="addCommand(1, 'F')">⬆️ Avanza</button>
+                <button class="cmd-btn" onclick="addCommand(1, 'B')">⬇️ Atrás</button>
+            </div>
             <div class="btn-group">
                 <button class="cmd-btn" onclick="addCommand(1, 'L')">↺ Izq</button>
-                <button class="cmd-btn" onclick="addCommand(1, 'F')">⬆️ Avanza</button>
                 <button class="cmd-btn" onclick="addCommand(1, 'R')">↻ Der</button>
-                <button class="cmd-btn undo-btn" onclick="undoCommand(1)">🔙 Borrar</button>
+                <button class="cmd-btn undo-btn" onclick="undoCommand(1)">❌ Borrar</button>
             </div>
             <div class="seq-container" id="seq1"></div>
         </div>
 
         <!-- Panel Verde -->
         <div class="panel player2">
-            <h3>🐝 Verde</h3>
+            <h3>🐝 Equipo Verde</h3>
+            <div class="btn-group">
+                <button class="cmd-btn" onclick="addCommand(2, 'F')">⬆️ Avanza</button>
+                <button class="cmd-btn" onclick="addCommand(2, 'B')">⬇️ Atrás</button>
+            </div>
             <div class="btn-group">
                 <button class="cmd-btn" onclick="addCommand(2, 'L')">↺ Izq</button>
-                <button class="cmd-btn" onclick="addCommand(2, 'F')">⬆️ Avanza</button>
                 <button class="cmd-btn" onclick="addCommand(2, 'R')">↻ Der</button>
-                <button class="cmd-btn undo-btn" onclick="undoCommand(2)">🔙 Borrar</button>
+                <button class="cmd-btn undo-btn" onclick="undoCommand(2)">❌ Borrar</button>
             </div>
             <div class="seq-container" id="seq2"></div>
         </div>
     </div>
     
     <div class="global-controls">
-        <button class="global-btn" onclick="executeCommands()" id="go-btn">🚀 ¡VOLAR!</button>
+        <button class="global-btn" onclick="executeCommands()" id="go-btn">🚀 ¡VOLAR Y COMER!</button>
         <button class="global-btn reset-btn" onclick="resetGame()">🔄 Resetear Nivel</button>
     </div>
 
@@ -161,16 +175,47 @@
     </div>
 
     <script>
-        const gridSize = 4; let isExecuting = false;
-        let bees = { 1: { pos: {x: 0, y: 0}, dir: 0, commands: [] }, 2: { pos: {x: 3, y: 3}, dir: 2, commands: [] } };
-        const gridEl = document.getElementById('grid'); const canvas = document.getElementById('drawing-canvas'); const ctx = canvas.getContext('2d');
+        let currentDifficulty = 1;
+        let gridSize = 4; 
+        let isExecuting = false;
+        let obstaclesSet = new Set();
+        
+        let bees = { 
+            1: { pos: {x: 0, y: 0}, dir: 0, commands: [] }, 
+            2: { pos: {x: 3, y: 3}, dir: 2, commands: [] } 
+        };
+
+        const gridEl = document.getElementById('grid'); 
+        const canvas = document.getElementById('drawing-canvas'); 
+        const ctx = canvas.getContext('2d');
         let isDrawing = false;
+
+        function setDifficulty(level) {
+            if (isExecuting) return;
+            currentDifficulty = level;
+            gridSize = level === 1 ? 4 : (level === 2 ? 5 : 6);
+            
+            // Actualizar botones UI
+            document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('diff-' + level).classList.add('active');
+            resetGame();
+        }
 
         function initGrid() {
             gridEl.innerHTML = '';
+            
+            // Ajustar el tamaño de la celda según el tamaño del grid para que quepa en pantalla
+            let cellSize = currentDifficulty === 1 ? 65 : (currentDifficulty === 2 ? 55 : 45);
+            gridEl.style.gridTemplateColumns = `repeat(${gridSize}, ${cellSize}px)`;
+            gridEl.style.gridTemplateRows = `repeat(${gridSize}, ${cellSize}px)`;
+
             for (let y = 0; y < gridSize; y++) {
                 for (let x = 0; x < gridSize; x++) {
-                    const cell = document.createElement('div'); cell.className = 'cell'; cell.dataset.x = x; cell.dataset.y = y; cell.id = `cell-${x}-${y}`;
+                    const cell = document.createElement('div'); 
+                    cell.className = 'cell'; 
+                    cell.dataset.x = x; 
+                    cell.dataset.y = y; 
+                    cell.id = `cell-${x}-${y}`;
                     gridEl.appendChild(cell);
                 }
             }
@@ -186,13 +231,44 @@
         canvas.addEventListener('touchstart', startDraw, { passive: false }); canvas.addEventListener('touchmove', draw, { passive: false }); window.addEventListener('touchend', stopDraw);
 
         function spawnSquares() {
-            let p1 = 0;
-            while (p1 < 3) { let rx = Math.floor(Math.random() * 4); let ry = Math.floor(Math.random() * 2); const cell = document.getElementById(`cell-${rx}-${ry}`);
-                if ((rx !== 0 || ry !== 0) && !cell.classList.contains('blue')) { cell.classList.add('blue'); p1++; }
+            obstaclesSet.clear();
+            let p1Count = 0, p2Count = 0;
+            
+            // Cantidad de elementos según dificultad
+            let targetCount = currentDifficulty === 1 ? 3 : (currentDifficulty === 2 ? 4 : 5);
+            let obsCount = currentDifficulty === 1 ? 0 : (currentDifficulty === 2 ? 3 : 6);
+
+            // Generar comida Azul (Mitad superior)
+            while (p1Count < targetCount) { 
+                let rx = Math.floor(Math.random() * gridSize); 
+                let ry = Math.floor(Math.random() * Math.floor(gridSize/2)); 
+                const cell = document.getElementById(`cell-${rx}-${ry}`);
+                if ((rx !== 0 || ry !== 0) && !cell.classList.contains('blue')) { cell.classList.add('blue'); p1Count++; }
             }
-            let p2 = 0;
-            while (p2 < 3) { let rx = Math.floor(Math.random() * 4); let ry = Math.floor(Math.random() * 2) + 2; const cell = document.getElementById(`cell-${rx}-${ry}`);
-                if ((rx !== 3 || ry !== 3) && !cell.classList.contains('green')) { cell.classList.add('green'); p2++; }
+            
+            // Generar comida Verde (Mitad inferior)
+            while (p2Count < targetCount) { 
+                let rx = Math.floor(Math.random() * gridSize); 
+                let ry = Math.floor(Math.random() * Math.ceil(gridSize/2)) + Math.floor(gridSize/2); 
+                const cell = document.getElementById(`cell-${rx}-${ry}`);
+                if ((rx !== gridSize - 1 || ry !== gridSize - 1) && !cell.classList.contains('green')) { cell.classList.add('green'); p2Count++; }
+            }
+
+            // Generar Rocas (Obstáculos)
+            let obsPlaced = 0;
+            while(obsPlaced < obsCount) {
+                let rx = Math.floor(Math.random() * gridSize);
+                let ry = Math.floor(Math.random() * gridSize);
+                const cell = document.getElementById(`cell-${rx}-${ry}`);
+                
+                let isStartPos = (rx === 0 && ry === 0) || (rx === gridSize-1 && ry === gridSize-1);
+                let hasTarget = cell.classList.contains('blue') || cell.classList.contains('green');
+
+                if (!isStartPos && !hasTarget && !cell.classList.contains('obstacle-cell')) {
+                    cell.classList.add('obstacle-cell');
+                    obstaclesSet.add(`${rx},${ry}`);
+                    obsPlaced++;
+                }
             }
         }
 
@@ -213,9 +289,9 @@
                 const orientation = document.createElement('div'); orientation.className = 'bee-orientation'; orientation.style.transform = getTransform(b.dir);
                 const sprite = document.createElement('div'); sprite.className = 'bee-sprite';
                 
-                // Aplicamos el sprite personalizado
+                // Aplicamos el sprite dinámico
                 let filterColor = playerNum === 2 ? 'filter: hue-rotate(120deg) brightness(1.1);' : '';
-                sprite.innerHTML = `<img src="../assets/robots/BeebotEmoji.png" alt="Bee" style="width: 48px; height: 48px; object-fit: contain; pointer-events: none; ${filterColor}">`;
+                sprite.innerHTML = `<img src="../assets/robots/BeebotEmoji.png" alt="Bee" style="width: 80%; height: 80%; object-fit: contain; pointer-events: none; ${filterColor}">`;
                 
                 orientation.appendChild(sprite); container.appendChild(orientation); cell.appendChild(container);
                 if (cell.classList.contains(playerNum === 1 ? 'blue' : 'green')) cell.classList.remove(playerNum === 1 ? 'blue' : 'green');
@@ -229,7 +305,7 @@
             }
         }
 
-        // AGREGADA FUNCIÓN UNDO (Borrar)
+        // BOTÓN DESHACER (Borrar el último comando ingresado)
         function undoCommand(player) {
             if (isExecuting || bees[player].commands.length === 0) return;
             bees[player].commands.pop();
@@ -238,17 +314,36 @@
 
         function addCommand(player, cmd) { if(isExecuting) return; bees[player].commands.push(cmd); updateSequenceUI(player); }
         function updateSequenceUI(player) {
-            const symbols = { 'F': '⬆️', 'R': '↻', 'L': '↺' }; const container = document.getElementById(`seq${player}`); container.innerHTML = ''; 
+            const symbols = { 'F': '⬆️', 'B': '⬇️', 'R': '↻', 'L': '↺' }; 
+            const container = document.getElementById(`seq${player}`); container.innerHTML = ''; 
             bees[player].commands.forEach(cmd => { const span = document.createElement('span'); span.className = 'cmd-block'; span.innerText = symbols[cmd]; container.appendChild(span); });
         }
 
+        // CÁLCULO FÍSICO DE MOVIMIENTO HACIA ADELANTE Y ATRÁS
         function processMove(player, cmd) {
             let b = bees[player];
-            if (cmd === 'F') {
+            if (cmd === 'F' || cmd === 'B') {
                 let newX = b.pos.x, newY = b.pos.y;
-                if (b.dir === 0) newX++; else if (b.dir === 1) newY++; else if (b.dir === 2) newX--; else if (b.dir === 3) newY--; 
-                if (newX >= 0 && newX < gridSize && newY >= 0 && newY < gridSize) { b.pos.x = newX; b.pos.y = newY; }
-            } else if (cmd === 'R') b.dir = (b.dir + 1) % 4; else if (cmd === 'L') b.dir = (b.dir + 3) % 4; 
+                
+                // Si es Adelante suma 1 a la dirección. Si es Atrás, resta 1 a la dirección.
+                let step = (cmd === 'F') ? 1 : -1;
+                
+                if (b.dir === 0) newX += step;       // Este
+                else if (b.dir === 1) newY += step;  // Sur
+                else if (b.dir === 2) newX -= step;  // Oeste
+                else if (b.dir === 3) newY -= step;  // Norte
+                
+                if (newX >= 0 && newX < gridSize && newY >= 0 && newY < gridSize) { 
+                    // Revisar que no haya una roca en el camino
+                    if (!obstaclesSet.has(`${newX},${newY}`)) {
+                        b.pos.x = newX; b.pos.y = newY; 
+                    }
+                }
+            } else if (cmd === 'R') {
+                b.dir = (b.dir + 1) % 4; 
+            } else if (cmd === 'L') {
+                b.dir = (b.dir + 3) % 4; 
+            }
         }
 
         function executeCommands() {
@@ -266,7 +361,7 @@
         function showModal(title, msg) { document.getElementById('m-title').innerText = title; document.getElementById('m-msg').innerText = msg; document.getElementById('modal').classList.add('active'); }
         function closeModal() { document.getElementById('modal').classList.remove('active'); }
 
-        // LÓGICA DE VICTORIA MEJORADA (Muestra quién ganó individualmente)
+        // LÓGICA DE VICTORIA
         function checkWin() {
             const bluesLeft = document.querySelectorAll('.blue').length; 
             const greensLeft = document.querySelectorAll('.green').length;
@@ -289,12 +384,17 @@
         }
 
         function resetGame() {
-            bees[1] = { pos: {x: 0, y: 0}, dir: 0, commands: [] }; bees[2] = { pos: {x: 3, y: 3}, dir: 2, commands: [] }; isExecuting = false;
+            // Posiciones iniciales se calculan basadas en el tamaño del mapa
+            bees[1] = { pos: {x: 0, y: 0}, dir: 0, commands: [] }; 
+            bees[2] = { pos: {x: gridSize-1, y: gridSize-1}, dir: 2, commands: [] }; 
+            
+            isExecuting = false;
             updateSequenceUI(1); updateSequenceUI(2); document.getElementById('go-btn').style.opacity = "1"; ctx.clearRect(0, 0, canvas.width, canvas.height);
             initGrid(); spawnSquares(); drawBees();
         }
 
-        initGrid(); spawnSquares(); drawBees();
+        // Inicio automático
+        resetGame();
     </script>
 </body>
 </html>
