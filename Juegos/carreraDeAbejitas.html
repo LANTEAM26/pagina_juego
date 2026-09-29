@@ -43,6 +43,57 @@
         .diff-btn { background-color: rgba(255, 255, 255, 0.9); border: 2px solid transparent; padding: 8px 15px; border-radius: 20px; font-size: 14px; font-weight: bold; color: #333; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: all 0.2s; }
         .diff-btn.active { background-color: #f1c40f; border-color: #f39c12; color: #d35400; box-shadow: 0 4px 0 #f39c12; transform: translateY(-2px); }
 
+        /* TEMPORIZADOR CON BOTÓN PLAY/PAUSE */
+        .timer-container {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            background: #fff;
+            border: 3px solid #3498db;
+            color: #2980b9;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            box-shadow: 0 4px 0 #2980b9, 0 10px 20px rgba(0,0,0,0.15);
+            margin-bottom: 10px;
+            z-index: 10;
+            position: relative;
+        }
+        .timer-container.warning {
+            border-color: #e74c3c;
+            color: #c0392b;
+            box-shadow: 0 4px 0 #c0392b, 0 10px 20px rgba(231,76,60,0.3);
+            animation: pulseTimer 1s infinite alternate;
+        }
+        @keyframes pulseTimer {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+        .timer-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 0 #2980b9;
+            transition: all 0.1s;
+        }
+        .timer-btn:active {
+            transform: translateY(3px);
+            box-shadow: none;
+        }
+        .timer-container.warning .timer-btn {
+            background: #e74c3c;
+            box-shadow: 0 3px 0 #c0392b;
+        }
+
         .grid-wrapper { position: relative; margin-bottom: 15px; padding: 10px; background: #ffe0b2; border-radius: 15px; box-shadow: 0 8px 0 #ffb74d, 0 15px 25px rgba(0,0,0,0.25); z-index: 10;}
         
         /* Grid dinámico que se adapta desde JS */
@@ -125,6 +176,12 @@
         <button id="diff-3" class="diff-btn" onclick="setDifficulty(3)">⭐⭐⭐ Grande (6x6)</button>
     </div>
 
+    <!-- Contenedor del Temporizador con botón Play/Pause -->
+    <div id="timer-display" class="timer-container">
+        <button id="timer-ctrl-btn" class="timer-btn" onclick="toggleTimer()">▶</button>
+        <span>⏳ <span id="time-left">02:00</span></span>
+    </div>
+
     <div class="grid-wrapper">
         <div id="grid"></div>
         <canvas id="drawing-canvas"></canvas>
@@ -182,7 +239,7 @@
         
         let bees = { 
             1: { pos: {x: 0, y: 0}, dir: 0, commands: [] }, 
-            2: { pos: {x: 3, y: 3}, dir: 2, commands: [] } 
+            2: { pos: {x: gridSize-1, y: gridSize-1}, dir: 2, commands: [] } 
         };
 
         const gridEl = document.getElementById('grid'); 
@@ -190,12 +247,71 @@
         const ctx = canvas.getContext('2d');
         let isDrawing = false;
 
+        // Variables del temporizador con control manual
+        let timerInterval = null;
+        let timeLeft = 120; // 2 minutos
+        let isTimerRunning = false;
+
+        function formatTime(seconds) {
+            let m = Math.floor(seconds / 60);
+            let s = seconds % 60;
+            return (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s);
+        }
+
+        function toggleTimer() {
+            if (currentDifficulty === 1) return;
+            isTimerRunning = !isTimerRunning;
+            let btn = document.getElementById('timer-ctrl-btn');
+            
+            if (isTimerRunning) {
+                btn.innerText = "⏸";
+            } else {
+                btn.innerText = "▶";
+            }
+        }
+
+        function setupTimer() {
+            clearInterval(timerInterval);
+            isTimerRunning = false; // Arranca pausado
+            
+            if (currentDifficulty > 1) {
+                timeLeft = 120;
+                let display = document.getElementById('timer-display');
+                let timeSpan = document.getElementById('time-left');
+                let btn = document.getElementById('timer-ctrl-btn');
+                
+                display.style.display = 'flex';
+                display.className = 'timer-container';
+                timeSpan.innerText = formatTime(timeLeft);
+                btn.innerText = "▶";
+                
+                timerInterval = setInterval(() => {
+                    // Solo descuenta si el timer está activo, no se están moviendo las abejas y no hay modales abiertos
+                    if (!isTimerRunning || isExecuting || document.getElementById('modal').classList.contains('active')) return;
+                    
+                    timeLeft--;
+                    timeSpan.innerText = formatTime(timeLeft);
+                    
+                    if (timeLeft === 30) {
+                        display.classList.add('warning');
+                    }
+                    
+                    if (timeLeft <= 0) {
+                        isTimerRunning = false;
+                        clearInterval(timerInterval);
+                        showModal("¡Se acabó el tiempo! ⏰", "Tienen que programar más rápido. ¡Vuelvan a intentarlo!", resetGame);
+                    }
+                }, 1000);
+            } else {
+                document.getElementById('timer-display').style.display = 'none';
+            }
+        }
+
         function setDifficulty(level) {
             if (isExecuting) return;
             currentDifficulty = level;
             gridSize = level === 1 ? 4 : (level === 2 ? 5 : 6);
             
-            // Actualizar botones UI
             document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById('diff-' + level).classList.add('active');
             resetGame();
@@ -203,8 +319,6 @@
 
         function initGrid() {
             gridEl.innerHTML = '';
-            
-            // Ajustar el tamaño de la celda según el tamaño del grid para que quepa en pantalla
             let cellSize = currentDifficulty === 1 ? 65 : (currentDifficulty === 2 ? 55 : 45);
             gridEl.style.gridTemplateColumns = `repeat(${gridSize}, ${cellSize}px)`;
             gridEl.style.gridTemplateRows = `repeat(${gridSize}, ${cellSize}px)`;
@@ -230,15 +344,12 @@
         canvas.addEventListener('mousedown', startDraw); canvas.addEventListener('mousemove', draw); window.addEventListener('mouseup', stopDraw);
         canvas.addEventListener('touchstart', startDraw, { passive: false }); canvas.addEventListener('touchmove', draw, { passive: false }); window.addEventListener('touchend', stopDraw);
 
-        // FUNCIÓN DE VERIFICACIÓN DE RUTA (Flood Fill / BFS)
         function checkReachable(startX, startY, targetsArray, obsSet) {
             let visited = new Set();
             let queue = [{x: startX, y: startY}];
             visited.add(`${startX},${startY}`);
-            
             let foundTargets = 0;
 
-            // Búsqueda ortogonal (arriba, abajo, izq, der) igual a como se mueve la abeja
             while(queue.length > 0) {
                 let curr = queue.shift();
                 let dirs = [[0,1], [1,0], [0,-1], [-1,0]];
@@ -261,7 +372,6 @@
         function spawnSquares() {
             let validMapFound = false;
             let attempts = 0;
-            
             let finalObstacles = new Set();
             let finalBlue = [];
             let finalGreen = [];
@@ -270,14 +380,12 @@
             let obsCountPerSide = currentDifficulty === 1 ? 0 : (currentDifficulty === 2 ? 2 : 4);
             let halfPoint = Math.floor(gridSize/2);
 
-            // BUCLE GENERADOR: Crea mapas hasta encontrar uno 100% jugable (sin softlocks)
             while(!validMapFound && attempts < 500) {
                 attempts++;
                 finalObstacles.clear();
                 finalBlue = [];
                 finalGreen = [];
 
-                // 1. Generar comida Azul (Mitad superior)
                 while (finalBlue.length < targetCount) { 
                     let rx = Math.floor(Math.random() * gridSize); 
                     let ry = Math.floor(Math.random() * halfPoint); 
@@ -285,7 +393,6 @@
                     if ((rx !== 0 || ry !== 0) && !finalBlue.includes(key)) finalBlue.push(key);
                 }
                 
-                // 2. Generar comida Verde (Mitad inferior)
                 while (finalGreen.length < targetCount) { 
                     let rx = Math.floor(Math.random() * gridSize); 
                     let ry = Math.floor(Math.random() * (gridSize - halfPoint)) + halfPoint; 
@@ -293,7 +400,6 @@
                     if ((rx !== gridSize - 1 || ry !== gridSize - 1) && !finalGreen.includes(key)) finalGreen.push(key);
                 }
 
-                // 3. Generar Rocas Simétricas (Equitativo)
                 let obsPlaced = 0;
                 let obsAttempts = 0;
                 while(obsPlaced < obsCountPerSide && obsAttempts < 100) {
@@ -315,7 +421,6 @@
                     if (!isStartPos1 && !isStartPos2 && !hasTarget1 && !hasTarget2 && 
                         !finalObstacles.has(key1) && !finalObstacles.has(key2)) {
                         
-                        // Anti-clumping visual para evitar bloques amorfos
                         let tooClose = false;
                         const dirs = [[-1,0], [1,0], [0,-1], [0,1], [-1,-1], [1,-1], [-1,1], [1,1]];
                         for (let d of dirs) {
@@ -331,16 +436,14 @@
                     }
                 }
 
-                // 4. VERIFICACIÓN DE RUTA (El Anti-Softlock)
                 let p1CanFinish = checkReachable(0, 0, finalBlue, finalObstacles);
                 let p2CanFinish = checkReachable(gridSize-1, gridSize-1, finalGreen, finalObstacles);
 
                 if(p1CanFinish && p2CanFinish) {
-                    validMapFound = true; // ¡El mapa es perfecto!
+                    validMapFound = true;
                 }
             }
 
-            // APLICAR EL MAPA AL DOM
             document.querySelectorAll('.cell').forEach(c => {
                 c.classList.remove('blue', 'green', 'obstacle-cell');
             });
@@ -361,12 +464,11 @@
             });
         }
 
-        // LÓGICA DE ROTACIÓN UNIVERSAL (Mirando a la derecha/arriba)
         function getTransform(dir) { 
-            if (dir === 0) return 'rotate(90deg)';   // Avanza a la DERECHA
-            if (dir === 1) return 'rotate(180deg)';  // Avanza hacia ABAJO
-            if (dir === 2) return 'rotate(-90deg)';  // Avanza a la IZQUIERDA
-            if (dir === 3) return 'rotate(0deg)';    // Avanza hacia ARRIBA
+            if (dir === 0) return 'rotate(90deg)';   
+            if (dir === 1) return 'rotate(180deg)';  
+            if (dir === 2) return 'rotate(-90deg)';  
+            if (dir === 3) return 'rotate(0deg)';    
         }
 
         function drawBees() {
@@ -378,7 +480,6 @@
                 const orientation = document.createElement('div'); orientation.className = 'bee-orientation'; orientation.style.transform = getTransform(b.dir);
                 const sprite = document.createElement('div'); sprite.className = 'bee-sprite';
                 
-                // Aplicamos el sprite dinámico
                 let filterColor = playerNum === 2 ? 'filter: hue-rotate(120deg) brightness(1.1);' : '';
                 sprite.innerHTML = `<img src="../assets/robots/BeebotEmoji.png" alt="Bee" style="width: 80%; height: 80%; object-fit: contain; pointer-events: none; ${filterColor}">`;
                 
@@ -394,7 +495,6 @@
             }
         }
 
-        // BOTÓN DESHACER (Borrar el último comando ingresado)
         function undoCommand(player) {
             if (isExecuting || bees[player].commands.length === 0) return;
             bees[player].commands.pop();
@@ -408,22 +508,18 @@
             bees[player].commands.forEach(cmd => { const span = document.createElement('span'); span.className = 'cmd-block'; span.innerText = symbols[cmd]; container.appendChild(span); });
         }
 
-        // CÁLCULO FÍSICO DE MOVIMIENTO HACIA ADELANTE Y ATRÁS
         function processMove(player, cmd) {
             let b = bees[player];
             if (cmd === 'F' || cmd === 'B') {
                 let newX = b.pos.x, newY = b.pos.y;
-                
-                // Si es Adelante suma 1 a la dirección. Si es Atrás, resta 1 a la dirección.
                 let step = (cmd === 'F') ? 1 : -1;
                 
-                if (b.dir === 0) newX += step;       // Este
-                else if (b.dir === 1) newY += step;  // Sur
-                else if (b.dir === 2) newX -= step;  // Oeste
-                else if (b.dir === 3) newY -= step;  // Norte
+                if (b.dir === 0) newX += step;       
+                else if (b.dir === 1) newY += step;  
+                else if (b.dir === 2) newX -= step;  
+                else if (b.dir === 3) newY -= step;  
                 
                 if (newX >= 0 && newX < gridSize && newY >= 0 && newY < gridSize) { 
-                    // Revisar que no haya una roca en el camino
                     if (!obstaclesSet.has(`${newX},${newY}`)) {
                         b.pos.x = newX; b.pos.y = newY; 
                     }
@@ -447,10 +543,22 @@
             }, 600); 
         }
 
-        function showModal(title, msg) { document.getElementById('m-title').innerText = title; document.getElementById('m-msg').innerText = msg; document.getElementById('modal').classList.add('active'); }
-        function closeModal() { document.getElementById('modal').classList.remove('active'); }
+        let modalCallback = null;
+        function showModal(title, msg, callback = null) { 
+            document.getElementById('m-title').innerText = title; 
+            document.getElementById('m-msg').innerText = msg; 
+            document.getElementById('modal').classList.add('active'); 
+            modalCallback = callback;
+        }
+        
+        function closeModal() { 
+            document.getElementById('modal').classList.remove('active'); 
+            if(modalCallback) {
+                modalCallback();
+                modalCallback = null;
+            }
+        }
 
-        // LÓGICA DE VICTORIA
         function checkWin() {
             const bluesLeft = document.querySelectorAll('.blue').length; 
             const greensLeft = document.querySelectorAll('.green').length;
@@ -473,13 +581,15 @@
         }
 
         function resetGame() {
-            // Posiciones iniciales se calculan basadas en el tamaño del mapa
             bees[1] = { pos: {x: 0, y: 0}, dir: 0, commands: [] }; 
             bees[2] = { pos: {x: gridSize-1, y: gridSize-1}, dir: 2, commands: [] }; 
             
             isExecuting = false;
             updateSequenceUI(1); updateSequenceUI(2); document.getElementById('go-btn').style.opacity = "1"; ctx.clearRect(0, 0, canvas.width, canvas.height);
             initGrid(); spawnSquares(); drawBees();
+            
+            // Configurar y dejar el temporizador listo en pausa para que el usuario le de Play
+            setupTimer();
         }
 
         // Inicio automático
