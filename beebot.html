@@ -1309,7 +1309,6 @@
      ============================================================ -->
 <script src="js/beebot.js"></script>
 
-</body>
 <!-- ============================================================
      SISTEMA DE PANTALLA COMPLETA CENTRALIZADO
      (Intercepta los juegos y los abre en un Visor Inmersivo)
@@ -1323,20 +1322,42 @@
     #visor-juego.activo { display: flex; }
     
     /* El juego se estirará a tamaño real */
-    #frame-juego { width: 100%; height: 100%; border: none; background: #fff; }
+    #frame-juego { width: 100%; height: 100%; border: none; background: #fff; display: block;}
     
-    /* Botón flotante para salir del juego y volver al portal */
+    /* ZONA INVISIBLE: Detecta el hover en la esquina superior derecha */
+    .hover-zone-cerrar {
+        position: absolute;
+        top: 0; right: 0;
+        width: 150px; height: 100px;
+        z-index: 10000000;
+        background: transparent;
+    }
+
+    /* Botón flotante para salir (Oculto por defecto) */
     .btn-cerrar-juego {
-        position: absolute; top: 15px; right: 15px; z-index: 10000000;
+        position: absolute; 
+        top: -50px; /* Escondido hacia arriba */
+        right: max(15px, env(safe-area-inset-right)); 
+        z-index: 10000001; /* Debe estar por encima de la zona de hover */
         background: #e74c3c; color: white; border: 3px solid #c0392b;
         padding: 10px 20px; border-radius: 15px; font-family: 'Fredoka', sans-serif;
         font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 5px 0 #c0392b;
-        transition: transform 0.1s;
+        opacity: 0;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
+    
     .btn-cerrar-juego:active { transform: translateY(4px); box-shadow: none; }
+
+    /* Al pasar el mouse por la zona invisible o el botón, aparece */
+    .hover-zone-cerrar:hover ~ .btn-cerrar-juego,
+    .btn-cerrar-juego:hover {
+        top: max(15px, env(safe-area-inset-top));
+        opacity: 1;
+    }
 </style>
 
 <div id="visor-juego">
+    <div class="hover-zone-cerrar"></div>
     <button class="btn-cerrar-juego" onclick="cerrarJuego()">❌ Volver al Portal</button>
     <iframe id="frame-juego" src="" allowfullscreen></iframe>
 </div>
@@ -1345,34 +1366,27 @@
     // 1. Buscamos todas las tarjetas de los juegos
     document.querySelectorAll('.game-card-link').forEach(enlace => {
         enlace.addEventListener('click', function(e) {
-            e.preventDefault(); // Bloqueamos que se abra una pestaña nueva
-            
-            // 2. Cargamos el juego en el visor oculto
+            e.preventDefault(); 
             const urlJuego = this.getAttribute('href');
             const visor = document.getElementById('visor-juego');
             document.getElementById('frame-juego').src = urlJuego;
-            
-            // 3. Mostramos el visor
             visor.classList.add('activo');
-            
-            // 4. Activamos la Pantalla Completa usando el clic que el niño acaba de hacer
             if (visor.requestFullscreen) { visor.requestFullscreen(); } 
-            else if (visor.webkitRequestFullscreen) { visor.webkitRequestFullscreen(); } // Safari
+            else if (visor.webkitRequestFullscreen) { visor.webkitRequestFullscreen(); } 
         });
     });
 
-    // Función para salir
     function cerrarJuego() {
         const visor = document.getElementById('visor-juego');
-        // Salir de pantalla completa si sigue activa
         if (document.fullscreenElement || document.webkitFullscreenElement) { 
             if(document.exitFullscreen) document.exitFullscreen();
             else if(document.webkitExitFullscreen) document.webkitExitFullscreen();
         }
-        // Ocultar y apagar el juego
         visor.classList.remove('activo');
         document.getElementById('frame-juego').src = ""; 
     }
 </script>
 <!-- ============================================================ -->
+
+</body>
 </html>

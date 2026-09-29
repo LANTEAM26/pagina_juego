@@ -230,46 +230,135 @@
         canvas.addEventListener('mousedown', startDraw); canvas.addEventListener('mousemove', draw); window.addEventListener('mouseup', stopDraw);
         canvas.addEventListener('touchstart', startDraw, { passive: false }); canvas.addEventListener('touchmove', draw, { passive: false }); window.addEventListener('touchend', stopDraw);
 
-        function spawnSquares() {
-            obstaclesSet.clear();
-            let p1Count = 0, p2Count = 0;
+        // FUNCIÓN DE VERIFICACIÓN DE RUTA (Flood Fill / BFS)
+        function checkReachable(startX, startY, targetsArray, obsSet) {
+            let visited = new Set();
+            let queue = [{x: startX, y: startY}];
+            visited.add(`${startX},${startY}`);
             
-            // Cantidad de elementos según dificultad
-            let targetCount = currentDifficulty === 1 ? 3 : (currentDifficulty === 2 ? 4 : 5);
-            let obsCount = currentDifficulty === 1 ? 0 : (currentDifficulty === 2 ? 3 : 6);
+            let foundTargets = 0;
 
-            // Generar comida Azul (Mitad superior)
-            while (p1Count < targetCount) { 
-                let rx = Math.floor(Math.random() * gridSize); 
-                let ry = Math.floor(Math.random() * Math.floor(gridSize/2)); 
-                const cell = document.getElementById(`cell-${rx}-${ry}`);
-                if ((rx !== 0 || ry !== 0) && !cell.classList.contains('blue')) { cell.classList.add('blue'); p1Count++; }
-            }
-            
-            // Generar comida Verde (Mitad inferior)
-            while (p2Count < targetCount) { 
-                let rx = Math.floor(Math.random() * gridSize); 
-                let ry = Math.floor(Math.random() * Math.ceil(gridSize/2)) + Math.floor(gridSize/2); 
-                const cell = document.getElementById(`cell-${rx}-${ry}`);
-                if ((rx !== gridSize - 1 || ry !== gridSize - 1) && !cell.classList.contains('green')) { cell.classList.add('green'); p2Count++; }
-            }
-
-            // Generar Rocas (Obstáculos)
-            let obsPlaced = 0;
-            while(obsPlaced < obsCount) {
-                let rx = Math.floor(Math.random() * gridSize);
-                let ry = Math.floor(Math.random() * gridSize);
-                const cell = document.getElementById(`cell-${rx}-${ry}`);
+            // Búsqueda ortogonal (arriba, abajo, izq, der) igual a como se mueve la abeja
+            while(queue.length > 0) {
+                let curr = queue.shift();
+                let dirs = [[0,1], [1,0], [0,-1], [-1,0]];
                 
-                let isStartPos = (rx === 0 && ry === 0) || (rx === gridSize-1 && ry === gridSize-1);
-                let hasTarget = cell.classList.contains('blue') || cell.classList.contains('green');
-
-                if (!isStartPos && !hasTarget && !cell.classList.contains('obstacle-cell')) {
-                    cell.classList.add('obstacle-cell');
-                    obstaclesSet.add(`${rx},${ry}`);
-                    obsPlaced++;
+                for(let d of dirs) {
+                    let nx = curr.x + d[0], ny = curr.y + d[1];
+                    if(nx >= 0 && nx < gridSize && ny >= 0 && ny < gridSize) {
+                        let key = `${nx},${ny}`;
+                        if(!visited.has(key) && !obsSet.has(key)) {
+                            visited.add(key);
+                            queue.push({x: nx, y: ny});
+                            if(targetsArray.includes(key)) foundTargets++;
+                        }
+                    }
                 }
             }
+            return foundTargets === targetsArray.length;
+        }
+
+        function spawnSquares() {
+            let validMapFound = false;
+            let attempts = 0;
+            
+            let finalObstacles = new Set();
+            let finalBlue = [];
+            let finalGreen = [];
+
+            let targetCount = currentDifficulty === 1 ? 3 : (currentDifficulty === 2 ? 4 : 5);
+            let obsCountPerSide = currentDifficulty === 1 ? 0 : (currentDifficulty === 2 ? 2 : 4);
+            let halfPoint = Math.floor(gridSize/2);
+
+            // BUCLE GENERADOR: Crea mapas hasta encontrar uno 100% jugable (sin softlocks)
+            while(!validMapFound && attempts < 500) {
+                attempts++;
+                finalObstacles.clear();
+                finalBlue = [];
+                finalGreen = [];
+
+                // 1. Generar comida Azul (Mitad superior)
+                while (finalBlue.length < targetCount) { 
+                    let rx = Math.floor(Math.random() * gridSize); 
+                    let ry = Math.floor(Math.random() * halfPoint); 
+                    let key = `${rx},${ry}`;
+                    if ((rx !== 0 || ry !== 0) && !finalBlue.includes(key)) finalBlue.push(key);
+                }
+                
+                // 2. Generar comida Verde (Mitad inferior)
+                while (finalGreen.length < targetCount) { 
+                    let rx = Math.floor(Math.random() * gridSize); 
+                    let ry = Math.floor(Math.random() * (gridSize - halfPoint)) + halfPoint; 
+                    let key = `${rx},${ry}`;
+                    if ((rx !== gridSize - 1 || ry !== gridSize - 1) && !finalGreen.includes(key)) finalGreen.push(key);
+                }
+
+                // 3. Generar Rocas Simétricas (Equitativo)
+                let obsPlaced = 0;
+                let obsAttempts = 0;
+                while(obsPlaced < obsCountPerSide && obsAttempts < 100) {
+                    obsAttempts++;
+                    let rx = Math.floor(Math.random() * gridSize);
+                    let ry1 = Math.floor(Math.random() * halfPoint);
+                    let rx2 = (gridSize - 1) - rx;
+                    let ry2 = (gridSize - 1) - ry1;
+                    
+                    let key1 = `${rx},${ry1}`;
+                    let key2 = `${rx2},${ry2}`;
+                    
+                    let isStartPos1 = (rx === 0 && ry1 === 0);
+                    let isStartPos2 = (rx2 === gridSize-1 && ry2 === gridSize-1);
+                    
+                    let hasTarget1 = finalBlue.includes(key1) || finalGreen.includes(key1);
+                    let hasTarget2 = finalBlue.includes(key2) || finalGreen.includes(key2);
+
+                    if (!isStartPos1 && !isStartPos2 && !hasTarget1 && !hasTarget2 && 
+                        !finalObstacles.has(key1) && !finalObstacles.has(key2)) {
+                        
+                        // Anti-clumping visual para evitar bloques amorfos
+                        let tooClose = false;
+                        const dirs = [[-1,0], [1,0], [0,-1], [0,1], [-1,-1], [1,-1], [-1,1], [1,1]];
+                        for (let d of dirs) {
+                            if (finalObstacles.has(`${rx + d[0]},${ry1 + d[1]}`)) tooClose = true;
+                            if (finalObstacles.has(`${rx2 + d[0]},${ry2 + d[1]}`)) tooClose = true;
+                        }
+
+                        if (!tooClose || obsAttempts > 30) {
+                            finalObstacles.add(key1);
+                            finalObstacles.add(key2);
+                            obsPlaced++;
+                        }
+                    }
+                }
+
+                // 4. VERIFICACIÓN DE RUTA (El Anti-Softlock)
+                let p1CanFinish = checkReachable(0, 0, finalBlue, finalObstacles);
+                let p2CanFinish = checkReachable(gridSize-1, gridSize-1, finalGreen, finalObstacles);
+
+                if(p1CanFinish && p2CanFinish) {
+                    validMapFound = true; // ¡El mapa es perfecto!
+                }
+            }
+
+            // APLICAR EL MAPA AL DOM
+            document.querySelectorAll('.cell').forEach(c => {
+                c.classList.remove('blue', 'green', 'obstacle-cell');
+            });
+            obstaclesSet.clear();
+
+            finalBlue.forEach(pos => {
+                let [x,y] = pos.split(',');
+                document.getElementById(`cell-${x}-${y}`).classList.add('blue');
+            });
+            finalGreen.forEach(pos => {
+                let [x,y] = pos.split(',');
+                document.getElementById(`cell-${x}-${y}`).classList.add('green');
+            });
+            finalObstacles.forEach(pos => {
+                let [x,y] = pos.split(',');
+                document.getElementById(`cell-${x}-${y}`).classList.add('obstacle-cell');
+                obstaclesSet.add(pos);
+            });
         }
 
         // LÓGICA DE ROTACIÓN UNIVERSAL (Mirando a la derecha/arriba)

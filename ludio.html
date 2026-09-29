@@ -81,29 +81,6 @@
             margin-bottom: 25px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         }
-
-        /* ============================================================
-           SISTEMA DE PANTALLA COMPLETA (Visor Inmersivo)
-           ============================================================ */
-        #visor-juego {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #000; z-index: 9999999; display: none; flex-direction: column;
-        }
-        #visor-juego.activo { display: flex; }
-        
-        #frame-juego { width: 100%; height: 100%; border: none; background: #fff; display: block; }
-        
-        .btn-cerrar-juego {
-            position: absolute; 
-            top: max(15px, env(safe-area-inset-top)); 
-            right: max(15px, env(safe-area-inset-right)); 
-            z-index: 10000000;
-            background: #e74c3c; color: white; border: 3px solid #c0392b;
-            padding: 10px 20px; border-radius: 15px; font-family: 'Fredoka', sans-serif;
-            font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 5px 0 #c0392b;
-            transition: transform 0.1s;
-        }
-        .btn-cerrar-juego:active { transform: translateY(4px); box-shadow: none; }
     </style>
 </head>
 <body class="world-portal portal-secundaria">
@@ -912,6 +889,41 @@
                 </a>
             </article>
 
+            <!-- NUEVO JUEGO: Lanzador Iónico -->
+            <article class="game-card game-card-new" data-category="ciencias" data-difficulty="dificil">
+                <a href="Juegos/quimica_splash.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Lanzador Iónico">
+                    <div class="game-card-thumb thumb-ciencias has-image">
+                        <iframe src="Juegos/quimica_splash.html" title="Lanzador Iónico" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">21</span>
+                        <span class="game-badge-new">NUEVO</span>
+                        <div class="game-difficulty difficulty-dificil">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Difícil</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-ciencias">🧪 Ciencias</span>
+                            <span class="game-age">14-17 años</span>
+                        </div>
+                        <h3 class="game-title">Lanzador Iónico</h3>
+                        <p class="game-desc">Usa física de parábolas para sintetizar compuestos químicos reales en el laboratorio.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 3 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
         </div>
     </section>
 
@@ -1333,7 +1345,51 @@
      SISTEMA DE PANTALLA COMPLETA CENTRALIZADO
      (Intercepta los juegos y los abre en un Visor Inmersivo)
      ============================================================ -->
+<style>
+    /* Contenedor oscuro que ocupará toda la pantalla */
+    #visor-juego {
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        background: #000; z-index: 9999999; display: none; flex-direction: column;
+    }
+    #visor-juego.activo { display: flex; }
+    
+    /* El juego se estirará a tamaño real */
+    #frame-juego { width: 100%; height: 100%; border: none; background: #fff; display: block; }
+    
+    /* ZONA INVISIBLE: Detecta el hover en la esquina superior derecha */
+    .hover-zone-cerrar {
+        position: absolute;
+        top: 0; right: 0;
+        width: 150px; height: 100px;
+        z-index: 10000000;
+        background: transparent;
+    }
+
+    /* Botón flotante para salir (Oculto por defecto) */
+    .btn-cerrar-juego {
+        position: absolute; 
+        top: -50px; /* Escondido hacia arriba */
+        right: max(15px, env(safe-area-inset-right)); 
+        z-index: 10000001; /* Debe estar por encima de la zona de hover */
+        background: #e74c3c; color: white; border: 3px solid #c0392b;
+        padding: 10px 20px; border-radius: 15px; font-family: 'Fredoka', sans-serif;
+        font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 5px 0 #c0392b;
+        opacity: 0;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    .btn-cerrar-juego:active { transform: translateY(4px); box-shadow: none; }
+
+    /* Al pasar el mouse por la zona invisible o el botón, aparece */
+    .hover-zone-cerrar:hover ~ .btn-cerrar-juego,
+    .btn-cerrar-juego:hover {
+        top: max(15px, env(safe-area-inset-top));
+        opacity: 1;
+    }
+</style>
+
 <div id="visor-juego">
+    <div class="hover-zone-cerrar"></div>
     <button class="btn-cerrar-juego" onclick="cerrarJuego()">❌ Volver al Portal</button>
     <iframe id="frame-juego" src="" allowfullscreen></iframe>
 </div>
