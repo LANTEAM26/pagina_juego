@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ciudad Segura 🏙️ · Juego de Educación Vial</title>
+  <meta name="description" content="Juego educativo horizontal: cruza la ciudad respetando el semáforo. 5 niveles, en familia." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="semaforo.css" />
+</head>
+
+<body>
+
+  <!-- ============================================================
+       APP
+  ============================================================= -->
+  <main class="game" role="application" aria-label="Juego Ciudad Segura">
+
+    <!-- ----------------------------------------------------------
+         TOPBAR
+    ----------------------------------------------------------- -->
+    <header class="topbar">
+      <div class="topbar__brand">
+        <span class="topbar__icon" aria-hidden="true">🏙️</span>
+        <h1 class="topbar__title">CIUDAD SEGURA</h1>
+        <span class="topbar__sub" id="topbar-level">Nivel 1</span>
+      </div>
+
+      <div class="topbar__controls">
+        <button id="btn-sound" class="icon-btn" type="button"
+                aria-pressed="true" aria-label="Activar o desactivar sonido" title="Sonido">
+          <span id="icon-sound" aria-hidden="true">🔊</span>
+        </button>
+        <button id="btn-help" class="icon-btn" type="button"
+                aria-label="Ver ayuda" title="Ayuda">
+          <span aria-hidden="true">❓</span>
+        </button>
+        <button id="btn-home" class="icon-btn" type="button"
+                aria-label="Volver al inicio" title="Inicio">
+          <span aria-hidden="true">🏠</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- ----------------------------------------------------------
+         STAGE
+    ----------------------------------------------------------- -->
+    <div class="stage" id="stage">
+
+      <!-- ==========================================================
+           PANEL 1 · INICIO
+      =========================================================== -->
+      <section id="panel-start" class="panel panel--active" aria-label="Pantalla de inicio">
+
+        <div class="city-deco" aria-hidden="true">
+          <span class="city-deco__cloud city-deco__cloud--a">☁️</span>
+          <span class="city-deco__cloud city-deco__cloud--b">☁️</span>
+          <span class="city-deco__bird">🕊️</span>
+          <span class="city-deco__building city-deco__building--1">🏢</span>
+          <span class="city-deco__building city-deco__building--2">🏬</span>
+          <span class="city-deco__building city-deco__building--3">🏦</span>
+          <span class="city-deco__car">🚗</span>
+          <span class="city-deco__signal">🚦</span>
+        </div>
+
+        <div class="start-body">
+          <span class="start-badge">🎓 Educación vial · Primaria</span>
+
+          <h2 class="start-title">
+            ¡Ayuda a <span class="start-title__name">Lucas</span> a cruzar la ciudad!
+          </h2>
+
+          <p class="start-lead">
+            Los autos circulan cuando el semáforo está en
+            <b class="t-green">verde</b> o <b class="t-yellow">amarillo</b>,
+            y se detienen en <b class="t-red">rojo</b>.
+            ¡Cruza la calle <b>solo</b> cuando esté en rojo!
+          </p>
+
+          <!-- SELECTOR DE NIVELES -->
+          <div class="level-section">
+            <h3 class="level-section__title">🎯 Elige tu nivel</h3>
+
+            <div class="level-grid" id="level-grid" role="radiogroup" aria-label="Selector de nivel">
+              <button class="level-card" type="button" data-level="1" role="radio" aria-checked="true">
+                <span class="level-card__badge">1</span>
+                <span class="level-card__emoji" aria-hidden="true">🌤️</span>
+                <span class="level-card__name">Calle tranquila</span>
+                <span class="level-card__desc">2 autos lentos</span>
+                <span class="level-card__stars" aria-label="Dificultad 1 de 5">⭐</span>
+              </button>
+
+              <button class="level-card" type="button" data-level="2" role="radio" aria-checked="false">
+                <span class="level-card__badge">2</span>
+                <span class="level-card__emoji" aria-hidden="true">🚗</span>
+                <span class="level-card__name">Cruce ocupado</span>
+                <span class="level-card__desc">3 autos</span>
+                <span class="level-card__stars" aria-label="Dificultad 2 de 5">⭐⭐</span>
+              </button>
+
+              <button class="level-card" type="button" data-level="3" role="radio" aria-checked="false">
+                <span class="level-card__badge">3</span>
+                <span class="level-card__emoji" aria-hidden="true">🚕</span>
+                <span class="level-card__name">Hora punta</span>
+                <span class="level-card__desc">4 autos rápidos</span>
+                <span class="level-card__stars" aria-label="Dificultad 3 de 5">⭐⭐⭐</span>
+              </button>
+
+              <button class="level-card" type="button" data-level="4" role="radio" aria-checked="false">
+                <span class="level-card__badge">4</span>
+                <span class="level-card__emoji" aria-hidden="true">🚌</span>
+                <span class="level-card__name">Doble vía</span>
+                <span class="level-card__desc">5 autos · 2 sentidos</span>
+                <span class="level-card__stars" aria-label="Dificultad 4 de 5">⭐⭐⭐⭐</span>
+              </button>
+
+              <button class="level-card" type="button" data-level="5" role="radio" aria-checked="false">
+                <span class="level-card__badge">5</span>
+                <span class="level-card__emoji" aria-hidden="true">🌆</span>
+                <span class="level-card__name">Gran ciudad</span>
+                <span class="level-card__desc">6 autos a toda velocidad</span>
+                <span class="level-card__stars" aria-label="Dificultad 5 de 5">⭐⭐⭐⭐⭐</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="start-actions">
+            <button id="btn-play" class="btn btn--primary btn--xl" type="button">
+              <span aria-hidden="true">▶️</span> ¡JUGAR!
+            </button>
+            <button id="btn-how" class="btn btn--ghost" type="button">
+              <span aria-hidden="true">📖</span> ¿Cómo se juega?
+            </button>
+          </div>
+
+          <p class="start-hint">Pulsa <kbd>Enter</kbd> para empezar el nivel elegido</p>
+        </div>
+      </section>
+
+      <!-- ==========================================================
+           PANEL 2 · CÓMO SE JUEGA
+      =========================================================== -->
+      <section id="panel-how" class="panel" aria-label="Cómo se juega">
+        <h2 class="panel-title">📖 ¿Cómo se juega?</h2>
+
+        <div class="how-grid">
+          <article class="how-card">
+            <span class="how-card__num">1</span>
+            <span class="how-card__icon" aria-hidden="true">🚦</span>
+            <h3 class="how-card__title">Mira el semáforo</h3>
+            <p class="how-card__text">
+              Cambia solo: <b class="t-green">verde</b> → <b class="t-yellow">amarillo</b> → <b class="t-red">rojo</b>.
+            </p>
+          </article>
+
+          <article class="how-card">
+            <span class="how-card__num">2</span>
+            <span class="how-card__icon" aria-hidden="true">🚗</span>
+            <h3 class="how-card__title">Los autos obedecen</h3>
+            <p class="how-card__text">
+              En verde y amarillo <b>circulan</b>. En rojo <b>se detienen</b>.
+            </p>
+          </article>
+
+          <article class="how-card">
+            <span class="how-card__num">3</span>
+            <span class="how-card__icon" aria-hidden="true">↺ ↻ ⬆️</span>
+            <h3 class="how-card__title">Muévete</h3>
+            <p class="how-card__text">
+              <b>↺</b> izquierda · <b>↻</b> derecha · <b>⬆️</b> avanzar.
+            </p>
+          </article>
+
+          <article class="how-card">
+            <span class="how-card__num">4</span>
+            <span class="how-card__icon" aria-hidden="true">🔴</span>
+            <h3 class="how-card__title">Cruza en rojo</h3>
+            <p class="how-card__text">
+              Solo puedes pisar la calle cuando el semáforo esté en <b>rojo</b>.
+            </p>
+          </article>
+        </div>
+
+        <div class="rules-card">
+          <h3 class="rules-card__title">🚦 Reglas del semáforo</h3>
+          <div class="rules-card__grid">
+            <div class="rule rule--red">
+              <span class="rule__light" aria-hidden="true">🔴</span>
+              <div class="rule__info">
+                <b class="rule__action">Autos detenidos</b>
+                <small class="rule__why">¡Es tu turno de cruzar!</small>
+              </div>
+            </div>
+            <div class="rule rule--yellow">
+              <span class="rule__light" aria-hidden="true">🟡</span>
+              <div class="rule__info">
+                <b class="rule__action">Autos frenando</b>
+                <small class="rule__why">Prepárate, aún no cruces.</small>
+              </div>
+            </div>
+            <div class="rule rule--green">
+              <span class="rule__light" aria-hidden="true">🟢</span>
+              <div class="rule__info">
+                <b class="rule__action">Autos circulando</b>
+                <small class="rule__why">Espera en la acera.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-actions">
+          <button id="btn-back" class="btn btn--ghost" type="button">
+            <span aria-hidden="true">⬅️</span> Volver
+          </button>
+          <button id="btn-go" class="btn btn--primary" type="button">
+            <span aria-hidden="true">🚀</span> ¡A jugar!
+          </button>
+        </div>
+      </section>
+
+      <!-- ==========================================================
+           PANEL 3 · JUEGO (layout horizontal)
+      =========================================================== -->
+      <section id="panel-game" class="panel panel--game" aria-label="Pantalla de juego">
+
+        <div class="game-layout">
+
+          <!-- ============ COLUMNA IZQUIERDA: HUD + CONTROLES ============ -->
+          <aside class="game-side game-side--left" aria-label="Panel de control">
+
+            <div class="hud">
+              <div class="hud__chip hud__chip--level">
+                <span class="hud__label">Nivel</span>
+                <span class="hud__value" id="hud-level">1</span>
+              </div>
+              <div class="hud__chip hud__chip--lives">
+                <span class="hud__label">Vidas</span>
+                <span class="hud__value" id="hud-lives" aria-live="polite">❤️❤️❤️</span>
+              </div>
+              <div class="hud__chip">
+                <span class="hud__label">Puntos</span>
+                <span class="hud__value" id="hud-points">0</span>
+              </div>
+              <div class="hud__chip">
+                <span class="hud__label">Cruces</span>
+                <span class="hud__value" id="hud-crossings">0</span>
+              </div>
+            </div>
+
+            <div class="controls" role="group" aria-label="Controles de Lucas">
+              <button class="ctrl ctrl--left" data-action="left" type="button">
+                <span class="ctrl__icon" aria-hidden="true">↺</span>
+                <span class="ctrl__name">Izquierda</span>
+                <span class="ctrl__key" aria-hidden="true">A</span>
+              </button>
+              <button class="ctrl ctrl--forward" data-action="forward" type="button">
+                <span class="ctrl__icon" aria-hidden="true">⬆️</span>
+                <span class="ctrl__name">Avanzar</span>
+                <span class="ctrl__key" aria-hidden="true">W</span>
+              </button>
+              <button class="ctrl ctrl--right" data-action="right" type="button">
+                <span class="ctrl__icon" aria-hidden="true">↻</span>
+                <span class="ctrl__name">Derecha</span>
+                <span class="ctrl__key" aria-hidden="true">D</span>
+              </button>
+            </div>
+
+          </aside>
+
+          <!-- ============ COLUMNA CENTRAL: TABLERO ============ -->
+          <div class="game-center">
+            <div class="board" id="board">
+              <div class="board__grid" id="board-grid" aria-label="Mapa de la ciudad">
+                <!-- Las casillas y los autos se generan dinámicamente con JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- ============ COLUMNA DERECHA: SEMÁFORO ============ -->
+          <aside class="game-side game-side--right" aria-label="Panel del semáforo">
+
+            <div class="signal-panel">
+              <h3 class="signal-panel__title">
+                <span aria-hidden="true">🚦</span> Semáforo
+              </h3>
+
+              <div class="signal" id="signal" role="img" aria-label="Semáforo en verde">
+                <div class="signal__head">
+                  <span class="signal__light signal__light--red" id="light-red" data-color="red"></span>
+                  <span class="signal__light signal__light--yellow" id="light-yellow" data-color="yellow"></span>
+                  <span class="signal__light signal__light--green is-on" id="light-green" data-color="green"></span>
+                </div>
+                <span class="signal__post" aria-hidden="true"></span>
+              </div>
+
+              <div class="signal-panel__status" id="signal-status">
+                🚗 Autos circulando
+              </div>
+
+              <div class="signal-panel__timer" aria-hidden="true">
+                <div class="signal-panel__timer-bar" id="signal-timer-bar"></div>
+              </div>
+
+              <div class="signal-panel__hint" id="signal-hint">
+                Espera en la acera 🧍
+              </div>
+            </div>
+
+            <div class="legend" aria-label="Leyenda">
+              <span class="legend__item"><span class="legend__dot legend__dot--road"></span> Calle</span>
+              <span class="legend__item"><span class="legend__dot legend__dot--walk"></span> Acera</span>
+              <span class="legend__item"><span class="legend__dot legend__dot--building"></span> Edificio</span>
+              <span class="legend__item"><span class="legend__dot legend__dot--goal"></span> Meta</span>
+            </div>
+
+          </aside>
+        </div>
+
+        <!-- ============ BARRA INFERIOR: FEEDBACK ============ -->
+        <div class="feedback" id="feedback" role="status" aria-live="polite">
+          <span class="feedback__icon" id="feedback-icon" aria-hidden="true">🏙️</span>
+          <p class="feedback__text" id="feedback-text">¡Prepárate para cruzar!</p>
+        </div>
+
+      </section>
+
+      <!-- ==========================================================
+           PANEL 4 · VICTORIA
+      =========================================================== -->
+      <section id="panel-win" class="panel panel--result" aria-label="Pantalla de victoria">
+        <div class="result-deco" aria-hidden="true">🎉 ⭐ 🎊 ⭐ 🎉</div>
+
+        <h2 class="result-title result-title--win">¡Lucas llegó a casa! 🏠</h2>
+        <p class="result-text" id="win-message">Cruzó la ciudad de forma segura.</p>
+
+        <div class="stars" id="win-stars" aria-label="Estrellas obtenidas">
+          <span class="star" aria-hidden="true">⭐</span>
+          <span class="star" aria-hidden="true">⭐</span>
+          <span class="star" aria-hidden="true">⭐</span>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <span class="stat__label">Nivel</span>
+            <span class="stat__value" id="win-level">1</span>
+          </div>
+          <div class="stat">
+            <span class="stat__label">Cruces</span>
+            <span class="stat__value" id="win-crossings">0</span>
+          </div>
+          <div class="stat">
+            <span class="stat__label">Puntos</span>
+            <span class="stat__value" id="win-points">0</span>
+          </div>
+        </div>
+
+        <div class="family-box">
+          <h3 class="family-box__title">👨‍👩‍👧 Conversen en familia</h3>
+          <p class="family-box__text" id="win-family">
+            ¿Por qué es importante esperar el rojo para cruzar?
+          </p>
+        </div>
+
+        <div class="panel-actions">
+          <button id="btn-win-next" class="btn btn--primary" type="button">
+            <span aria-hidden="true">➡️</span> Siguiente nivel
+          </button>
+          <button id="btn-win-again" class="btn btn--ghost" type="button">
+            <span aria-hidden="true">🔁</span> Repetir
+          </button>
+          <button id="btn-win-home" class="btn btn--ghost" type="button">
+            <span aria-hidden="true">🏠</span> Inicio
+          </button>
+        </div>
+      </section>
+
+      <!-- ==========================================================
+           PANEL 5 · DERROTA
+      =========================================================== -->
+      <section id="panel-lose" class="panel panel--result" aria-label="Pantalla de derrota">
+        <div class="result-deco result-deco--sad" aria-hidden="true">💤 🚧 💤</div>
+
+        <h2 class="result-title result-title--lose">¡Casi lo logras! 💪</h2>
+        <p class="result-text" id="lose-message">Te quedaste sin vidas.</p>
+
+        <div class="stars" id="lose-stars" aria-label="Estrellas obtenidas">
+          <span class="star" aria-hidden="true">⭐</span>
+          <span class="star" aria-hidden="true">⭐</span>
+          <span class="star" aria-hidden="true">⭐</span>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <span class="stat__label">Nivel</span>
+            <span class="stat__value" id="lose-level">1</span>
+          </div>
+          <div class="stat">
+            <span class="stat__label">Cruces</span>
+            <span class="stat__value" id="lose-crossings">0</span>
+          </div>
+          <div class="stat">
+            <span class="stat__label">Puntos</span>
+            <span class="stat__value" id="lose-points">0</span>
+          </div>
+        </div>
+
+        <div class="family-box family-box--tip">
+          <h3 class="family-box__title">💡 Consejo vial</h3>
+          <p class="family-box__text" id="lose-tip">
+            Cruza la calle SOLO cuando el semáforo esté en rojo.
+          </p>
+        </div>
+
+        <div class="panel-actions">
+          <button id="btn-lose-again" class="btn btn--primary" type="button">
+            <span aria-hidden="true">🔁</span> Intentar de nuevo
+          </button>
+          <button id="btn-lose-home" class="btn btn--ghost" type="button">
+            <span aria-hidden="true">🏠</span> Inicio
+          </button>
+        </div>
+      </section>
+
+      <!-- ==========================================================
+           PANEL 6 · AYUDA
+      =========================================================== -->
+      <section id="panel-help" class="panel panel--modal" aria-label="Ayuda rápida">
+        <div class="modal" role="dialog" aria-modal="true">
+          <h2 class="modal__title">❓ Ayuda rápida</h2>
+
+          <ul class="modal__list">
+            <li>🚦 El semáforo cambia solo: <b class="t-green">verde</b> → <b class="t-yellow">amarillo</b> → <b class="t-red">rojo</b></li>
+            <li>🚗 Los autos circulan en <b>verde</b> y <b>amarillo</b></li>
+            <li>🔴 En <b class="t-red">rojo</b> los autos se detienen: ¡puedes cruzar!</li>
+            <li>↺ <b>Girar izquierda</b> — tecla <kbd>A</kbd> o <kbd>←</kbd></li>
+            <li>↻ <b>Girar derecha</b> — tecla <kbd>D</kbd> o <kbd>→</kbd></li>
+            <li>⬆️ <b>Avanzar</b> — tecla <kbd>W</kbd> o <kbd>↑</kbd></li>
+            <li>🏢 Los edificios bloquean el paso</li>
+            <li>🏠 Llega hasta la casa con la familia</li>
+            <li>⭐ Termina sin choques para ganar 3 estrellas</li>
+          </ul>
+
+          <button id="btn-help-close" class="btn btn--primary" type="button">¡Entendido!</button>
+        </div>
+      </section>
+
+    </div><!-- /stage -->
+
+    <!-- ----------------------------------------------------------
+         FOOTER
+    ----------------------------------------------------------- -->
+    <footer class="footer">
+      <span class="footer__text">🏙️ Ciudad Segura · Educación vial responsable · DUA</span>
+      <span class="footer__lights" aria-hidden="true">
+        <i class="dot dot--red"></i>
+        <i class="dot dot--yellow"></i>
+        <i class="dot dot--green"></i>
+      </span>
+    </footer>
+  </main>
+
+  <!-- ============================================================
+       AUDIOS opcionales (coloca tus mp3 en /sounds/)
+  ============================================================= -->
+  <audio id="sfx-click"   src="sounds/click.mp3"   preload="auto"></audio>
+  <audio id="sfx-correct" src="sounds/correct.mp3" preload="auto"></audio>
+  <audio id="sfx-wrong"   src="sounds/wrong.mp3"   preload="auto"></audio>
+  <audio id="sfx-win"     src="sounds/win.mp3"     preload="auto"></audio>
+  <audio id="sfx-lose"    src="sounds/lose.mp3"    preload="auto"></audio>
+  <audio id="sfx-step"    src="sounds/step.mp3"    preload="auto"></audio>
+  <audio id="sfx-crash"   src="sounds/crash.mp3"   preload="auto"></audio>
+
+  <script src="semaforo.js"></script>
+</body>
+</html>
