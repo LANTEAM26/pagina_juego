@@ -263,7 +263,7 @@
 
 
 <!-- ============================================================
-     ÁREA DE JUEGOS — 20 juegos organizados por categorías
+     ÁREA DE JUEGOS — 21 juegos organizados por categorías
      ============================================================ -->
 <main id="juegos" class="games-area">
 
@@ -274,7 +274,7 @@
             <span class="section-title-txt">SELECCIONA MISIÓN</span>
         </h2>
         <p class="section-subtitle">
-            20 protocolos de aprendizaje te esperan. ¡Inicia tu carrera digital!
+            21 protocolos de aprendizaje te esperan. ¡Inicia tu carrera digital!
         </p>
     </div>
 
@@ -285,7 +285,7 @@
         <button class="filter-btn is-active" data-filter="all" role="tab" aria-selected="true">
             <span class="filter-ico">🌐</span>
             <span class="filter-txt">Todos</span>
-            <span class="filter-count" data-count="all">20</span>
+            <span class="filter-count" data-count="all">21</span>
         </button>
 
         <button class="filter-btn" data-filter="matematicas" role="tab" aria-selected="false">
@@ -303,7 +303,7 @@
         <button class="filter-btn" data-filter="ciencias" role="tab" aria-selected="false">
             <span class="filter-ico">🧪</span>
             <span class="filter-txt">Ciencias</span>
-            <span class="filter-count" data-count="ciencias">4</span>
+            <span class="filter-count" data-count="ciencias">5</span>
         </button>
 
         <button class="filter-btn" data-filter="historia" role="tab" aria-selected="false">
@@ -727,7 +727,7 @@
                 <p class="games-section-desc">Física, química, biología y astronomía a nivel avanzado</p>
             </div>
             <span class="games-section-count">
-                <span class="games-section-count-num">4</span>
+                <span class="games-section-count-num">5</span>
                 <span class="games-section-count-txt">juegos</span>
             </span>
         </header>
@@ -889,11 +889,15 @@
                 </a>
             </article>
 
-            <!-- NUEVO JUEGO: Lanzador Iónico -->
+            <!-- 21 · Lanzador Iónico -->
             <article class="game-card game-card-new" data-category="ciencias" data-difficulty="dificil">
-                <a href="Juegos/quimica_splash.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Lanzador Iónico">
+                <a href="JuegosSecundaria/AngryChems.html"
+                   class="game-card-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Abrir juego Lanzador Iónico">
                     <div class="game-card-thumb thumb-ciencias has-image">
-                        <iframe src="Juegos/quimica_splash.html" title="Lanzador Iónico" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                        <iframe src="JuegosSecundaria/AngryChems.html" title="Lanzador Iónico" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">21</span>
                         <span class="game-badge-new">NUEVO</span>
@@ -908,7 +912,7 @@
                             <span class="game-age">14-17 años</span>
                         </div>
                         <h3 class="game-title">Lanzador Iónico</h3>
-                        <p class="game-desc">Usa física de parábolas para sintetizar compuestos químicos reales en el laboratorio.</p>
+                        <p class="game-desc">Aplica física de parábolas para sintetizar compuestos químicos interactivos.</p>
                         <div class="game-card-bottom">
                             <span class="game-rating" aria-label="Dificultad 3 de 3">
                                 <span class="star is-filled">★</span>
@@ -1359,17 +1363,18 @@
     /* ZONA INVISIBLE: Detecta el hover en la esquina superior derecha */
     .hover-zone-cerrar {
         position: absolute;
-        top: 0; right: 0;
-        width: 150px; height: 100px;
+        top: max(15px, env(safe-area-inset-top)); 
+        right: 0;
+        width: 150px; height: 80px;
         z-index: 10000000;
         background: transparent;
     }
 
-    /* Botón flotante para salir (Oculto por defecto) */
+    /* Botón flotante para salir (Oculto por defecto hacia la derecha) */
     .btn-cerrar-juego {
         position: absolute; 
-        top: -50px; /* Escondido hacia arriba */
-        right: max(15px, env(safe-area-inset-right)); 
+        top: max(15px, env(safe-area-inset-top)); 
+        right: -250px; /* Escondido hacia la derecha */
         z-index: 10000001; /* Debe estar por encima de la zona de hover */
         background: #e74c3c; color: white; border: 3px solid #c0392b;
         padding: 10px 20px; border-radius: 15px; font-family: 'Fredoka', sans-serif;
@@ -1380,10 +1385,10 @@
     
     .btn-cerrar-juego:active { transform: translateY(4px); box-shadow: none; }
 
-    /* Al pasar el mouse por la zona invisible o el botón, aparece */
+    /* Al pasar el mouse por la zona invisible o el botón, se desliza desde la derecha */
     .hover-zone-cerrar:hover ~ .btn-cerrar-juego,
     .btn-cerrar-juego:hover {
-        top: max(15px, env(safe-area-inset-top));
+        right: max(15px, env(safe-area-inset-right));
         opacity: 1;
     }
 </style>

@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🧪 Reacción en Cadena | Química</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --lab-bg: #0d1117;
+            --lab-acid: #39ff14;
+            --lab-acid-dark: #128000;
+            --lab-purple: #9d00ff;
+            --lab-cyan: #00f3ff;
+            --lab-panel: rgba(13, 17, 23, 0.85);
+            --font-title: 'Fredoka', sans-serif;
+            --font-text: 'Nunito', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-text);
+            display: flex; flex-direction: column; align-items: center; margin: 0; padding: 10px;
+            min-height: 100vh; touch-action: none; color: #fff; background-color: var(--lab-bg); overflow: hidden;
+        }
+
+        /* FONDO DEL LABORATORIO LOCO */
+        .lab-background { position: fixed; inset: 0; z-index: -2; background: radial-gradient(circle at center, #1b0033 0%, var(--lab-bg) 100%); overflow: hidden;}
+        
+        .tube { position: absolute; bottom: 0; width: 60px; height: 100vh; background: rgba(255,255,255,0.02); border-left: 2px solid rgba(255,255,255,0.05); border-right: 2px solid rgba(255,255,255,0.05); }
+        .tube-1 { left: 10%; } .tube-2 { right: 15%; width: 80px; } .tube-3 { left: 30%; width: 40px; opacity: 0.5;}
+
+        .bubble-bg { position: absolute; bottom: -20px; background: rgba(57, 255, 20, 0.2); border: 1px solid rgba(57, 255, 20, 0.5); border-radius: 50%; animation: floatUp linear infinite; box-shadow: 0 0 10px rgba(57, 255, 20, 0.2); }
+        @keyframes floatUp {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(20px); opacity: 0; }
+        }
+
+        .header-container { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 900px; margin-bottom: 5px; z-index: 10;}
+        h1 { color: #fff; margin: 0; font-size: 26px; font-family: var(--font-title); text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 15px var(--lab-acid); display: flex; align-items: center; gap: 10px;}
+        .level-badge { background: var(--lab-purple); color: #fff; padding: 6px 18px; border-radius: 20px; font-weight: bold; font-family: var(--font-title); box-shadow: 0 0 15px var(--lab-purple); border: 2px solid #d080ff;}
+
+        .difficulty-selector { display: flex; gap: 10px; justify-content: center; margin-bottom: 12px; width: 100%; max-width: 900px; z-index: 10; }
+        .diff-btn { background-color: rgba(0,0,0,0.5); border: 2px solid #444; padding: 8px 20px; border-radius: 20px; font-size: 14px; font-weight: bold; color: #aaa; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: all 0.3s; font-family: var(--font-title); text-transform: uppercase;}
+        .diff-btn:hover { border-color: var(--lab-cyan); color: #fff; }
+        .diff-btn.active { background-color: var(--lab-cyan); border-color: var(--lab-cyan); color: #000; box-shadow: 0 0 15px var(--lab-cyan); transform: translateY(-2px); }
+
+        .prompt-box {
+            text-align: center; background: rgba(0, 0, 0, 0.6); padding: 12px 25px; border-radius: 15px; font-size: 16px; font-weight: 700; width: 100%; max-width: 900px; margin-bottom: 15px; box-shadow: inset 0 0 20px rgba(57, 255, 20, 0.1), 0 5px 15px rgba(0,0,0,0.5); border: 2px solid var(--lab-acid); z-index: 10; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; backdrop-filter: blur(10px);
+        }
+        .compound-name { color: var(--lab-acid); text-shadow: 0 0 10px var(--lab-acid); font-size: 22px; font-family: var(--font-title); letter-spacing: 1px;}
+        .progress-tracker { background: rgba(0,0,0,0.8); padding: 5px 20px; border-radius: 10px; border: 1px solid var(--lab-cyan); box-shadow: 0 0 10px rgba(0, 243, 255, 0.3); }
+
+        .canvas-container {
+            position: relative; width: 100%; max-width: 900px; background: rgba(10, 15, 25, 0.7); border-radius: 20px; border: 4px solid #223; box-shadow: inset 0 0 60px rgba(0,0,0,0.9), 0 15px 40px rgba(0,0,0,0.7); overflow: hidden; backdrop-filter: blur(5px);
+        }
+        #gameCanvas { display: block; width: 100%; height: auto; border-radius: 15px; cursor: crosshair; }
+
+        .controls { display: flex; gap: 15px; margin-top: 15px; z-index: 10; }
+        .btn { font-family: var(--font-title); font-weight: 700; font-size: 15px; padding: 12px 25px; border: none; border-radius: 12px; cursor: pointer; text-transform: uppercase; transition: all 0.2s; color: #fff; letter-spacing: 1px;}
+        .btn:active { transform: translateY(4px); box-shadow: none !important; }
+        .btn-reset { background: linear-gradient(180deg, #444, #222); box-shadow: 0 6px 0 #111, 0 0 15px rgba(255,255,255,0.1); border: 2px solid #666;}
+        .btn-info { background: linear-gradient(180deg, #00f3ff, #008b99); color: #000; box-shadow: 0 6px 0 #005f66, 0 0 20px rgba(0, 243, 255, 0.4); border: 2px solid #afffff;}
+
+        /* MODAL */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 1000; visibility: hidden; opacity: 0; transition: all 0.3s; }
+        .modal-overlay.active { visibility: visible; opacity: 1; }
+        .modal-box { background: linear-gradient(135deg, #111a2a, #0a0e17); border: 4px solid var(--lab-cyan); padding: 40px 30px; border-radius: 25px; text-align: center; max-width: 80%; width: 500px; transform: scale(0.7); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 0 50px rgba(0, 243, 255, 0.3), inset 0 0 30px rgba(0,0,0,0.8); }
+        .modal-overlay.active .modal-box { transform: scale(1); }
+        .modal-title { font-size: 30px; font-family: var(--font-title); margin-bottom: 5px; color: var(--lab-acid); text-shadow: 0 0 15px var(--lab-acid);}
+        .modal-formula { font-size: 45px; color: #fff; font-family: var(--font-title); margin-bottom: 20px; letter-spacing: 3px; text-shadow: 0 5px 10px rgba(0,0,0,0.5);}
+        .modal-msg { font-size: 17px; margin-bottom: 25px; color: #ccc; white-space: pre-line; line-height: 1.5;}
+        
+        .fact-box { background: rgba(0,0,0,0.5); border-left: 5px solid var(--lab-purple); padding: 15px 20px; border-radius: 0 15px 15px 0; margin-bottom: 30px; text-align: left; display: flex; gap: 15px; align-items: center; box-shadow: inset 0 0 15px rgba(157, 0, 255, 0.1);}
+        .fact-icon { font-size: 35px; filter: drop-shadow(0 0 5px rgba(255,255,255,0.5));}
+        .fact-text { font-size: 15px; color: #d6eaf8; font-style: italic; margin: 0; line-height: 1.4;}
+
+        .modal-btn { background: linear-gradient(180deg, #ff00ea, #9e0091); box-shadow: 0 6px 0 #5c0055, 0 0 20px rgba(255, 0, 234, 0.4); padding: 15px 35px; font-size: 18px; color: white; border: 2px solid #ffaff7; border-radius: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;}
+        .modal-btn:active { transform: translateY(6px); box-shadow: none; }
+    </style>
+</head>
+<body>
+
+    <div class="lab-background">
+        <div class="tube tube-1"></div>
+        <div class="tube tube-2"></div>
+        <div class="tube tube-3"></div>
+        <div id="bg-bubbles"></div>
+    </div>
+
+    <div class="header-container">
+        <h1><span style="font-size: 35px;">👨‍🔬</span> Laboratorio Iónico</h1>
+        <div class="level-badge" id="level-indicator">Nivel 1/30</div>
+    </div>
+    
+    <div class="difficulty-selector">
+        <button id="btn-diff-easy" class="diff-btn active" onclick="setDifficulty('easy')">🟢 Fácil</button>
+        <button id="btn-diff-medium" class="diff-btn" onclick="setDifficulty('medium')">🟡 Medio</button>
+        <button id="btn-diff-hard" class="diff-btn" onclick="setDifficulty('hard')">🔴 Difícil</button>
+    </div>
+
+    <div class="prompt-box">
+        <div style="text-align: left;">
+            <span style="color: #aaa; font-size: 14px; text-transform: uppercase;">Sintetizar:</span><br>
+            <span class="compound-name" id="target-compound">Cargando...</span>
+        </div>
+        <div class="progress-tracker" id="progress-box">
+            <span style="color: #aaa; font-size: 12px; text-transform: uppercase; display: block;">Requeridos</span>
+            <span style="color: var(--lab-cyan); font-size: 24px; font-weight: 900; text-shadow: 0 0 10px var(--lab-cyan);" id="atoms-left">0</span>
+        </div>
+    </div>
+
+    <div class="canvas-container">
+        <canvas id="gameCanvas" width="900" height="450"></canvas>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-reset" onclick="resetShot()">🔄 Abortar Tiro</button>
+        <button class="btn btn-info" onclick="showHelp()">💡 Ayuda del Doc</button>
+    </div>
+
+    <div class="modal-overlay" id="modal">
+        <div class="modal-box">
+            <h2 class="modal-title" id="m-title">Título</h2>
+            <div class="modal-formula" id="m-formula"></div>
+            <p class="modal-msg" id="m-msg">Mensaje</p>
+            <div class="fact-box" id="fact-container" style="display: none;">
+                <span class="fact-icon">💡</span>
+                <p class="fact-text" id="m-fact">Dato curioso aquí.</p>
+            </div>
+            <button class="modal-btn" onclick="nextLevelAction()" id="m-btn">¡Siguiente Nivel!</button>
+        </div>
+    </div>
+
+    <script>
+        // GENERADOR DE BURBUJAS CSS
+        const bubbleContainer = document.getElementById('bg-bubbles');
+        for(let i=0; i<20; i++) {
+            let b = document.createElement('div');
+            b.className = 'bubble-bg';
+            let size = Math.random() * 15 + 5;
+            b.style.width = size + 'px';
+            b.style.height = size + 'px';
+            b.style.left = Math.random() * 100 + 'vw';
+            b.style.animationDuration = (Math.random() * 5 + 5) + 's';
+            b.style.animationDelay = (Math.random() * 5) + 's';
+            bubbleContainer.appendChild(b);
+        }
+
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Físicas Generales
+        const gravity = 0.25;
+        const friction = 0.98;
+        const groundY = 390; 
+
+        // Estado del Juego
+        let isDragging = false;
+        let isFlying = false;
+        let currentLevel = 0;
+        let particles = [];
+        let bumpers = []; 
+        let targets = [];
+        let requiredCollected = 0;
+        let time = 0; 
+
+        // Bobina Tesla
+        const sling = { x: 120, y: 290, r: 90 }; 
+
+        // Proyectil (successfulHit sirve para perdonar errores si ya agarró el correcto en este tiro)
+        let bird = { x: 120, y: 290, r: 22, vx: 0, vy: 0, text: "", color: "#00f3ff", active: true, successfulHit: false };
+
+        // CLASE OBSTÁCULO ESTÁTICO (REPULSOR)
+        class Bumper {
+            constructor(x, y, r) {
+                this.x = x; this.y = y; this.r = r;
+            }
+            draw(ctx) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
+                let grad = ctx.createRadialGradient(this.x - this.r/3, this.y - this.r/3, this.r/5, this.x, this.y, this.r);
+                grad.addColorStop(0, "#fff");
+                grad.addColorStop(0.3, "#7f8c8d");
+                grad.addColorStop(1, "#2c3e50");
+                ctx.fillStyle = grad;
+                ctx.fill();
+
+                ctx.strokeStyle = varColor('--lab-cyan');
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.r * 0.4 + Math.sin(time*5)*2, 0, Math.PI*2);
+                ctx.fillStyle = varColor('--lab-acid');
+                ctx.shadowBlur = 10; ctx.shadowColor = varColor('--lab-acid');
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        }
+
+        const allLevels = [
+            { diff: "easy", name: "Monóxido de carbono", form: "CO", base: "C", baseCol: "#95a5a6", reqA: "O", reqCount: 1, reqCol: "#e74c3c", wrongA: ["N"], fact: "Es un gas muy peligroso que sale del escape de los autos." },
+            { diff: "easy", name: "Cloruro de sodio", form: "NaCl", base: "Na", baseCol: "#f1c40f", reqA: "Cl", reqCount: 1, reqCol: "#2ecc71", wrongA: ["He"], fact: "¡Es la sal de mesa que usamos todos los días en la comida!" },
+            { diff: "easy", name: "Óxido de magnesio", form: "MgO", base: "Mg", baseCol: "#bdc3c7", reqA: "O", reqCount: 1, reqCol: "#e74c3c", wrongA: ["F"], fact: "Se usa en las medicinas antiácidas para el dolor de estómago." },
+            { diff: "easy", name: "Fluoruro de hidrógeno", form: "HF", base: "H", baseCol: "#3498db", reqA: "F", reqCount: 1, reqCol: "#1abc9c", wrongA: ["S"], fact: "Es tan corrosivo que puede disolver el vidrio." },
+            { diff: "easy", name: "Bromuro de potasio", form: "KBr", base: "K", baseCol: "#9b59b6", reqA: "Br", reqCount: 1, reqCol: "#d35400", wrongA: ["C"], fact: "En el siglo XIX, los médicos lo usaban como un sedante." },
+            { diff: "easy", name: "Sulfuro de zinc", form: "ZnS", base: "Zn", baseCol: "#7f8c8d", reqA: "S", reqCount: 1, reqCol: "#f1c40f", wrongA: ["O"], fact: "Brilla en la oscuridad y se usa en pinturas fosforescentes." },
+            { diff: "easy", name: "Óxido de calcio", form: "CaO", base: "Ca", baseCol: "#ecf0f1", reqA: "O", reqCount: 1, reqCol: "#e74c3c", wrongA: ["Cl"], fact: "Se le llama 'cal viva' y es fundamental en la construcción." },
+            { diff: "easy", name: "Yoduro de plata", form: "AgI", base: "Ag", baseCol: "#bdc3c7", reqA: "I", reqCount: 1, reqCol: "#8e44ad", wrongA: ["H"], fact: "Se usa para 'sembrar nubes' y provocar lluvia artificial." },
+            { diff: "easy", name: "Cloruro de hidrógeno", form: "HCl", base: "H", baseCol: "#3498db", reqA: "Cl", reqCount: 1, reqCol: "#2ecc71", wrongA: ["N"], fact: "Mezclado con agua, forma el ácido que disuelve tu comida en el estómago." },
+            { diff: "easy", name: "Monóxido de nitrógeno", form: "NO", base: "N", baseCol: "#8e44ad", reqA: "O", reqCount: 1, reqCol: "#e74c3c", wrongA: ["C"], fact: "A pesar de ser un gas tóxico, tu propio cuerpo lo produce para la circulación." },
+            
+            { diff: "medium", name: "Monóxido de dihidrógeno", form: "H₂O", base: "O", baseCol: "#e74c3c", reqA: "H", reqCount: 2, reqCol: "#3498db", wrongA: ["C", "Na"], fact: "¡Es el agua! Cubre el 71% de la superficie de nuestro planeta Tierra." },
+            { diff: "medium", name: "Dióxido de carbono", form: "CO₂", base: "C", baseCol: "#95a5a6", reqA: "O", reqCount: 2, reqCol: "#e74c3c", wrongA: ["H", "N"], fact: "Es el gas que exhalamos y que las plantas necesitan para respirar." },
+            { diff: "medium", name: "Tetrahidruro de carbono", form: "CH₄", base: "C", baseCol: "#95a5a6", reqA: "H", reqCount: 4, reqCol: "#3498db", wrongA: ["O", "Cl"], fact: "Conocido como metano, es el gas inflamable que usas en la cocina." },
+            { diff: "medium", name: "Trihidruro de nitrógeno", form: "NH₃", base: "N", baseCol: "#8e44ad", reqA: "H", reqCount: 3, reqCol: "#3498db", wrongA: ["S", "O"], fact: "Es el amoníaco, un gas de olor muy fuerte usado en productos de limpieza." },
+            { diff: "medium", name: "Dióxido de azufre", form: "SO₂", base: "S", baseCol: "#f1c40f", reqA: "O", reqCount: 2, reqCol: "#e74c3c", wrongA: ["C", "F"], fact: "Se produce en las erupciones volcánicas y es el causante de la lluvia ácida." },
+            { diff: "medium", name: "Dicloruro de calcio", form: "CaCl₂", base: "Ca", baseCol: "#ecf0f1", reqA: "Cl", reqCount: 2, reqCol: "#2ecc71", wrongA: ["Na", "H"], fact: "En países fríos se arroja en las calles para derretir la nieve y el hielo." },
+            { diff: "medium", name: "Dicloruro de magnesio", form: "MgCl₂", base: "Mg", baseCol: "#bdc3c7", reqA: "Cl", reqCount: 2, reqCol: "#2ecc71", wrongA: ["O", "Br"], fact: "Es un mineral vital para los músculos que encuentras en el tofu y las almendras." },
+            { diff: "medium", name: "Trifluoruro de boro", form: "BF₃", base: "B", baseCol: "#e67e22", reqA: "F", reqCount: 3, reqCol: "#1abc9c", wrongA: ["C", "N"], fact: "Es un gas incoloro y tóxico que se usa como catalizador para hacer plásticos." },
+            { diff: "medium", name: "Disulfuro de carbono", form: "CS₂", base: "C", baseCol: "#95a5a6", reqA: "S", reqCount: 2, reqCol: "#f1c40f", wrongA: ["O", "Cl"], fact: "Es un líquido inflamable que huele terriblemente mal y se usa para hacer celofán." },
+            { diff: "medium", name: "Dióxido de nitrógeno", form: "NO₂", base: "N", baseCol: "#8e44ad", reqA: "O", reqCount: 2, reqCol: "#e74c3c", wrongA: ["H", "C"], fact: "Es un gas tóxico de color marrón rojizo, principal culpable del smog en las ciudades." },
+            
+            { diff: "hard", name: "Trióxido de dihierro", form: "Fe₂O₃", base: "Fe₂", baseCol: "#d35400", reqA: "O", reqCount: 3, reqCol: "#e74c3c", wrongA: ["C", "N", "Cl", "S"], fact: "Es el óxido común. Le da el color rojo al planeta Marte y a tu sangre." },
+            { diff: "hard", name: "Tricloruro de aluminio", form: "AlCl₃", base: "Al", baseCol: "#bdc3c7", reqA: "Cl", reqCount: 3, reqCol: "#2ecc71", wrongA: ["H", "O", "Na", "F"], fact: "Es el ingrediente activo principal que utilizan los desodorantes antitranspirantes." },
+            { diff: "hard", name: "Hexafluoruro de azufre", form: "SF₆", base: "S", baseCol: "#f1c40f", reqA: "F", reqCount: 6, reqCol: "#1abc9c", wrongA: ["C", "O", "N", "H"], fact: "Es un gas tan pesado que si lo respiras (no lo hagas), tu voz suena súper grave." },
+            { diff: "hard", name: "Tetracloruro de carbono", form: "CCl₄", base: "C", baseCol: "#95a5a6", reqA: "Cl", reqCount: 4, reqCol: "#2ecc71", wrongA: ["O", "H", "F", "Br"], fact: "Antes se usaba en extintores de incendios, pero se prohibió porque era muy tóxico." },
+            { diff: "hard", name: "Dióxido de silicio", form: "SiO₂", base: "Si", baseCol: "#7f8c8d", reqA: "O", reqCount: 2, reqCol: "#e74c3c", wrongA: ["C", "N", "S", "Cl"], fact: "Es el componente principal de la arena de la playa y el ingrediente para hacer vidrio." },
+            { diff: "hard", name: "Trióxido de azufre", form: "SO₃", base: "S", baseCol: "#f1c40f", reqA: "O", reqCount: 3, reqCol: "#e74c3c", wrongA: ["H", "C", "N", "Cl"], fact: "Cuando este gas contaminante se mezcla con agua en las nubes, forma ácido sulfúrico." },
+            { diff: "hard", name: "Pentacloruro de fósforo", form: "PCl₅", base: "P", baseCol: "#e67e22", reqA: "Cl", reqCount: 5, reqCol: "#2ecc71", wrongA: ["O", "F", "N", "Na"], fact: "Es un sólido cristalino amarillo que reacciona violentamente si toca el agua." },
+            { diff: "hard", name: "Hexafluoruro de uranio", form: "UF₆", base: "U", baseCol: "#27ae60", reqA: "F", reqCount: 6, reqCol: "#1abc9c", wrongA: ["C", "O", "S", "Cl"], fact: "Se usa en las plantas de energía nuclear para enriquecer el uranio combustible." },
+            { diff: "hard", name: "Tetrabromuro de carbono", form: "CBr₄", base: "C", baseCol: "#95a5a6", reqA: "Br", reqCount: 4, reqCol: "#d35400", wrongA: ["O", "H", "N", "Cl"], fact: "Es un compuesto que se usaba antiguamente para vulcanizar el caucho de las llantas." },
+            { diff: "hard", name: "Pentóxido de dinitrógeno", form: "N₂O₅", base: "N₂", baseCol: "#8e44ad", reqA: "O", reqCount: 5, reqCol: "#e74c3c", wrongA: ["C", "H", "S", "Cl"], fact: "Es un sólido blanco inestable que se utiliza en la fabricación de explosivos modernos." }
+        ];
+
+        const colorMap = { "N":"#8e44ad", "C":"#95a5a6", "O":"#e74c3c", "H":"#3498db", "He":"#9b59b6", "F":"#1abc9c", "S":"#f1c40f", "Cl":"#2ecc71", "Br":"#d35400", "Na":"#f1c40f" };
+
+        function drawChemicalText(ctx, text, x, y) {
+            ctx.textAlign = "center"; ctx.textBaseline = "middle";
+            let hasNum = text.match(/[0-9₂₃₄₅₆₇₈]/);
+            if (!hasNum) { ctx.fillText(text, x, y); return; }
+            let letter = text.replace(/[0-9₂₃₄₅₆₇₈]/g, '');
+            let num = text.match(/[0-9₂₃₄₅₆₇₈]/)[0];
+            const subMap = {'₂':'2','₃':'3','₄':'4','₅':'5','₆':'6','₇':'7','₈':'8'};
+            if(subMap[num]) num = subMap[num];
+            ctx.font = "bold 20px Nunito"; ctx.fillText(letter, x - 5, y);
+            ctx.font = "bold 12px Nunito"; ctx.fillText(num, x + 8, y + 8);
+            ctx.font = "bold 18px Nunito";
+        }
+
+        // GENERADOR DE REPULSORES MAGNÉTICOS SIN SOLAPAMIENTO
+        function buildBumpers(difficulty) {
+            bumpers = [];
+            let count = difficulty === 'easy' ? 1 : (difficulty === 'medium' ? 2 : 3);
+            let fixedRadius = 35; 
+            let maxAttempts = 100;
+
+            for(let i = 0; i < count; i++) {
+                let placed = false;
+                let attempts = 0;
+
+                while (!placed && attempts < maxAttempts) {
+                    let x = 350 + Math.random() * 450; 
+                    let y = 100 + Math.random() * (groundY - 150 - fixedRadius);
+
+                    let overlap = false;
+                    for (let b of bumpers) {
+                        let dx = x - b.x;
+                        let dy = y - b.y;
+                        let dist = Math.sqrt(dx*dx + dy*dy);
+                        if (dist < (fixedRadius + b.r + 20)) { 
+                            overlap = true;
+                            break;
+                        }
+                    }
+
+                    if (!overlap) {
+                        bumpers.push(new Bumper(x, y, fixedRadius));
+                        placed = true;
+                    }
+                    attempts++;
+                }
+            }
+        }
+
+        function spawnTarget(text, isCorrect, speedMult) {
+            let angle = Math.random() * Math.PI * 2;
+            let speed = (Math.random() * 1.5 + 1.5) * speedMult;
+            return {
+                text: text,
+                color: colorMap[text] || "#7f8c8d",
+                isCorrect: isCorrect,
+                r: 25,
+                x: 400 + Math.random() * 400,
+                y: 50 + Math.random() * 250,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                hit: false
+            };
+        }
+
+        function setDifficulty(diff) {
+            if (isFlying && bird.active) return; 
+            if (diff === 'easy') currentLevel = 0;
+            else if (diff === 'medium') currentLevel = 10;
+            else if (diff === 'hard') currentLevel = 20;
+            loadLevel(currentLevel);
+        }
+
+        function updateDifficultyUI(index) {
+            document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('active'));
+            if (index < 10) document.getElementById('btn-diff-easy').classList.add('active');
+            else if (index < 20) document.getElementById('btn-diff-medium').classList.add('active');
+            else document.getElementById('btn-diff-hard').classList.add('active');
+        }
+
+        function loadLevel(index) {
+            if(index >= allLevels.length) {
+                showModal("¡Maestro Químico! 🏆", "", "Has completado todos los compuestos del laboratorio.", "Volver a Jugar", null, () => {
+                    currentLevel = 0; loadLevel(0); closeModal();
+                });
+                return;
+            }
+
+            const lvl = allLevels[index];
+            updateDifficultyUI(index);
+
+            document.getElementById('level-indicator').innerText = `Nivel ${index + 1}/30`;
+            document.getElementById('target-compound').innerText = lvl.name;
+            requiredCollected = 0;
+            
+            bird.text = lvl.base;
+            bird.color = lvl.baseCol;
+            document.getElementById('atoms-left').innerText = lvl.reqCount;
+
+            let maxTargets = 2, speed = 1.0;
+            if(lvl.diff === "medium") { maxTargets = 3; speed = 1.3; }
+            if(lvl.diff === "hard") { maxTargets = 5; speed = 1.8; }
+
+            targets = [];
+            targets.push(spawnTarget(lvl.reqA, true, speed));
+            for(let i=0; i<maxTargets-1; i++) {
+                let wAtom = lvl.wrongA[i % lvl.wrongA.length];
+                targets.push(spawnTarget(wAtom, false, speed));
+            }
+
+            buildBumpers(lvl.diff);
+            resetShot();
+        }
+
+        function resetShot() {
+            bird.x = sling.x; bird.y = sling.y; bird.vx = 0; bird.vy = 0;
+            isFlying = false; isDragging = false; bird.active = true;
+            bird.successfulHit = false; // Reiniciar el escudo de estabilidad
+        }
+
+        class Particle {
+            constructor(x, y, color, isSuccess) {
+                this.x = x; this.y = y;
+                this.vx = (Math.random() - 0.5) * (isSuccess ? 10 : 15);
+                this.vy = (Math.random() - 0.5) * (isSuccess ? 10 : 15);
+                this.life = 1.0;
+                this.color = color;
+                this.size = Math.random() * 6 + 3;
+            }
+            update() {
+                this.x += this.vx; this.y += this.vy;
+                this.life -= 0.02;
+            }
+            draw(ctx) {
+                ctx.globalAlpha = this.life;
+                ctx.fillStyle = this.color;
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill();
+                ctx.globalAlpha = 1.0;
+            }
+        }
+
+        function createExplosion(x, y, color, isSuccess) {
+            for(let i=0; i<30; i++) particles.push(new Particle(x, y, color, isSuccess));
+        }
+
+        // FÍSICA DE REBOTE CÍRCULO-CÍRCULO
+        function circleCollision(obj, staticBumper, bounceFactor = 0.8) {
+            let dx = obj.x - staticBumper.x;
+            let dy = obj.y - staticBumper.y;
+            let dist = Math.sqrt(dx*dx + dy*dy);
+            let minDist = obj.r + staticBumper.r;
+
+            if (dist < minDist) {
+                let overlap = minDist - dist;
+                let nx = dx / dist;
+                let ny = dy / dist;
+                
+                obj.x += nx * overlap;
+                obj.y += ny * overlap;
+
+                let dp = obj.vx * nx + obj.vy * ny;
+                if (dp < 0) {
+                    obj.vx -= (1 + bounceFactor) * dp * nx;
+                    obj.vy -= (1 + bounceFactor) * dp * ny;
+                }
+                return true;
+            }
+            return false;
+        }
+
+        // MOTOR DE FÍSICAS PRINCIPAL
+        function handleCollisions() {
+            if(!bird.active) return;
+
+            // Pájaro contra Piso (Ácido)
+            if (bird.y + bird.r >= groundY) {
+                bird.y = groundY - bird.r; bird.vy *= -0.6; bird.vx *= friction;
+                if(Math.abs(bird.vy) < 1) bird.vy = 0;
+            }
+            // Pájaro contra Paredes
+            if (bird.x + bird.r >= canvas.width) { bird.x = canvas.width - bird.r; bird.vx *= -0.8; }
+            if (bird.x - bird.r <= 0) { bird.x = bird.r; bird.vx *= -0.8; }
+            if (bird.y - bird.r <= 0) { bird.y = bird.r; bird.vy *= -0.8; }
+
+            // Pájaro contra Repulsores
+            bumpers.forEach(b => {
+                let hit = circleCollision(bird, b, 0.7);
+                if(hit) {
+                    createExplosion(bird.x + (b.x - bird.x)/2, bird.y + (b.y - bird.y)/2, varColor('--lab-cyan'), false);
+                }
+            });
+
+            // ESCUDO DE ESTABILIDAD: Filtramos y ordenamos los átomos que colisionan este frame.
+            // Los átomos correctos se evalúan PRIMERO.
+            let hitList = targets.filter(t => !t.hit && Math.sqrt((bird.x - t.x)**2 + (bird.y - t.y)**2) < bird.r + t.r);
+            hitList.sort((a, b) => (a.isCorrect === b.isCorrect) ? 0 : a.isCorrect ? -1 : 1);
+
+            for (let t of hitList) {
+                t.hit = true;
+                let lvl = allLevels[currentLevel];
+
+                if (t.isCorrect) {
+                    bird.successfulHit = true; // Activa el escudo de estabilidad para este tiro
+                    createExplosion(t.x, t.y, varColor('--cyber-green'), true);
+                    requiredCollected++;
+                    let left = lvl.reqCount - requiredCollected;
+                    
+                    if (left > 0) {
+                        document.getElementById('atoms-left').innerText = left;
+                        setTimeout(() => {
+                            let speed = lvl.diff === "easy" ? 1.0 : (lvl.diff === "medium" ? 1.3 : 1.8);
+                            targets.push(spawnTarget(lvl.reqA, true, speed));
+                        }, 500);
+                    } else {
+                        isFlying = false; bird.active = false;
+                        document.getElementById('atoms-left').innerText = `¡COMPLETO!`;
+                        setTimeout(() => {
+                            showModal("¡Reacción Exitosa! ✨", lvl.form, `Has sintetizado ${lvl.name}.`, "Siguiente Nivel", lvl.fact, () => {
+                                currentLevel++; loadLevel(currentLevel); closeModal();
+                            });
+                        }, 500);
+                    }
+                } else {
+                    // Chocó con un átomo incorrecto
+                    if (bird.successfulHit) {
+                        // El escudo de estabilidad lo perdona. Solo destruimos el átomo falso visualmente.
+                        createExplosion(t.x, t.y, '#7f8c8d', false);
+                    } else {
+                        // Fallo real (tocó uno malo antes que uno bueno)
+                        isFlying = false; bird.active = false;
+                        createExplosion(t.x, t.y, varColor('--cyber-pink'), false);
+                        setTimeout(() => {
+                            showModal("¡BOOM! Reacción Inestable 💥", "", `Atrapaste un elemento equivocado.\nConcéntrate en buscar el átomo correcto.`, "Reintentar", null, () => {
+                                loadLevel(currentLevel); closeModal();
+                            });
+                        }, 500);
+                    }
+                }
+            }
+
+            if (isFlying && Math.abs(bird.vx) < 0.1 && Math.abs(bird.vy) < 0.1 && bird.y >= groundY - bird.r - 2) {
+                isFlying = false; setTimeout(resetShot, 800);
+            }
+        }
+
+        // DRONES QUÍMICOS
+        function updateTargets() {
+            targets = targets.filter(t => !t.hit);
+            targets.forEach(t => {
+                t.x += t.vx; t.y += t.vy;
+
+                // Limites de pantalla para los blancos
+                if (t.x + t.r > canvas.width) { t.x = canvas.width - t.r; t.vx *= -1; }
+                else if (t.x - t.r < 250) { t.x = 250 + t.r; t.vx *= -1; }
+                
+                if (t.y + t.r > groundY) { t.y = groundY - t.r; t.vy *= -1; }
+                else if (t.y - t.r < 0) { t.y = t.r; t.vy *= -1; }
+
+                bumpers.forEach(b => circleCollision(t, b, 1.0));
+            });
+        }
+
+        function varColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || '#fff'; }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            time += 0.05;
+
+            // Piscina de Ácido
+            let acidGrad = ctx.createLinearGradient(0, groundY, 0, canvas.height);
+            acidGrad.addColorStop(0, "rgba(57, 255, 20, 0.4)");
+            acidGrad.addColorStop(1, "rgba(18, 128, 0, 0.8)");
+            ctx.fillStyle = acidGrad; 
+            ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
+            
+            ctx.beginPath();
+            ctx.moveTo(0, groundY);
+            for(let i=0; i<canvas.width; i+=20) {
+                ctx.lineTo(i, groundY + Math.sin(i*0.05 + time) * 4);
+            }
+            ctx.lineTo(canvas.width, canvas.height);
+            ctx.lineTo(0, canvas.height);
+            ctx.fillStyle = "rgba(57, 255, 20, 0.2)";
+            ctx.fill();
+            
+            ctx.strokeStyle = varColor('--lab-acid'); ctx.lineWidth = 3;
+            ctx.beginPath(); 
+            for(let i=0; i<canvas.width; i+=20) { ctx.lineTo(i, groundY + Math.sin(i*0.05 + time) * 4); }
+            ctx.stroke();
+
+            // Bobina Tesla (Lanzador)
+            ctx.fillStyle = "#555"; 
+            ctx.fillRect(sling.x - 15, sling.y, 30, groundY - sling.y); 
+            ctx.fillStyle = "#333"; 
+            ctx.fillRect(sling.x - 25, groundY - 20, 50, 20); 
+            
+            ctx.beginPath(); ctx.arc(sling.x, sling.y, 12, 0, Math.PI*2);
+            ctx.fillStyle = varColor('--lab-cyan'); ctx.fill();
+            ctx.shadowBlur = 15; ctx.shadowColor = varColor('--lab-cyan');
+            
+            if (bird.active && !isFlying) {
+                ctx.beginPath(); ctx.moveTo(sling.x, sling.y); ctx.lineTo(bird.x, bird.y); 
+                ctx.strokeStyle = varColor('--lab-cyan'); ctx.lineWidth = 3; ctx.stroke();
+                
+                if (isDragging) {
+                    ctx.shadowBlur = 0; 
+                    ctx.beginPath(); ctx.setLineDash([8, 12]); ctx.lineWidth = 2; ctx.strokeStyle = "rgba(0, 243, 255, 0.5)"; 
+                    let simX = bird.x; let simY = bird.y; let simVx = (sling.x - bird.x) * 0.2; let simVy = (sling.y - bird.y) * 0.2;
+                    ctx.moveTo(simX, simY);
+                    for (let i = 0; i < 35; i++) { simVy += gravity; simX += simVx; simY += simVy; ctx.lineTo(simX, simY); }
+                    ctx.stroke(); ctx.setLineDash([]); 
+                }
+            }
+            ctx.shadowBlur = 0; 
+
+            bumpers.forEach(b => { b.draw(ctx); });
+
+            ctx.font = "bold 20px Nunito";
+            targets.forEach(t => {
+                if (!t.hit) {
+                    ctx.save();
+                    ctx.translate(t.x, t.y);
+                    let angle = Math.atan2(t.vy, t.vx);
+                    ctx.rotate(angle); 
+                    ctx.fillStyle = "rgba(0, 255, 255, 0.6)";
+                    ctx.beginPath();
+                    ctx.moveTo(-t.r + 5, -10);
+                    ctx.lineTo(-t.r + 5, 10);
+                    ctx.lineTo(-t.r - 15 - Math.random() * 15, 0); 
+                    ctx.fill();
+                    ctx.restore();
+
+                    let grad = ctx.createRadialGradient(t.x-8, t.y-8, 3, t.x, t.y, t.r);
+                    grad.addColorStop(0, "#fff"); grad.addColorStop(1, t.color);
+                    ctx.shadowBlur = 15; ctx.shadowColor = t.color;
+                    ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(t.x, t.y, t.r, 0, Math.PI*2); ctx.fill();
+                    ctx.shadowBlur = 0;
+
+                    ctx.save(); ctx.translate(t.x, t.y); ctx.rotate(time * 2); 
+                    ctx.strokeStyle = "rgba(255,255,255,0.6)"; ctx.lineWidth = 1.5;
+                    ctx.beginPath(); ctx.ellipse(0, 0, t.r + 8, t.r - 10, 0, 0, Math.PI*2); ctx.stroke();
+                    ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(t.r + 8, 0, 3, 0, Math.PI*2); ctx.fill();
+                    ctx.restore();
+
+                    ctx.fillStyle = "#fff"; ctx.shadowBlur = 5; ctx.shadowColor = "#000"; 
+                    drawChemicalText(ctx, t.text, t.x, t.y); ctx.shadowBlur = 0;
+                }
+            });
+
+            if (bird.active) {
+                if (!isFlying && !isDragging) bird.y = sling.y + Math.sin(time * 4) * 6;
+                
+                let bGrad = ctx.createRadialGradient(bird.x-8, bird.y-8, 3, bird.x, bird.y, bird.r);
+                bGrad.addColorStop(0, "#fff"); bGrad.addColorStop(1, bird.color);
+
+                ctx.shadowBlur = 15; ctx.shadowColor = bird.color;
+                ctx.fillStyle = bGrad; ctx.beginPath(); ctx.arc(bird.x, bird.y, bird.r, 0, Math.PI*2); ctx.fill();
+                ctx.shadowBlur = 0;
+
+                ctx.save(); ctx.translate(bird.x, bird.y); ctx.rotate(-time * 3); 
+                ctx.strokeStyle = "rgba(255,255,255,0.6)"; ctx.lineWidth = 1.5;
+                ctx.beginPath(); ctx.ellipse(0, 0, bird.r + 8, bird.r - 10, 0, 0, Math.PI*2); ctx.stroke();
+                ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(bird.r + 8, 0, 3, 0, Math.PI*2); ctx.fill();
+                ctx.restore();
+
+                ctx.fillStyle = "#fff"; ctx.shadowBlur = 5; ctx.shadowColor = "#000";
+                ctx.font = "bold 18px Nunito"; drawChemicalText(ctx, bird.text, bird.x, bird.y); ctx.shadowBlur = 0;
+            }
+
+            for(let i = particles.length - 1; i >= 0; i--) {
+                particles[i].update(); particles[i].draw(ctx);
+                if(particles[i].life <= 0) particles.splice(i, 1);
+            }
+        }
+
+        function update() {
+            if (isFlying && bird.active) { bird.vy += gravity; bird.x += bird.vx; bird.y += bird.vy; }
+            handleCollisions(); 
+            updateTargets(); 
+            draw(); 
+            requestAnimationFrame(update);
+        }
+
+        function getPos(evt) {
+            const rect = canvas.getBoundingClientRect();
+            let clientX = evt.clientX; let clientY = evt.clientY;
+            if(evt.touches && evt.touches.length > 0) { clientX = evt.touches[0].clientX; clientY = evt.touches[0].clientY; }
+            return { x: (clientX - rect.left) * (canvas.width / rect.width), y: (clientY - rect.top) * (canvas.height / rect.height) };
+        }
+        function down(e) {
+            if (isFlying || !bird.active) return;
+            const pos = getPos(e); let dx = pos.x - bird.x; let dy = pos.y - bird.y;
+            if (Math.sqrt(dx*dx + dy*dy) < bird.r + 25) { isDragging = true; if(e.cancelable) e.preventDefault(); }
+        }
+        function move(e) {
+            if (!isDragging || !bird.active) return;
+            if(e.cancelable) e.preventDefault();
+            const pos = getPos(e); let dx = pos.x - sling.x; let dy = pos.y - sling.y;
+            let angle = Math.atan2(dy, dx); let dist = Math.min(Math.sqrt(dx*dx + dy*dy), sling.r);
+            if (Math.cos(angle) > 0.2) angle = Math.acos(0.2) * Math.sign(Math.asin(Math.sin(angle)));
+            bird.x = sling.x + Math.cos(angle) * dist; bird.y = sling.y + Math.sin(angle) * dist;
+        }
+        function up(e) {
+            if (isDragging) {
+                isDragging = false; let dx = sling.x - bird.x; let dy = sling.y - bird.y;
+                if (Math.sqrt(dx*dx + dy*dy) > 10) { bird.vx = dx * 0.2; bird.vy = dy * 0.2; isFlying = true; } 
+                else { resetShot(); }
+            }
+        }
+
+        canvas.addEventListener('mousedown', down); window.addEventListener('mousemove', move); window.addEventListener('mouseup', up);
+        canvas.addEventListener('touchstart', down, {passive:false}); window.addEventListener('touchmove', move, {passive:false}); window.addEventListener('touchend', up);
+
+        let nextAction = null;
+        function showModal(title, formula, msg, btnText, fact, action) {
+            document.getElementById('m-title').innerText = title;
+            document.getElementById('m-formula').innerText = formula;
+            document.getElementById('m-msg').innerText = msg;
+            document.getElementById('m-btn').innerText = btnText;
+            if(fact) { document.getElementById('fact-container').style.display = "flex"; document.getElementById('m-fact').innerText = fact; } 
+            else { document.getElementById('fact-container').style.display = "none"; }
+            nextAction = action;
+            document.getElementById('modal').classList.add('active');
+        }
+        function closeModal() { document.getElementById('modal').classList.remove('active'); }
+        function nextLevelAction() { if(nextAction) nextAction(); }
+        function showHelp() { showModal("💡 Instrucciones", "", "1. Lee el nombre de la molécula.\n2. Deduce la fórmula en tu mente.\n3. Caza la cantidad de átomos correctos disparando el cañón iónico.", "¡Entendido!", null, closeModal); }
+
+        loadLevel(0); update();
+    </script>
+    <script>
+        document.body.addEventListener('pointerdown', function() {
+            let elem = document.documentElement;
+            if (!document.fullscreenElement) {
+                if (elem.requestFullscreen) { elem.requestFullscreen().catch(e=>{}); } 
+                else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); }
+            }
+        }, { once: true });
+    </script>
+</body>
+</html>

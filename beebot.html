@@ -1333,11 +1333,11 @@
         background: transparent;
     }
 
-    /* Botón flotante para salir (Oculto por defecto) */
+    /* Botón flotante para salir (Escondido a la derecha) */
     .btn-cerrar-juego {
         position: absolute; 
-        top: -50px; /* Escondido hacia arriba */
-        right: max(15px, env(safe-area-inset-right)); 
+        top: max(15px, env(safe-area-inset-top)); 
+        right: -250px; /* Escondido hacia la derecha */
         z-index: 10000001; /* Debe estar por encima de la zona de hover */
         background: #e74c3c; color: white; border: 3px solid #c0392b;
         padding: 10px 20px; border-radius: 15px; font-family: 'Fredoka', sans-serif;
@@ -1348,10 +1348,10 @@
     
     .btn-cerrar-juego:active { transform: translateY(4px); box-shadow: none; }
 
-    /* Al pasar el mouse por la zona invisible o el botón, aparece */
+    /* Al pasar el mouse por la zona invisible o el botón, aparece desde la derecha */
     .hover-zone-cerrar:hover ~ .btn-cerrar-juego,
     .btn-cerrar-juego:hover {
-        top: max(15px, env(safe-area-inset-top));
+        right: max(15px, env(safe-area-inset-right));
         opacity: 1;
     }
 </style>
