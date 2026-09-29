@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🧬 Laboratorio Genético · Reproducción Humana y Pensamiento Computacional</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    :root {
+      --bg-deep: #060e18;
+      --bg-panel: #0d1f2e;
+      --bg-card: #112b3d;
+      --bg-card-2: #0a1a27;
+      --border-glow: #2c7fa8;
+      --accent-cyan: #4fd1ff;
+      --accent-teal: #2dd4bf;
+      --accent-gold: #fbbf24;
+      --accent-pink: #f472b6;
+      --accent-green: #22c55e;
+      --accent-red: #ef4444;
+      --accent-purple: #a78bfa;
+      --text-main: #e6f3ff;
+      --text-soft: #9ec5df;
+      --text-dim: #6b93ae;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      background: radial-gradient(ellipse at top left, #0f2b40 0%, #060e18 55%, #03070c 100%);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        radial-gradient(2px 2px at 20% 30%, rgba(79, 209, 255, 0.4), transparent),
+        radial-gradient(1px 1px at 60% 70%, rgba(45, 212, 191, 0.3), transparent),
+        radial-gradient(1.5px 1.5px at 80% 20%, rgba(251, 191, 36, 0.3), transparent),
+        radial-gradient(1px 1px at 35% 85%, rgba(244, 114, 182, 0.25), transparent),
+        radial-gradient(2px 2px at 90% 50%, rgba(79, 209, 255, 0.25), transparent);
+      background-size: 100% 100%;
+      pointer-events: none;
+      z-index: 0;
+      animation: twinkle 8s ease-in-out infinite alternate;
+    }
+
+    @keyframes twinkle {
+      0% { opacity: 0.4; }
+      100% { opacity: 1; }
+    }
+
+    .app {
+      width: 100%;
+      height: 100%;
+      max-width: 1900px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ===== HEADER ===== */
+    .header {
+      background: linear-gradient(135deg, rgba(13, 31, 46, 0.95), rgba(10, 26, 39, 0.95));
+      border: 1px solid rgba(44, 127, 168, 0.4);
+      border-radius: 20px;
+      padding: 12px 26px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(10px);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-icon {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #4fd1ff, #2dd4bf);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      box-shadow: 0 0 24px rgba(79, 209, 255, 0.5), inset 0 -3px 8px rgba(0, 0, 0, 0.3);
+      animation: pulseGlow 3s ease-in-out infinite;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 24px rgba(79, 209, 255, 0.5), inset 0 -3px 8px rgba(0, 0, 0, 0.3); }
+      50% { box-shadow: 0 0 36px rgba(79, 209, 255, 0.8), inset 0 -3px 8px rgba(0, 0, 0, 0.3); }
+    }
+
+    .brand-text h1 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      background: linear-gradient(90deg, #4fd1ff, #2dd4bf, #fbbf24);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      line-height: 1.1;
+    }
+
+    .brand-text p {
+      font-size: 0.72rem;
+      color: var(--text-soft);
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .stats-bar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .stat-chip {
+      background: rgba(17, 43, 61, 0.8);
+      border: 1px solid rgba(44, 127, 168, 0.5);
+      border-radius: 12px;
+      padding: 6px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4);
+      min-width: 110px;
+    }
+
+    .stat-chip .label {
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+
+    .stat-chip .value {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--accent-cyan);
+      text-shadow: 0 0 12px rgba(79, 209, 255, 0.6);
+    }
+
+    .stat-chip.gold .value {
+      color: var(--accent-gold);
+      text-shadow: 0 0 12px rgba(251, 191, 36, 0.6);
+    }
+
+    .timer-chip {
+      background: rgba(17, 43, 61, 0.8);
+      border: 1px solid rgba(44, 127, 168, 0.5);
+      border-radius: 12px;
+      padding: 6px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4);
+      min-width: 130px;
+      transition: all 0.3s;
+    }
+
+    .timer-chip.warning {
+      border-color: rgba(251, 191, 36, 0.8);
+      background: rgba(251, 191, 36, 0.12);
+    }
+
+    .timer-chip.danger {
+      border-color: rgba(239, 68, 68, 0.9);
+      background: rgba(239, 68, 68, 0.15);
+      animation: dangerPulse 0.6s infinite;
+    }
+
+    @keyframes dangerPulse {
+      0%, 100% { box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4), 0 0 0 rgba(239, 68, 68, 0); }
+      50% { box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4), 0 0 20px rgba(239, 68, 68, 0.6); }
+    }
+
+    .timer-icon {
+      font-size: 1.4rem;
+      filter: drop-shadow(0 0 6px currentColor);
+    }
+
+    .timer-chip .label {
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+
+    .timer-chip .value {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--accent-teal);
+      font-variant-numeric: tabular-nums;
+      text-shadow: 0 0 12px rgba(45, 212, 191, 0.6);
+    }
+
+    .timer-chip.warning .value {
+      color: var(--accent-gold);
+      text-shadow: 0 0 12px rgba(251, 191, 36, 0.6);
+    }
+
+    .timer-chip.danger .value {
+      color: #ff6b6b;
+      text-shadow: 0 0 12px rgba(239, 68, 68, 0.8);
+    }
+
+    .reset-btn {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.5);
+      color: #ff8a8a;
+      font-size: 1.35rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .reset-btn:hover {
+      background: rgba(239, 68, 68, 0.3);
+      transform: rotate(-90deg) scale(1.05);
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+    }
+
+    /* ===== LAYOUT PRINCIPAL ===== */
+    .main-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1.55fr 1fr;
+      gap: 12px;
+      min-height: 0;
+    }
+
+    .game-panel {
+      background: linear-gradient(160deg, rgba(17, 43, 61, 0.9), rgba(10, 26, 39, 0.95));
+      border: 1px solid rgba(44, 127, 168, 0.4);
+      border-radius: 24px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 
+        0 12px 40px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+    }
+
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(44, 127, 168, 0.3);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .question-badge {
+      background: linear-gradient(135deg, rgba(79, 209, 255, 0.2), rgba(45, 212, 191, 0.2));
+      border: 1px solid rgba(79, 209, 255, 0.5);
+      border-radius: 30px;
+      padding: 5px 16px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .question-badge .dot {
+      width: 8px;
+      height: 8px;
+      background: var(--accent-cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--accent-cyan);
+      animation: blink 1.5s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .question-progress-text {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    .progress-bar-wrapper {
+      width: 100%;
+      height: 6px;
+      background: rgba(6, 14, 24, 0.8);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 12px;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #4fd1ff, #2dd4bf);
+      border-radius: 3px;
+      transition: width 0.4s ease;
+      box-shadow: 0 0 12px rgba(79, 209, 255, 0.6);
+    }
+
+    .question-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .question-text {
+      font-size: clamp(1rem, 1.35vw, 1.3rem);
+      font-weight: 600;
+      line-height: 1.45;
+      color: var(--text-main);
+      margin-bottom: 16px;
+      padding: 14px 20px;
+      background: rgba(6, 14, 24, 0.6);
+      border-left: 5px solid var(--accent-cyan);
+      border-radius: 14px;
+      box-shadow: inset 0 2px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      flex: 1;
+      align-content: start;
+    }
+
+    .option-btn {
+      background: linear-gradient(145deg, rgba(17, 43, 61, 0.9), rgba(10, 26, 39, 0.95));
+      border: 2px solid rgba(44, 127, 168, 0.4);
+      color: var(--text-main);
+      padding: 16px 16px;
+      border-radius: 16px;
+      font-size: clamp(0.85rem, 0.95vw, 1rem);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 
+        0 5px 0 rgba(6, 14, 24, 0.8),
+        0 6px 16px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .option-btn::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--accent-cyan);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: rgba(79, 209, 255, 0.8);
+      transform: translateY(-3px);
+      box-shadow: 
+        0 8px 0 rgba(6, 14, 24, 0.8),
+        0 10px 24px rgba(79, 209, 255, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    .option-btn:hover:not(:disabled)::before {
+      opacity: 1;
+    }
+
+    .option-letter {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: rgba(79, 209, 255, 0.15);
+      border: 1px solid rgba(79, 209, 255, 0.4);
+      color: var(--accent-cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .option-text {
+      flex: 1;
+      line-height: 1.3;
+    }
+
+    .option-btn.correct {
+      background: linear-gradient(145deg, rgba(34, 197, 94, 0.3), rgba(22, 101, 52, 0.4));
+      border-color: var(--accent-green);
+      box-shadow: 
+        0 5px 0 rgba(6, 14, 24, 0.8),
+        0 0 30px rgba(34, 197, 94, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    .option-btn.correct .option-letter {
+      background: rgba(34, 197, 94, 0.3);
+      border-color: var(--accent-green);
+      color: #86efac;
+    }
+
+    .option-btn.incorrect {
+      background: linear-gradient(145deg, rgba(239, 68, 68, 0.3), rgba(127, 29, 29, 0.4));
+      border-color: var(--accent-red);
+      box-shadow: 
+        0 5px 0 rgba(6, 14, 24, 0.8),
+        0 0 30px rgba(239, 68, 68, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    .option-btn.incorrect .option-letter {
+      background: rgba(239, 68, 68, 0.3);
+      border-color: var(--accent-red);
+      color: #fca5a5;
+    }
+
+    .option-btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.85;
+    }
+
+    .feedback-box {
+      margin-top: 12px;
+      padding: 12px 18px;
+      border-radius: 14px;
+      background: rgba(6, 14, 24, 0.7);
+      border: 1px solid rgba(44, 127, 168, 0.4);
+      border-left: 5px solid var(--accent-cyan);
+      color: var(--text-soft);
+      font-size: 0.88rem;
+      line-height: 1.4;
+      min-height: 56px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: inset 0 2px 12px rgba(0, 0, 0, 0.4);
+      transition: all 0.3s;
+    }
+
+    .feedback-box .feedback-icon {
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+
+    .feedback-box.success {
+      border-left-color: var(--accent-green);
+      background: rgba(34, 197, 94, 0.08);
+    }
+
+    .feedback-box.error {
+      border-left-color: var(--accent-red);
+      background: rgba(239, 68, 68, 0.08);
+    }
+
+    .next-btn {
+      margin-top: 10px;
+      padding: 14px 24px;
+      border-radius: 14px;
+      border: none;
+      background: linear-gradient(135deg, #4fd1ff, #2dd4bf);
+      color: #04121d;
+      font-size: 0.95rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 
+        0 5px 0 #1a6a8a,
+        0 8px 20px rgba(79, 209, 255, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .next-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 
+        0 7px 0 #1a6a8a,
+        0 12px 26px rgba(79, 209, 255, 0.5);
+    }
+
+    .next-btn:active:not(:disabled) {
+      transform: translateY(4px);
+      box-shadow: 
+        0 1px 0 #1a6a8a,
+        0 5px 12px rgba(79, 209, 255, 0.3);
+    }
+
+    .next-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      filter: grayscale(0.5);
+    }
+
+    /* ===== PANEL LATERAL ===== */
+    .side-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 0;
+    }
+
+    .card {
+      background: linear-gradient(160deg, rgba(17, 43, 61, 0.9), rgba(10, 26, 39, 0.95));
+      border: 1px solid rgba(44, 127, 168, 0.4);
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: 
+        0 12px 40px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(10px);
+    }
+
+    .card-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent-teal);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-title .icon {
+      font-size: 1.05rem;
+    }
+
+    /* ===== LABORATORIO DE CROMOSOMAS ===== */
+    .chromosome-lab {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .chromosome-stage {
+      position: relative;
+      background: 
+        radial-gradient(ellipse at center, rgba(79, 209, 255, 0.08), transparent 70%),
+        rgba(6, 14, 24, 0.6);
+      border-radius: 18px;
+      padding: 18px 14px 12px;
+      border: 1px solid rgba(44, 127, 168, 0.3);
+      box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+    }
+
+    .chromosome-stage::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(79, 209, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(79, 209, 255, 0.05) 1px, transparent 1px);
+      background-size: 20px 20px;
+      pointer-events: none;
+    }
+
+    .chromosome-pair {
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-end;
+      gap: 20px;
+      position: relative;
+      z-index: 1;
+      padding: 10px 0;
+    }
+
+    .chromosome-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+    }
+
+    .chromosome-x {
+      position: relative;
+      width: 80px;
+      height: 140px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      animation: floatX 5s ease-in-out infinite;
+    }
+
+    .chromosome-wrapper:nth-child(2) .chromosome-x {
+      animation-delay: -2.5s;
+    }
+
+    @keyframes floatX {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .chromatid {
+      position: absolute;
+      width: 26px;
+      height: 130px;
+      border-radius: 13px;
+      background: linear-gradient(180deg, 
+        #8ecae6 0%, 
+        #5fa8d3 20%, 
+        #3d7a9e 50%, 
+        #2c5f7c 80%, 
+        #1e4560 100%);
+      box-shadow: 
+        0 0 20px rgba(79, 209, 255, 0.4),
+        inset 0 0 15px rgba(255, 255, 255, 0.15),
+        inset 0 -10px 20px rgba(0, 0, 0, 0.4);
+      overflow: hidden;
+    }
+
+    .chromatid::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), transparent);
+      border-radius: 13px 13px 0 0;
+    }
+
+    .chromatid::after {
+      content: '';
+      position: absolute;
+      top: 20%;
+      left: 15%;
+      right: 15%;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, #ffe484, transparent);
+      border-radius: 2px;
+      box-shadow: 
+        0 0 10px #ffe484,
+        0 25px 0 #4fd1ff,
+        0 50px 0 #ffe484,
+        0 75px 0 #2dd4bf;
+      opacity: 0.9;
+    }
+
+    .chromatid.left {
+      transform: rotate(-18deg);
+      left: 8px;
+    }
+
+    .chromatid.right {
+      transform: rotate(18deg);
+      right: 8px;
+    }
+
+    .chromosome-x.maternal .chromatid {
+      background: linear-gradient(180deg, 
+        #f4a4c0 0%, 
+        #e582a3 20%, 
+        #c96389 50%, 
+        #a84870 80%, 
+        #7e3556 100%);
+      box-shadow: 
+        0 0 20px rgba(244, 114, 182, 0.4),
+        inset 0 0 15px rgba(255, 255, 255, 0.15),
+        inset 0 -10px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .chromosome-x.maternal .chromatid::after {
+      background: linear-gradient(90deg, transparent, #fbbf24, transparent);
+      box-shadow: 
+        0 0 10px #fbbf24,
+        0 25px 0 #f472b6,
+        0 50px 0 #fbbf24,
+        0 75px 0 #a78bfa;
+    }
+
+    .centromere {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff8dc, #fbbf24, #b45309);
+      box-shadow: 
+        0 0 20px #fbbf24,
+        0 0 40px rgba(251, 191, 36, 0.5),
+        inset 0 0 8px rgba(0, 0, 0, 0.3);
+      z-index: 3;
+      animation: centerPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes centerPulse {
+      0%, 100% { 
+        box-shadow: 0 0 20px #fbbf24, 0 0 40px rgba(251, 191, 36, 0.5), inset 0 0 8px rgba(0, 0, 0, 0.3);
+        transform: translate(-50%, -50%) scale(1);
+      }
+      50% { 
+        box-shadow: 0 0 30px #fbbf24, 0 0 60px rgba(251, 191, 36, 0.8), inset 0 0 8px rgba(0, 0, 0, 0.3);
+        transform: translate(-50%, -50%) scale(1.15);
+      }
+    }
+
+    .chromosome-x::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 6px;
+      height: 6px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 0 0 10px white;
+      z-index: 4;
+    }
+
+    .allele-tag {
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 3px 10px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      z-index: 5;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+      white-space: nowrap;
+    }
+
+    .allele-tag.dominant {
+      background: linear-gradient(135deg, #fbbf24, #d97706);
+      color: #1a0f00;
+      border: 1px solid #fde68a;
+      box-shadow: 0 0 15px rgba(251, 191, 36, 0.7), 0 3px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    .allele-tag.recessive {
+      background: linear-gradient(135deg, #4fd1ff, #0891b2);
+      color: #001a24;
+      border: 1px solid #a5f3fc;
+      box-shadow: 0 0 15px rgba(79, 209, 255, 0.7), 0 3px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    .chromosome-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    .chromosome-label.paternal {
+      color: #8ecae6;
+      background: rgba(79, 209, 255, 0.12);
+      border: 1px solid rgba(79, 209, 255, 0.3);
+    }
+
+    .chromosome-label.maternal {
+      color: #f4a4c0;
+      background: rgba(244, 114, 182, 0.12);
+      border: 1px solid rgba(244, 114, 182, 0.3);
+    }
+
+    .genotype-display {
+      background: rgba(6, 14, 24, 0.6);
+      border-radius: 14px;
+      padding: 12px;
+      border: 1px solid rgba(44, 127, 168, 0.3);
+    }
+
+    .allele-pair {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 10px;
+    }
+
+    .allele {
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      transition: all 0.4s;
+      box-shadow: inset 0 -4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .allele.dominant {
+      background: linear-gradient(145deg, rgba(251, 191, 36, 0.25), rgba(217, 119, 6, 0.3));
+      border: 2px solid var(--accent-gold);
+      color: #fde68a;
+      text-shadow: 0 0 15px rgba(251, 191, 36, 0.8);
+      box-shadow: 0 0 25px rgba(251, 191, 36, 0.3), inset 0 -4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .allele.recessive {
+      background: linear-gradient(145deg, rgba(79, 209, 255, 0.2), rgba(45, 212, 191, 0.25));
+      border: 2px solid var(--accent-cyan);
+      color: #a5f3fc;
+      text-shadow: 0 0 15px rgba(79, 209, 255, 0.8);
+      box-shadow: 0 0 25px rgba(79, 209, 255, 0.3), inset 0 -4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .genotype-info {
+      display: flex;
+      justify-content: space-around;
+      padding-top: 10px;
+      border-top: 1px dashed rgba(44, 127, 168, 0.4);
+    }
+
+    .info-item {
+      text-align: center;
+    }
+
+    .info-item .info-label {
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+
+    .info-item .info-value {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .concept-card {
+      background: linear-gradient(135deg, rgba(45, 212, 191, 0.12), rgba(79, 209, 255, 0.08));
+      border: 1px solid rgba(45, 212, 191, 0.4);
+      border-radius: 20px;
+      padding: 14px 16px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .concept-card .card-title {
+      color: var(--accent-teal);
+    }
+
+    .concept-content {
+      color: var(--text-soft);
+      font-size: 0.85rem;
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    .concept-content strong {
+      color: var(--accent-cyan);
+      font-weight: 700;
+    }
+
+    .concept-content .highlight {
+      display: inline-block;
+      background: rgba(79, 209, 255, 0.15);
+      border: 1px solid rgba(79, 209, 255, 0.3);
+      border-radius: 6px;
+      padding: 1px 7px;
+      margin: 2px 2px;
+      font-family: 'Courier New', monospace;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      font-size: 0.85em;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(6, 14, 24, 0.5);
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(44, 127, 168, 0.6);
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(79, 209, 255, 0.8);
+    }
+
+    @media (max-width: 1200px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+        overflow-y: auto;
+      }
+      .side-panel {
+        flex-direction: row;
+      }
+      .side-panel .card {
+        flex: 1;
+      }
+    }
+
+    @media (max-width: 800px) {
+      .options-grid {
+        grid-template-columns: 1fr;
+      }
+      .side-panel {
+        flex-direction: column;
+      }
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .stats-bar {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .timeout-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(239, 68, 68, 0.15);
+      pointer-events: none;
+      z-index: 100;
+      animation: timeoutFlash 0.6s ease-out;
+    }
+
+    @keyframes timeoutFlash {
+      0% { opacity: 0; }
+      50% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 7, 12, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    .modal {
+      background: linear-gradient(160deg, #112b3d, #0a1a27);
+      border: 1px solid rgba(79, 209, 255, 0.5);
+      border-radius: 28px;
+      padding: 40px;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 
+        0 0 60px rgba(79, 209, 255, 0.3),
+        0 30px 80px rgba(0, 0, 0, 0.8);
+      animation: modalIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.9) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .modal-icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+      filter: drop-shadow(0 0 20px rgba(251, 191, 36, 0.6));
+      animation: floatX 3s ease-in-out infinite;
+    }
+
+    .modal h2 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(90deg, #4fd1ff, #2dd4bf, #fbbf24);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 12px;
+    }
+
+    .modal .final-score {
+      font-size: 3rem;
+      font-weight: 900;
+      color: var(--accent-gold);
+      text-shadow: 0 0 30px rgba(251, 191, 36, 0.6);
+      margin: 16px 0;
+    }
+
+    .modal p {
+      color: var(--text-soft);
+      font-size: 1rem;
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    .modal-btn {
+      padding: 14px 32px;
+      border-radius: 14px;
+      border: none;
+      background: linear-gradient(135deg, #4fd1ff, #2dd4bf);
+      color: #04121d;
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 5px 0 #1a6a8a, 0 8px 20px rgba(79, 209, 255, 0.35);
+    }
+
+    .modal-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 7px 0 #1a6a8a, 0 12px 26px rgba(79, 209, 255, 0.5);
+    }
+
+    .modal-btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 1px 0 #1a6a8a, 0 5px 12px rgba(79, 209, 255, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- HEADER -->
+    <header class="header">
+      <div class="brand">
+        <div class="brand-icon">🧬</div>
+        <div class="brand-text">
+          <h1>LABORATORIO GENÉTICO</h1>
+          <p>Reproducción Humana · Pensamiento Computacional</p>
+        </div>
+      </div>
+      <div class="stats-bar">
+        <div class="stat-chip gold">
+          <div>
+            <div class="label">Aciertos</div>
+            <div class="value" id="scoreDisplay">0</div>
+          </div>
+        </div>
+        <div class="stat-chip">
+          <div>
+            <div class="label">Pregunta</div>
+            <div class="value" id="questionCounter">1/11</div>
+          </div>
+        </div>
+        <div class="timer-chip" id="timerChip">
+          <span class="timer-icon">⏱️</span>
+          <div>
+            <div class="label">Tiempo</div>
+            <div class="value" id="timerDisplay">20s</div>
+          </div>
+        </div>
+        <button class="reset-btn" id="resetBtn" title="Reiniciar juego">⟲</button>
+      </div>
+    </header>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="main-grid">
+      <!-- PANEL DE JUEGO -->
+      <main class="game-panel">
+        <div class="question-header">
+          <div class="question-badge">
+            <span class="dot"></span>
+            Pregunta activa
+          </div>
+          <div class="question-progress-text" id="progressText">Nivel 1 de 11</div>
+        </div>
+
+        <div class="progress-bar-wrapper">
+          <div class="progress-bar-fill" id="progressBarFill"></div>
+        </div>
+
+        <div class="question-body">
+          <div class="question-text fade-in" id="questionText">
+            Cargando pregunta...
+          </div>
+
+          <div class="options-grid" id="optionsContainer"></div>
+
+          <div class="feedback-box" id="feedbackMessage">
+            <span class="feedback-icon">⚡</span>
+            <span>Selecciona una opción. ¡Tienes 20 segundos!</span>
+          </div>
+
+          <button class="next-btn" id="nextBtn" disabled>
+            <span>Siguiente pregunta</span>
+            <span>→</span>
+          </button>
+        </div>
+      </main>
+
+      <!-- PANEL LATERAL -->
+      <aside class="side-panel">
+        <div class="card">
+          <div class="card-title">
+            <span class="icon">🔬</span> Cromosomas homólogos
+          </div>
+          <div class="chromosome-lab">
+            <div class="chromosome-stage">
+              <div class="chromosome-pair">
+                <div class="chromosome-wrapper">
+                  <div class="chromosome-x" id="chromoPaternal">
+                    <div class="allele-tag dominant" id="tagPaternal">A</div>
+                    <div class="chromatid left"></div>
+                    <div class="chromatid right"></div>
+                    <div class="centromere"></div>
+                  </div>
+                  <div class="chromosome-label paternal">Paterno</div>
+                </div>
+                <div class="chromosome-wrapper">
+                  <div class="chromosome-x maternal" id="chromoMaternal">
+                    <div class="allele-tag recessive" id="tagMaternal">a</div>
+                    <div class="chromatid left"></div>
+                    <div class="chromatid right"></div>
+                    <div class="centromere"></div>
+                  </div>
+                  <div class="chromosome-label maternal">Materno</div>
+                </div>
+              </div>
+            </div>
+            <div class="genotype-display">
+              <div class="allele-pair">
+                <div class="allele dominant" id="alleleDisplayA">A</div>
+                <div class="allele recessive" id="alleleDisplayB">a</div>
+              </div>
+              <div class="genotype-info">
+                <div class="info-item">
+                  <div class="info-label">Genotipo</div>
+                  <div class="info-value" id="genotypeLabel">Aa</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Fenotipo</div>
+                  <div class="info-value" id="phenotypeLabel">Dominante</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card concept-card">
+          <div class="card-title">
+            <span class="icon">🧠</span> Pensamiento computacional
+          </div>
+          <div class="concept-content" id="conceptText">
+            La genética es un <strong>algoritmo natural</strong>: cada progenitor aporta un alelo, y las reglas de dominancia determinan el resultado.
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      // ==================== BANCO DE 11 PREGUNTAS ====================
+      const questions = [
+        {
+          question: "¿Qué tipo de células sexuales (gametos) intervienen en la reproducción humana?",
+          options: ["Óvulo y espermatozoide", "Neurona y glóbulo rojo", "Célula madre y plaqueta", "Huevo y cigoto"],
+          correct: 0,
+          explanation: "✅ El óvulo (femenino) y el espermatozoide (masculino) son los gametos. Al unirse forman el cigoto.",
+          concept: "En computación, los gametos son como <strong>entradas</strong> de un algoritmo: dos fuentes de información que se combinan para formar un nuevo conjunto de datos."
+        },
+        {
+          question: "Si un progenitor es heterocigoto (Aa) y el otro es homocigoto recesivo (aa), ¿qué proporción de descendientes muestra el fenotipo recesivo?",
+          options: ["0%", "25%", "50%", "100%"],
+          correct: 2,
+          explanation: "🧬 Cruce Aa x aa → 50% Aa (dominante) y 50% aa (recesivo). ¡La mitad muestra el rasgo recesivo!",
+          concept: "Este cruce es un <strong>algoritmo de dos pasos</strong>: 1) separar alelos, 2) combinar. El resultado se predice con un <span class='highlight'>cuadro de Punnett</span>."
+        },
+        {
+          question: "En el pensamiento computacional, ¿qué estrategia usamos para representar los alelos de un gen?",
+          options: ["Una variable booleana", "Una estructura de datos (como una tupla o par)", "Un bucle infinito", "Un condicional simple"],
+          correct: 1,
+          explanation: "🔢 Usamos estructuras como pares ordenados (alelo1, alelo2) para modelar el genotipo. Ej: ('A', 'a').",
+          concept: "Un genotipo se modela como <span class='highlight'>gen = ('A', 'a')</span>. Luego aplicamos reglas lógicas: si hay al menos un dominante, el fenotipo se expresa."
+        },
+        {
+          question: "¿Cómo se llama la división celular que reduce el número de cromosomas a la mitad y forma gametos?",
+          options: ["Mitosis", "Meiosis", "Fisión binaria", "Gemación"],
+          correct: 1,
+          explanation: "🔬 La meiosis produce células haploides (23 cromosomas en humanos) y genera diversidad genética.",
+          concept: "La meiosis es un <strong>algoritmo de reducción</strong>: toma una célula diploide (2n) y produce cuatro células haploides (n), introduciendo variabilidad."
+        },
+        {
+          question: "Si ambos progenitores son heterocigotos (Aa), ¿cuál es la probabilidad de tener un hijo con genotipo homocigoto dominante (AA)?",
+          options: ["25%", "50%", "75%", "0%"],
+          correct: 0,
+          explanation: "📊 Cruce Aa x Aa: 25% AA, 50% Aa, 25% aa. Solo el 25% es homocigoto dominante.",
+          concept: "Este es un <strong>espacio de probabilidad</strong> discreto: 4 combinaciones posibles, cada una con 25% de probabilidad. ¡Como lanzar dos monedas!"
+        },
+        {
+          question: "¿Qué componente del pensamiento computacional aplicamos al predecir proporciones genéticas con el cuadro de Punnett?",
+          options: ["Descomposición", "Abstracción", "Algoritmos", "Reconocimiento de patrones"],
+          correct: 2,
+          explanation: "⚙️ El cuadro de Punnett es un algoritmo: pasos ordenados para predecir combinaciones de alelos.",
+          concept: "El cuadro de Punnett es un <strong>algoritmo visual</strong>: una secuencia finita de pasos que resuelve un problema de probabilidad genética."
+        },
+        {
+          question: "En la especie humana, ¿cuántos cromosomas tiene una célula somática normal?",
+          options: ["23", "46", "92", "22"],
+          correct: 1,
+          explanation: "🧬 Las células somáticas humanas son diploides (2n = 46 cromosomas), 23 pares.",
+          concept: "El genoma humano se representa como un <strong>array de 46 elementos</strong>, organizados en 23 pares. Cada par contiene información duplicada."
+        },
+        {
+          question: "¿Qué es un alelo recesivo?",
+          options: [
+            "Aquel que siempre se expresa en el fenotipo",
+            "Aquel que solo se expresa si está en dosis doble (homocigoto)",
+            "Aquel que nunca se hereda",
+            "Aquel que muta constantemente"
+          ],
+          correct: 1,
+          explanation: "🔍 Un alelo recesivo (ej. 'a') solo se manifiesta cuando no está presente el alelo dominante, es decir, genotipo aa.",
+          concept: "En lógica booleana, un alelo recesivo es como un <span class='highlight'>AND</span>: necesita dos copias para activarse. El dominante es un <span class='highlight'>OR</span>."
+        },
+        {
+          question: "¿Cuál es la función principal del ADN en la reproducción?",
+          options: [
+            "Transportar oxígeno en la sangre",
+            "Almacenar y transmitir la información genética",
+            "Producir energía para la célula",
+            "Defender al organismo de virus"
+          ],
+          correct: 1,
+          explanation: "🧬 El ADN contiene las instrucciones genéticas que se transmiten de padres a hijos, como un código fuente biológico.",
+          concept: "El ADN es como un <strong>archivo de código</strong> con instrucciones. La reproducción es el <span class='highlight'>copy-paste</span> de ese código, con pequeñas variaciones."
+        },
+        {
+          question: "Si una madre es portadora de un gen recesivo ligado al cromosoma X (X^a X) y el padre es sano (X^A Y), ¿qué probabilidad hay de tener un hijo varón afectado?",
+          options: ["0%", "25%", "50%", "100%"],
+          correct: 2,
+          explanation: "🧬 Los hijos varones reciben el cromosoma X de la madre. Si la madre es portadora (X^a X), el 50% de sus hijos varones heredarán el alelo recesivo y estarán afectados.",
+          concept: "Esto es un <strong>condicional</strong>: si (hijo es varón) y (recibe X^a) → afectado. ¡Programación pura aplicada a la genética!"
+        },
+        {
+          question: "¿Qué son las mutaciones genéticas desde la perspectiva del pensamiento computacional?",
+          options: [
+            "Errores aleatorios en el código genético que generan variabilidad",
+            "Copias exactas sin ningún cambio",
+            "Programas que eliminan genes defectuosos",
+            "Bucles infinitos de reproducción celular"
+          ],
+          correct: 0,
+          explanation: "🧬 Las mutaciones son cambios aleatorios en la secuencia del ADN. Son como 'errores' o 'bugs' en el código genético que pueden generar nuevas características.",
+          concept: "Una mutación es como un <strong>error de ejecución</strong> que se propaga. A veces es beneficioso, a veces no. ¡La evolución es un algoritmo de prueba y error!"
+        }
+      ];
+
+      const TOTAL_TIME = 20; // ⏱️ 20 segundos por pregunta
+
+      // ==================== ESTADO ====================
+      let currentQuestionIndex = 0;
+      let score = 0;
+      let answerSelected = false;
+      let timerInterval = null;
+      let timeLeft = TOTAL_TIME;
+      let gameFinished = false;
+
+      // ==================== DOM ====================
+      const questionText = document.getElementById('questionText');
+      const optionsContainer = document.getElementById('optionsContainer');
+      const feedbackMessage = document.getElementById('feedbackMessage');
+      const nextBtn = document.getElementById('nextBtn');
+      const scoreDisplay = document.getElementById('scoreDisplay');
+      const questionCounter = document.getElementById('questionCounter');
+      const progressText = document.getElementById('progressText');
+      const resetBtn = document.getElementById('resetBtn');
+      const conceptText = document.getElementById('conceptText');
+      const timerChip = document.getElementById('timerChip');
+      const timerDisplay = document.getElementById('timerDisplay');
+      const progressBarFill = document.getElementById('progressBarFill');
+
+      const tagPaternal = document.getElementById('tagPaternal');
+      const tagMaternal = document.getElementById('tagMaternal');
+      const alleleDisplayA = document.getElementById('alleleDisplayA');
+      const alleleDisplayB = document.getElementById('alleleDisplayB');
+      const genotypeLabel = document.getElementById('genotypeLabel');
+      const phenotypeLabel = document.getElementById('phenotypeLabel');
+
+      // ==================== DATOS GENÉTICOS ====================
+      const geneticsData = [
+        { pat: 'X', mat: 'Y', genotype: 'XY', phenotype: 'Masculino' },
+        { pat: 'A', mat: 'a', genotype: 'Aa', phenotype: 'Dominante' },
+        { pat: 'A', mat: 'a', genotype: 'Aa', phenotype: 'Dominante' },
+        { pat: 'B', mat: 'b', genotype: 'Bb', phenotype: 'Dominante' },
+        { pat: 'A', mat: 'A', genotype: 'AA', phenotype: 'Dominante' },
+        { pat: 'G', mat: 'g', genotype: 'Gg', phenotype: 'Dominante' },
+        { pat: 'C', mat: 'c', genotype: 'Cc', phenotype: 'Dominante' },
+        { pat: 'a', mat: 'a', genotype: 'aa', phenotype: 'Recesivo' },
+        { pat: 'D', mat: 'd', genotype: 'Dd', phenotype: 'Dominante' },
+        { pat: 'Xᵃ', mat: 'X', genotype: 'XᵃX', phenotype: 'Portadora' },
+        { pat: 'M', mat: 'm', genotype: 'Mm', phenotype: 'Mutación' }
+      ];
+
+      // ==================== FUNCIONES ====================
+      function isDominant(allele) {
+        return ['A', 'B', 'C', 'D', 'G', 'M', 'X', 'Y'].includes(allele);
+      }
+
+      function updateGeneticsVisual(questionIndex) {
+        const data = geneticsData[questionIndex % geneticsData.length];
+
+        tagPaternal.textContent = data.pat;
+        tagMaternal.textContent = data.mat;
+
+        tagPaternal.className = 'allele-tag ' + (isDominant(data.pat) ? 'dominant' : 'recessive');
+        tagMaternal.className = 'allele-tag ' + (isDominant(data.mat) ? 'dominant' : 'recessive');
+
+        alleleDisplayA.textContent = data.pat;
+        alleleDisplayB.textContent = data.mat;
+        alleleDisplayA.className = 'allele ' + (isDominant(data.pat) ? 'dominant' : 'recessive');
+        alleleDisplayB.className = 'allele ' + (isDominant(data.mat) ? 'dominant' : 'recessive');
+
+        genotypeLabel.textContent = data.genotype;
+        phenotypeLabel.textContent = data.phenotype;
+        phenotypeLabel.style.color = data.phenotype === 'Recesivo' ? '#4fd1ff' 
+          : data.phenotype === 'Portadora' ? '#a78bfa' 
+          : data.phenotype === 'Mutación' ? '#f472b6'
+          : '#fbbf24';
+      }
+
+      function updateTimerDisplay() {
+        timerDisplay.textContent = timeLeft + 's';
+        
+        // Umbrales proporcionales para 20 segundos
+        timerChip.classList.remove('warning', 'danger');
+        if (timeLeft <= 4) {
+          timerChip.classList.add('danger');
+        } else if (timeLeft <= 8) {
+          timerChip.classList.add('warning');
+        }
+      }
+
+      function stopTimer() {
+        if (timerInterval) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+        }
+      }
+
+      function startTimer() {
+        stopTimer();
+        timeLeft = TOTAL_TIME;
+        updateTimerDisplay();
+        
+        timerInterval = setInterval(() => {
+          timeLeft--;
+          updateTimerDisplay();
+          
+          if (timeLeft <= 0) {
+            stopTimer();
+            handleTimeOut();
+          }
+        }, 1000);
+      }
+
+      function handleTimeOut() {
+        if (answerSelected || gameFinished) return;
+        answerSelected = true;
+        
+        const overlay = document.createElement('div');
+        overlay.className = 'timeout-overlay';
+        document.body.appendChild(overlay);
+        setTimeout(() => overlay.remove(), 600);
+        
+        const allButtons = document.querySelectorAll('.option-btn');
+        allButtons.forEach(b => {
+          b.disabled = true;
+          if (b.dataset.correct === 'true') {
+            b.classList.add('correct');
+          }
+        });
+        
+        const correctBtn = Array.from(allButtons).find(b => b.dataset.correct === 'true');
+        feedbackMessage.className = 'feedback-box error';
+        feedbackMessage.innerHTML = `<span class="feedback-icon">⏰</span><span>¡Se acabó el tiempo! La respuesta correcta era: <strong>${correctBtn ? correctBtn.querySelector('.option-text').textContent : ''}</strong>. ${questions[currentQuestionIndex].explanation}</span>`;
+        
+        nextBtn.disabled = false;
+      }
+
+      function loadQuestion() {
+        answerSelected = false;
+        nextBtn.disabled = true;
+        const q = questions[currentQuestionIndex];
+
+        questionText.textContent = q.question;
+        questionText.classList.remove('fade-in');
+        void questionText.offsetWidth;
+        questionText.classList.add('fade-in');
+
+        conceptText.innerHTML = q.concept || 'La genética es un algoritmo natural que sigue reglas lógicas.';
+
+        const optionLetters = ['A', 'B', 'C', 'D'];
+        const optionsWithMeta = q.options.map((text, idx) => ({
+          text: text,
+          isCorrect: idx === q.correct
+        }));
+
+        for (let i = optionsWithMeta.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [optionsWithMeta[i], optionsWithMeta[j]] = [optionsWithMeta[j], optionsWithMeta[i]];
+        }
+
+        optionsContainer.innerHTML = '';
+        optionsWithMeta.forEach((opt, idx) => {
+          const btn = document.createElement('button');
+          btn.className = 'option-btn';
+          btn.dataset.correct = opt.isCorrect ? 'true' : 'false';
+          
+          const letterSpan = document.createElement('span');
+          letterSpan.className = 'option-letter';
+          letterSpan.textContent = optionLetters[idx];
+          
+          const textSpan = document.createElement('span');
+          textSpan.className = 'option-text';
+          textSpan.textContent = opt.text;
+          
+          btn.appendChild(letterSpan);
+          btn.appendChild(textSpan);
+          btn.addEventListener('click', () => handleOptionClick(btn, opt.isCorrect, q.explanation));
+          optionsContainer.appendChild(btn);
+        });
+
+        feedbackMessage.className = 'feedback-box';
+        feedbackMessage.innerHTML = '<span class="feedback-icon">⚡</span><span>Selecciona una opción. ¡Tienes 20 segundos!</span>';
+
+        updateGeneticsVisual(currentQuestionIndex);
+
+        questionCounter.textContent = `${currentQuestionIndex + 1}/${questions.length}`;
+        progressText.textContent = `Nivel ${currentQuestionIndex + 1} de ${questions.length}`;
+        progressBarFill.style.width = `${((currentQuestionIndex) / questions.length) * 100}%`;
+
+        startTimer();
+      }
+
+      function handleOptionClick(btn, isCorrect, explanation) {
+        if (answerSelected) return;
+        answerSelected = true;
+        stopTimer();
+
+        const allButtons = document.querySelectorAll('.option-btn');
+        allButtons.forEach(b => b.disabled = true);
+
+        if (isCorrect) {
+          btn.classList.add('correct');
+          score += 1;
+          scoreDisplay.textContent = score;
+          feedbackMessage.className = 'feedback-box success';
+          feedbackMessage.innerHTML = `<span class="feedback-icon">✅</span><span>${explanation}</span>`;
+        } else {
+          btn.classList.add('incorrect');
+          const correctBtn = Array.from(allButtons).find(b => b.dataset.correct === 'true');
+          if (correctBtn) correctBtn.classList.add('correct');
+          feedbackMessage.className = 'feedback-box error';
+          feedbackMessage.innerHTML = `<span class="feedback-icon">❌</span><span>La respuesta correcta era: <strong>${correctBtn ? correctBtn.querySelector('.option-text').textContent : ''}</strong>. ${explanation}</span>`;
+        }
+
+        nextBtn.disabled = false;
+      }
+
+      function nextQuestion() {
+        if (!answerSelected) return;
+        stopTimer();
+        
+        if (currentQuestionIndex < questions.length - 1) {
+          currentQuestionIndex++;
+          loadQuestion();
+        } else {
+          finishGame();
+        }
+      }
+
+      function finishGame() {
+        gameFinished = true;
+        stopTimer();
+        progressBarFill.style.width = '100%';
+        showFinalModal();
+      }
+
+      function showFinalModal() {
+        const modalOverlay = document.createElement('div');
+        modalOverlay.className = 'modal-overlay';
+        
+        let message = '';
+        let icon = '🏆';
+        if (score === 11) {
+          message = '¡PERFECTO! Eres un maestro de la genética y el pensamiento computacional.';
+          icon = '🧬';
+        } else if (score >= 8) {
+          message = '¡Excelente trabajo! Dominas muy bien los conceptos de genética.';
+          icon = '🥇';
+        } else if (score >= 5) {
+          message = '¡Buen intento! Repasa algunos conceptos y vuelve a intentarlo.';
+          icon = '📚';
+        } else {
+          message = 'Sigue practicando. La genética es fascinante cuando la entiendes.';
+          icon = '💪';
+        }
+
+        modalOverlay.innerHTML = `
+          <div class="modal">
+            <div class="modal-icon">${icon}</div>
+            <h2>¡Laboratorio completado!</h2>
+            <div class="final-score">${score} / ${questions.length}</div>
+            <p>${message}</p>
+            <button class="modal-btn" id="playAgainBtn">Jugar de nuevo</button>
+          </div>
+        `;
+        
+        document.body.appendChild(modalOverlay);
+        
+        document.getElementById('playAgainBtn').addEventListener('click', () => {
+          modalOverlay.remove();
+          resetGame();
+        });
+      }
+
+      function resetGame() {
+        stopTimer();
+        currentQuestionIndex = 0;
+        score = 0;
+        answerSelected = false;
+        gameFinished = false;
+        scoreDisplay.textContent = '0';
+        nextBtn.disabled = true;
+        progressBarFill.style.width = '0%';
+        
+        document.querySelectorAll('.modal-overlay').forEach(m => m.remove());
+        
+        loadQuestion();
+      }
+
+      function init() {
+        resetGame();
+        nextBtn.addEventListener('click', nextQuestion);
+        resetBtn.addEventListener('click', resetGame);
+      }
+
+      window.addEventListener('DOMContentLoaded', init);
+    })();
+  </script>
+</body>
+</html>
