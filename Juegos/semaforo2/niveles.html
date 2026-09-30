@@ -29,11 +29,11 @@
       </div>
     </section>
 
-    <section class="tutorial-screen" id="tutorial-screen" hidden aria-labelledby="tutorial-title"><div class="tutorial-panel"><p class="eyebrow">ANTES DE COMENZAR</p><h2 id="tutorial-title">¿Cómo jugar?</h2><div class="tutorial-grid"><article><span>⬆️</span><h3>Avanza y gira</h3><p>Usa los botones para avanzar una casilla y girar a la izquierda o derecha.</p></article><article><span>🚦</span><h3>Observa las señales</h3><p>Espera el verde peatonal y comprueba que los vehículos se hayan detenido.</p></article><article><span>🚸</span><h3>Cruza con cuidado</h3><p>Utiliza el paso peatonal, termina de cruzar y llega a tu destino.</p></article></div><p id="tutorial-specific" class="tutorial-specific"></p><div class="tutorial-actions"><button class="back-button" id="tutorial-back" type="button">← MISIÓN</button><a class="play-button" id="tutorial-start" href="levels/nivel-01/index.html">▶ COMENZAR NIVEL</a></div></div></section>
+    <section class="tutorial-screen" id="tutorial-screen" hidden aria-labelledby="tutorial-title"><div class="tutorial-panel"><p class="eyebrow">ANTES DE COMENZAR</p><h2 id="tutorial-title">¿Cómo jugar?</h2><div class="tutorial-grid"><article><span>⬆️</span><h3>Avanza y gira</h3><p>Usa los botones para avanzar una casilla y girar a la izquierda o derecha.</p></article><article><span>🚦</span><h3>Observa las señales</h3><p>Espera el verde peatonal y comprueba que los vehículos se hayan detenido.</p></article><article><span>🚸</span><h3>Cruza con cuidado</h3><p>Utiliza el paso peatonal, termina de cruzar y llega a tu destino.</p></article><article class="spatial-card"><div class="spatial-compass" aria-hidden="true"><span>↶</span><strong>↑</strong><span>↷</span></div><h3>Muévete según tu personaje</h3><p>Avanzar y retroceder dependen de hacia dónde mira el personaje, <b>no de tu posición frente a la pantalla</b>. Si mira a la izquierda y avanzas, caminará hacia la izquierda. Primero gira para cambiar su dirección.</p></article></div><p id="tutorial-specific" class="tutorial-specific"></p><div class="tutorial-actions"><button class="back-button" id="tutorial-back" type="button">← MISIÓN</button><a class="play-button" id="tutorial-start" href="levels/nivel-01/index.html">▶ COMENZAR NIVEL</a></div></div></section>
 
     <aside class="rotate-overlay" id="rotate-overlay" hidden><div class="rotate-card"><span>📱 ↻</span><h2>¡Gira tu dispositivo!</h2><p>Este juego está diseñado para jugar en horizontal.</p></div></aside>
   </main>
-  <audio id="menu-music" src="assets/audio/menu.mp3" loop preload="none"></audio>
+  <audio id="menu-music" src="assetsInicio/musica/cancion3.mp3" loop preload="none"></audio>
   <script>
     const LEVELS = [
       {title:'Camino a casa',story:'Saliste de la escuela. ¡Tu familia te espera! Busca el paso peatonal y cruza la avenida de forma segura.',objectives:['Encuentra el paso peatonal.','Espera la señal peatonal verde.','Cruza y llega hasta tu familia.'],tip:'Los autos deben estar completamente detenidos antes de que cruces.'},
@@ -76,15 +76,16 @@
       $('mission-image').src=`assets/images/nivel-${String(index+1).padStart(2,'0')}.png`; $('mission-image').onerror=function(){this.hidden=true;}; $('mission-image').hidden=false;
       $('mission-objectives').replaceChildren(); level.objectives.forEach(objective=>{const li=document.createElement('li');li.textContent=objective;$('mission-objectives').append(li);});
       $('mission-note').textContent='Antes de jugar, verás las instrucciones del nivel.';
-      const implemented = index===0; $('mission-play').disabled=!implemented; $('mission-play').textContent=implemented?'▶ ¡JUGAR!':'🚧 NIVEL EN PREPARACIÓN';
+      const implemented = index===0 || index===1; $('mission-play').disabled=!implemented; $('mission-play').textContent=implemented?'▶ ¡JUGAR!':'🚧 NIVEL EN PREPARACIÓN';
       $('tutorial-specific').textContent=level.tip;
       $('tutorial-start').href=`levels/nivel-${String(index+1).padStart(2,'0')}/index.html`;
       show('mission-screen');
     }
     $('mission-back').addEventListener('click',()=>{renderLevels();show('levels-screen');});
-    $('mission-play').addEventListener('click',()=>{if(selected===0)show('tutorial-screen');});
+    $('mission-play').addEventListener('click',()=>{if(selected<=1)show('tutorial-screen');});
     $('tutorial-back').addEventListener('click',()=>show('mission-screen'));
-    const music=$('menu-music'), sound=$('sound-toggle'); let soundOn=localStorage.getItem('semaforo-sound')==='on';
+    const music=$('menu-music'), sound=$('sound-toggle'); let soundOn=localStorage.getItem('semaforo-sound')!=='off';
+    music.volume=.30; if(soundOn)music.play().catch(()=>{}); document.addEventListener('pointerdown',()=>{if(soundOn&&music.paused)music.play().catch(()=>{})},{passive:true});
     function paintSound(){sound.textContent=soundOn?'🔊':'🔇';sound.setAttribute('aria-pressed',String(soundOn));sound.setAttribute('aria-label',soundOn?'Silenciar música':'Activar música');}
     sound.addEventListener('click',async()=>{soundOn=!soundOn;localStorage.setItem('semaforo-sound',soundOn?'on':'off');paintSound();if(soundOn){try{await music.play();}catch{}}else music.pause();});paintSound();
     const rotate=$('rotate-overlay'); function checkOrientation(){rotate.hidden=!(matchMedia('(orientation:portrait)').matches&&matchMedia('(max-width:900px)').matches);}addEventListener('resize',checkOrientation);checkOrientation();

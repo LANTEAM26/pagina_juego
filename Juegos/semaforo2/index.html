@@ -41,14 +41,17 @@
     </dialog>
     <aside class="rotate-overlay" id="rotate-overlay" hidden><div class="rotate-card"><span>📱 ↻</span><h2>¡Gira tu dispositivo!</h2><p>Para disfrutar de la ciudad, coloca tu pantalla en horizontal.</p></div></aside>
   </main>
-  <audio id="menu-music" src="assets/audio/menu.mp3" loop preload="none"></audio>
+  <audio id="menu-music" src="assetsInicio/musica/cancion1.mp3" loop preload="none"></audio>
   <script>
     const music = document.getElementById('menu-music');
     const soundButton = document.getElementById('sound-toggle');
-    const savedSound = localStorage.getItem('semaforo-sound') === 'on';
+    const savedSound = localStorage.getItem('semaforo-sound') !== 'off';
     let soundOn = savedSound;
     function paintSound() { soundButton.textContent = soundOn ? '🔊' : '🔇'; soundButton.setAttribute('aria-pressed', String(soundOn)); soundButton.setAttribute('aria-label', soundOn ? 'Silenciar música' : 'Activar música'); }
     paintSound();
+    music.volume = 0.32;
+    if (soundOn) music.play().catch(() => {});
+    document.addEventListener('pointerdown', () => { if (soundOn && music.paused) music.play().catch(() => {}); }, {passive:true});
     soundButton.addEventListener('click', async () => {
       soundOn = !soundOn;
       localStorage.setItem('semaforo-sound', soundOn ? 'on' : 'off');
