@@ -1179,12 +1179,6 @@ function resizeCanvas(){
     canvas.height=
         window.innerHeight;
 
-    /*
-       El bote queda sobre la superficie.
-       La superficie está aproximadamente
-       al 32% de la pantalla.
-    */
-
     boat.x=
         Math.max(
             30,
@@ -1384,22 +1378,10 @@ function createFish(letter,isTarget=false){
 
         isTarget,
 
-        /*
-           CAMBIO:
-           los peces ahora empiezan cerca
-           del borde izquierdo para que
-           aparezcan mucho más rápido.
-        */
-
         x:
             -Math.random()*220-50,
 
         y:0,
-
-        /*
-           CAMBIO:
-           peces más rápidos.
-        */
 
         vx:
             Math.random()*1.7+1.15,
@@ -1409,32 +1391,11 @@ function createFish(letter,isTarget=false){
 
         size:sizeBase,
 
-        color:
-            isTarget
-            ?`hsl(
-                ${Math.random()*40+180},
-                80%,
-                60%
-             )`
-            :color,
+        color:color,
 
-        tailColor:
-            isTarget
-            ?`hsl(
-                ${Math.random()*40+180},
-                75%,
-                40%
-             )`
-            :tailColor,
+        tailColor:tailColor,
 
-        finColor:
-            isTarget
-            ?`hsl(
-                ${Math.random()*40+180},
-                85%,
-                70%
-             )`
-            :finColor,
+        finColor:finColor,
 
         wobble:
             Math.random()*Math.PI*2,
@@ -1498,25 +1459,35 @@ function startNewRound(){
 
     fishes=[];
 
-    /*
-       ZONA DE PECES:
-       empieza justo debajo de la superficie.
-    */
-
-    const swimTop=
-        canvas.height*.43;
-
-    const swimBottom=
-        canvas.height*.86;
 
     /*
-       CAMBIO:
-       ahora aparecen 9 peces,
-       en lugar de 5-8.
+       ======================================================
+       ZONAS DE NADO
+       ======================================================
+
+       Los peces incorrectos pueden aparecer desde
+       bastante arriba.
+
+       El pez correcto empieza más abajo y permanece
+       siempre en la zona inferior del agua.
     */
 
-    const decoyCount=
-        Math.floor(Math.random()*3)+8;
+    const generalTop=
+        canvas.height*.37;
+
+    const generalBottom=
+        canvas.height*.84;
+
+    const targetTop=
+        canvas.height*.62;
+
+    const targetBottom=
+        canvas.height*.84;
+
+
+    /*
+       PEZ CORRECTO
+    */
 
     const targetFish=
         createFish(
@@ -1525,19 +1496,28 @@ function startNewRound(){
         );
 
     targetFish.y=
-        swimTop+
+        targetTop+
         Math.random()*
-        (swimBottom-swimTop);
-
-    /*
-       El pez objetivo aparece
-       rápidamente.
-    */
+        (targetBottom-targetTop);
 
     targetFish.x=
         -80-Math.random()*120;
 
+    /*
+       El correcto se mueve un poco más lento
+       para que sea cómodo de pescar en la
+       pantalla táctil.
+    */
+
+    targetFish.vx=
+        Math.random()*.75+.8;
+
     fishes.push(targetFish);
+
+
+    /*
+       PECES INCORRECTOS
+    */
 
     const availableDecoys=
         SPANISH_ALPHABET.filter(
@@ -1545,6 +1525,9 @@ function startNewRound(){
                 l!==targetLower &&
                 !caughtLetters.has(l)
         );
+
+    const decoyCount=
+        Math.floor(Math.random()*3)+8;
 
     for(let i=0;i<decoyCount;i++){
 
@@ -1568,20 +1551,20 @@ function startNewRound(){
                 false
             );
 
-        fish.y=
-            swimTop+
-            Math.random()*
-            (swimBottom-swimTop);
-
         /*
-           Distribución inicial mucho más rápida.
+           Los incorrectos sí pueden nadar
+           por la zona superior y media.
         */
+
+        fish.y=
+            generalTop+
+            Math.random()*
+            (generalBottom-generalTop);
 
         fish.x=
             -50-
-            Math.random()*(
-                300+i*55
-            );
+            Math.random()*
+            (300+i*55);
 
         fishes.push(fish);
 
@@ -1702,14 +1685,11 @@ function update(deltaTime){
     }
 
 
-    const swimTop=
-        canvas.height*.43;
-
-    const swimBottom=
-        canvas.height*.86;
-
-
-    /* PECES */
+    /*
+       ======================================================
+       PECES
+       ======================================================
+    */
 
     for(
         let i=fishes.length-1;
@@ -1734,16 +1714,54 @@ function update(deltaTime){
             f.finPhase+=
                 .1*dt;
 
-            if(f.y<swimTop)
-                f.y=swimTop;
 
-            if(f.y>swimBottom)
-                f.y=swimBottom;
+            /*
+               ZONA DE MOVIMIENTO DEL PEZ CORRECTO
+            */
+
+            let fishTop;
+            let fishBottom;
+
+            if(f.isTarget){
+
+                /*
+                   MUY IMPORTANTE:
+                   el correcto nunca sube a la superficie.
+                */
+
+                fishTop=
+                    canvas.height*.62;
+
+                fishBottom=
+                    canvas.height*.84;
+
+            }else{
+
+                /*
+                   Los incorrectos tienen libertad
+                   para nadar también por arriba.
+                */
+
+                fishTop=
+                    canvas.height*.37;
+
+                fishBottom=
+                    canvas.height*.84;
+
+            }
+
+
+            if(f.y<fishTop)
+                f.y=fishTop;
+
+            if(f.y>fishBottom)
+                f.y=fishBottom;
 
 
             /*
                Cuando sale por la derecha,
-               vuelve inmediatamente por la izquierda.
+               vuelve por la izquierda manteniendo
+               su zona de profundidad.
             */
 
             if(
@@ -1756,9 +1774,9 @@ function update(deltaTime){
                     Math.random()*180;
 
                 f.y=
-                    swimTop+
+                    fishTop+
                     Math.random()*
-                    (swimBottom-swimTop);
+                    (fishBottom-fishTop);
 
             }
 
@@ -1878,7 +1896,9 @@ function update(deltaTime){
     }
 
 
-    /* COLISION ANZUELO */
+    /* =====================================================
+       COLISION ANZUELO
+    ===================================================== */
 
     if(
         hookActive &&
@@ -1953,14 +1973,35 @@ function update(deltaTime){
                     playIncorrectSound();
 
                     /*
-                       El pez incorrecto
-                       escapa.
+                       =================================================
+                       EFECTO DE PEZ INCORRECTO
+                       =================================================
+
+                       El pez se pone rojo momentáneamente,
+                       pero NO se muestra ninguna pista sobre
+                       cuál es el correcto.
+                    */
+
+                    f.wrongFlash=1;
+
+                    /*
+                       Pequeño escape hacia adelante.
                     */
 
                     f.vx=
-                        Math.abs(f.vx)*.7;
+                        Math.abs(f.vx)*1.4;
 
                     hookActive=false;
+
+                    /*
+                       Después desaparece el efecto rojo.
+                    */
+
+                    setTimeout(()=>{
+
+                        f.wrongFlash=0;
+
+                    },500);
 
                 }
 
@@ -1971,6 +2012,25 @@ function update(deltaTime){
         }
 
     }
+
+    /*
+       Actualizar efecto rojo
+    */
+
+    fishes.forEach(f=>{
+
+        if(f.wrongFlash>0){
+
+            f.wrongFlash-=
+                .025*dt;
+
+            if(f.wrongFlash<0)
+                f.wrongFlash=0;
+
+        }
+
+    });
+
 
     albumCountSpan.textContent=
         `${caughtLetters.size}/27`;
@@ -1993,9 +2053,7 @@ function draw(){
 
 
     /*
-       ======================================================
        CIELO
-       ======================================================
     */
 
     const skyGrad=
@@ -2225,7 +2283,7 @@ function draw(){
 
 
     /*
-       REFLEJOS DE SUPERFICIE
+       REFLEJOS
     */
 
     ctx.save();
@@ -2333,7 +2391,7 @@ function draw(){
 
 
     /*
-       FONDO DEL MAR
+       FONDO
     */
 
     const floorY=
@@ -2367,16 +2425,7 @@ function draw(){
     );
 
 
-    /*
-       ALGAS
-    */
-
     drawSeaweed();
-
-
-    /*
-       CORALES
-    */
 
     drawCorals();
 
@@ -2487,16 +2536,7 @@ function draw(){
     });
 
 
-    /*
-       BARCO
-    */
-
     drawBoat();
-
-
-    /*
-       ANZUELO
-    */
 
     drawHook();
 
@@ -2657,9 +2697,6 @@ function drawBoat(){
     const bw=boat.width;
     const bh=boat.height;
 
-    /*
-       Sombra sobre el agua
-    */
 
     ctx.save();
 
@@ -2683,10 +2720,6 @@ function drawBoat(){
 
     ctx.restore();
 
-
-    /*
-       HULL
-    */
 
     const hullGrad=
         ctx.createLinearGradient(
@@ -2754,10 +2787,6 @@ function drawBoat(){
     ctx.stroke();
 
 
-    /*
-       BORDE SUPERIOR
-    */
-
     ctx.strokeStyle="#f1c40f";
     ctx.lineWidth=3;
 
@@ -2777,10 +2806,6 @@ function drawBoat(){
 
     ctx.stroke();
 
-
-    /*
-       CABINA
-    */
 
     const cabinGrad=
         ctx.createLinearGradient(
@@ -2820,10 +2845,6 @@ function drawBoat(){
     );
 
 
-    /*
-       VENTANAS
-    */
-
     for(let i=0;i<3;i++){
 
         ctx.fillStyle="#5dc8ed";
@@ -2848,10 +2869,6 @@ function drawBoat(){
     }
 
 
-    /*
-       MASTIL
-    */
-
     const mastX=
         bx+bw*.5;
 
@@ -2867,10 +2884,6 @@ function drawBoat(){
         by+10-mastTopY
     );
 
-
-    /*
-       VELA DERECHA
-    */
 
     const windSway=
         Math.sin(time*1.5)*4;
@@ -2924,10 +2937,6 @@ function drawBoat(){
     ctx.stroke();
 
 
-    /*
-       VELA IZQUIERDA
-    */
-
     ctx.fillStyle="#f5f5f5";
 
     ctx.beginPath();
@@ -2955,10 +2964,6 @@ function drawBoat(){
 
     ctx.stroke();
 
-
-    /*
-       BANDERA
-    */
 
     ctx.fillStyle="#e74c3c";
 
@@ -3014,6 +3019,44 @@ function drawFish(f){
     ctx.save();
 
     ctx.translate(x,y);
+
+
+    /*
+       EFECTO ROJO SOLO CUANDO SE ELIGE
+       INCORRECTAMENTE.
+    */
+
+    if(f.wrongFlash>0){
+
+        ctx.save();
+
+        ctx.globalAlpha=
+            Math.min(
+                f.wrongFlash*2,
+                1
+            );
+
+        ctx.shadowColor="#ff2020";
+
+        ctx.shadowBlur=25;
+
+        ctx.fillStyle="#ff3030";
+
+        ctx.beginPath();
+
+        ctx.arc(
+            0,
+            0,
+            size*1.35,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+
+        ctx.restore();
+
+    }
 
 
     /*
@@ -3297,26 +3340,11 @@ function drawFish(f){
 
 
     /*
-       INDICADOR DEL PEZ OBJETIVO
+       IMPORTANTE:
+       NO SE DIBUJA NINGÚN CÍRCULO,
+       MARCA, HALO NI INDICADOR DEL
+       PEZ CORRECTO.
     */
-
-    if(f.isTarget){
-
-        ctx.fillStyle="#ffe477";
-
-        ctx.beginPath();
-
-        ctx.arc(
-            size*.7,
-            size*.4,
-            size*.13,
-            0,
-            Math.PI*2
-        );
-
-        ctx.fill();
-
-    }
 
     ctx.restore();
 
@@ -3335,12 +3363,6 @@ function drawHook(){
     )
         return;
 
-    /*
-       La línea comienza
-       justo por debajo del barco,
-       atraviesa la superficie
-       y entra al agua.
-    */
 
     const startX=
         boat.x+
@@ -3358,8 +3380,7 @@ function drawHook(){
 
     const dist=
         Math.sqrt(
-            dx*dx+
-            dy*dy
+            dx*dx+dy*dy
         );
 
     const sag=
@@ -3400,10 +3421,6 @@ function drawHook(){
     ctx.setLineDash([]);
 
 
-    /*
-       BRILLO DEL ANZUELO
-    */
-
     const glow=
         ctx.createRadialGradient(
             hookX,
@@ -3438,10 +3455,6 @@ function drawHook(){
 
     ctx.fill();
 
-
-    /*
-       FLOTADOR / ANZUELO
-    */
 
     const hookGrad=
         ctx.createRadialGradient(
@@ -3482,10 +3495,6 @@ function drawHook(){
 
     ctx.stroke();
 
-
-    /*
-       GANCHO
-    */
 
     ctx.beginPath();
 
@@ -3773,10 +3782,6 @@ function setupEvents(){
     );
 
 
-    /*
-       ALBUM
-    */
-
     albumBtn.addEventListener(
         "click",
         ()=>{
@@ -3869,19 +3874,37 @@ function setupEvents(){
 
             resizeCanvas();
 
-            const swimTop=
-                canvas.height*.43;
-
-            const swimBottom=
-                canvas.height*.86;
-
             fishes.forEach(f=>{
 
-                if(f.y<swimTop)
-                    f.y=swimTop;
+                if(f.isTarget){
 
-                if(f.y>swimBottom)
-                    f.y=swimBottom;
+                    const top=
+                        canvas.height*.62;
+
+                    const bottom=
+                        canvas.height*.84;
+
+                    if(f.y<top)
+                        f.y=top;
+
+                    if(f.y>bottom)
+                        f.y=bottom;
+
+                }else{
+
+                    const top=
+                        canvas.height*.37;
+
+                    const bottom=
+                        canvas.height*.84;
+
+                    if(f.y<top)
+                        f.y=top;
+
+                    if(f.y>bottom)
+                        f.y=bottom;
+
+                }
 
             });
 
