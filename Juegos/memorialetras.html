@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>¡Memoria Tradicional de Letras! 🐝</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --p1-main: #3498db;
+            --p1-dark: #2980b9;
+            --grid-bg: #8d6e63;
+        }
+
+        body {
+            font-family: 'Fredoka', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 10px;
+            min-height: 100vh;
+            touch-action: manipulation;
+            color: #333;
+            background-color: transparent; 
+        }
+
+        /* PAISAJE DE FONDO */
+        .decorations {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -1;
+            pointer-events: none; 
+            overflow: hidden;
+            background: linear-gradient(180deg, #74ebd5 0%, #ACB6E5 100%);
+        }
+
+        .decorations::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='104' viewBox='0 0 60 104' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 52l15-26 15 26v52l-15 26-15-26zM0 0l15 26v52L0 104V0zm60 0v104L45 78V26z' fill='%23ffffff' fill-opacity='0.15' fill-rule='evenodd'/%3E%3C/svg%3E");
+            z-index: 1;
+        }
+
+        .sun {
+            position: absolute;
+            top: 3%; right: 5%;
+            font-size: 70px;
+            z-index: 2;
+            filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.8));
+            animation: pulse-sun 3s infinite alternate;
+        }
+
+        @keyframes pulse-sun {
+            0% { transform: scale(1) rotate(0deg); }
+            100% { transform: scale(1.1) rotate(10deg); }
+        }
+
+        .grass {
+            position: absolute;
+            bottom: -5vh; left: -10vw;
+            width: 120vw; height: 25vh;
+            background: #a9dfbf;
+            border-radius: 50% 50% 0 0;
+            z-index: 2;
+            box-shadow: inset 0 15px 0 #82e0aa, 0 -30px 50px rgba(46,204,113,0.3);
+        }
+
+        /* UI y Títulos */
+        h1 {
+            color: #2c3e50;
+            margin: 5px 0 8px 0;
+            text-align: center;
+            font-size: 28px;
+            text-shadow: 2px 2px 0px #fff;
+            z-index: 10;
+        }
+
+        .prompt-box {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 8px 15px;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            max-width: 600px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 4px solid #ffb74d;
+            color: #d35400;
+            z-index: 10;
+        }
+
+        /* GRID 6x6 */
+        .grid-wrapper {
+            position: relative;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #ffe0b2;
+            border-radius: 20px;
+            box-shadow: 0 10px 0 #ffb74d, 0 15px 30px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+
+        #grid {
+            display: grid;
+            grid-template-columns: repeat(6, clamp(42px, 12vw, 65px));
+            grid-template-rows: repeat(6, clamp(42px, 12vw, 65px));
+            gap: 6px;
+            background-color: var(--grid-bg);
+            border-radius: 15px;
+            padding: 8px;
+        }
+
+        /* Tarjetas de Memoria Estilo Tradicional (Flip Correcto) */
+        .card {
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            user-select: none;
+            box-shadow: inset 0 -4px 0 rgba(0,0,0,0.1);
+            font-size: clamp(22px, 6vw, 35px);
+            font-weight: 700;
+            color: #9e9e9e;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        /* Estado tarjeta oculta (Dorso con Interrogación) */
+        .card:not(.flipped)::after {
+            content: '?';
+            font-size: clamp(20px, 5vw, 32px);
+            font-weight: 900;
+        }
+
+        /* Estado volteada (Mostrando Letra de frente) */
+        .card.flipped {
+            background-color: #aed6f1;
+            color: #2c3e50;
+            box-shadow: inset 0 0 15px #3498db;
+            transform: scale(1.02);
+        }
+
+        /* Pareja encontrada con éxito */
+        .card.matched {
+            background-color: #a9dfbf !important;
+            color: #2c3e50;
+            box-shadow: inset 0 0 15px #2ecc71 !important;
+            opacity: 0.85;
+            cursor: default;
+            transform: scale(0.95);
+        }
+
+        /* Botón de Control */
+        .global-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 10;
+        }
+
+        button.global-btn {
+            padding: 12px 25px;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 800;
+            font-size: 18px;
+            color: white;
+            border-radius: 15px;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.1s;
+            background-color: #ff9800;
+            box-shadow: 0 6px 0 #f57c00;
+        }
+        button.global-btn:active { transform: translateY(4px); box-shadow: 0 0 0 transparent !important; }
+
+        /* Modal de Victoria */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100000;
+            visibility: hidden;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .modal-overlay.active { visibility: visible; opacity: 1; }
+        .modal-box {
+            background: white;
+            padding: 30px;
+            border-radius: 25px;
+            text-align: center;
+            max-width: 80%;
+            transform: scale(0.7);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        }
+
+        .modal-overlay.active .modal-box { transform: scale(1); }
+        .modal-title { font-size: 28px; margin-bottom: 10px; color: #ff9800; }
+        .modal-msg { font-size: 18px; margin-bottom: 20px; color: #555; }
+        .modal-btn { 
+            background: #4CAF50; border: none; font-family: 'Fredoka', sans-serif; font-weight: bold;
+            box-shadow: 0 5px 0 #388E3C; padding: 12px 25px; font-size: 18px; color: white; border-radius: 12px; cursor: pointer;
+        }
+        .modal-btn:active { transform: translateY(4px); box-shadow: none; }
+    </style>
+</head>
+<body>
+
+    <div class="decorations">
+        <div class="sun">☀️</div>
+        <div class="cloud c1" style="position:absolute; top:10%; left:10%; font-size:40px;">☁️</div>
+        <div class="cloud c2" style="position:absolute; top:20%; right:15%; font-size:50px;">☁️</div>
+        <div class="grass"></div>
+    </div>
+
+    <h1>¡Memoria Tradicional de Letras! 🐝</h1>
+    
+    <div class="prompt-box" id="prompt-box">
+        ¡Voltea dos tarjetas para encontrar las parejas de letras iguales!
+    </div>
+
+    <div class="grid-wrapper">
+        <div id="grid"></div>
+    </div>
+    
+    <div class="global-controls">
+        <button class="global-btn" onclick="initGame()">🔄 Reiniciar Juego</button>
+    </div>
+
+    <div class="modal-overlay" id="modal">
+        <div class="modal-box">
+            <h2 class="modal-title">¡Excelente Memoria! 🧠✨</h2>
+            <p class="modal-msg">¡Encontraste todas las parejas de letras con éxito!</p>
+            <button class="modal-btn" onclick="initGame(); closeModal();">¡Jugar de Nuevo!</button>
+        </div>
+    </div>
+
+    <script>
+        const alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R'];
+        
+        let cards = [];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let isChecking = false;
+
+        const gridEl = document.getElementById('grid');
+        const promptBox = document.getElementById('prompt-box');
+
+        function initGame() {
+            gridEl.innerHTML = '';
+            cards = [];
+            flippedCards = [];
+            matchedPairs = 0;
+            isChecking = false;
+            document.getElementById('modal').classList.remove('active');
+            promptBox.innerHTML = `¡Voltea dos tarjetas para encontrar las parejas de letras iguales!`;
+
+            let selectedLetters = [...alphabet];
+            let deck = [...selectedLetters, ...selectedLetters].sort(() => Math.random() - 0.5);
+
+            deck.forEach((letter, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.dataset.letter = letter;
+                card.dataset.index = index;
+                card.addEventListener('click', () => flipCard(card));
+                gridEl.appendChild(card);
+            });
+        }
+
+        function flipCard(card) {
+            if (isChecking) return;
+            if (card.classList.contains('flipped') || card.classList.contains('matched')) return;
+
+            card.classList.add('flipped');
+            card.innerText = card.dataset.letter;
+            flippedCards.push(card);
+
+            if (flippedCards.length === 2) {
+                isChecking = true;
+                let [card1, card2] = flippedCards;
+
+                if (card1.dataset.letter === card2.dataset.letter) {
+                    card1.classList.add('matched');
+                    card2.classList.add('matched');
+                    matchedPairs++;
+                    flippedCards = [];
+                    isChecking = false;
+
+                    if (matchedPairs === 18) {
+                        setTimeout(() => {
+                            document.getElementById('modal').classList.add('active');
+                        }, 400);
+                    }
+                } else {
+                    setTimeout(() => {
+                        card1.classList.remove('flipped');
+                        card1.innerText = '';
+                        card2.classList.remove('flipped');
+                        card2.innerText = '';
+                        flippedCards = [];
+                        isChecking = false;
+                    }, 800);
+                }
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+
+        initGame();
+    </script>
+</body>
+</html>
