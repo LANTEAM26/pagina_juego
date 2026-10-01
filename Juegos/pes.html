@@ -11,6 +11,7 @@
     padding:0;
     box-sizing:border-box;
     user-select:none;
+    -webkit-user-select:none;
     -webkit-tap-highlight-color:transparent;
 }
 
@@ -93,7 +94,6 @@ canvas{
 
 .target-letter{
     flex-shrink:0;
-
     width:62px;
     height:62px;
 
@@ -127,12 +127,8 @@ canvas{
 }
 
 @keyframes letterPulse{
-    0%,100%{
-        transform:scale(1);
-    }
-    50%{
-        transform:scale(1.06);
-    }
+    0%,100%{transform:scale(1);}
+    50%{transform:scale(1.06);}
 }
 
 .info-text{
@@ -175,6 +171,7 @@ canvas{
     align-items:center;
 
     pointer-events:auto;
+    z-index:25;
 }
 
 .music-btn,
@@ -210,13 +207,15 @@ canvas{
 .music-btn.playing{
     background:linear-gradient(145deg,#58d68d,#27ae60);
     border-color:#abebc6;
+
     box-shadow:
         0 5px 0 #1e8449,
         0 8px 18px rgba(0,0,0,.3);
 }
 
 .music-btn:active,
-.album-btn:active{
+.album-btn:active,
+.sound-btn:active{
     transform:translateY(4px);
 }
 
@@ -246,6 +245,7 @@ canvas{
 
 .sound-btn.muted{
     background:linear-gradient(145deg,#95a5a6,#7f8c8d);
+
     box-shadow:
         0 5px 0 #566573,
         0 8px 18px rgba(0,0,0,.3);
@@ -579,7 +579,6 @@ canvas{
 
 <canvas id="gameCanvas"></canvas>
 
-<!-- INDICACIÓN -->
 <div class="top-bar">
 
     <div class="top-indicator" id="topIndicator">
@@ -602,11 +601,9 @@ canvas{
 
 </div>
 
-<!-- CONTROLES -->
 <div class="top-controls">
 
     <button class="music-btn" id="musicBtn">
-        <input type="file" id="musicInput" accept="audio/*">
         <span id="musicIcon">🎵</span>
         <span id="musicLabel">Música</span>
     </button>
@@ -622,7 +619,6 @@ canvas{
 
 </div>
 
-<!-- VICTORIA -->
 <div class="win-overlay" id="winOverlay">
 
     <div class="win-card">
@@ -639,7 +635,6 @@ canvas{
 
 </div>
 
-<!-- ALBUM -->
 <div class="album-modal" id="albumModal">
 
     <div class="album-content">
@@ -673,7 +668,6 @@ canvas{
 </div>
 
 <script>
-
 (function(){
 
 "use strict";
@@ -682,52 +676,49 @@ canvas{
    ELEMENTOS
 ========================================================= */
 
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
+const canvas=document.getElementById("gameCanvas");
+const ctx=canvas.getContext("2d");
 
-const targetLetterDisplay =
+const targetLetterDisplay=
     document.getElementById("targetLetterDisplay");
 
-const topIndicator =
+const topIndicator=
     document.getElementById("topIndicator");
 
-const albumBtn =
+const albumBtn=
     document.getElementById("albumBtn");
 
-const albumModal =
+const albumModal=
     document.getElementById("albumModal");
 
-const closeAlbumBtn =
+const closeAlbumBtn=
     document.getElementById("closeAlbumBtn");
 
-const albumGrid =
+const albumGrid=
     document.getElementById("albumGrid");
 
-const albumCountSpan =
+const albumCountSpan=
     document.getElementById("albumCount");
 
-const albumCounter =
+const albumCounter=
     document.getElementById("albumCounter");
 
-const resetBtn =
+const resetBtn=
     document.getElementById("resetBtn");
 
-const winOverlay =
+const winOverlay=
     document.getElementById("winOverlay");
 
-const soundBtn =
+const soundBtn=
     document.getElementById("soundBtn");
 
-const musicBtn =
+const musicBtn=
     document.getElementById("musicBtn");
 
-const musicInput =
-    document.getElementById("musicInput");
-
-const musicIcon =
+const musicIcon=
     document.getElementById("musicIcon");
 
-const musicLabel =
+const musicLabel=
     document.getElementById("musicLabel");
 
 
@@ -735,8 +726,8 @@ const musicLabel =
    AUDIO
 ========================================================= */
 
-let audioCtx = null;
-let soundEnabled = true;
+let audioCtx=null;
+let soundEnabled=true;
 
 function initAudio(){
 
@@ -744,8 +735,8 @@ function initAudio(){
 
         try{
 
-            audioCtx =
-                new(window.AudioContext ||
+            audioCtx=
+                new(window.AudioContext||
                 window.webkitAudioContext)();
 
         }catch(e){
@@ -758,8 +749,10 @@ function initAudio(){
 
     }
 
-    if(audioCtx &&
-       audioCtx.state === "suspended"){
+    if(
+        audioCtx &&
+        audioCtx.state==="suspended"
+    ){
 
         audioCtx.resume();
 
@@ -775,19 +768,19 @@ function playTone(
     delay=0
 ){
 
-    if(!soundEnabled || !audioCtx)
+    if(!soundEnabled||!audioCtx)
         return;
 
-    const start =
-        audioCtx.currentTime + delay;
+    const start=
+        audioCtx.currentTime+delay;
 
-    const osc =
+    const osc=
         audioCtx.createOscillator();
 
-    const gain =
+    const gain=
         audioCtx.createGain();
 
-    osc.type = type;
+    osc.type=type;
 
     osc.frequency.setValueAtTime(
         frequency,
@@ -795,18 +788,13 @@ function playTone(
     );
 
     gain.gain.setValueAtTime(
-        0,
+        .001,
         start
     );
 
     gain.gain.linearRampToValueAtTime(
         volume,
         start+.01
-    );
-
-    gain.gain.exponentialRampToValueAtTime(
-        volume*.7,
-        start+duration*.3
     );
 
     gain.gain.exponentialRampToValueAtTime(
@@ -831,20 +819,18 @@ function playCorrectSound(){
     if(!audioCtx)
         return;
 
-    const notes =
-        [523.25,659.25,783.99,1046.50];
+    [523.25,659.25,783.99,1046.5]
+        .forEach((f,i)=>{
 
-    notes.forEach((f,i)=>{
+            playTone(
+                f,
+                .25,
+                "triangle",
+                .25,
+                i*.08
+            );
 
-        playTone(
-            f,
-            .25,
-            "triangle",
-            .25,
-            i*.08
-        );
-
-    });
+        });
 
 }
 
@@ -858,13 +844,13 @@ function playIncorrectSound(){
     if(!audioCtx)
         return;
 
-    const start =
+    const start=
         audioCtx.currentTime;
 
-    const osc =
+    const osc=
         audioCtx.createOscillator();
 
-    const gain =
+    const gain=
         audioCtx.createGain();
 
     osc.type="sawtooth";
@@ -880,7 +866,7 @@ function playIncorrectSound(){
     );
 
     gain.gain.setValueAtTime(
-        0,
+        .001,
         start
     );
 
@@ -899,7 +885,6 @@ function playIncorrectSound(){
 
     osc.start(start);
     osc.stop(start+.5);
-
 }
 
 function playCastSound(){
@@ -912,42 +897,20 @@ function playCastSound(){
     if(!audioCtx)
         return;
 
-    const start =
-        audioCtx.currentTime;
-
-    const osc =
-        audioCtx.createOscillator();
-
-    const gain =
-        audioCtx.createGain();
-
-    osc.type="sine";
-
-    osc.frequency.setValueAtTime(
+    playTone(
         600,
-        start
+        .2,
+        "sine",
+        .12
     );
 
-    osc.frequency.exponentialRampToValueAtTime(
+    playTone(
         200,
-        start+.2
+        .2,
+        "sine",
+        .08,
+        .08
     );
-
-    gain.gain.setValueAtTime(
-        .12,
-        start
-    );
-
-    gain.gain.exponentialRampToValueAtTime(
-        .001,
-        start+.25
-    );
-
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-
-    osc.start(start);
-    osc.stop(start+.3);
 
 }
 
@@ -962,14 +925,12 @@ function playVictorySound(){
         return;
 
     const melody=[
-
         {f:523.25,t:0,d:.2},
         {f:659.25,t:.15,d:.2},
         {f:783.99,t:.3,d:.2},
         {f:1046.5,t:.45,d:.4},
         {f:783.99,t:.75,d:.15},
         {f:1046.5,t:.9,d:.6}
-
     ];
 
     melody.forEach(note=>{
@@ -988,7 +949,7 @@ function playVictorySound(){
 
 
 /* =========================================================
-   BOTON SONIDO
+   SONIDO
 ========================================================= */
 
 soundBtn.addEventListener("click",e=>{
@@ -997,8 +958,8 @@ soundBtn.addEventListener("click",e=>{
 
     soundEnabled=!soundEnabled;
 
-    soundBtn.textContent =
-        soundEnabled ? "🔊":"🔇";
+    soundBtn.textContent=
+        soundEnabled?"🔊":"🔇";
 
     soundBtn.classList.toggle(
         "muted",
@@ -1022,28 +983,68 @@ soundBtn.addEventListener("click",e=>{
 
 
 /* =========================================================
-   MUSICA
+   MÚSICA DE FONDO PREDETERMINADA
 ========================================================= */
 
-const bgMusic = new Audio();
+/*
+    Coloca tu archivo aquí:
+
+    /musica/fondo.mp3
+
+    Estructura:
+
+    proyecto/
+    ├── index.html
+    └── musica/
+        └── fondo.mp3
+*/
+
+const bgMusic=
+    new Audio("../assets/musicafondo/pesca_pescaditos.mp3");
 
 bgMusic.loop=true;
 bgMusic.volume=.35;
 
-let musicLoaded=false;
+let musicLoaded=true;
 let musicPlaying=false;
+
+
+/* Iniciar música después de la primera interacción */
+
+function startBackgroundMusic(){
+
+    if(!musicLoaded || musicPlaying)
+        return;
+
+    bgMusic.play().then(()=>{
+
+        musicPlaying=true;
+
+        musicIcon.textContent="⏸";
+        musicLabel.textContent="Pausar";
+
+        musicBtn.classList.add(
+            "playing"
+        );
+
+    }).catch(()=>{
+
+        console.warn(
+            "El navegador bloqueó la reproducción automática."
+        );
+
+    });
+
+}
+
+
+/* Botón de música */
 
 musicBtn.addEventListener("click",e=>{
 
     e.stopPropagation();
 
-    if(!musicLoaded){
-
-        musicInput.click();
-
-        return;
-
-    }
+    initAudio();
 
     if(musicPlaying){
 
@@ -1060,60 +1061,11 @@ musicBtn.addEventListener("click",e=>{
 
     }else{
 
-        bgMusic.play().then(()=>{
-
-            musicPlaying=true;
-
-            musicIcon.textContent="⏸";
-            musicLabel.textContent="Pausar";
-
-            musicBtn.classList.add(
-                "playing"
-            );
-
-        });
+        startBackgroundMusic();
 
     }
 
 });
-
-musicInput.addEventListener(
-    "change",
-    e=>{
-
-        const file =
-            e.target.files[0];
-
-        if(!file)
-            return;
-
-        bgMusic.src =
-            URL.createObjectURL(file);
-
-        bgMusic.load();
-
-        musicLoaded=true;
-
-        bgMusic.play().then(()=>{
-
-            musicPlaying=true;
-
-            musicIcon.textContent="⏸";
-            musicLabel.textContent="Pausar";
-
-            musicBtn.classList.add(
-                "playing"
-            );
-
-        }).catch(()=>{
-
-            musicIcon.textContent="▶";
-            musicLabel.textContent="Reproducir";
-
-        });
-
-    }
-);
 
 
 /* =========================================================
@@ -1121,14 +1073,11 @@ musicInput.addEventListener(
 ========================================================= */
 
 const SPANISH_ALPHABET=[
-
     "a","b","c","d","e","f","g","h","i","j","k","l","m",
     "n","ñ","o","p","q","r","s","t","u","v","w","x","y","z"
-
 ];
 
 let caughtLetters=new Set();
-
 let currentTargetLower="a";
 
 let fishes=[];
@@ -1151,19 +1100,18 @@ let hookTargetY=0;
 
 let time=0;
 
+let roundLocked=false;
+
 
 /* =========================================================
    BARCO
 ========================================================= */
 
 const boat={
-
     x:0,
     y:0,
-
     width:155,
     height:75
-
 };
 
 
@@ -1173,11 +1121,8 @@ const boat={
 
 function resizeCanvas(){
 
-    canvas.width=
-        window.innerWidth;
-
-    canvas.height=
-        window.innerHeight;
+    canvas.width=window.innerWidth;
+    canvas.height=window.innerHeight;
 
     boat.x=
         Math.max(
@@ -1197,7 +1142,7 @@ function resizeCanvas(){
 
 
 /* =========================================================
-   BURBUJAS
+   DECORACIÓN
 ========================================================= */
 
 function initBubbles(){
@@ -1205,9 +1150,7 @@ function initBubbles(){
     bubbles=[];
 
     const count=
-        Math.floor(
-            canvas.width/18
-        );
+        Math.floor(canvas.width/18);
 
     for(let i=0;i<count;i++){
 
@@ -1241,26 +1184,18 @@ function initBubbles(){
 
 }
 
-
-/* =========================================================
-   ALGAS
-========================================================= */
-
 function initSeaweed(){
 
     seaweed=[];
 
     const count=
-        Math.floor(
-            canvas.width/100
-        )+4;
+        Math.floor(canvas.width/100)+4;
 
     for(let i=0;i<count;i++){
 
         seaweed.push({
 
-            x:
-                Math.random()*canvas.width,
+            x:Math.random()*canvas.width,
 
             height:
                 Math.random()*100+60,
@@ -1287,11 +1222,6 @@ function initSeaweed(){
 
 }
 
-
-/* =========================================================
-   NUBES
-========================================================= */
-
 function initClouds(){
 
     clouds=[];
@@ -1300,11 +1230,11 @@ function initClouds(){
 
         clouds.push({
 
-            x:
-                Math.random()*canvas.width,
+            x:Math.random()*canvas.width,
 
             y:
-                40+Math.random()*
+                40+
+                Math.random()*
                 canvas.height*.17,
 
             scale:
@@ -1319,11 +1249,6 @@ function initClouds(){
 
 }
 
-
-/* =========================================================
-   OLAS
-========================================================= */
-
 function initWaves(){
 
     waves=[];
@@ -1332,8 +1257,7 @@ function initWaves(){
 
         waves.push({
 
-            x:
-                Math.random()*canvas.width,
+            x:Math.random()*canvas.width,
 
             offset:
                 Math.random()*Math.PI*2,
@@ -1363,23 +1287,12 @@ function createFish(letter,isTarget=false){
     const hue=
         Math.random()*360;
 
-    const color=
-        `hsl(${hue},75%,55%)`;
-
-    const tailColor=
-        `hsl(${(hue+30)%360},70%,40%)`;
-
-    const finColor=
-        `hsl(${(hue+60)%360},80%,65%)`;
-
     return{
 
         letter,
-
         isTarget,
 
-        x:
-            -Math.random()*220-50,
+        x:-Math.random()*220-50,
 
         y:0,
 
@@ -1391,11 +1304,14 @@ function createFish(letter,isTarget=false){
 
         size:sizeBase,
 
-        color:color,
+        color:
+            `hsl(${hue},75%,55%)`,
 
-        tailColor:tailColor,
+        tailColor:
+            `hsl(${(hue+30)%360},70%,40%)`,
 
-        finColor:finColor,
+        finColor:
+            `hsl(${(hue+60)%360},80%,65%)`,
 
         wobble:
             Math.random()*Math.PI*2,
@@ -1408,7 +1324,9 @@ function createFish(letter,isTarget=false){
         catchProgress:0,
 
         finPhase:
-            Math.random()*Math.PI*2
+            Math.random()*Math.PI*2,
+
+        wrongFlash:0
 
     };
 
@@ -1429,6 +1347,9 @@ function startNewRound(){
 
     }
 
+    roundLocked=false;
+    hookActive=false;
+
     const remaining=
         SPANISH_ALPHABET.filter(
             l=>!caughtLetters.has(l)
@@ -1444,8 +1365,7 @@ function startNewRound(){
             )
         ];
 
-    currentTargetLower=
-        targetLower;
+    currentTargetLower=targetLower;
 
     targetLetterDisplay.textContent=
         targetLower.toUpperCase();
@@ -1460,34 +1380,12 @@ function startNewRound(){
     fishes=[];
 
 
-    /*
-       ======================================================
-       ZONAS DE NADO
-       ======================================================
-
-       Los peces incorrectos pueden aparecer desde
-       bastante arriba.
-
-       El pez correcto empieza más abajo y permanece
-       siempre en la zona inferior del agua.
-    */
-
-    const generalTop=
-        canvas.height*.37;
-
-    const generalBottom=
-        canvas.height*.84;
-
-    const targetTop=
-        canvas.height*.62;
-
-    const targetBottom=
-        canvas.height*.84;
-
-
-    /*
+    /* =====================================================
        PEZ CORRECTO
-    */
+       
+       AHORA PUEDE NADAR DESDE LA ZONA MEDIA
+       HASTA CASI EL FONDO DEL MAR.
+    ===================================================== */
 
     const targetFish=
         createFish(
@@ -1496,18 +1394,13 @@ function startNewRound(){
         );
 
     targetFish.y=
-        targetTop+
+        canvas.height*.40+
         Math.random()*
-        (targetBottom-targetTop);
+        (canvas.height*.93-
+        canvas.height*.40);
 
     targetFish.x=
         -80-Math.random()*120;
-
-    /*
-       El correcto se mueve un poco más lento
-       para que sea cómodo de pescar en la
-       pantalla táctil.
-    */
 
     targetFish.vx=
         Math.random()*.75+.8;
@@ -1515,9 +1408,7 @@ function startNewRound(){
     fishes.push(targetFish);
 
 
-    /*
-       PECES INCORRECTOS
-    */
+    /* PECES INCORRECTOS */
 
     const availableDecoys=
         SPANISH_ALPHABET.filter(
@@ -1551,15 +1442,11 @@ function startNewRound(){
                 false
             );
 
-        /*
-           Los incorrectos sí pueden nadar
-           por la zona superior y media.
-        */
-
         fish.y=
-            generalTop+
+            canvas.height*.37+
             Math.random()*
-            (generalBottom-generalTop);
+            (canvas.height*.84-
+            canvas.height*.37);
 
         fish.x=
             -50-
@@ -1607,8 +1494,7 @@ function update(deltaTime){
             canvas.height*.30
         ){
 
-            b.y=
-                canvas.height;
+            b.y=canvas.height;
 
             b.x=
                 Math.random()*
@@ -1662,34 +1548,26 @@ function update(deltaTime){
 
         hookX+=
             (hookTargetX-hookX)*
-            .25*
-            dt;
+            Math.min(.25*dt,1);
 
         hookY+=
             (hookTargetY-hookY)*
-            .25*
-            dt;
+            Math.min(.25*dt,1);
 
     }else if(mouseX>0&&mouseY>0){
 
         hookX+=
             (mouseX-hookX)*
-            .12*
-            dt;
+            Math.min(.12*dt,1);
 
         hookY+=
             (mouseY-hookY)*
-            .12*
-            dt;
+            Math.min(.12*dt,1);
 
     }
 
 
-    /*
-       ======================================================
-       PECES
-       ======================================================
-    */
+    /* PECES */
 
     for(
         let i=fishes.length-1;
@@ -1715,32 +1593,28 @@ function update(deltaTime){
                 .1*dt;
 
 
-            /*
-               ZONA DE MOVIMIENTO DEL PEZ CORRECTO
-            */
+            /* =================================================
+               ZONA DE MOVIMIENTO
+
+               PEZ CORRECTO:
+               37% → 94%
+
+               PECES INCORRECTOS:
+               37% → 84%
+            ================================================= */
 
             let fishTop;
             let fishBottom;
 
             if(f.isTarget){
 
-                /*
-                   MUY IMPORTANTE:
-                   el correcto nunca sube a la superficie.
-                */
-
                 fishTop=
-                    canvas.height*.62;
+                    canvas.height*.37;
 
                 fishBottom=
-                    canvas.height*.84;
+                    canvas.height*.94;
 
             }else{
-
-                /*
-                   Los incorrectos tienen libertad
-                   para nadar también por arriba.
-                */
 
                 fishTop=
                     canvas.height*.37;
@@ -1750,19 +1624,11 @@ function update(deltaTime){
 
             }
 
-
             if(f.y<fishTop)
                 f.y=fishTop;
 
             if(f.y>fishBottom)
                 f.y=fishBottom;
-
-
-            /*
-               Cuando sale por la derecha,
-               vuelve por la izquierda manteniendo
-               su zona de profundidad.
-            */
 
             if(
                 f.x>
@@ -1799,36 +1665,6 @@ function update(deltaTime){
 
                     updateAlbumUI();
 
-                    if(
-                        f.letter===
-                        currentTargetLower
-                    ){
-
-                        setTimeout(()=>{
-
-                            if(
-                                caughtLetters.size<27
-                            ){
-
-                                startNewRound();
-
-                            }else{
-
-                                targetLetterDisplay
-                                    .textContent="✓";
-
-                                winOverlay
-                                    .classList
-                                    .add("active");
-
-                                playVictorySound();
-
-                            }
-
-                        },350);
-
-                    }
-
                 }
 
                 fishes.splice(i,1);
@@ -1844,8 +1680,7 @@ function update(deltaTime){
             const targetY=
                 canvas.height*.34;
 
-            const t=
-                f.catchProgress;
+            const t=f.catchProgress;
 
             const ctrlX=
                 (f.x+targetX)/2;
@@ -1896,12 +1731,28 @@ function update(deltaTime){
     }
 
 
-    /* =====================================================
-       COLISION ANZUELO
-    ===================================================== */
+    /* EFECTO ROJO */
+
+    fishes.forEach(f=>{
+
+        if(f.wrongFlash>0){
+
+            f.wrongFlash-=
+                .025*dt;
+
+            if(f.wrongFlash<0)
+                f.wrongFlash=0;
+
+        }
+
+    });
+
+
+    /* COLISION */
 
     if(
         hookActive &&
+        !roundLocked &&
         currentTargetLower
     ){
 
@@ -1921,87 +1772,67 @@ function update(deltaTime){
                     dx*dx+dy*dy
                 );
 
+            const collisionRadius=
+                f.size*1.15;
+
             if(
                 dist<
-                f.size*.95
+                collisionRadius
             ){
+
+                hookActive=false;
 
                 if(
                     f.letter===
                     currentTargetLower
                 ){
 
+                    roundLocked=true;
+
                     playCorrectSound();
 
                     f.caught=true;
-
                     f.catchProgress=0;
 
-                    hookActive=false;
+                    createCatchParticles(
+                        f.x,
+                        f.y
+                    );
 
-                    for(let i=0;i<20;i++){
+                    setTimeout(()=>{
 
-                        particles.push({
+                        if(
+                            caughtLetters.size>=27
+                        ){
 
-                            x:f.x,
-                            y:f.y,
+                            targetLetterDisplay
+                                .textContent="✓";
 
-                            vx:
-                                (Math.random()-.5)*8,
+                            winOverlay
+                                .classList
+                                .add("active");
 
-                            vy:
-                                (Math.random()-.5)*8-3,
+                            playVictorySound();
 
-                            size:
-                                Math.random()*7+3,
+                        }else{
 
-                            color:
-                                `hsl(
-                                    ${Math.random()*360},
-                                    90%,
-                                    70%
-                                )`,
+                            startNewRound();
 
-                            life:1
+                        }
 
-                        });
-
-                    }
+                    },850);
 
                 }else{
 
                     playIncorrectSound();
 
-                    /*
-                       =================================================
-                       EFECTO DE PEZ INCORRECTO
-                       =================================================
-
-                       El pez se pone rojo momentáneamente,
-                       pero NO se muestra ninguna pista sobre
-                       cuál es el correcto.
-                    */
-
                     f.wrongFlash=1;
 
-                    /*
-                       Pequeño escape hacia adelante.
-                    */
-
                     f.vx=
-                        Math.abs(f.vx)*1.4;
-
-                    hookActive=false;
-
-                    /*
-                       Después desaparece el efecto rojo.
-                    */
-
-                    setTimeout(()=>{
-
-                        f.wrongFlash=0;
-
-                    },500);
+                        Math.max(
+                            Math.abs(f.vx)*1.4,
+                            2
+                        );
 
                 }
 
@@ -2013,27 +1844,47 @@ function update(deltaTime){
 
     }
 
-    /*
-       Actualizar efecto rojo
-    */
-
-    fishes.forEach(f=>{
-
-        if(f.wrongFlash>0){
-
-            f.wrongFlash-=
-                .025*dt;
-
-            if(f.wrongFlash<0)
-                f.wrongFlash=0;
-
-        }
-
-    });
-
 
     albumCountSpan.textContent=
         `${caughtLetters.size}/27`;
+
+}
+
+
+/* =========================================================
+   PARTICULAS DE CAPTURA
+========================================================= */
+
+function createCatchParticles(x,y){
+
+    for(let i=0;i<25;i++){
+
+        particles.push({
+
+            x,
+            y,
+
+            vx:
+                (Math.random()-.5)*8,
+
+            vy:
+                (Math.random()-.5)*8-3,
+
+            size:
+                Math.random()*7+3,
+
+            color:
+                `hsl(
+                    ${Math.random()*360},
+                    90%,
+                    70%
+                )`,
+
+            life:1
+
+        });
+
+    }
 
 }
 
@@ -2052,9 +1903,7 @@ function draw(){
     );
 
 
-    /*
-       CIELO
-    */
+    /* CIELO */
 
     const skyGrad=
         ctx.createLinearGradient(
@@ -2089,9 +1938,7 @@ function draw(){
     );
 
 
-    /*
-       SOL
-    */
+    /* SOL */
 
     const sunX=
         canvas.width*.82;
@@ -2133,7 +1980,6 @@ function draw(){
 
     ctx.fill();
 
-
     ctx.fillStyle="#fff5b5";
 
     ctx.beginPath();
@@ -2149,9 +1995,7 @@ function draw(){
     ctx.fill();
 
 
-    /*
-       NUBES
-    */
+    /* NUBES */
 
     clouds.forEach(c=>{
 
@@ -2194,15 +2038,10 @@ function draw(){
     });
 
 
-    /*
-       ======================================================
-       SUPERFICIE DEL MAR
-       ======================================================
-    */
+    /* MAR */
 
     const surfaceY=
         canvas.height*.34;
-
 
     const waterGrad=
         ctx.createLinearGradient(
@@ -2242,9 +2081,7 @@ function draw(){
     );
 
 
-    /*
-       Línea brillante de superficie
-    */
+    /* SUPERFICIE */
 
     ctx.save();
 
@@ -2282,9 +2119,7 @@ function draw(){
     ctx.restore();
 
 
-    /*
-       REFLEJOS
-    */
+    /* REFLEJOS */
 
     ctx.save();
 
@@ -2300,9 +2135,7 @@ function draw(){
         const y=
             surfaceY+
             10+
-            Math.sin(
-                time+i
-            )*4;
+            Math.sin(time+i)*4;
 
         ctx.fillStyle="white";
 
@@ -2325,9 +2158,7 @@ function draw(){
     ctx.restore();
 
 
-    /*
-       RAYOS DE LUZ
-    */
+    /* RAYOS */
 
     ctx.save();
 
@@ -2390,9 +2221,7 @@ function draw(){
     ctx.restore();
 
 
-    /*
-       FONDO
-    */
+    /* FONDO */
 
     const floorY=
         canvas.height*.86;
@@ -2426,13 +2255,10 @@ function draw(){
 
 
     drawSeaweed();
-
     drawCorals();
 
 
-    /*
-       BURBUJAS
-    */
+    /* BURBUJAS */
 
     bubbles.forEach(b=>{
 
@@ -2500,18 +2326,10 @@ function draw(){
     });
 
 
-    /*
-       PECES
-    */
-
     fishes.forEach(f=>{
         drawFish(f);
     });
 
-
-    /*
-       PARTICULAS
-    */
 
     particles.forEach(p=>{
 
@@ -2537,7 +2355,6 @@ function draw(){
 
 
     drawBoat();
-
     drawHook();
 
 }
@@ -2553,20 +2370,14 @@ function drawSeaweed(){
 
         const sway=
             Math.sin(
-                time*2+
-                s.phase
+                time*2+s.phase
             )*12;
 
         const baseX=s.x;
+        const baseY=canvas.height;
 
-        const baseY=
-            canvas.height;
-
-        const topX=
-            baseX+sway;
-
-        const topY=
-            baseY-s.height;
+        const topX=baseX+sway;
+        const topY=baseY-s.height;
 
         const midX=
             baseX+sway*.4;
@@ -2619,8 +2430,7 @@ function drawSeaweed(){
 
 function drawCorals(){
 
-    const baseY=
-        canvas.height;
+    const baseY=canvas.height;
 
     const positions=[
         80,250,480,720,950,1150,1350
@@ -2646,15 +2456,11 @@ function drawCorals(){
             )`;
 
         ctx.lineWidth=8;
-
         ctx.lineCap="round";
 
         ctx.beginPath();
 
-        ctx.moveTo(
-            x,
-            baseY
-        );
+        ctx.moveTo(x,baseY);
 
         ctx.quadraticCurveTo(
             x-20,
@@ -2667,10 +2473,7 @@ function drawCorals(){
 
         ctx.beginPath();
 
-        ctx.moveTo(
-            x,
-            baseY
-        );
+        ctx.moveTo(x,baseY);
 
         ctx.quadraticCurveTo(
             x+20,
@@ -2783,7 +2586,6 @@ function drawBoat(){
 
     ctx.strokeStyle="#3e1e08";
     ctx.lineWidth=3;
-
     ctx.stroke();
 
 
@@ -3021,10 +2823,7 @@ function drawFish(f){
     ctx.translate(x,y);
 
 
-    /*
-       EFECTO ROJO SOLO CUANDO SE ELIGE
-       INCORRECTAMENTE.
-    */
+    /* ERROR */
 
     if(f.wrongFlash>0){
 
@@ -3037,7 +2836,6 @@ function drawFish(f){
             );
 
         ctx.shadowColor="#ff2020";
-
         ctx.shadowBlur=25;
 
         ctx.fillStyle="#ff3030";
@@ -3059,9 +2857,7 @@ function drawFish(f){
     }
 
 
-    /*
-       SOMBRA
-    */
+    /* SOMBRA */
 
     ctx.save();
 
@@ -3086,9 +2882,7 @@ function drawFish(f){
     ctx.restore();
 
 
-    /*
-       COLA
-    */
+    /* COLA */
 
     const tailWag=
         Math.sin(f.finPhase)*.3;
@@ -3127,9 +2921,7 @@ function drawFish(f){
     ctx.restore();
 
 
-    /*
-       ALETAS
-    */
+    /* ALETAS */
 
     ctx.fillStyle=f.finColor;
 
@@ -3181,9 +2973,7 @@ function drawFish(f){
     ctx.fill();
 
 
-    /*
-       CUERPO
-    */
+    /* CUERPO */
 
     const bodyGrad=
         ctx.createRadialGradient(
@@ -3227,9 +3017,7 @@ function drawFish(f){
     ctx.fill();
 
 
-    /*
-       BRILLO
-    */
+    /* BRILLO */
 
     ctx.save();
 
@@ -3254,9 +3042,7 @@ function drawFish(f){
     ctx.restore();
 
 
-    /*
-       BORDE
-    */
+    /* BORDE */
 
     ctx.strokeStyle="rgba(0,0,0,.25)";
     ctx.lineWidth=1.5;
@@ -3276,9 +3062,7 @@ function drawFish(f){
     ctx.stroke();
 
 
-    /*
-       OJO
-    */
+    /* OJO */
 
     ctx.fillStyle="white";
 
@@ -3309,9 +3093,7 @@ function drawFish(f){
     ctx.fill();
 
 
-    /*
-       LETRA
-    */
+    /* LETRA */
 
     ctx.font=
         `900 ${size}px 'Segoe UI',Arial`;
@@ -3338,14 +3120,6 @@ function drawFish(f){
         0
     );
 
-
-    /*
-       IMPORTANTE:
-       NO SE DIBUJA NINGÚN CÍRCULO,
-       MARCA, HALO NI INDICADOR DEL
-       PEZ CORRECTO.
-    */
-
     ctx.restore();
 
 }
@@ -3362,7 +3136,6 @@ function drawHook(){
         (!mouseX||!mouseY)
     )
         return;
-
 
     const startX=
         boat.x+
@@ -3395,6 +3168,9 @@ function drawHook(){
     const ctrlY=
         (startY+hookY)/2+sag;
 
+
+    /* CUERDA */
+
     ctx.beginPath();
 
     ctx.moveTo(
@@ -3420,6 +3196,8 @@ function drawHook(){
 
     ctx.setLineDash([]);
 
+
+    /* BRILLO */
 
     const glow=
         ctx.createRadialGradient(
@@ -3455,6 +3233,8 @@ function drawHook(){
 
     ctx.fill();
 
+
+    /* ANZUELO */
 
     const hookGrad=
         ctx.createRadialGradient(
@@ -3496,6 +3276,8 @@ function drawHook(){
     ctx.stroke();
 
 
+    ctx.fillStyle="white";
+
     ctx.beginPath();
 
     ctx.arc(
@@ -3505,8 +3287,6 @@ function drawHook(){
         0,
         Math.PI*2
     );
-
-    ctx.fillStyle="white";
 
     ctx.fill();
 
@@ -3562,7 +3342,6 @@ function updateAlbumUI(){
             document.createElement("div");
 
         small.className="mini";
-
         small.textContent=letter;
 
         div.appendChild(small);
@@ -3591,19 +3370,49 @@ function resetGame(){
 
     caughtLetters.clear();
 
-    updateAlbumUI();
+    fishes=[];
+    particles=[];
+
+    currentTargetLower="a";
+
+    roundLocked=false;
+    hookActive=false;
 
     winOverlay.classList.remove(
         "active"
     );
 
-    hookActive=false;
-
     albumModal.classList.remove(
         "active"
     );
 
+    updateAlbumUI();
+
     startNewRound();
+
+}
+
+
+/* =========================================================
+   CONVERTIR COORDENADAS
+========================================================= */
+
+function getCanvasPosition(clientX,clientY){
+
+    const rect=
+        canvas.getBoundingClientRect();
+
+    return{
+
+        x:
+            (clientX-rect.left)*
+            (canvas.width/rect.width),
+
+        y:
+            (clientY-rect.top)*
+            (canvas.height/rect.height)
+
+    };
 
 }
 
@@ -3618,27 +3427,19 @@ function setupEvents(){
         "mousemove",
         e=>{
 
-            const rect=
-                canvas.getBoundingClientRect();
+            const pos=
+                getCanvasPosition(
+                    e.clientX,
+                    e.clientY
+                );
 
-            const scaleX=
-                canvas.width/rect.width;
-
-            const scaleY=
-                canvas.height/rect.height;
-
-            mouseX=
-                (e.clientX-rect.left)*
-                scaleX;
-
-            mouseY=
-                (e.clientY-rect.top)*
-                scaleY;
+            mouseX=pos.x;
+            mouseY=pos.y;
 
             if(!hookActive){
 
-                hookTargetX=mouseX;
-                hookTargetY=mouseY;
+                hookTargetX=pos.x;
+                hookTargetY=pos.y;
 
             }
 
@@ -3652,24 +3453,35 @@ function setupEvents(){
 
             e.preventDefault();
 
+            if(
+                albumModal.classList.contains(
+                    "active"
+                ) ||
+                winOverlay.classList.contains(
+                    "active"
+                )
+            )
+                return;
+
             initAudio();
 
-            const rect=
-                canvas.getBoundingClientRect();
+            /* INICIAR MÚSICA */
+            startBackgroundMusic();
 
-            const scaleX=
-                canvas.width/rect.width;
+            const pos=
+                getCanvasPosition(
+                    e.clientX,
+                    e.clientY
+                );
 
-            const scaleY=
-                canvas.height/rect.height;
+            hookTargetX=pos.x;
+            hookTargetY=pos.y;
 
-            hookTargetX=
-                (e.clientX-rect.left)*
-                scaleX;
+            hookX=pos.x;
+            hookY=pos.y;
 
-            hookTargetY=
-                (e.clientY-rect.top)*
-                scaleY;
+            mouseX=pos.x;
+            mouseY=pos.y;
 
             hookActive=true;
 
@@ -3701,32 +3513,39 @@ function setupEvents(){
 
             e.preventDefault();
 
+            if(
+                albumModal.classList.contains(
+                    "active"
+                ) ||
+                winOverlay.classList.contains(
+                    "active"
+                )
+            )
+                return;
+
             initAudio();
 
-            const rect=
-                canvas.getBoundingClientRect();
+            /* INICIAR MÚSICA */
+            startBackgroundMusic();
 
-            const touch=
-                e.touches[0];
+            const touch=e.touches[0];
 
-            const scaleX=
-                canvas.width/rect.width;
+            const pos=
+                getCanvasPosition(
+                    touch.clientX,
+                    touch.clientY
+                );
 
-            const scaleY=
-                canvas.height/rect.height;
+            hookTargetX=pos.x;
+            hookTargetY=pos.y;
 
-            hookTargetX=
-                (touch.clientX-rect.left)*
-                scaleX;
+            hookX=pos.x;
+            hookY=pos.y;
 
-            hookTargetY=
-                (touch.clientY-rect.top)*
-                scaleY;
+            mouseX=pos.x;
+            mouseY=pos.y;
 
             hookActive=true;
-
-            mouseX=hookTargetX;
-            mouseY=hookTargetY;
 
             playCastSound();
 
@@ -3741,28 +3560,19 @@ function setupEvents(){
 
             e.preventDefault();
 
-            const rect=
-                canvas.getBoundingClientRect();
+            const touch=e.touches[0];
 
-            const touch=
-                e.touches[0];
+            const pos=
+                getCanvasPosition(
+                    touch.clientX,
+                    touch.clientY
+                );
 
-            const scaleX=
-                canvas.width/rect.width;
+            hookTargetX=pos.x;
+            hookTargetY=pos.y;
 
-            const scaleY=
-                canvas.height/rect.height;
-
-            hookTargetX=
-                (touch.clientX-rect.left)*
-                scaleX;
-
-            hookTargetY=
-                (touch.clientY-rect.top)*
-                scaleY;
-
-            mouseX=hookTargetX;
-            mouseY=hookTargetY;
+            mouseX=pos.x;
+            mouseY=pos.y;
 
         },
         {passive:false}
@@ -3782,11 +3592,21 @@ function setupEvents(){
     );
 
 
+    canvas.addEventListener(
+        "touchcancel",
+        ()=>{
+            hookActive=false;
+        }
+    );
+
+
     albumBtn.addEventListener(
         "click",
         ()=>{
 
             initAudio();
+
+            startBackgroundMusic();
 
             playTone(
                 660,
@@ -3809,6 +3629,8 @@ function setupEvents(){
         "click",
         ()=>{
 
+            initAudio();
+
             playTone(
                 440,
                 .08,
@@ -3828,10 +3650,7 @@ function setupEvents(){
         "click",
         e=>{
 
-            if(
-                e.target===
-                albumModal
-            ){
+            if(e.target===albumModal){
 
                 albumModal.classList.remove(
                     "active"
@@ -3846,6 +3665,8 @@ function setupEvents(){
     resetBtn.addEventListener(
         "click",
         ()=>{
+
+            initAudio();
 
             playTone(
                 523.25,
@@ -3876,35 +3697,21 @@ function setupEvents(){
 
             fishes.forEach(f=>{
 
-                if(f.isTarget){
+                const top=
+                    f.isTarget
+                    ?canvas.height*.37
+                    :canvas.height*.37;
 
-                    const top=
-                        canvas.height*.62;
+                const bottom=
+                    f.isTarget
+                    ?canvas.height*.94
+                    :canvas.height*.84;
 
-                    const bottom=
-                        canvas.height*.84;
+                if(f.y<top)
+                    f.y=top;
 
-                    if(f.y<top)
-                        f.y=top;
-
-                    if(f.y>bottom)
-                        f.y=bottom;
-
-                }else{
-
-                    const top=
-                        canvas.height*.37;
-
-                    const bottom=
-                        canvas.height*.84;
-
-                    if(f.y<top)
-                        f.y=top;
-
-                    if(f.y>bottom)
-                        f.y=bottom;
-
-                }
+                if(f.y>bottom)
+                    f.y=bottom;
 
             });
 
@@ -3935,6 +3742,9 @@ function init(){
     hookY=
         canvas.height*.55;
 
+    hookTargetX=hookX;
+    hookTargetY=hookY;
+
     mouseX=hookX;
     mouseY=hookY;
 
@@ -3942,13 +3752,15 @@ function init(){
 
     function gameLoop(timestamp){
 
+        if(!lastTimestamp)
+            lastTimestamp=timestamp;
+
         const deltaTime=
             timestamp-lastTimestamp;
 
         lastTimestamp=timestamp;
 
         update(deltaTime);
-
         draw();
 
         requestAnimationFrame(
@@ -3966,7 +3778,6 @@ function init(){
 init();
 
 })();
-
 </script>
 
 </body>
