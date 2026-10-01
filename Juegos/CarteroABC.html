@@ -209,7 +209,7 @@
         .mailman-rider {
             position: absolute;
             font-size: 60px;
-            bottom: 40px; /* Lo sienta exactamente en la bici */
+            bottom: 40px; 
             left: 50%;
             transform: translateX(-50%);
             z-index: 2;
@@ -343,7 +343,7 @@
     </audio>
 
     <div class="decorations">
-        <div class="sun">☀️️</div>
+        <div class="sun">☀️</div>
         <div class="cloud c1">☁️</div>
         <div class="cloud c2">☁️</div>
         <div class="cloud c3">☁️</div>
@@ -358,7 +358,7 @@
     
     <div class="status-bar">
         <div class="status-item">Ronda: <span id="street-num">⭐</span></div>
-        <div class="status-item">Cartas: <span id="letters-left-icons">✉️✉️✉️✉️</span></div>
+        <div class="status-item">Cartas: <span id="letters-left-icons">✉️️✉️✉️✉️</span></div>
     </div>
 
     <div class="game-area">
@@ -492,10 +492,10 @@
 
         // Distribución porcentual matemática para simetría perfecta
         const isometricLayout = [
-            { left: '25%', top: '0%', z: 15, scale: 0.85 },   // Atrás Izq
-            { left: '54%', top: '0%', z: 15, scale: 0.85 },   // Atrás Der
-            { left: '10%', top: '32%', z: 30, scale: 1.1 },   // Adelante Izq
-            { left: '69%', top: '32%', z: 30, scale: 1.1 }    // Adelante Der
+            { left: '25%', top: '0%', z: 15, scale: 0.85 },   
+            { left: '54%', top: '0%', z: 15, scale: 0.85 },   
+            { left: '10%', top: '32%', z: 30, scale: 1.1 },   
+            { left: '69%', top: '32%', z: 30, scale: 1.1 }    
         ];
 
         let currentStreet = 0;
@@ -593,20 +593,22 @@
             }
         }
 
-        // ARRASTRE Y SOLTAR 
+        // ARRASTRE Y SOLTAR MEJORADO PARA TÁCTIL
         function makeDraggable(elm) {
             let posX = 0, posY = 0, startLeft = 0, startTop = 0;
 
-            elm.onmousedown = dragMouseDown;
-            elm.ontouchstart = dragMouseDown;
+            // Soporte robusto para touch y mouse
+            elm.addEventListener('mousedown', dragStart, { passive: false });
+            elm.addEventListener('touchstart', dragStart, { passive: false });
 
-            function dragMouseDown(e) {
+            function dragStart(e) {
+                if (e.cancelable) e.preventDefault(); // Evita scroll o zoom accidental
                 initAudio(); 
                 sfxPickup(); 
                 
-                e.preventDefault();
-                let clientX = e.clientX || e.touches[0].clientX;
-                let clientY = e.clientY || e.touches[0].clientY;
+                let isTouch = e.type.includes('touch');
+                let clientX = isTouch ? e.touches[0].clientX : e.clientX;
+                let clientY = isTouch ? e.touches[0].clientY : e.clientY;
 
                 startLeft = elm.offsetLeft;
                 startTop = elm.offsetTop;
@@ -615,16 +617,17 @@
 
                 elm.classList.add('dragging');
 
-                document.onmousemove = elementDrag;
-                document.ontouchmove = elementDrag;
-                document.onmouseup = closeDragElement;
-                document.ontouchend = closeDragElement;
+                document.addEventListener('mousemove', dragMove, { passive: false });
+                document.addEventListener('touchmove', dragMove, { passive: false });
+                document.addEventListener('mouseup', dragEnd);
+                document.addEventListener('touchend', dragEnd);
             }
 
-            function elementDrag(e) {
-                e.preventDefault();
-                let clientX = e.clientX || e.touches[0].clientX;
-                let clientY = e.clientY || e.touches[0].clientY;
+            function dragMove(e) {
+                if (e.cancelable) e.preventDefault();
+                let isTouch = e.type.includes('touch');
+                let clientX = isTouch ? e.touches[0].clientX : e.clientX;
+                let clientY = isTouch ? e.touches[0].clientY : e.clientY;
 
                 let deltaX = clientX - posX;
                 let deltaY = clientY - posY;
@@ -633,11 +636,11 @@
                 elm.style.top = (startTop + deltaY) + 'px';
             }
 
-            function closeDragElement() {
-                document.onmousemove = null;
-                document.ontouchmove = null;
-                document.onmouseup = null;
-                document.ontouchend = null;
+            function dragEnd(e) {
+                document.removeEventListener('mousemove', dragMove);
+                document.removeEventListener('touchmove', dragMove);
+                document.removeEventListener('mouseup', dragEnd);
+                document.removeEventListener('touchend', dragEnd);
 
                 elm.classList.remove('dragging');
 
