@@ -139,6 +139,7 @@
             background-repeat: no-repeat;
             transform: scale(var(--base-scale, 1));
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
         }
 
         .house.h1 { background-image: url('../assets/Casa1.png'); }
@@ -209,7 +210,7 @@
         .mailman-rider {
             position: absolute;
             font-size: 60px;
-            bottom: 40px; /* Lo sienta exactamente en la bici */
+            bottom: 40px; 
             left: 50%;
             transform: translateX(-50%);
             z-index: 2;
@@ -301,6 +302,14 @@
             z-index: 9999 !important; 
         }
 
+        /* Estilo para cuando se selecciona un sobre haciendo clic/tap */
+        .envelope.selected {
+            border-color: #51cf66 !important;
+            box-shadow: 0 0 20px #51cf66, 0 8px 0 #2b8a3e !important;
+            transform: scale(1.15) translateY(-5px);
+            animation: none;
+        }
+
         /* MODAL DE VICTORIA INFANTIL */
         .modal-overlay {
             position: fixed; inset: 0; background: rgba(255, 255, 255, 0.8);
@@ -343,7 +352,7 @@
     </audio>
 
     <div class="decorations">
-        <div class="sun">☀️️</div>
+        <div class="sun">☀️</div>
         <div class="cloud c1">☁️</div>
         <div class="cloud c2">☁️</div>
         <div class="cloud c3">☁️</div>
@@ -490,17 +499,17 @@
             { pairs: [{upper: 'F', lower: 'f'}, {upper: 'G', lower: 'g'}, {upper: 'R', lower: 'r'}, {upper: 'J', lower: 'j'}] }
         ];
 
-        // Distribución porcentual matemática para simetría perfecta
         const isometricLayout = [
-            { left: '25%', top: '0%', z: 15, scale: 0.85 },   // Atrás Izq
-            { left: '54%', top: '0%', z: 15, scale: 0.85 },   // Atrás Der
-            { left: '10%', top: '32%', z: 30, scale: 1.1 },   // Adelante Izq
-            { left: '69%', top: '32%', z: 30, scale: 1.1 }    // Adelante Der
+            { left: '25%', top: '0%', z: 15, scale: 0.85 },   
+            { left: '54%', top: '0%', z: 15, scale: 0.85 },   
+            { left: '10%', top: '32%', z: 30, scale: 1.1 },   
+            { left: '69%', top: '32%', z: 30, scale: 1.1 }    
         ];
 
         let currentStreet = 0;
         let activePairs = [];
         let remainingLetters = 0;
+        let selectedEnvelope = null; // Almacena el sobre seleccionado por toque/clic
 
         const cityBlock = document.getElementById('city-block');
         const postalZone = document.getElementById('postal-zone');
@@ -520,6 +529,7 @@
             let levelInfo = levelsData[currentStreet % levelsData.length];
             activePairs = [...levelInfo.pairs];
             remainingLetters = activePairs.length;
+            selectedEnvelope = null;
             
             updateLetterIcons();
 
@@ -543,6 +553,21 @@
                 house.style.top = pos.top;
                 house.style.zIndex = pos.z;
 
+                // Evento al tocar o hacer clic en una casa (Modo Selección)
+                house.addEventListener('click', () => {
+                    if (!selectedEnvelope) return;
+
+                    if (house.dataset.letter === selectedEnvelope.dataset.match) {
+                        let elm = selectedEnvelope;
+                        selectedEnvelope = null;
+                        executeDelivery(elm, house, index);
+                    } else {
+                        sfxWrong();
+                        selectedEnvelope.classList.remove('selected');
+                        selectedEnvelope = null;
+                    }
+                });
+
                 let mailbox = document.createElement('div');
                 mailbox.className = 'mailbox';
                 mailbox.innerText = pair.upper;
@@ -551,7 +576,7 @@
                 cityBlock.appendChild(house);
             });
 
-            // Generar Sobres centrados en la bolsa
+            // Generar Sobres
             let shuffledEnvelopes = [...activePairs].sort(() => Math.random() - 0.5);
             shuffledEnvelopes.forEach((pair, index) => {
                 let env = document.createElement('div');
@@ -564,6 +589,16 @@
                 let startX = (postalZone.offsetWidth / 2) - ((shuffledEnvelopes.length * spacing) / 2) + (index * spacing);
                 env.style.left = Math.max(10, startX) + 'px';
                 env.style.top = '40px';
+
+                // Evento para seleccionar la carta con clic o toque
+                env.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    initAudio();
+                    sfxPickup();
+                    document.querySelectorAll('.envelope').forEach(en => en.classList.remove('selected'));
+                    selectedEnvelope = env;
+                    env.classList.add('selected');
+                });
 
                 makeDraggable(env);
                 postalZone.appendChild(env);
@@ -593,20 +628,77 @@
             }
         }
 
-        // ARRASTRE Y SOLTAR 
+        // FUNCIÓN CENTRALIZADA DE ENTREGA (Usada tanto por Drag & Drop como por Selección)
+        function executeDelivery(elm, house, index) {
+            sfxCorrect(); 
+            elm.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            
+            elm.style.left = (house.offsetLeft + house.offsetWidth - 20) + 'px'; 
+            elm.style.top = (house.offsetTop + house.offsetHeight - 50) + 'px';
+            elm.style.transform = 'scale(0.2)';
+            elm.style.opacity = '0';
+            
+            let houseRect = house.getBoundingClientRect();
+            house.classList.add('happy');
+            createSparkles(houseRect.right - 10, houseRect.bottom - 40);
+
+            // Mover el cartero
+            let currentMailmanX = parseInt(mailman.style.left || -150);
+            let targetMailmanX = house.offsetLeft - 30; 
+            let targetMailmanY = house.offsetTop + 110; 
+            
+            let posScale = isometricLayout[index].scale;
+            let direction = targetMailmanX < currentMailmanX ? -1 : 1;
+            
+            mailman.style.transform = `scaleX(${direction * posScale}) scaleY(${posScale})`;
+            mailman.style.left = targetMailmanX + 'px';
+            mailman.style.top = targetMailmanY + 'px';
+            
+            let zModifier = index >= 2 ? 5 : 5;
+            mailman.style.zIndex = parseInt(house.style.zIndex) + zModifier; 
+
+            setTimeout(() => sfxBicycleBell(), 600); 
+
+            setTimeout(() => {
+                elm.remove();
+                house.classList.remove('happy');
+            }, 400);
+
+            remainingLetters--;
+            updateLetterIcons();
+
+            if (remainingLetters === 0) {
+                setTimeout(() => {
+                    // Cartero sale de la pantalla
+                    mailman.style.transform = `scaleX(1) scaleY(1)`;
+                    mailman.style.left = '120%';
+                    
+                    setTimeout(() => {
+                        sfxVictory();
+                        document.getElementById('modal').classList.add('active');
+                    }, 1500);
+
+                }, 1500); 
+            }
+        }
+
+        // ARRASTRE Y SOLTAR (DRAG & DROP) TÁCTIL Y MOUSE
         function makeDraggable(elm) {
             let posX = 0, posY = 0, startLeft = 0, startTop = 0;
+            let hasMoved = false;
 
-            elm.onmousedown = dragMouseDown;
-            elm.ontouchstart = dragMouseDown;
+            elm.addEventListener('mousedown', dragStart, { passive: false });
+            elm.addEventListener('touchstart', dragStart, { passive: false });
 
-            function dragMouseDown(e) {
+            function dragStart(e) {
+                if (e.cancelable) e.preventDefault();
                 initAudio(); 
                 sfxPickup(); 
                 
-                e.preventDefault();
-                let clientX = e.clientX || e.touches[0].clientX;
-                let clientY = e.clientY || e.touches[0].clientY;
+                hasMoved = false;
+                let isTouch = e.type.includes('touch');
+                let clientX = isTouch ? e.touches[0].clientX : e.clientX;
+                let clientY = isTouch ? e.touches[0].clientY : e.clientY;
 
                 startLeft = elm.offsetLeft;
                 startTop = elm.offsetTop;
@@ -615,16 +707,18 @@
 
                 elm.classList.add('dragging');
 
-                document.onmousemove = elementDrag;
-                document.ontouchmove = elementDrag;
-                document.onmouseup = closeDragElement;
-                document.ontouchend = closeDragElement;
+                document.addEventListener('mousemove', dragMove, { passive: false });
+                document.addEventListener('touchmove', dragMove, { passive: false });
+                document.addEventListener('mouseup', dragEnd);
+                document.addEventListener('touchend', dragEnd);
             }
 
-            function elementDrag(e) {
-                e.preventDefault();
-                let clientX = e.clientX || e.touches[0].clientX;
-                let clientY = e.clientY || e.touches[0].clientY;
+            function dragMove(e) {
+                if (e.cancelable) e.preventDefault();
+                hasMoved = true;
+                let isTouch = e.type.includes('touch');
+                let clientX = isTouch ? e.touches[0].clientX : e.clientX;
+                let clientY = isTouch ? e.touches[0].clientY : e.clientY;
 
                 let deltaX = clientX - posX;
                 let deltaY = clientY - posY;
@@ -633,11 +727,11 @@
                 elm.style.top = (startTop + deltaY) + 'px';
             }
 
-            function closeDragElement() {
-                document.onmousemove = null;
-                document.ontouchmove = null;
-                document.onmouseup = null;
-                document.ontouchend = null;
+            function dragEnd(e) {
+                document.removeEventListener('mousemove', dragMove);
+                document.removeEventListener('touchmove', dragMove);
+                document.removeEventListener('mouseup', dragEnd);
+                document.removeEventListener('touchend', dragEnd);
 
                 elm.classList.remove('dragging');
 
@@ -656,55 +750,8 @@
                     ) {
                         if (house.dataset.letter === elm.dataset.match) {
                             matched = true;
-                            sfxCorrect(); 
-                            elm.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-                            
-                            elm.style.left = (house.offsetLeft + house.offsetWidth - 20) + 'px'; 
-                            elm.style.top = (house.offsetTop + house.offsetHeight - 50) + 'px';
-                            elm.style.transform = 'scale(0.2)';
-                            elm.style.opacity = '0';
-                            
-                            house.classList.add('happy');
-                            createSparkles(houseRect.right - 10, houseRect.bottom - 40);
-
-                            // Mover el cartero
-                            let currentMailmanX = parseInt(mailman.style.left || -150);
-                            let targetMailmanX = house.offsetLeft - 30; 
-                            let targetMailmanY = house.offsetTop + 110; 
-                            
-                            let posScale = isometricLayout[index].scale;
-                            let direction = targetMailmanX < currentMailmanX ? -1 : 1;
-                            
-                            mailman.style.transform = `scaleX(${direction * posScale}) scaleY(${posScale})`;
-                            mailman.style.left = targetMailmanX + 'px';
-                            mailman.style.top = targetMailmanY + 'px';
-                            
-                            let zModifier = index >= 2 ? 5 : 5;
-                            mailman.style.zIndex = parseInt(house.style.zIndex) + zModifier; 
-
-                            setTimeout(() => sfxBicycleBell(), 600); 
-
-                            setTimeout(() => {
-                                elm.remove();
-                                house.classList.remove('happy');
-                            }, 400);
-
-                            remainingLetters--;
-                            updateLetterIcons();
-
-                            if (remainingLetters === 0) {
-                                setTimeout(() => {
-                                    // Cartero sale de la pantalla
-                                    mailman.style.transform = `scaleX(1) scaleY(1)`;
-                                    mailman.style.left = '120%';
-                                    
-                                    setTimeout(() => {
-                                        sfxVictory();
-                                        document.getElementById('modal').classList.add('active');
-                                    }, 1500);
-
-                                }, 1500); 
-                            }
+                            if(selectedEnvelope === elm) selectedEnvelope = null;
+                            executeDelivery(elm, house, index);
                         }
                     }
                 });
