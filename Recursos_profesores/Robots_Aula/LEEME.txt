@@ -1,0 +1,9 @@
+DETECTOR DE ROBOTS · NUEVA VERSIÓN
+
+Abre el archivo index.html que está en esta carpeta (NO abras la carpeta como dirección en Chrome).
+Cada robot tiene su propia carpeta con index.html, style.css y app.js.
+Las imágenes originales están en assets.
+Los sonidos se generan en el navegador: sube el volumen multimedia del teléfono.
+La señal final se repite 7 veces; puedes pausarla o detenerla.
+Para publicarlo en tu página, copia la carpeta completa y enlaza DetectorRobots_NuevaVersion/index.html.
+Funciona sin internet; si no hay conexión se usa una fuente de respaldo.
