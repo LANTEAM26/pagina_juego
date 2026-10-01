@@ -14,7 +14,7 @@
 <style>
 
 /* =========================================================
-   PALETA MORADA — ESTILO INFANTIL / FANTÁSTICO
+   PALETA
 ========================================================= */
 
 :root{
@@ -24,7 +24,6 @@
     --moradoClaro:#eee8ff;
     --moradoPalido:#f7f2ff;
     --moradoOscuro:#5842b5;
-    --violeta:#7056d8;
 
     --rosa:#efa9c4;
     --rosaClaro:#f9dce8;
@@ -39,18 +38,12 @@
     --verdeClaro:#e5f1dc;
 
     --crema:#fffaf2;
-    --crema2:#f7efdf;
     --blanco:#fffefa;
-
-    --tierra:#66594c;
 
     --texto:#51475d;
     --textoSuave:#91869c;
-
-    --fondo1:#eee8ff;
-    --fondo2:#fff3f0;
-    --fondo3:#eaf4f0;
 }
+
 
 /* =========================================================
    RESET
@@ -76,182 +69,481 @@ body{
         sans-serif;
 
     color:var(--texto);
-
     min-height:100vh;
-
     overflow-x:hidden;
 
     background:
-        radial-gradient(
-            circle at 8% 10%,
-            rgba(201,185,255,.65),
-            transparent 24%
-        ),
-        radial-gradient(
-            circle at 92% 12%,
-            rgba(249,205,221,.62),
-            transparent 26%
-        ),
-        radial-gradient(
-            circle at 85% 88%,
-            rgba(184,222,207,.55),
-            transparent 27%
-        ),
-        radial-gradient(
-            circle at 15% 85%,
-            rgba(255,226,172,.42),
-            transparent 24%
-        ),
         linear-gradient(
             135deg,
-            var(--fondo1) 0%,
-            var(--fondo2) 52%,
-            var(--fondo3) 100%
+            #ddd4ff 0%,
+            #fce5ef 42%,
+            #fff0cf 72%,
+            #dff3ed 100%
         );
 }
 
+
 /* =========================================================
-   FONDO DECORATIVO
+   FONDO INFANTIL
 ========================================================= */
 
 .bg-deco{
     position:fixed;
-
     inset:0;
-
     z-index:0;
-
     pointer-events:none;
-
     overflow:hidden;
-
-    opacity:.9;
 }
 
-.bg-deco::before,
-.bg-deco::after{
-    content:"";
 
-    position:absolute;
-
-    border-radius:50%;
-
-    pointer-events:none;
-}
+/* manchas grandes */
 
 .bg-deco::before{
-    width:480px;
-    height:480px;
-
-    left:-170px;
-    top:80px;
+    content:"";
+    position:absolute;
+    width:600px;
+    height:600px;
+    left:-220px;
+    top:-150px;
+    border-radius:50%;
 
     background:
         radial-gradient(
             circle,
-            rgba(143,116,226,.20),
-            rgba(143,116,226,.08) 46%,
+            rgba(160,137,242,.45),
+            rgba(160,137,242,.12) 50%,
             transparent 72%
         );
 
-    filter:blur(4px);
+    filter:blur(8px);
 }
 
 .bg-deco::after{
-    width:520px;
-    height:520px;
-
-    right:-190px;
-    bottom:-170px;
+    content:"";
+    position:absolute;
+    width:650px;
+    height:650px;
+    right:-260px;
+    bottom:-250px;
+    border-radius:50%;
 
     background:
         radial-gradient(
             circle,
-            rgba(239,166,195,.25),
-            rgba(239,166,195,.09) 46%,
+            rgba(245,169,199,.42),
+            rgba(245,169,199,.12) 50%,
             transparent 72%
         );
 
-    filter:blur(5px);
+    filter:blur(8px);
 }
 
-/* pequeñas luces del fondo */
-
-.bg-deco{
-    background-image:
-        radial-gradient(
-            circle at 12% 17%,
-            rgba(255,255,255,.85) 0 5px,
-            transparent 6px
-        ),
-        radial-gradient(
-            circle at 82% 14%,
-            rgba(255,255,255,.85) 0 6px,
-            transparent 7px
-        ),
-        radial-gradient(
-            circle at 93% 48%,
-            rgba(255,255,255,.75) 0 4px,
-            transparent 5px
-        ),
-        radial-gradient(
-            circle at 7% 73%,
-            rgba(255,255,255,.75) 0 5px,
-            transparent 6px
-        ),
-        radial-gradient(
-            circle at 51% 91%,
-            rgba(255,255,255,.75) 0 5px,
-            transparent 6px
-        );
-}
 
 /* =========================================================
-   DECORACIONES INFANTILES
+   BURBUJAS
 ========================================================= */
 
-.bg-deco .cloud{
+.bubble{
     position:absolute;
+    bottom:-120px;
+    border-radius:50%;
+    opacity:.5;
+    filter:blur(.2px);
 
-    width:100px;
-    height:42px;
-
-    border-radius:999px;
-
-    background:
-        rgba(255,255,255,.45);
-
-    filter:blur(1px);
-
-    opacity:.8;
+    animation:
+        bubbleFloat
+        linear
+        infinite;
 }
 
-.bg-deco .cloud::before,
-.bg-deco .cloud::after{
+.bubble::after{
     content:"";
-
     position:absolute;
-
+    width:28%;
+    height:28%;
+    top:16%;
+    left:18%;
     border-radius:50%;
+    background:rgba(255,255,255,.75);
+}
 
+.bubble-1{
+    width:75px;
+    height:75px;
+    left:5%;
+    background:rgba(173,143,242,.34);
+    animation-duration:15s;
+}
+
+.bubble-2{
+    width:45px;
+    height:45px;
+    left:17%;
+    background:rgba(247,174,205,.38);
+    animation-duration:11s;
+    animation-delay:2s;
+}
+
+.bubble-3{
+    width:95px;
+    height:95px;
+    left:31%;
+    background:rgba(255,209,112,.28);
+    animation-duration:18s;
+    animation-delay:5s;
+}
+
+.bubble-4{
+    width:55px;
+    height:55px;
+    left:54%;
+    background:rgba(128,195,218,.35);
+    animation-duration:13s;
+    animation-delay:1s;
+}
+
+.bubble-5{
+    width:85px;
+    height:85px;
+    left:72%;
+    background:rgba(157,210,154,.3);
+    animation-duration:17s;
+    animation-delay:4s;
+}
+
+.bubble-6{
+    width:48px;
+    height:48px;
+    left:88%;
+    background:rgba(238,160,192,.35);
+    animation-duration:12s;
+    animation-delay:7s;
+}
+
+@keyframes bubbleFloat{
+
+    0%{
+        transform:
+            translateY(0)
+            translateX(0)
+            rotate(0deg);
+        opacity:0;
+    }
+
+    10%{
+        opacity:.55;
+    }
+
+    50%{
+        transform:
+            translateY(-55vh)
+            translateX(35px)
+            rotate(120deg);
+    }
+
+    100%{
+        transform:
+            translateY(-115vh)
+            translateX(-25px)
+            rotate(240deg);
+        opacity:0;
+    }
+}
+
+
+/* =========================================================
+   ESTRELLAS DEL FONDO
+========================================================= */
+
+.bg-star{
+    position:absolute;
+    color:white;
+    opacity:.65;
+    text-shadow:
+        0 0 10px rgba(255,255,255,.9),
+        0 2px 5px rgba(100,70,150,.18);
+
+    animation:
+        twinkle
+        ease-in-out
+        infinite;
+}
+
+.star-a{
+    left:8%;
+    top:18%;
+    font-size:24px;
+    animation-duration:2.8s;
+}
+
+.star-b{
+    left:24%;
+    top:74%;
+    font-size:18px;
+    animation-duration:3.5s;
+    animation-delay:1s;
+}
+
+.star-c{
+    left:45%;
+    top:12%;
+    font-size:14px;
+    animation-duration:2.3s;
+}
+
+.star-d{
+    left:68%;
+    top:26%;
+    font-size:27px;
+    animation-duration:3.2s;
+    animation-delay:.8s;
+}
+
+.star-e{
+    left:88%;
+    top:68%;
+    font-size:20px;
+    animation-duration:2.7s;
+}
+
+.star-f{
+    left:78%;
+    top:87%;
+    font-size:15px;
+    animation-duration:3.8s;
+}
+
+@keyframes twinkle{
+
+    0%,100%{
+        opacity:.25;
+        transform:scale(.7) rotate(0deg);
+    }
+
+    50%{
+        opacity:1;
+        transform:scale(1.25) rotate(20deg);
+    }
+}
+
+
+/* =========================================================
+   NUBES
+========================================================= */
+
+.cloud{
+    position:absolute;
+    width:130px;
+    height:45px;
+    border-radius:50px;
+    background:rgba(255,255,255,.5);
+    filter:blur(.5px);
+    opacity:.75;
+
+    animation:
+        cloudMove
+        linear
+        infinite;
+}
+
+.cloud::before,
+.cloud::after{
+    content:"";
+    position:absolute;
+    border-radius:50%;
     background:inherit;
 }
 
-.bg-deco .cloud::before{
-    width:45px;
-    height:45px;
-
-    left:15px;
-    bottom:10px;
-}
-
-.bg-deco .cloud::after{
-    width:55px;
-    height:55px;
-
-    right:13px;
+.cloud::before{
+    width:58px;
+    height:58px;
+    left:20px;
     bottom:8px;
 }
+
+.cloud::after{
+    width:70px;
+    height:70px;
+    right:14px;
+    bottom:5px;
+}
+
+.cloud-1{
+    top:11%;
+    left:-160px;
+    animation-duration:38s;
+}
+
+.cloud-2{
+    top:48%;
+    right:-180px;
+    transform:scale(.75);
+    animation-duration:45s;
+    animation-delay:8s;
+}
+
+.cloud-3{
+    top:82%;
+    left:-180px;
+    transform:scale(.55);
+    animation-duration:50s;
+    animation-delay:15s;
+}
+
+@keyframes cloudMove{
+
+    from{
+        transform:translateX(0);
+    }
+
+    to{
+        transform:translateX(calc(100vw + 380px));
+    }
+}
+
+
+/* =========================================================
+   FORMAS DECORATIVAS
+========================================================= */
+
+.bg-shape{
+    position:absolute;
+    opacity:.35;
+    animation:
+        shapeFloat
+        ease-in-out
+        infinite;
+}
+
+.shape-circle{
+    width:32px;
+    height:32px;
+    border-radius:50%;
+    background:#efa9c4;
+}
+
+.shape-square{
+    width:30px;
+    height:30px;
+    border-radius:8px;
+    background:#8dbdd0;
+    transform:rotate(25deg);
+}
+
+.shape-triangle{
+    width:0;
+    height:0;
+    border-left:18px solid transparent;
+    border-right:18px solid transparent;
+    border-bottom:32px solid #f1ca72;
+}
+
+.shape-1{
+    left:13%;
+    top:42%;
+    animation-duration:4s;
+}
+
+.shape-2{
+    right:11%;
+    top:37%;
+    animation-duration:5s;
+    animation-delay:1s;
+}
+
+.shape-3{
+    left:4%;
+    bottom:15%;
+    animation-duration:4.5s;
+}
+
+.shape-4{
+    right:28%;
+    bottom:8%;
+    animation-duration:6s;
+}
+
+@keyframes shapeFloat{
+
+    0%,100%{
+        transform:
+            translateY(0)
+            rotate(0deg);
+    }
+
+    50%{
+        transform:
+            translateY(-15px)
+            rotate(15deg);
+    }
+}
+
+
+/* =========================================================
+   PARTICULAS PEQUEÑAS
+========================================================= */
+
+.particle{
+    position:absolute;
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:white;
+    opacity:.65;
+
+    animation:
+        particleFloat
+        ease-in-out
+        infinite;
+}
+
+.particle:nth-of-type(1){
+    left:18%;
+    top:29%;
+    animation-duration:4s;
+}
+
+.particle:nth-of-type(2){
+    left:37%;
+    top:61%;
+    animation-duration:5s;
+}
+
+.particle:nth-of-type(3){
+    left:61%;
+    top:18%;
+    animation-duration:4.5s;
+}
+
+.particle:nth-of-type(4){
+    left:84%;
+    top:44%;
+    animation-duration:5.5s;
+}
+
+.particle:nth-of-type(5){
+    left:73%;
+    top:78%;
+    animation-duration:4.2s;
+}
+
+@keyframes particleFloat{
+
+    0%,100%{
+        transform:
+            translateY(0)
+            scale(.7);
+        opacity:.3;
+    }
+
+    50%{
+        transform:
+            translateY(-13px)
+            scale(1.25);
+        opacity:.9;
+    }
+}
+
 
 /* =========================================================
    APP
@@ -259,17 +551,13 @@ body{
 
 .app{
     width:min(1500px,94vw);
-
     min-height:100vh;
-
     margin:0 auto;
-
     padding:22px 0 28px;
-
     position:relative;
-
-    z-index:1;
+    z-index:2;
 }
+
 
 /* =========================================================
    CABECERA
@@ -277,52 +565,38 @@ body{
 
 .topbar{
     display:flex;
-
     justify-content:space-between;
-
     align-items:center;
-
     gap:20px;
-
     min-height:60px;
-
     margin-bottom:10px;
 }
 
 .brand{
     display:flex;
-
     align-items:center;
-
     gap:13px;
 }
 
 .logo{
     width:52px;
     height:52px;
-
     border-radius:18px;
-
     display:grid;
-
     place-items:center;
-
     color:white;
-
     font-size:28px;
-
     font-weight:800;
-
     font-family:"Chewy",sans-serif;
 
     background:
         linear-gradient(
             145deg,
-            #a78cf0,
-            #7055d3
+            #b49cff,
+            #7358d5
         );
 
-    border:3px solid rgba(255,255,255,.96);
+    border:3px solid white;
 
     box-shadow:
         0 7px 0 #5842b5,
@@ -333,56 +607,41 @@ body{
 
 .brand h1{
     font-size:20px;
-
     font-weight:800;
-
     line-height:1;
-
     color:#50455f;
 }
 
 .brand p{
     margin-top:5px;
-
     font-size:11px;
-
     color:#8d8198;
-
     font-weight:500;
 }
 
 .top-right{
     display:flex;
-
     align-items:center;
-
     gap:10px;
 }
 
 .points{
     display:flex;
-
     align-items:center;
-
     gap:8px;
-
     padding:9px 15px;
 
     background:
         linear-gradient(
             135deg,
             #fff8d9,
-            #fff2c5
+            #fff0bd
         );
 
     border:2px solid #f0d68b;
-
     border-radius:15px;
-
     color:#9a6b1d;
-
     font-size:14px;
-
     font-weight:800;
 
     box-shadow:
@@ -394,27 +653,20 @@ body{
 }
 
 @keyframes bump{
-
     50%{
         transform:
             scale(1.1)
             rotate(-2deg);
     }
-
 }
 
 .star{
     width:25px;
     height:25px;
-
     border-radius:50%;
-
     display:grid;
-
     place-items:center;
-
     color:white;
-
     font-size:14px;
 
     background:
@@ -431,19 +683,12 @@ body{
 .sound-btn{
     width:46px;
     height:46px;
-
     border-radius:15px;
-
     border:2px solid #ddd4ef;
-
     background:#fffdf9;
-
     cursor:pointer;
-
     display:grid;
-
     place-items:center;
-
     font-size:20px;
 
     box-shadow:
@@ -457,24 +702,17 @@ body{
     transform:
         translateY(-3px)
         rotate(2deg);
-
-    box-shadow:
-        0 7px 0 #cfc5df,
-        0 12px 18px rgba(80,65,100,.13);
 }
 
 .sound-btn:active{
     transform:translateY(2px);
-
-    box-shadow:
-        0 2px 0 #cfc5df;
 }
 
 .sound-btn.muted{
     background:#f0edf5;
-
     color:#aaa5b1;
 }
+
 
 /* =========================================================
    PORTADA
@@ -482,39 +720,24 @@ body{
 
 #topicScreen{
     display:flex;
-
     flex-direction:column;
-
     align-items:center;
-
     min-height:calc(100vh - 100px);
-
     padding-bottom:20px;
 }
 
-/* =========================================================
-   HERO
-========================================================= */
-
 .hero{
     width:100%;
-
     text-align:center;
-
     padding-top:25px;
-
     margin-bottom:70px;
 }
 
 .small-title{
     display:inline-flex;
-
     align-items:center;
-
     justify-content:center;
-
     padding:10px 25px;
-
     border-radius:999px;
 
     color:#6652a4;
@@ -526,12 +749,9 @@ body{
             #e7defd
         );
 
-    border:2px solid rgba(255,255,255,.96);
-
+    border:2px solid white;
     font-size:14px;
-
     font-weight:800;
-
     letter-spacing:2.3px;
 
     box-shadow:
@@ -539,10 +759,6 @@ body{
 
     margin-bottom:18px;
 }
-
-/* =========================================================
-   TÍTULO
-========================================================= */
 
 .hero h2{
     font-family:
@@ -558,65 +774,44 @@ body{
         );
 
     line-height:.98;
-
     font-weight:800;
-
     letter-spacing:-3px;
-
     color:#50455c;
-
     margin-bottom:21px;
 
     text-shadow:
-        0 4px 0 rgba(255,255,255,.95),
+        0 4px 0 white,
         0 9px 22px rgba(90,70,100,.09);
 }
 
 .hero h2 span{
     color:#745ad1;
-
     position:relative;
-
     display:inline-block;
 }
 
 .hero h2 span::after{
     content:"";
-
     position:absolute;
-
     left:3%;
-
     right:3%;
-
     bottom:-5px;
-
     height:9px;
-
     background:#e8c8ff;
-
     border-radius:50%;
-
     transform:rotate(-2deg);
-
     z-index:-1;
-
-    opacity:.95;
 }
 
 .hero p{
     width:min(820px,92%);
-
     margin:0 auto;
-
     color:#8b7e91;
-
     font-size:18px;
-
     line-height:1.6;
-
     font-weight:500;
 }
+
 
 /* =========================================================
    CATEGORÍAS
@@ -624,24 +819,17 @@ body{
 
 .categories-title{
     width:100%;
-
     display:flex;
-
     align-items:center;
-
     gap:17px;
-
     margin-bottom:27px;
 }
 
 .categories-title::before,
 .categories-title::after{
     content:"";
-
     height:2px;
-
     flex:1;
-
     background:
         linear-gradient(
             90deg,
@@ -661,15 +849,12 @@ body{
 
 .categories-title h3{
     white-space:nowrap;
-
     color:#897d91;
-
     font-size:15px;
-
     font-weight:800;
-
     letter-spacing:2px;
 }
+
 
 /* =========================================================
    GRID
@@ -677,18 +862,14 @@ body{
 
 .topic-grid{
     width:100%;
-
     display:grid;
-
     grid-template-columns:
         repeat(5,minmax(0,1fr));
-
     gap:24px;
-
     align-items:stretch;
-
     transform:translateY(8px);
 }
+
 
 /* =========================================================
    TARJETAS
@@ -696,26 +877,22 @@ body{
 
 .topic-card{
     position:relative;
-
     min-width:0;
 
     background:
         linear-gradient(
             180deg,
             #fffefa 0%,
-            #fffdf9 68%,
-            #f2eafb 100%
+            #fffdf9 65%,
+            #f1eaff 100%
         );
 
     border-radius:30px;
-
     padding:13px;
-
     cursor:pointer;
-
     overflow:hidden;
 
-    border:3px solid rgba(255,255,255,.97);
+    border:3px solid white;
 
     box-shadow:
         0 8px 0 rgba(100,78,130,.12),
@@ -729,82 +906,46 @@ body{
         cardIn .55s backwards;
 
     aspect-ratio:.74 / 1;
-
     display:flex;
-
     flex-direction:column;
 }
 
 .topic-card::before{
     content:"";
-
     position:absolute;
-
     top:-45px;
-
     right:-45px;
-
     width:115px;
-
     height:115px;
-
     border-radius:50%;
-
-    background:
-        rgba(255,255,255,.72);
-
+    background:rgba(255,255,255,.72);
     pointer-events:none;
 }
 
 .topic-card::after{
     content:"✦";
-
     position:absolute;
-
     top:9px;
-
     right:13px;
-
-    color:rgba(255,255,255,.98);
-
+    color:white;
     font-size:20px;
-
-    text-shadow:
-        0 2px 5px rgba(80,65,100,.18);
-
+    text-shadow:0 2px 5px rgba(80,65,100,.18);
     pointer-events:none;
 }
 
-.topic-card:nth-child(1){
-    animation-delay:.05s;
-}
-
-.topic-card:nth-child(2){
-    animation-delay:.10s;
-}
-
-.topic-card:nth-child(3){
-    animation-delay:.15s;
-}
-
-.topic-card:nth-child(4){
-    animation-delay:.20s;
-}
-
-.topic-card:nth-child(5){
-    animation-delay:.25s;
-}
+.topic-card:nth-child(1){animation-delay:.05s}
+.topic-card:nth-child(2){animation-delay:.10s}
+.topic-card:nth-child(3){animation-delay:.15s}
+.topic-card:nth-child(4){animation-delay:.20s}
+.topic-card:nth-child(5){animation-delay:.25s}
 
 @keyframes cardIn{
-
     from{
         opacity:0;
-
         transform:
             translateY(28px)
             scale(.96);
     }
-
 }
 
 .topic-card:hover{
@@ -825,9 +966,9 @@ body{
 
 .topic-card:focus-visible{
     outline:4px solid #a18be5;
-
     outline-offset:4px;
 }
+
 
 /* =========================================================
    IMAGEN
@@ -835,20 +976,15 @@ body{
 
 .topic-image{
     position:relative;
-
     width:100%;
-
     height:59%;
-
     flex:0 0 59%;
-
     overflow:hidden;
-
     border-radius:23px;
 
     background:#eee8f5;
 
-    border:3px solid rgba(255,255,255,.95);
+    border:3px solid white;
 
     box-shadow:
         inset 0 -6px 0 rgba(90,70,100,.06),
@@ -859,36 +995,22 @@ body{
 
 .topic-image::before{
     content:"";
-
     position:absolute;
-
     width:90px;
-
     height:90px;
-
     left:-40px;
-
     top:-40px;
-
     border-radius:50%;
-
-    background:
-        rgba(255,255,255,.58);
-
+    background:rgba(255,255,255,.58);
     z-index:2;
-
     pointer-events:none;
 }
 
 .topic-image img{
     width:100%;
-
     height:100%;
-
     object-fit:cover;
-
     object-position:center;
-
     display:block;
 
     transition:
@@ -899,7 +1021,6 @@ body{
 
 .topic-card:hover .topic-image img{
     transform:scale(1.08);
-
     filter:
         saturate(1.05)
         contrast(.98)
@@ -908,21 +1029,13 @@ body{
 
 .image-label{
     position:absolute;
-
     left:9px;
-
     bottom:9px;
-
     padding:5px 10px;
-
     border-radius:10px;
-
     color:white;
-
     font-size:9px;
-
     font-weight:800;
-
     letter-spacing:1px;
 
     background:rgba(76,60,93,.76);
@@ -934,19 +1047,16 @@ body{
     z-index:3;
 }
 
+
 /* =========================================================
    CONTENIDO
 ========================================================= */
 
 .topic-content{
     flex:1;
-
     display:flex;
-
     flex-direction:column;
-
     padding:14px 7px 3px;
-
     min-height:0;
 }
 
@@ -957,35 +1067,25 @@ body{
         sans-serif;
 
     font-size:26px;
-
     line-height:1.1;
-
     font-weight:800;
-
     color:#51465e;
-
     margin-bottom:7px;
 }
 
 .topic-content p{
     font-size:13.5px;
-
     line-height:1.42;
-
     color:#918598;
-
     font-weight:500;
-
     margin-bottom:10px;
 
     display:-webkit-box;
-
     -webkit-line-clamp:2;
-
     -webkit-box-orient:vertical;
-
     overflow:hidden;
 }
+
 
 /* =========================================================
    BOTÓN TARJETA
@@ -993,21 +1093,13 @@ body{
 
 .card-play{
     margin-top:auto;
-
     min-height:42px;
-
     display:flex;
-
     align-items:center;
-
     justify-content:space-between;
-
     padding:0 7px 0 12px;
-
     border-radius:13px;
-
     font-size:13px;
-
     font-weight:800;
 
     background:
@@ -1015,30 +1107,22 @@ body{
             135deg,
             #eee8ff,
             #e5ddfa
-        ) !important;
+        );
 
-    color:#6754a7 !important;
+    color:#6754a7;
 
-    border:2px solid rgba(255,255,255,.92);
-
+    border:2px solid white;
     transition:.2s;
 }
 
 .card-play span:last-child{
     width:29px;
-
     height:29px;
-
     display:grid;
-
     place-items:center;
-
     border-radius:9px;
-
     background:#fffdf7;
-
     color:#725bc7;
-
     font-size:14px;
 
     box-shadow:
@@ -1047,13 +1131,13 @@ body{
     transition:.2s;
 }
 
-.topic-card:hover
-.card-play span:last-child{
+.topic-card:hover .card-play span:last-child{
     transform:translateX(4px);
 }
 
+
 /* =========================================================
-   COLORES DE CATEGORÍAS
+   COLORES
 ========================================================= */
 
 .animales .topic-image{
@@ -1121,17 +1205,15 @@ body{
     background:#bd7188;
 }
 
+
 /* =========================================================
    PANTALLA DEL JUEGO
 ========================================================= */
 
 #gameScreen{
     display:none;
-
     flex-direction:column;
-
     gap:14px;
-
     min-height:calc(100vh - 100px);
 }
 
@@ -1139,31 +1221,28 @@ body{
     display:flex;
 }
 
+
 /* =========================================================
    PROGRESO
 ========================================================= */
 
 .game-top{
     flex:0 0 auto;
-
     display:flex;
-
     align-items:center;
-
     gap:18px;
 
     background:
         linear-gradient(
             135deg,
-            rgba(255,255,255,.96),
-            rgba(250,246,255,.96)
+            rgba(255,255,255,.97),
+            rgba(250,246,255,.97)
         );
 
     border-radius:20px;
-
     padding:11px 18px;
 
-    border:2px solid rgba(255,255,255,.98);
+    border:2px solid white;
 
     box-shadow:
         0 5px 0 rgba(100,80,120,.08),
@@ -1176,43 +1255,30 @@ body{
 
 .progress-info small{
     display:block;
-
     font-size:9px;
-
     color:#99909e;
-
     font-weight:800;
-
     letter-spacing:1px;
 }
 
 .progress-info strong{
     display:block;
-
     margin-top:2px;
-
     font-size:15px;
-
     color:#705ac0;
-
     font-weight:800;
 }
 
 .progress-track{
     flex:1;
-
     height:14px;
-
     background:#e9e3ef;
-
     border-radius:30px;
-
     overflow:hidden;
 }
 
 .progress-bar{
     height:100%;
-
     width:20%;
 
     background:
@@ -1227,10 +1293,8 @@ body{
     transition:
         width .5s
         cubic-bezier(.34,1.56,.64,1);
-
-    box-shadow:
-        inset 0 2px 0 rgba(255,255,255,.4);
 }
+
 
 /* =========================================================
    PANEL
@@ -1238,7 +1302,6 @@ body{
 
 .game-panel{
     flex:1;
-
     min-height:0;
 
     background:
@@ -1249,21 +1312,17 @@ body{
         );
 
     border-radius:30px;
-
     padding:18px 25px 17px;
 
-    border:3px solid rgba(255,255,255,.98);
+    border:3px solid white;
 
     box-shadow:
         0 8px 0 rgba(100,80,120,.08),
         0 18px 40px rgba(100,80,120,.13);
 
     display:flex;
-
     flex-direction:column;
-
     gap:11px;
-
     overflow:hidden;
 }
 
@@ -1271,17 +1330,13 @@ body{
     align-self:center;
 
     color:#6a55ad;
-
     font-size:11px;
-
     font-weight:800;
-
     letter-spacing:2px;
 
     background:#eee8ff;
 
     padding:5px 15px;
-
     border-radius:30px;
 
     border:2px solid #d9cef5;
@@ -1298,11 +1353,10 @@ body{
         );
 
     font-weight:800;
-
     color:#554a5f;
-
     line-height:1.2;
 }
+
 
 /* =========================================================
    SECUENCIA
@@ -1310,17 +1364,11 @@ body{
 
 .sequence{
     display:flex;
-
     align-items:center;
-
     justify-content:center;
-
     flex-wrap:nowrap;
-
     gap:12px;
-
     padding:7px 0;
-
     min-height:0;
 }
 
@@ -1333,9 +1381,7 @@ body{
         );
 
     aspect-ratio:.86 / 1;
-
     position:relative;
-
     border-radius:19px;
 
     border:3px solid #e1d9eb;
@@ -1345,9 +1391,7 @@ body{
     overflow:hidden;
 
     display:flex;
-
     align-items:center;
-
     justify-content:center;
 
     box-shadow:
@@ -1360,69 +1404,36 @@ body{
     flex:0 0 auto;
 }
 
-.sequence-card:nth-child(1){
-    animation-delay:.05s;
-}
-
-.sequence-card:nth-child(2){
-    animation-delay:.10s;
-}
-
-.sequence-card:nth-child(3){
-    animation-delay:.15s;
-}
-
-.sequence-card:nth-child(4){
-    animation-delay:.20s;
-}
-
-.sequence-card:nth-child(5){
-    animation-delay:.25s;
-}
-
-.sequence-card:nth-child(6){
-    animation-delay:.30s;
-}
-
-.sequence-card:nth-child(7){
-    animation-delay:.35s;
-}
-
-.sequence-card:nth-child(8){
-    animation-delay:.40s;
-}
+.sequence-card:nth-child(1){animation-delay:.05s}
+.sequence-card:nth-child(2){animation-delay:.10s}
+.sequence-card:nth-child(3){animation-delay:.15s}
+.sequence-card:nth-child(4){animation-delay:.20s}
+.sequence-card:nth-child(5){animation-delay:.25s}
+.sequence-card:nth-child(6){animation-delay:.30s}
+.sequence-card:nth-child(7){animation-delay:.35s}
+.sequence-card:nth-child(8){animation-delay:.40s}
 
 @keyframes seqIn{
-
     from{
         opacity:0;
-
         transform:
             scale(.7)
             translateY(15px);
     }
-
 }
 
 .sequence-card img{
     width:100%;
     height:100%;
-
     object-fit:contain;
-
     padding:6px;
 }
 
 .sequence-text{
     font-size:34px;
-
     font-weight:800;
-
     color:#7059bd;
-
-    font-family:
-        "Baloo 2",
-        sans-serif;
+    font-family:"Baloo 2",sans-serif;
 }
 
 .sequence-card.blank{
@@ -1438,18 +1449,15 @@ body{
     border:3px dashed #9a83d8;
 
     color:#735bc0;
-
     font-size:38px;
-
     font-weight:800;
 
     animation:
         blankPulse 1.8s
-        ease-in-out infinite;
+        ease-in-out
+        infinite;
 
-    font-family:
-        "Baloo 2",
-        sans-serif;
+    font-family:"Baloo 2",sans-serif;
 }
 
 @keyframes blankPulse{
@@ -1463,8 +1471,8 @@ body{
 
         transform:scale(1.03);
     }
-
 }
+
 
 /* =========================================================
    OPCIONES
@@ -1472,64 +1480,44 @@ body{
 
 .options-title{
     display:flex;
-
     align-items:center;
-
     gap:12px;
-
     font-size:11px;
-
     color:#988da0;
-
     font-weight:800;
-
     letter-spacing:1.5px;
-
     flex:0 0 auto;
 }
 
 .options-title::before,
 .options-title::after{
     content:"";
-
     flex:1;
-
     height:2px;
-
     background:#e9e1ef;
 }
 
 .options{
     display:flex;
-
     justify-content:center;
-
     flex-wrap:nowrap;
-
     gap:16px;
-
     flex:0 0 auto;
 }
 
 .option-card{
     width:104px;
-
     aspect-ratio:.92 / 1;
-
     position:relative;
-
     overflow:hidden;
-
     border-radius:20px;
 
     background:#fffefb;
-
     border:3px solid #e2d9eb;
 
     cursor:pointer;
 
     display:grid;
-
     place-items:center;
 
     box-shadow:
@@ -1545,30 +1533,22 @@ body{
         optIn .4s backwards;
 
     font-family:inherit;
-
     flex:0 0 auto;
 }
 
 .option-card img{
     width:100%;
     height:100%;
-
     object-fit:contain;
-
     padding:8px;
-
     pointer-events:none;
 }
 
 .option-card span{
     font-size:36px;
-
     font-weight:800;
-
     pointer-events:none;
-
     font-family:"Baloo 2",sans-serif;
-
     color:#6651ad;
 }
 
@@ -1590,21 +1570,18 @@ body{
 
 .option-card:focus-visible{
     outline:3px solid #9079d4;
-
     outline-offset:3px;
 }
 
 @keyframes optIn{
-
     from{
         opacity:0;
-
         transform:
             translateY(15px)
             scale(.9);
     }
-
 }
+
 
 /* =========================================================
    RESPUESTAS
@@ -1612,7 +1589,6 @@ body{
 
 .option-card.correct{
     border-color:#76c78d;
-
     background:#eaf8ed;
 
     box-shadow:
@@ -1624,23 +1600,16 @@ body{
 
 .option-card.correct::after{
     content:"✔";
-
     position:absolute;
-
     top:5px;
-
     right:8px;
-
     color:#3f8450;
-
     font-size:20px;
-
     font-weight:900;
 }
 
 .option-card.wrong{
     border-color:#e5a0aa;
-
     background:#fff0f2;
 
     box-shadow:
@@ -1652,47 +1621,27 @@ body{
 
 .option-card.wrong::after{
     content:"✖";
-
     position:absolute;
-
     top:5px;
-
     right:8px;
-
     color:#b95763;
-
     font-size:20px;
-
     font-weight:900;
 }
 
 @keyframes pop{
-
     50%{
         transform:scale(1.12);
     }
-
 }
 
 @keyframes shake{
-
-    20%{
-        transform:translateX(-9px);
-    }
-
-    40%{
-        transform:translateX(9px);
-    }
-
-    60%{
-        transform:translateX(-6px);
-    }
-
-    80%{
-        transform:translateX(6px);
-    }
-
+    20%{transform:translateX(-9px)}
+    40%{transform:translateX(9px)}
+    60%{transform:translateX(-6px)}
+    80%{transform:translateX(6px)}
 }
+
 
 /* =========================================================
    FEEDBACK
@@ -1700,57 +1649,39 @@ body{
 
 .feedback{
     display:none;
-
     max-width:520px;
-
     margin:0 auto;
-
     padding:11px 20px;
-
     border-radius:14px;
-
     text-align:center;
-
     font-weight:700;
-
     font-size:14px;
-
     flex:0 0 auto;
 }
 
 .feedback.correct-message{
     display:block;
-
     background:#e9f7e8;
-
     color:#3e8150;
-
     border:2px solid #c5dfbd;
-
     animation:slideUp .4s;
 }
 
 .feedback.wrong-message{
     display:block;
-
     background:#fff0f1;
-
     color:#a95761;
-
     border:2px solid #f1cdd1;
-
     animation:slideUp .4s;
 }
 
 @keyframes slideUp{
-
     from{
         opacity:0;
-
         transform:translateY(10px);
     }
-
 }
+
 
 /* =========================================================
    BOTONES
@@ -1758,35 +1689,22 @@ body{
 
 .actions{
     display:flex;
-
     justify-content:space-between;
-
     gap:12px;
-
     align-items:center;
-
     margin-top:auto;
-
     padding-top:11px;
-
     border-top:2px solid #eee7f1;
-
     flex:0 0 auto;
 }
 
 .btn{
     border:0;
-
     border-radius:14px;
-
     padding:12px 22px;
-
     cursor:pointer;
-
     font-weight:700;
-
     font-family:inherit;
-
     font-size:14px;
 
     transition:
@@ -1796,11 +1714,8 @@ body{
 
 .btn-back{
     background:#f0edf4;
-
     color:#776c7f;
-
-    box-shadow:
-        0 4px 0 #d9d3df;
+    box-shadow:0 4px 0 #d9d3df;
 }
 
 .btn-next{
@@ -1824,10 +1739,8 @@ body{
 
 .btn:active{
     transform:translateY(2px);
-
-    box-shadow:
-        0 1px 0 rgba(0,0,0,.2);
 }
+
 
 /* =========================================================
    FINAL
@@ -1835,11 +1748,8 @@ body{
 
 #endScreen{
     display:none;
-
     min-height:calc(100vh - 100px);
-
     align-items:center;
-
     justify-content:center;
 }
 
@@ -1849,9 +1759,7 @@ body{
 
 .end-card{
     max-width:560px;
-
     width:100%;
-
     padding:38px 30px;
 
     background:
@@ -1862,8 +1770,7 @@ body{
         );
 
     border-radius:30px;
-
-    border:3px solid rgba(255,255,255,.98);
+    border:3px solid white;
 
     box-shadow:
         0 8px 0 rgba(100,80,120,.08),
@@ -1878,23 +1785,20 @@ body{
 }
 
 @keyframes endIn{
-
     from{
         opacity:0;
-
         transform:scale(.9);
     }
-
 }
 
 .trophy{
     font-size:64px;
-
     display:inline-block;
 
     animation:
         trophyBounce 1.6s
-        ease-in-out infinite;
+        ease-in-out
+        infinite;
 }
 
 @keyframes trophyBounce{
@@ -1910,50 +1814,38 @@ body{
             translateY(-10px)
             rotate(5deg);
     }
-
 }
 
 .end-card h2{
     font-size:30px;
-
     margin:6px 0;
-
     color:#7059bd;
 }
 
 .end-card > p{
     color:#8c8193;
-
     font-size:15px;
 }
 
 .stars-result{
     display:flex;
-
     justify-content:center;
-
     gap:12px;
-
     margin:18px 0;
-
     font-size:48px;
 }
 
 .stars-result span{
     opacity:.2;
-
     transition:
         .35s
         cubic-bezier(.34,1.56,.64,1);
-
     filter:grayscale(1);
 }
 
 .stars-result span.on{
     opacity:1;
-
     color:#e8bc4e;
-
     filter:none;
 
     text-shadow:
@@ -1983,23 +1875,17 @@ body{
             scale(1)
             rotate(0);
     }
-
 }
 
 .results{
     display:grid;
-
-    grid-template-columns:
-        repeat(2,1fr);
-
+    grid-template-columns:repeat(2,1fr);
     gap:14px;
-
     margin:20px 0;
 }
 
 .result{
     padding:18px 14px;
-
     border-radius:18px;
 
     background:
@@ -2012,39 +1898,26 @@ body{
 
 .result strong{
     display:block;
-
     color:#7059bd;
-
     font-size:30px;
-
     font-family:"Baloo 2",sans-serif;
-
     font-weight:800;
 }
 
 .result span{
     display:block;
-
     margin-top:3px;
-
     color:#8d8276;
-
     font-size:10px;
-
     font-weight:800;
-
     letter-spacing:1px;
 }
 
 .end-actions{
     display:flex;
-
     flex-direction:column;
-
     gap:10px;
-
     align-items:center;
-
     margin-top:8px;
 }
 
@@ -2052,17 +1925,15 @@ body{
     min-width:230px;
 }
 
+
 /* =========================================================
-   ESTRELLAS DE ACIERTO
+   ESTRELLAS AL ACERTAR
 ========================================================= */
 
 .mini-star{
     position:fixed;
-
     z-index:1000;
-
     pointer-events:none;
-
     font-size:20px;
 
     animation:
@@ -2075,7 +1946,6 @@ body{
 
     0%{
         opacity:1;
-
         transform:
             translate(0,0)
             scale(.5);
@@ -2083,14 +1953,13 @@ body{
 
     100%{
         opacity:0;
-
         transform:
             translate(var(--tx),var(--ty))
             scale(1.4)
             rotate(540deg);
     }
-
 }
+
 
 /* =========================================================
    PANTALLAS GRANDES
@@ -2108,24 +1977,22 @@ body{
 
     .hero{
         padding-top:30px;
-
         margin-bottom:82px;
     }
 
     .topic-grid{
         gap:27px;
-
         transform:translateY(10px);
     }
 
     .topic-card{
         min-height:500px;
     }
-
 }
 
+
 /* =========================================================
-   COMPUTADORAS CON POCA ALTURA
+   COMPUTADORAS BAJAS
 ========================================================= */
 
 @media(
@@ -2136,13 +2003,11 @@ body{
 
     .app{
         padding-top:12px;
-
         padding-bottom:18px;
     }
 
     .topbar{
         min-height:48px;
-
         margin-bottom:4px;
     }
 
@@ -2161,21 +2026,17 @@ body{
 
     .hero{
         padding-top:8px;
-
         margin-bottom:40px;
     }
 
     .small-title{
         font-size:12px;
-
         padding:7px 18px;
-
         margin-bottom:11px;
     }
 
     .hero h2{
         font-size:55px;
-
         margin-bottom:10px;
     }
 
@@ -2193,17 +2054,13 @@ body{
 
     .topic-card{
         padding:9px;
-
         border-radius:24px;
-
         min-height:0;
     }
 
     .topic-image{
         border-radius:18px;
-
         height:56%;
-
         flex-basis:56%;
     }
 
@@ -2221,11 +2078,10 @@ body{
 
     .card-play{
         min-height:34px;
-
         font-size:11px;
     }
-
 }
+
 
 /* =========================================================
    TABLETS
@@ -2256,8 +2112,8 @@ body{
                 80px
             );
     }
-
 }
+
 
 /* =========================================================
    MÓVIL
@@ -2271,7 +2127,6 @@ body{
 
     .app{
         width:92vw;
-
         padding:
             12px
             0
@@ -2293,13 +2148,11 @@ body{
     .logo{
         width:42px;
         height:42px;
-
         font-size:21px;
     }
 
     .points{
         padding:7px 10px;
-
         font-size:12px;
     }
 
@@ -2310,37 +2163,29 @@ body{
 
     #topicScreen{
         min-height:auto;
-
         padding-bottom:25px;
     }
 
     .hero{
         padding-top:12px;
-
         margin-bottom:43px;
     }
 
     .small-title{
         font-size:11px;
-
         padding:7px 16px;
-
         margin-bottom:12px;
     }
 
     .hero h2{
         font-size:46px;
-
         line-height:1;
-
         letter-spacing:-2px;
-
         margin-bottom:15px;
     }
 
     .hero p{
         font-size:14px;
-
         line-height:1.5;
     }
 
@@ -2357,23 +2202,18 @@ body{
             repeat(2,minmax(0,1fr));
 
         gap:13px;
-
         transform:translateY(5px);
     }
 
     .topic-card{
         aspect-ratio:.77 / 1;
-
         border-radius:22px;
-
         padding:9px;
     }
 
     .topic-image{
         height:57%;
-
         flex-basis:57%;
-
         border-radius:17px;
     }
 
@@ -2391,7 +2231,6 @@ body{
 
     .card-play{
         min-height:34px;
-
         font-size:11px;
     }
 
@@ -2415,7 +2254,15 @@ body{
         flex-wrap:wrap;
     }
 
+    .cloud{
+        opacity:.45;
+    }
+
+    .bg-shape{
+        opacity:.22;
+    }
 }
+
 
 /* =========================================================
    MÓVIL PEQUEÑO
@@ -2441,9 +2288,7 @@ body{
 
     .topic-card{
         aspect-ratio:.75 / 1;
-
         padding:7px;
-
         border-radius:19px;
     }
 
@@ -2461,9 +2306,7 @@ body{
 
     .card-play{
         min-height:30px;
-
         margin-top:5px;
-
         font-size:10px;
     }
 
@@ -2474,8 +2317,8 @@ body{
     .end-card{
         padding:28px 18px;
     }
-
 }
+
 
 /* =========================================================
    REDUCIR ANIMACIONES
@@ -2487,12 +2330,9 @@ body{
     *::before,
     *::after{
         animation-duration:.01ms !important;
-
         animation-iteration-count:1 !important;
-
         transition-duration:.01ms !important;
     }
-
 }
 
 </style>
@@ -2500,9 +2340,52 @@ body{
 
 <body>
 
-<div class="bg-deco"></div>
+
+<!-- =====================================================
+     FONDO INFANTIL ANIMADO
+===================================================== -->
+
+<div class="bg-deco">
+
+    <!-- Nubes -->
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+    <div class="cloud cloud-3"></div>
+
+    <!-- Burbujas -->
+    <div class="bubble bubble-1"></div>
+    <div class="bubble bubble-2"></div>
+    <div class="bubble bubble-3"></div>
+    <div class="bubble bubble-4"></div>
+    <div class="bubble bubble-5"></div>
+    <div class="bubble bubble-6"></div>
+
+    <!-- Estrellas -->
+    <div class="bg-star star-a">✦</div>
+    <div class="bg-star star-b">✧</div>
+    <div class="bg-star star-c">✦</div>
+    <div class="bg-star star-d">✧</div>
+    <div class="bg-star star-e">✦</div>
+    <div class="bg-star star-f">✧</div>
+
+    <!-- Formas -->
+    <div class="bg-shape shape-circle shape-1"></div>
+    <div class="bg-shape shape-square shape-2"></div>
+    <div class="bg-shape shape-triangle shape-3"></div>
+    <div class="bg-shape shape-circle shape-4"></div>
+
+    <!-- Partículas -->
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+
+</div>
+
 
 <div class="app">
+
 
 <!-- =====================================================
      CABECERA
@@ -2592,6 +2475,7 @@ body{
 
 
     <div class="topic-grid">
+
 
         <!-- ANIMALES -->
 
@@ -3026,11 +2910,8 @@ body{
 const Sound = (() => {
 
     let ctx = null;
-
     let masterGain = null;
-
     let sfxGain = null;
-
     let muted = false;
 
     const musicAudio =
@@ -3039,7 +2920,6 @@ const Sound = (() => {
         );
 
     musicAudio.loop = true;
-
     musicAudio.volume = .35;
 
     let musicStarted = false;
@@ -3182,7 +3062,6 @@ const Sound = (() => {
         );
 
         osc.connect(g);
-
         g.connect(sfxGain);
 
         osc.start(t);
@@ -3288,11 +3167,9 @@ const Sound = (() => {
         );
 
         osc.connect(g);
-
         g.connect(sfxGain);
 
         osc.start(t);
-
         osc.stop(t + .48);
 
     }
@@ -3428,7 +3305,6 @@ const Sound = (() => {
                 break;
 
             default:
-
                 arpeggio(
                     [7,12,16],
                     .65,
@@ -3525,7 +3401,6 @@ const Sound = (() => {
                 g.gain.value = 1.2;
 
                 src.connect(g);
-
                 g.connect(sfxGain);
 
                 src.start();
@@ -3635,7 +3510,7 @@ const Sound = (() => {
 
 
 /* =========================================================
-   DATOS
+   DATOS DEL JUEGO
 ========================================================= */
 
 const topics = {
@@ -3647,37 +3522,21 @@ const topics = {
         animalSounds:{
 
             "../assets/img_p.secuencia/S_Animales/s.gato.png":"gato",
-
             "../assets/img_p.secuencia/S_Animales/s.perro.png":"perro",
-
             "../assets/img_p.secuencia/S_Animales/s.conejo.png":"conejo",
-
             "../assets/img_p.secuencia/S_Animales/s.pato.png":"pato",
-
             "../assets/img_p.secuencia/S_Animales/s.panda.png":"panda",
-
             "../assets/img_p.secuencia/S_Animales/s.tigre.png":"tigre",
-
             "../assets/img_p.secuencia/S_Animales/s.elefante.png":"elefante",
-
             "../assets/img_p.secuencia/S_Animales/s.jirafa.png":"jirafa",
-
             "../assets/img_p.secuencia/S_Animales/s.vaca.png":"vaca",
-
             "../assets/img_p.secuencia/S_Animales/s.oveja.png":"oveja",
-
             "../assets/img_p.secuencia/S_Animales/s.rana.png":"rana",
-
             "../assets/img_p.secuencia/S_Animales/s.tortuga.png":"tortuga",
-
             "../assets/img_p.secuencia/S_Animales/s.leon.png":"leon",
-
             "../assets/img_p.secuencia/S_Animales/s.cocodrilo.png":"cocodrilo",
-
             "../assets/img_p.secuencia/S_Animales/s.serpiente.png":"serpiente",
-
             "../assets/img_p.secuencia/S_Animales/s.pandarojo.png":"pandarojo",
-
             "../assets/img_p.secuencia/S_Animales/s.cebra.png":"cebra"
 
         },
@@ -3692,10 +3551,7 @@ const topics = {
                     "../assets/img_p.secuencia/S_Animales/s.perro.png",
                     "?"
                 ],
-
-                answer:
-                    "../assets/img_p.secuencia/S_Animales/s.gato.png",
-
+                answer:"../assets/img_p.secuencia/S_Animales/s.gato.png",
                 options:[
                     "../assets/img_p.secuencia/S_Animales/s.gato.png",
                     "../assets/img_p.secuencia/S_Animales/s.perro.png",
@@ -3712,10 +3568,7 @@ const topics = {
                     "../assets/img_p.secuencia/S_Animales/s.tigre.png",
                     "?"
                 ],
-
-                answer:
-                    "../assets/img_p.secuencia/S_Animales/s.panda.png",
-
+                answer:"../assets/img_p.secuencia/S_Animales/s.panda.png",
                 options:[
                     "../assets/img_p.secuencia/S_Animales/s.elefante.png",
                     "../assets/img_p.secuencia/S_Animales/s.tigre.png",
@@ -3733,10 +3586,7 @@ const topics = {
                     "../assets/img_p.secuencia/S_Animales/s.vaca.png",
                     "?"
                 ],
-
-                answer:
-                    "../assets/img_p.secuencia/S_Animales/s.oveja.png",
-
+                answer:"../assets/img_p.secuencia/S_Animales/s.oveja.png",
                 options:[
                     "../assets/img_p.secuencia/S_Animales/s.oveja.png",
                     "../assets/img_p.secuencia/S_Animales/s.vaca.png",
@@ -3754,10 +3604,7 @@ const topics = {
                     "../assets/img_p.secuencia/S_Animales/s.leon.png",
                     "?"
                 ],
-
-                answer:
-                    "../assets/img_p.secuencia/S_Animales/s.cocodrilo.png",
-
+                answer:"../assets/img_p.secuencia/S_Animales/s.cocodrilo.png",
                 options:[
                     "../assets/img_p.secuencia/S_Animales/s.serpiente.png",
                     "../assets/img_p.secuencia/S_Animales/s.tigre.png",
@@ -3777,10 +3624,7 @@ const topics = {
                     "../assets/img_p.secuencia/S_Animales/s.cebra.png",
                     "?"
                 ],
-
-                answer:
-                    "../assets/img_p.secuencia/S_Animales/s.cebra.png",
-
+                answer:"../assets/img_p.secuencia/S_Animales/s.cebra.png",
                 options:[
                     "../assets/img_p.secuencia/S_Animales/s.jirafa.png",
                     "../assets/img_p.secuencia/S_Animales/s.cebra.png",
@@ -3801,99 +3645,33 @@ const topics = {
         sequences:[
 
             {
-                seq:[
-                    "1",
-                    "2",
-                    "1",
-                    "2",
-                    "?"
-                ],
-
+                seq:["1","2","1","2","?"],
                 answer:"1",
-
-                options:[
-                    "1",
-                    "2",
-                    "3",
-                    "4"
-                ]
+                options:["1","2","3","4"]
             },
 
             {
-                seq:[
-                    "2",
-                    "4",
-                    "2",
-                    "4",
-                    "?"
-                ],
-
+                seq:["2","4","2","4","?"],
                 answer:"2",
-
-                options:[
-                    "2",
-                    "4",
-                    "6",
-                    "8"
-                ]
+                options:["2","4","6","8"]
             },
 
             {
-                seq:[
-                    "1",
-                    "2",
-                    "3",
-                    "1",
-                    "2",
-                    "?"
-                ],
-
+                seq:["1","2","3","1","2","?"],
                 answer:"3",
-
-                options:[
-                    "1",
-                    "2",
-                    "3",
-                    "4"
-                ]
+                options:["1","2","3","4"]
             },
 
             {
-                seq:[
-                    "5",
-                    "3",
-                    "5",
-                    "3",
-                    "?"
-                ],
-
+                seq:["5","3","5","3","?"],
                 answer:"5",
-
-                options:[
-                    "3",
-                    "4",
-                    "5",
-                    "6"
-                ]
+                options:["3","4","5","6"]
             },
 
             {
-                seq:[
-                    "7",
-                    "8",
-                    "7",
-                    "8",
-                    "?"
-                ],
-
+                seq:["7","8","7","8","?"],
                 answer:"7",
-
-                options:[
-                    "6",
-                    "7",
-                    "8",
-                    "9"
-                ]
+                options:["6","7","8","9"]
             }
 
         ]
@@ -3915,10 +3693,7 @@ const topics = {
                     "../assets/img_p.secuencia/S_Formas/s.triangulo.png",
                     "?"
                 ],
-
-                answer:
-                    "../assets/img_p.secuencia/S_Formas/s.circulo.png",
-
+                answer:"../assets/img_p.secuencia/S_Formas/s.circulo.png",
                 options:[
                     "../assets/img_p.secuencia/S_Formas/s.circulo.png",
                     "../assets/img_p.secuencia/S_Formas/s.triangulo.png",
@@ -3935,10 +3710,7 @@ const topics = {
                     "../assets/img_p.secuencia/S_Formas/s.estrella.png",
                     "?"
                 ],
-
-                answer:
-                    "../assets/img_p.secuencia/S_Formas/s.cuadrado.png",
-
+                answer:"../assets/img_p.secuencia/S_Formas/s.cuadrado.png",
                 options:[
                     "../assets/img_p.secuencia/S_Formas/s.rectangulo.png",
                     "../assets/img_p.secuencia/S_Formas/s.triangulo.png",
@@ -3958,10 +3730,7 @@ const topics = {
                     "../assets/img_p.secuencia/S_Formas/s.luna.png",
                     "?"
                 ],
-
-                answer:
-                    "../assets/img_p.secuencia/S_Formas/s.luna.png",
-
+                answer:"../assets/img_p.secuencia/S_Formas/s.luna.png",
                 options:[
                     "../assets/img_p.secuencia/S_Formas/s.corazon.png",
                     "../assets/img_p.secuencia/S_Formas/s.triangulo.png",
@@ -3979,10 +3748,7 @@ const topics = {
                     "../assets/img_p.secuencia/S_Formas/s.rombo.png",
                     "?"
                 ],
-
-                answer:
-                    "../assets/img_p.secuencia/S_Formas/s.rombo.png",
-
+                answer:"../assets/img_p.secuencia/S_Formas/s.rombo.png",
                 options:[
                     "../assets/img_p.secuencia/S_Formas/s.circulo.png",
                     "../assets/img_p.secuencia/S_Formas/s.corazon.png",
@@ -4001,10 +3767,7 @@ const topics = {
                     "../assets/img_p.secuencia/S_Formas/s.octogono.png",
                     "?"
                 ],
-
-                answer:
-                    "../assets/img_p.secuencia/S_Formas/s.hexagono.png",
-
+                answer:"../assets/img_p.secuencia/S_Formas/s.hexagono.png",
                 options:[
                     "../assets/img_p.secuencia/S_Formas/s.hexagono.png",
                     "../assets/img_p.secuencia/S_Formas/s.cuadrado.png",
@@ -4032,10 +3795,7 @@ const topics = {
                     "img/naturaleza/flor.png",
                     "?"
                 ],
-
-                answer:
-                    "img/naturaleza/arbol.png",
-
+                answer:"img/naturaleza/arbol.png",
                 options:[
                     "img/naturaleza/arbol.png",
                     "img/naturaleza/flor.png",
@@ -4052,10 +3812,7 @@ const topics = {
                     "img/naturaleza/flor.png",
                     "?"
                 ],
-
-                answer:
-                    "img/naturaleza/sol.png",
-
+                answer:"img/naturaleza/sol.png",
                 options:[
                     "img/naturaleza/arbol.png",
                     "img/naturaleza/flor.png",
@@ -4072,10 +3829,7 @@ const topics = {
                     "img/naturaleza/arbol.png",
                     "?"
                 ],
-
-                answer:
-                    "img/naturaleza/hoja.png",
-
+                answer:"img/naturaleza/hoja.png",
                 options:[
                     "img/naturaleza/arbol.png",
                     "img/naturaleza/flor.png",
@@ -4093,10 +3847,7 @@ const topics = {
                     "img/naturaleza/flor.png",
                     "?"
                 ],
-
-                answer:
-                    "img/naturaleza/sol.png",
-
+                answer:"img/naturaleza/sol.png",
                 options:[
                     "img/naturaleza/arbol.png",
                     "img/naturaleza/flor.png",
@@ -4114,10 +3865,7 @@ const topics = {
                     "img/naturaleza/hoja.png",
                     "?"
                 ],
-
-                answer:
-                    "img/naturaleza/flor.png",
-
+                answer:"img/naturaleza/flor.png",
                 options:[
                     "img/naturaleza/arbol.png",
                     "img/naturaleza/flor.png",
@@ -4145,9 +3893,7 @@ const topics = {
                     "#5b83e8",
                     "?"
                 ],
-
                 answer:"#ef5b5b",
-
                 options:[
                     "#ef5b5b",
                     "#5b83e8",
@@ -4164,9 +3910,7 @@ const topics = {
                     "#ef5b5b",
                     "?"
                 ],
-
                 answer:"#63c97d",
-
                 options:[
                     "#ef5b5b",
                     "#63c97d",
@@ -4183,9 +3927,7 @@ const topics = {
                     "#f5c84c",
                     "?"
                 ],
-
                 answer:"#5b83e8",
-
                 options:[
                     "#5b83e8",
                     "#ef5b5b",
@@ -4203,9 +3945,7 @@ const topics = {
                     "#63c97d",
                     "?"
                 ],
-
                 answer:"#5b83e8",
-
                 options:[
                     "#ef5b5b",
                     "#5b83e8",
@@ -4222,9 +3962,7 @@ const topics = {
                     "#63c97d",
                     "?"
                 ],
-
                 answer:"#f5c84c",
-
                 options:[
                     "#ef5b5b",
                     "#5b83e8",
@@ -4245,13 +3983,9 @@ const topics = {
 ========================================================= */
 
 let currentTopic = null;
-
 let currentLevel = 0;
-
 let score = 0;
-
 let correctCount = 0;
-
 let answered = false;
 
 
@@ -4331,7 +4065,7 @@ const soundBtn =
 
 
 /* =========================================================
-   SONIDO HOVER
+   HOVER
 ========================================================= */
 
 function attachHoverSound(el){
@@ -4365,9 +4099,7 @@ document
                 card.dataset.topic;
 
             currentLevel = 0;
-
             correctCount = 0;
-
             score = 0;
 
             scoreTop.textContent =
@@ -5059,7 +4791,7 @@ document
 
 
 /* =========================================================
-   ESTRELLAS
+   ESTRELLAS AL ACERTAR
 ========================================================= */
 
 function burstStars(el){
@@ -5078,7 +4810,7 @@ function burstStars(el){
 
     for(
         let i = 0;
-        i < 8;
+        i < 10;
         i++
     ){
 
@@ -5102,12 +4834,12 @@ function burstStars(el){
         const angle =
             (
                 Math.PI * 2 * i
-            ) / 8;
+            ) / 10;
 
 
         const dist =
             60 +
-            Math.random() * 40;
+            Math.random() * 50;
 
 
         s.style.left =
