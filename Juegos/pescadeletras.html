@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Pesca de Letras - Alfabeto Español</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            background: #061c2b;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        #game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            max-width: 1280px;
+            max-height: 820px;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.6), 0 0 0 4px rgba(255,255,255,0.08);
+            background: #0a2a3d;
+            margin: 10px;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+            touch-action: none;
+        }
+
+        /* ===== BARRA SUPERIOR UNIFICADA ===== */
+        .top-bar {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            right: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            z-index: 15;
+            pointer-events: none;
+        }
+        .top-bar > * {
+            pointer-events: auto;
+        }
+
+        /* Indicador central */
+        .top-indicator {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: rgba(20, 35, 50, 0.78);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-radius: 60px;
+            padding: 8px 22px 8px 10px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+            border: 2px solid rgba(241, 196, 15, 0.55);
+            animation: slideDown 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+            flex-shrink: 0;
+        }
+        @keyframes slideDown {
+            0% { transform: translateY(-40px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        .top-indicator .target-letter {
+            background: linear-gradient(145deg, #2c3e50, #1a252f);
+            color: #ffd966;
+            font-size: 2.4rem;
+            font-weight: 900;
+            width: 66px;
+            height: 66px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 18px;
+            box-shadow: 
+                inset 0 -6px 0 rgba(0,0,0,0.45),
+                0 0 0 3px #f1c40f,
+                0 0 0 6px rgba(241, 196, 15, 0.25),
+                0 8px 20px rgba(0, 0, 0, 0.4);
+            text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.55);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            letter-spacing: 1px;
+            animation: letterPulse 2.4s ease-in-out infinite;
+            flex-shrink: 0;
+        }
+        @keyframes letterPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.06); }
+        }
+        .top-indicator .info-text {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            line-height: 1.15;
+            white-space: nowrap;
+        }
+        .top-indicator .info-text .label {
+            font-size: 0.7rem;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: rgba(255, 217, 102, 0.9);
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+        .top-indicator .info-text .hint {
+            font-size: 1.05rem;
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 600;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+        }
+        .top-indicator .info-text .hint strong {
+            color: #ffd966;
+            font-weight: 800;
+        }
+
+        /* Controles derecha */
+        .top-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        /* Botón de música */
+        .music-btn {
+            background: linear-gradient(145deg, #bb8fce, #8e44ad);
+            border: none;
+            border-radius: 50px;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: 800;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #6c3483, 0 8px 20px rgba(0,0,0,0.3);
+            transition: all 0.06s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 2px solid #d7bde2;
+            font-family: inherit;
+        }
+        .music-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 1px 0 #6c3483;
+        }
+        .music-btn.playing {
+            background: linear-gradient(145deg, #58d68d, #27ae60);
+            box-shadow: 0 6px 0 #1e8449, 0 8px 20px rgba(0,0,0,0.3);
+            border-color: #abebc6;
+        }
+        .music-btn.playing:active {
+            box-shadow: 0 1px 0 #1e8449;
+        }
+        .music-btn input[type="file"] {
+            display: none;
+        }
+
+        /* Botón de sonido */
+        .sound-btn {
+            background: linear-gradient(145deg, #5dade2, #3498db);
+            border: none;
+            border-radius: 50%;
+            width: 52px;
+            height: 52px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #1f618d, 0 8px 20px rgba(0,0,0,0.3);
+            transition: all 0.06s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #a9cce3;
+        }
+        .sound-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 1px 0 #1f618d;
+        }
+        .sound-btn.muted {
+            background: linear-gradient(145deg, #95a5a6, #7f8c8d);
+            box-shadow: 0 6px 0 #566573, 0 8px 20px rgba(0,0,0,0.3);
+            border-color: #bdc3c7;
+        }
+
+        /* Botón álbum */
+        .album-btn {
+            background: linear-gradient(145deg, #f7dc6f, #f1c40f);
+            border: none;
+            border-radius: 50px;
+            padding: 13px 22px;
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #1e2b3a;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #b78a1e, 0 8px 22px rgba(0,0,0,0.3);
+            transition: all 0.06s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 2px solid #fff3d1;
+            font-family: inherit;
+        }
+        .album-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 1px 0 #b78a1e;
+        }
+        .album-btn .badge {
+            background: #c0392b;
+            color: white;
+            border-radius: 30px;
+            padding: 3px 10px;
+            font-size: 0.85rem;
+            box-shadow: inset 0 -2px 0 rgba(0,0,0,0.2);
+        }
+
+        /* Modal álbum */
+        .album-modal {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(2, 15, 25, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 20px;
+            animation: fadeIn 0.25s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .album-modal.active {
+            display: flex;
+        }
+        .album-content {
+            background: linear-gradient(160deg, #fff9ec, #fdf1d6);
+            border-radius: 36px;
+            padding: 28px;
+            max-width: 920px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.9);
+            border: 6px solid #f1c40f;
+            position: relative;
+        }
+        .album-content::-webkit-scrollbar {
+            width: 10px;
+        }
+        .album-content::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+            border-radius: 10px;
+        }
+        .album-content::-webkit-scrollbar-thumb {
+            background: #f1c40f;
+            border-radius: 10px;
+        }
+        .album-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+            padding-bottom: 14px;
+            border-bottom: 4px solid #f1c40f;
+        }
+        .album-header h2 {
+            font-size: 2rem;
+            color: #1e2b3a;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+        }
+        .album-header h2 .emoji {
+            font-size: 2.2rem;
+        }
+        .close-album {
+            background: linear-gradient(145deg, #e74c3c, #c0392b);
+            border: none;
+            border-radius: 50%;
+            width: 52px;
+            height: 52px;
+            font-size: 1.6rem;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #a82315, 0 8px 15px rgba(0,0,0,0.2);
+            font-weight: bold;
+            transition: all 0.06s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .close-album:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #a82315;
+        }
+        .album-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 12px;
+            justify-content: center;
+        }
+        .album-letter {
+            aspect-ratio: 1 / 1;
+            background: linear-gradient(145deg, #e8eef3, #d0dae0);
+            border-radius: 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.9rem;
+            font-weight: 800;
+            color: #8494a3;
+            box-shadow: inset 0 -5px 0 #b0bec5, 0 3px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 3px solid #b0bec5;
+            position: relative;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        .album-letter .mini {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 2px;
+            color: #94a3b1;
+        }
+        .album-letter.caught {
+            background: linear-gradient(145deg, #58d68d, #2ecc71);
+            color: white;
+            border-color: #27ae60;
+            box-shadow: 0 0 18px rgba(46, 204, 113, 0.6), inset 0 -5px 0 #1e8e4a;
+            transform: scale(1.04);
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.15);
+        }
+        .album-letter.caught .mini {
+            color: #eaffd0;
+        }
+        .album-letter.caught::after {
+            content: '✓';
+            position: absolute;
+            top: 4px;
+            right: 6px;
+            font-size: 0.9rem;
+            color: white;
+            background: #27ae60;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .counter {
+            margin-top: 22px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e2b3a;
+            text-align: center;
+            padding: 12px;
+            background: rgba(241, 196, 15, 0.15);
+            border-radius: 16px;
+            border: 2px dashed #f1c40f;
+        }
+        .reset-btn {
+            background: linear-gradient(145deg, #5dade2, #3498db);
+            border: none;
+            border-radius: 40px;
+            padding: 14px 32px;
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #1f618d, 0 10px 20px rgba(0,0,0,0.15);
+            margin-top: 18px;
+            transition: all 0.06s;
+            border: 2px solid #a9cce3;
+            font-family: inherit;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .reset-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 1px 0 #1f618d;
+        }
+
+        /* Overlay de victoria */
+        .win-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            z-index: 50;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+        .win-overlay.active {
+            display: flex;
+            animation: fadeIn 0.5s ease;
+            pointer-events: auto;
+        }
+        .win-card {
+            background: linear-gradient(160deg, rgba(255,255,255,0.97), rgba(255,245,220,0.95));
+            padding: 40px 60px;
+            border-radius: 40px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 0 6px #f1c40f;
+            backdrop-filter: blur(10px);
+            animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .win-card h1 {
+            font-size: 3rem;
+            color: #1e2b3a;
+            margin-bottom: 10px;
+            text-shadow: 3px 3px 0 #f1c40f;
+        }
+        .win-card p {
+            font-size: 1.4rem;
+            color: #5d6d7e;
+            font-weight: 600;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .top-bar {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .top-indicator {
+                order: 1;
+                width: 100%;
+                justify-content: center;
+                max-width: 420px;
+            }
+            .top-controls {
+                order: 2;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .top-indicator {
+                gap: 10px;
+                padding: 6px 16px 6px 8px;
+            }
+            .top-indicator .target-letter {
+                font-size: 1.9rem;
+                width: 52px;
+                height: 52px;
+                border-radius: 14px;
+            }
+            .top-indicator .info-text .label {
+                font-size: 0.6rem;
+                letter-spacing: 2px;
+            }
+            .top-indicator .info-text .hint {
+                font-size: 0.85rem;
+                white-space: normal;
+            }
+            .music-btn {
+                padding: 10px 14px;
+                font-size: 0.85rem;
+            }
+            .sound-btn {
+                width: 44px;
+                height: 44px;
+                font-size: 1.2rem;
+            }
+            .album-btn {
+                padding: 10px 16px;
+                font-size: 0.85rem;
+            }
+            .album-btn .badge {
+                padding: 2px 8px;
+                font-size: 0.75rem;
+            }
+            .album-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 8px;
+            }
+            .album-header h2 {
+                font-size: 1.5rem;
+            }
+            .win-card h1 {
+                font-size: 2rem;
+            }
+            .win-card {
+                padding: 25px 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div id="game-container">
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- Barra superior unificada -->
+    <div class="top-bar">
+        <!-- Indicador central -->
+        <div class="top-indicator" id="topIndicator">
+            <div class="target-letter" id="targetLetterDisplay">A</div>
+            <div class="info-text">
+                <div class="label">Pesca esta letra</div>
+                <div class="hint">Busca su pareja en <strong>minúscula</strong></div>
+            </div>
+        </div>
+
+        <!-- Controles derecha -->
+        <div class="top-controls">
+            <button class="music-btn" id="musicBtn" title="Cargar música de fondo">
+                <input type="file" id="musicInput" accept="audio/*">
+                <span id="musicIcon">🎵</span>
+                <span id="musicLabel">Música</span>
+            </button>
+            <button class="sound-btn" id="soundBtn" title="Activar/desactivar efectos de sonido">🔊</button>
+            <button class="album-btn" id="albumBtn">
+                📖 Álbum <span class="badge" id="albumCount">0/27</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Overlay de victoria -->
+    <div class="win-overlay" id="winOverlay">
+        <div class="win-card">
+            <h1>🎉 ¡FELICIDADES! 🎉</h1>
+            <p>Has completado el álbum de las 27 letras</p>
+        </div>
+    </div>
+
+    <!-- Modal Álbum -->
+    <div class="album-modal" id="albumModal">
+        <div class="album-content">
+            <div class="album-header">
+                <h2><span class="emoji">🐟</span> Álbum de Pesca</h2>
+                <button class="close-album" id="closeAlbumBtn">✕</button>
+            </div>
+            <div class="album-grid" id="albumGrid"></div>
+            <div class="counter" id="albumCounter">0 de 27 letras capturadas</div>
+            <button class="reset-btn" id="resetBtn">🔄 Reiniciar juego</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const targetLetterDisplay = document.getElementById('targetLetterDisplay');
+        const topIndicator = document.getElementById('topIndicator');
+        const albumBtn = document.getElementById('albumBtn');
+        const albumModal = document.getElementById('albumModal');
+        const closeAlbumBtn = document.getElementById('closeAlbumBtn');
+        const albumGrid = document.getElementById('albumGrid');
+        const albumCountSpan = document.getElementById('albumCount');
+        const albumCounter = document.getElementById('albumCounter');
+        const resetBtn = document.getElementById('resetBtn');
+        const winOverlay = document.getElementById('winOverlay');
+        const soundBtn = document.getElementById('soundBtn');
+        const musicBtn = document.getElementById('musicBtn');
+        const musicInput = document.getElementById('musicInput');
+        const musicIcon = document.getElementById('musicIcon');
+        const musicLabel = document.getElementById('musicLabel');
+
+        // ============ SISTEMA DE AUDIO (Web Audio API) ============
+        let audioCtx = null;
+        let soundEnabled = true;
+
+        function initAudio() {
+            if (!audioCtx) {
+                try {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                } catch (e) {
+                    console.warn('Web Audio API no soportada');
+                }
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playTone(frequency, duration, type = 'sine', volume = 0.3, delay = 0) {
+            if (!soundEnabled || !audioCtx) return;
+            const startTime = audioCtx.currentTime + delay;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.type = type;
+            osc.frequency.setValueAtTime(frequency, startTime);
+            
+            gain.gain.setValueAtTime(0, startTime);
+            gain.gain.linearRampToValueAtTime(volume, startTime + 0.01);
+            gain.gain.exponentialRampToValueAtTime(volume * 0.7, startTime + duration * 0.3);
+            gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.start(startTime);
+            osc.stop(startTime + duration + 0.05);
+        }
+
+        function playCorrectSound() {
+            if (!soundEnabled) return;
+            initAudio();
+            if (!audioCtx) return;
+            const notes = [523.25, 659.25, 783.99, 1046.50];
+            notes.forEach((freq, i) => {
+                playTone(freq, 0.25, 'triangle', 0.25, i * 0.08);
+            });
+            setTimeout(() => {
+                playTone(1200, 0.15, 'sine', 0.15);
+                playTone(1600, 0.12, 'sine', 0.12, 0.05);
+            }, 300);
+        }
+
+        function playIncorrectSound() {
+            if (!soundEnabled) return;
+            initAudio();
+            if (!audioCtx) return;
+            const startTime = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(280, startTime);
+            osc.frequency.exponentialRampToValueAtTime(110, startTime + 0.4);
+            
+            gain.gain.setValueAtTime(0, startTime);
+            gain.gain.linearRampToValueAtTime(0.2, startTime + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.45);
+            
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(800, startTime);
+            filter.frequency.exponentialRampToValueAtTime(300, startTime + 0.4);
+            
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.start(startTime);
+            osc.stop(startTime + 0.5);
+        }
+
+        function playCastSound() {
+            if (!soundEnabled) return;
+            initAudio();
+            if (!audioCtx) return;
+            const startTime = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600, startTime);
+            osc.frequency.exponentialRampToValueAtTime(200, startTime + 0.2);
+            
+            gain.gain.setValueAtTime(0.12, startTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.25);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.start(startTime);
+            osc.stop(startTime + 0.3);
+        }
+
+        function playVictorySound() {
+            if (!soundEnabled) return;
+            initAudio();
+            if (!audioCtx) return;
+            const melody = [
+                { f: 523.25, t: 0.0, d: 0.2 },
+                { f: 659.25, t: 0.15, d: 0.2 },
+                { f: 783.99, t: 0.3, d: 0.2 },
+                { f: 1046.50, t: 0.45, d: 0.4 },
+                { f: 783.99, t: 0.75, d: 0.15 },
+                { f: 1046.50, t: 0.9, d: 0.6 }
+            ];
+            melody.forEach(note => {
+                playTone(note.f, note.d, 'triangle', 0.3, note.t);
+            });
+            setTimeout(() => {
+                playTone(523.25, 0.8, 'triangle', 0.2);
+                playTone(659.25, 0.8, 'triangle', 0.2);
+                playTone(783.99, 0.8, 'triangle', 0.2);
+                playTone(1046.50, 0.8, 'triangle', 0.2);
+            }, 1000);
+        }
+
+        // Botón de sonido
+        soundBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            soundEnabled = !soundEnabled;
+            soundBtn.textContent = soundEnabled ? '🔊' : '🔇';
+            soundBtn.classList.toggle('muted', !soundEnabled);
+            if (soundEnabled) {
+                initAudio();
+                playTone(880, 0.1, 'sine', 0.2);
+            }
+        });
+
+        // ============ REPRODUCTOR DE MÚSICA DE FONDO ============
+        const bgMusic = new Audio();
+        bgMusic.loop = true;
+        bgMusic.volume = 0.35;
+        let musicLoaded = false;
+        let musicPlaying = false;
+
+        musicBtn.addEventListener('click', (e) => {
+            // Si no hay música cargada, abrir selector de archivos
+            if (!musicLoaded) {
+                musicInput.click();
+                return;
+            }
+            // Si hay música cargada, alternar reproducción
+            if (musicPlaying) {
+                bgMusic.pause();
+                musicPlaying = false;
+                musicIcon.textContent = '🎵';
+                musicLabel.textContent = 'Música';
+                musicBtn.classList.remove('playing');
+            } else {
+                bgMusic.play().then(() => {
+                    musicPlaying = true;
+                    musicIcon.textContent = '⏸';
+                    musicLabel.textContent = 'Pausar';
+                    musicBtn.classList.add('playing');
+                }).catch(err => {
+                    console.warn('No se pudo reproducir:', err);
+                });
+            }
+        });
+
+        musicInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const url = URL.createObjectURL(file);
+            bgMusic.src = url;
+            bgMusic.load();
+            musicLoaded = true;
+            // Reproducir automáticamente después de cargar
+            bgMusic.play().then(() => {
+                musicPlaying = true;
+                musicIcon.textContent = '⏸';
+                musicLabel.textContent = 'Pausar';
+                musicBtn.classList.add('playing');
+            }).catch(err => {
+                console.warn('No se pudo reproducir automáticamente:', err);
+                // Si falla, mostrar que está listo para reproducir
+                musicIcon.textContent = '▶';
+                musicLabel.textContent = 'Reproducir';
+            });
+        });
+
+        // ============ FIN REPRODUCTOR ============
+
+        // Inicializar audio en la primera interacción del usuario
+        function firstInteraction() {
+            initAudio();
+            document.removeEventListener('click', firstInteraction);
+            document.removeEventListener('touchstart', firstInteraction);
+        }
+        document.addEventListener('click', firstInteraction);
+        document.addEventListener('touchstart', firstInteraction);
+
+        // ============ FIN SISTEMA DE AUDIO ============
+
+        const SPANISH_ALPHABET = [
+            'a','b','c','d','e','f','g','h','i','j','k','l','m',
+            'n','ñ','o','p','q','r','s','t','u','v','w','x','y','z'
+        ];
+
+        let caughtLetters = new Set();
+        let currentTargetLower = 'a';
+        let fishes = [];
+        let bubbles = [];
+        let particles = [];
+        let seaweed = [];
+
+        let hookX = 0, hookY = 0;
+        let hookActive = false;
+        let mouseX = 0, mouseY = 0;
+        let hookTargetX = 0, hookTargetY = 0;
+
+        let animationFrame;
+        let time = 0;
+
+        const boat = { x: 0, y: 0, width: 160, height: 80 };
+
+        function resizeCanvas() {
+            const container = document.getElementById('game-container');
+            const rect = container.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            boat.x = 40;
+            boat.y = 30;
+            initBubbles();
+            initSeaweed();
+        }
+
+        function initBubbles() {
+            bubbles = [];
+            const count = Math.floor(canvas.width / 22);
+            for (let i = 0; i < count; i++) {
+                bubbles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 10 + 3,
+                    speed: Math.random() * 0.6 + 0.2,
+                    alpha: Math.random() * 0.25 + 0.1,
+                    wobble: Math.random() * Math.PI * 2,
+                    wobbleSpeed: Math.random() * 0.02 + 0.008
+                });
+            }
+        }
+
+        function initSeaweed() {
+            seaweed = [];
+            const count = Math.floor(canvas.width / 120) + 3;
+            for (let i = 0; i < count; i++) {
+                seaweed.push({
+                    x: Math.random() * canvas.width,
+                    height: Math.random() * 100 + 80,
+                    width: Math.random() * 10 + 8,
+                    phase: Math.random() * Math.PI * 2,
+                    speed: Math.random() * 0.02 + 0.01,
+                    color: `hsl(${Math.random() * 40 + 120}, ${Math.random() * 20 + 45}%, ${Math.random() * 15 + 25}%)`
+                });
+            }
+        }
+
+        function createFish(letter, isTarget = false) {
+            const sizeBase = Math.random() * 16 + 30;
+            const hue = Math.random() * 360;
+            const color = `hsl(${hue}, 75%, 55%)`;
+            const tailColor = `hsl(${(hue + 30) % 360}, 70%, 40%)`;
+            const finColor = `hsl(${(hue + 60) % 360}, 80%, 65%)`;
+            
+            return {
+                letter: letter,
+                isTarget: isTarget,
+                x: -100,
+                y: 0,
+                vx: Math.random() * 1.0 + 0.6,
+                vy: (Math.random() - 0.5) * 0.3,
+                size: sizeBase,
+                color: isTarget ? `hsl(${Math.random() * 40 + 180}, 80%, 60%)` : color,
+                tailColor: isTarget ? `hsl(${Math.random() * 40 + 180}, 75%, 40%)` : tailColor,
+                finColor: isTarget ? `hsl(${Math.random() * 40 + 180}, 85%, 70%)` : finColor,
+                wobble: Math.random() * Math.PI * 2,
+                wobbleSpeed: Math.random() * 0.04 + 0.02,
+                caught: false,
+                catchProgress: 0,
+                finPhase: Math.random() * Math.PI * 2
+            };
+        }
+
+        function startNewRound() {
+            if (caughtLetters.size >= 27) {
+                targetLetterDisplay.textContent = '✓';
+                return;
+            }
+
+            const remaining = SPANISH_ALPHABET.filter(l => !caughtLetters.has(l));
+            if (remaining.length === 0) return;
+
+            const targetLower = remaining[Math.floor(Math.random() * remaining.length)];
+            currentTargetLower = targetLower;
+            targetLetterDisplay.textContent = targetLower.toUpperCase();
+
+            topIndicator.style.animation = 'none';
+            void topIndicator.offsetWidth;
+            topIndicator.style.animation = 'slideDown 0.55s cubic-bezier(0.34, 1.56, 0.64, 1)';
+
+            fishes = [];
+            
+            const swimTop = canvas.height * 0.52;
+            const swimBottom = canvas.height * 0.9;
+            
+            const targetFish = createFish(targetLower, true);
+            targetFish.y = swimTop + Math.random() * (swimBottom - swimTop);
+            fishes.push(targetFish);
+
+            const decoyCount = Math.floor(Math.random() * 4) + 5;
+            const availableDecoys = SPANISH_ALPHABET.filter(l => l !== targetLower && !caughtLetters.has(l));
+            let decoyPool = availableDecoys.length >= decoyCount ? availableDecoys : SPANISH_ALPHABET.filter(l => l !== targetLower);
+            
+            for (let i = 0; i < decoyCount; i++) {
+                const decoyLetter = decoyPool[Math.floor(Math.random() * decoyPool.length)];
+                const fish = createFish(decoyLetter, false);
+                fish.y = swimTop + Math.random() * (swimBottom - swimTop);
+                fishes.push(fish);
+            }
+
+            fishes.forEach((f, i) => {
+                f.x = -Math.random() * 500 - 100 - i * 80;
+                f.y = swimTop + Math.random() * (swimBottom - swimTop);
+            });
+        }
+
+        function update(deltaTime) {
+            const dt = Math.min(deltaTime / 16.67, 2.5);
+            time += deltaTime * 0.001;
+
+            bubbles.forEach(b => {
+                b.y -= b.speed * dt;
+                b.x += Math.sin(b.wobble) * 0.4 * dt;
+                b.wobble += b.wobbleSpeed * dt;
+                if (b.y < -20) {
+                    b.y = canvas.height + 20;
+                    b.x = Math.random() * canvas.width;
+                }
+                if (b.x < -20) b.x = canvas.width + 20;
+                if (b.x > canvas.width + 20) b.x = -20;
+            });
+
+            if (hookActive) {
+                hookX += (hookTargetX - hookX) * 0.25 * dt;
+                hookY += (hookTargetY - hookY) * 0.25 * dt;
+            } else if (mouseX > 0 && mouseY > 0) {
+                hookX += (mouseX - hookX) * 0.12 * dt;
+                hookY += (mouseY - hookY) * 0.12 * dt;
+            }
+
+            const swimTop = canvas.height * 0.5;
+            const swimBottom = canvas.height * 0.92;
+
+            for (let i = fishes.length - 1; i >= 0; i--) {
+                const f = fishes[i];
+                
+                if (!f.caught) {
+                    f.x += f.vx * dt;
+                    f.y += Math.sin(f.wobble) * 0.4 * dt;
+                    f.wobble += f.wobbleSpeed * dt;
+                    f.finPhase += 0.08 * dt;
+
+                    if (f.y < swimTop) f.y = swimTop;
+                    if (f.y > swimBottom) f.y = swimBottom;
+
+                    if (f.x > canvas.width + 120) {
+                        f.x = -120;
+                        f.y = swimTop + Math.random() * (swimBottom - swimTop);
+                    }
+                } else {
+                    f.catchProgress += 0.028 * dt;
+                    if (f.catchProgress >= 1) {
+                        if (!caughtLetters.has(f.letter)) {
+                            caughtLetters.add(f.letter);
+                            updateAlbumUI();
+                            
+                            if (f.letter === currentTargetLower) {
+                                setTimeout(() => {
+                                    if (caughtLetters.size < 27) {
+                                        startNewRound();
+                                    } else {
+                                        targetLetterDisplay.textContent = '✓';
+                                        winOverlay.classList.add('active');
+                                        playVictorySound();
+                                    }
+                                }, 350);
+                            }
+                        }
+                        fishes.splice(i, 1);
+                        continue;
+                    }
+                    const targetX = boat.x + boat.width/2;
+                    const targetY = boat.y + boat.height/2;
+                    const t = f.catchProgress;
+                    const ctrlX = (f.x + targetX) / 2;
+                    const ctrlY = Math.min(f.y, targetY) - 120;
+                    const mt = 1 - t;
+                    f.x = mt*mt*f.x + 2*mt*t*ctrlX + t*t*targetX;
+                    f.y = mt*mt*f.y + 2*mt*t*ctrlY + t*t*targetY;
+                }
+            }
+
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx * dt;
+                p.y += p.vy * dt;
+                p.vy += 0.12 * dt;
+                p.life -= 0.018 * dt;
+                if (p.life <= 0) particles.splice(i, 1);
+            }
+
+            if (hookActive && currentTargetLower) {
+                for (let f of fishes) {
+                    if (!f.caught) {
+                        const dx = hookX - f.x;
+                        const dy = hookY - f.y;
+                        const dist = Math.sqrt(dx*dx + dy*dy);
+                        if (dist < f.size * 0.95) {
+                            if (f.letter === currentTargetLower) {
+                                playCorrectSound();
+                                f.caught = true;
+                                f.catchProgress = 0;
+                                hookActive = false;
+                                for (let i = 0; i < 18; i++) {
+                                    particles.push({
+                                        x: f.x,
+                                        y: f.y,
+                                        vx: (Math.random() - 0.5) * 8,
+                                        vy: (Math.random() - 0.5) * 8 - 3,
+                                        size: Math.random() * 7 + 3,
+                                        color: `hsl(${Math.random()*360}, 90%, 70%)`,
+                                        life: 1
+                                    });
+                                }
+                            } else {
+                                playIncorrectSound();
+                                f.vx = Math.abs(f.vx) * 0.5;
+                                hookActive = false;
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+
+            albumCountSpan.textContent = `${caughtLetters.size}/27`;
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#0a3d5c');
+            gradient.addColorStop(0.3, '#1565a0');
+            gradient.addColorStop(0.6, '#1e88c7');
+            gradient.addColorStop(1, '#0d4d70');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.save();
+            ctx.globalCompositeOperation = 'lighter';
+            for (let i = 0; i < 7; i++) {
+                const xBase = (i * canvas.width / 6) - 50 + Math.sin(time * 0.3 + i) * 30;
+                const grad = ctx.createLinearGradient(xBase, 0, xBase + 100, canvas.height);
+                grad.addColorStop(0, 'rgba(255, 250, 200, 0.12)');
+                grad.addColorStop(1, 'rgba(255, 250, 200, 0)');
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.moveTo(xBase, 0);
+                ctx.lineTo(xBase + 80, 0);
+                ctx.lineTo(xBase + 220, canvas.height);
+                ctx.lineTo(xBase + 60, canvas.height);
+                ctx.closePath();
+                ctx.fill();
+            }
+            ctx.restore();
+
+            const sandGrad = ctx.createLinearGradient(0, canvas.height * 0.85, 0, canvas.height);
+            sandGrad.addColorStop(0, 'rgba(60, 90, 80, 0)');
+            sandGrad.addColorStop(1, 'rgba(40, 60, 55, 0.6)');
+            ctx.fillStyle = sandGrad;
+            ctx.fillRect(0, canvas.height * 0.85, canvas.width, canvas.height * 0.15);
+
+            drawSeaweed();
+            drawCorals();
+
+            bubbles.forEach(b => {
+                const bGrad = ctx.createRadialGradient(
+                    b.x - b.radius * 0.3, b.y - b.radius * 0.3, b.radius * 0.1,
+                    b.x, b.y, b.radius
+                );
+                bGrad.addColorStop(0, `rgba(255, 255, 255, ${b.alpha + 0.25})`);
+                bGrad.addColorStop(0.7, `rgba(200, 240, 255, ${b.alpha})`);
+                bGrad.addColorStop(1, `rgba(150, 210, 240, ${b.alpha * 0.6})`);
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+                ctx.fillStyle = bGrad;
+                ctx.fill();
+                ctx.strokeStyle = `rgba(255, 255, 255, ${b.alpha + 0.15})`;
+                ctx.lineWidth = 1.2;
+                ctx.stroke();
+            });
+
+            fishes.forEach(f => drawFish(f));
+
+            particles.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = p.life;
+                ctx.fill();
+                ctx.globalAlpha = 1;
+            });
+
+            drawBoat();
+            drawHook();
+        }
+
+        function drawSeaweed() {
+            seaweed.forEach(s => {
+                const sway = Math.sin(time * 2 + s.phase) * 12;
+                const baseX = s.x;
+                const baseY = canvas.height;
+                const topX = baseX + sway;
+                const topY = baseY - s.height;
+                const midX = baseX + sway * 0.4;
+                const midY = baseY - s.height * 0.5;
+
+                ctx.beginPath();
+                ctx.moveTo(baseX - s.width/2, baseY);
+                ctx.quadraticCurveTo(midX - s.width/4, midY, topX - s.width/4, topY);
+                ctx.quadraticCurveTo(topX, topY - 12, topX + s.width/4, topY);
+                ctx.quadraticCurveTo(midX + s.width/4, midY, baseX + s.width/2, baseY);
+                ctx.closePath();
+                ctx.fillStyle = s.color;
+                ctx.fill();
+            });
+        }
+
+        function drawCorals() {
+            const baseY = canvas.height;
+            const coralPositions = [80, 250, 480, 720, 950, 1150];
+            
+            coralPositions.forEach((x, idx) => {
+                if (x > canvas.width) return;
+                const h = 70 + Math.sin(idx * 1.7) * 25;
+                const hue = 10 + idx * 15;
+                
+                ctx.fillStyle = `hsl(${hue}, 70%, 45%)`;
+                ctx.beginPath();
+                ctx.ellipse(x, baseY - h * 0.3, 22, h * 0.5, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.strokeStyle = `hsl(${hue}, 75%, 50%)`;
+                ctx.lineWidth = 8;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(x, baseY - h * 0.3);
+                ctx.quadraticCurveTo(x - 20, baseY - h * 0.7, x - 15, baseY - h);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(x, baseY - h * 0.3);
+                ctx.quadraticCurveTo(x + 22, baseY - h * 0.65, x + 18, baseY - h * 0.95);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(x, baseY - h * 0.3);
+                ctx.quadraticCurveTo(x + 5, baseY - h * 0.55, x + 2, baseY - h * 0.85);
+                ctx.stroke();
+
+                ctx.fillStyle = `hsl(${hue + 20}, 80%, 60%)`;
+                ctx.beginPath();
+                ctx.arc(x - 15, baseY - h, 7, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(x + 18, baseY - h * 0.95, 6, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(x + 2, baseY - h * 0.85, 5, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
+        function drawBoat() {
+            const bx = boat.x;
+            const by = boat.y;
+            const bw = boat.width;
+            const bh = boat.height;
+
+            ctx.save();
+            ctx.globalAlpha = 0.2;
+            ctx.fillStyle = '#000';
+            ctx.beginPath();
+            ctx.ellipse(bx + bw/2, by + bh + 40, bw * 0.5, 15, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            const hullGrad = ctx.createLinearGradient(bx, by, bx, by + bh);
+            hullGrad.addColorStop(0, '#a0522d');
+            hullGrad.addColorStop(0.5, '#8b4513');
+            hullGrad.addColorStop(1, '#5d2e0a');
+            ctx.fillStyle = hullGrad;
+            ctx.beginPath();
+            ctx.moveTo(bx - 15, by + 25);
+            ctx.lineTo(bx + bw + 15, by + 25);
+            ctx.quadraticCurveTo(bx + bw + 5, by + bh, bx + bw - 15, by + bh);
+            ctx.lineTo(bx + 15, by + bh);
+            ctx.quadraticCurveTo(bx - 5, by + bh, bx - 15, by + 25);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.strokeStyle = '#3e1e08';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            ctx.strokeStyle = '#f1c40f';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(bx - 8, by + 40);
+            ctx.quadraticCurveTo(bx + bw/2, by + 50, bx + bw + 8, by + 40);
+            ctx.stroke();
+
+            const cabinGrad = ctx.createLinearGradient(bx, by + 5, bx, by + 25);
+            cabinGrad.addColorStop(0, '#f5f5f5');
+            cabinGrad.addColorStop(1, '#d0d0d0');
+            ctx.fillStyle = cabinGrad;
+            ctx.fillRect(bx + 20, by + 5, bw - 40, 22);
+            ctx.strokeStyle = '#8b4513';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(bx + 20, by + 5, bw - 40, 22);
+
+            ctx.fillStyle = '#87ceeb';
+            for (let i = 0; i < 3; i++) {
+                ctx.beginPath();
+                ctx.arc(bx + 40 + i * 30, by + 16, 6, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#5d3a1a';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
+            const mastX = bx + bw/2;
+            const mastTopY = by - 55;
+            ctx.fillStyle = '#5d3a1a';
+            ctx.fillRect(mastX - 3, mastTopY, 6, by + 10 - mastTopY);
+            
+            const windSway = Math.sin(time * 1.5) * 4;
+            const sailGrad = ctx.createLinearGradient(mastX, mastTopY, mastX + 60, by);
+            sailGrad.addColorStop(0, '#ffffff');
+            sailGrad.addColorStop(1, '#e8e8e8');
+            ctx.fillStyle = sailGrad;
+            ctx.beginPath();
+            ctx.moveTo(mastX + 3, mastTopY + 5);
+            ctx.quadraticCurveTo(mastX + 50 + windSway, mastTopY + 35, mastX + 55 + windSway, by);
+            ctx.lineTo(mastX + 3, by);
+            ctx.closePath();
+            ctx.fill();
+            ctx.strokeStyle = '#bdc3c7';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            ctx.fillStyle = '#ecf0f1';
+            ctx.beginPath();
+            ctx.moveTo(mastX - 3, mastTopY + 5);
+            ctx.quadraticCurveTo(mastX - 45 + windSway, mastTopY + 30, mastX - 50 + windSway, by);
+            ctx.lineTo(mastX - 3, by);
+            ctx.closePath();
+            ctx.fill();
+            ctx.strokeStyle = '#bdc3c7';
+            ctx.stroke();
+
+            ctx.fillStyle = '#e74c3c';
+            ctx.beginPath();
+            ctx.moveTo(mastX, mastTopY - 2);
+            ctx.lineTo(mastX + 28 + windSway * 0.5, mastTopY + 8);
+            ctx.lineTo(mastX, mastTopY + 18);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.fillStyle = '#f1c40f';
+            ctx.beginPath();
+            ctx.arc(mastX, mastTopY - 5, 4, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function drawFish(f) {
+            const x = f.x;
+            const y = f.y;
+            const size = f.size;
+
+            ctx.save();
+            ctx.translate(x, y);
+
+            ctx.save();
+            ctx.globalAlpha = 0.15;
+            ctx.fillStyle = '#000';
+            ctx.beginPath();
+            ctx.ellipse(0, size * 0.8, size * 1.1, size * 0.2, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            const tailWag = Math.sin(f.finPhase) * 0.3;
+            ctx.save();
+            ctx.translate(-size * 0.8, 0);
+            ctx.rotate(tailWag);
+            ctx.fillStyle = f.tailColor;
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(-size * 0.7, -size * 0.55);
+            ctx.quadraticCurveTo(-size * 0.4, 0, -size * 0.7, size * 0.55);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+
+            ctx.fillStyle = f.finColor;
+            ctx.beginPath();
+            ctx.moveTo(-size * 0.2, -size * 0.65);
+            ctx.quadraticCurveTo(size * 0.1, -size * 1.0, size * 0.5, -size * 0.55);
+            ctx.quadraticCurveTo(size * 0.2, -size * 0.5, -size * 0.2, -size * 0.65);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.moveTo(-size * 0.1, size * 0.6);
+            ctx.quadraticCurveTo(size * 0.2, size * 0.95, size * 0.4, size * 0.55);
+            ctx.quadraticCurveTo(size * 0.1, size * 0.5, -size * 0.1, size * 0.6);
+            ctx.fill();
+
+            const bodyGrad = ctx.createRadialGradient(
+                -size * 0.3, -size * 0.3, size * 0.1,
+                0, 0, size * 1.2
+            );
+            bodyGrad.addColorStop(0, f.color);
+            bodyGrad.addColorStop(1, f.color);
+            
+            ctx.fillStyle = bodyGrad;
+            ctx.beginPath();
+            ctx.ellipse(0, 0, size * 1.05, size * 0.72, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.save();
+            ctx.globalAlpha = 0.35;
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.ellipse(-size * 0.1, -size * 0.35, size * 0.7, size * 0.2, -0.2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.ellipse(0, 0, size * 1.05, size * 0.72, 0, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.arc(size * 0.5, -size * 0.12, size * 0.22, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            ctx.fillStyle = '#1a1a1a';
+            ctx.beginPath();
+            ctx.arc(size * 0.55, -size * 0.14, size * 0.11, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.arc(size * 0.58, -size * 0.18, size * 0.04, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.font = `bold ${size * 1.0}px 'Segoe UI', Arial, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            ctx.fillStyle = 'rgba(0,0,0,0.35)';
+            ctx.fillText(f.letter, 1.5, 1.5);
+            
+            ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+            ctx.lineWidth = 3;
+            ctx.strokeText(f.letter, 0, 0);
+            ctx.fillStyle = 'white';
+            ctx.fillText(f.letter, 0, 0);
+
+            if (f.isTarget) {
+                ctx.fillStyle = '#ffd966';
+                ctx.beginPath();
+                ctx.arc(size * 0.7, size * 0.4, size * 0.12, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            ctx.restore();
+        }
+
+        function drawHook() {
+            if (!hookActive && (!mouseX || !mouseY)) return;
+            
+            const startX = boat.x + boat.width/2;
+            const startY = boat.y + 5;
+            
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            
+            const dx = hookX - startX;
+            const dy = hookY - startY;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            const sag = Math.min(dist * 0.15, 40);
+            
+            const ctrlX = (startX + hookX) / 2;
+            const ctrlY = (startY + hookY) / 2 + sag;
+            
+            ctx.quadraticCurveTo(ctrlX, ctrlY, hookX, hookY);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([6, 4]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            const hookGlow = ctx.createRadialGradient(hookX, hookY, 2, hookX, hookY, 16);
+            hookGlow.addColorStop(0, 'rgba(255, 220, 100, 0.9)');
+            hookGlow.addColorStop(1, 'rgba(255, 220, 100, 0)');
+            ctx.fillStyle = hookGlow;
+            ctx.beginPath();
+            ctx.arc(hookX, hookY, 16, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.arc(hookX, hookY, 8, 0, Math.PI * 2);
+            const hookGrad = ctx.createRadialGradient(hookX - 3, hookY - 3, 1, hookX, hookY, 8);
+            hookGrad.addColorStop(0, '#ffd966');
+            hookGrad.addColorStop(1, '#e67e22');
+            ctx.fillStyle = hookGrad;
+            ctx.fill();
+            ctx.strokeStyle = '#b35e0e';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(hookX - 3, hookY - 3, 3, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.moveTo(hookX - 4, hookY + 8);
+            ctx.quadraticCurveTo(hookX - 2, hookY + 16, hookX + 4, hookY + 14);
+            ctx.strokeStyle = '#b35e0e';
+            ctx.lineWidth = 2.5;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+        }
+
+        function updateAlbumUI() {
+            albumGrid.innerHTML = '';
+            SPANISH_ALPHABET.forEach((letter) => {
+                const div = document.createElement('div');
+                div.className = 'album-letter' + (caughtLetters.has(letter) ? ' caught' : '');
+                div.textContent = letter.toUpperCase();
+                const small = document.createElement('div');
+                small.className = 'mini';
+                small.textContent = letter;
+                div.appendChild(small);
+                albumGrid.appendChild(div);
+            });
+            const count = caughtLetters.size;
+            albumCounter.textContent = `${count} de 27 letras capturadas`;
+            albumCountSpan.textContent = `${count}/27`;
+        }
+
+        function resetGame() {
+            caughtLetters.clear();
+            updateAlbumUI();
+            startNewRound();
+            hookActive = false;
+            albumModal.classList.remove('active');
+            winOverlay.classList.remove('active');
+        }
+
+        function setupEvents() {
+            canvas.addEventListener('mousemove', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                mouseX = (e.clientX - rect.left) * scaleX;
+                mouseY = (e.clientY - rect.top) * scaleY;
+                if (!hookActive) {
+                    hookTargetX = mouseX;
+                    hookTargetY = mouseY;
+                }
+            });
+
+            canvas.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                initAudio();
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                hookTargetX = (e.clientX - rect.left) * scaleX;
+                hookTargetY = (e.clientY - rect.top) * scaleY;
+                hookActive = true;
+                playCastSound();
+            });
+
+            canvas.addEventListener('mouseup', () => { hookActive = false; });
+            canvas.addEventListener('mouseleave', () => { hookActive = false; });
+
+            canvas.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                initAudio();
+                const rect = canvas.getBoundingClientRect();
+                const touch = e.touches[0];
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                hookTargetX = (touch.clientX - rect.left) * scaleX;
+                hookTargetY = (touch.clientY - rect.top) * scaleY;
+                hookActive = true;
+                mouseX = hookTargetX;
+                mouseY = hookTargetY;
+                playCastSound();
+            }, { passive: false });
+
+            canvas.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                const rect = canvas.getBoundingClientRect();
+                const touch = e.touches[0];
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                hookTargetX = (touch.clientX - rect.left) * scaleX;
+                hookTargetY = (touch.clientY - rect.top) * scaleY;
+                mouseX = hookTargetX;
+                mouseY = hookTargetY;
+            }, { passive: false });
+
+            canvas.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                hookActive = false;
+            }, { passive: false });
+
+            albumBtn.addEventListener('click', () => {
+                initAudio();
+                playTone(660, 0.08, 'sine', 0.15);
+                albumModal.classList.add('active');
+                updateAlbumUI();
+            });
+
+            closeAlbumBtn.addEventListener('click', () => {
+                playTone(440, 0.08, 'sine', 0.15);
+                albumModal.classList.remove('active');
+            });
+
+            albumModal.addEventListener('click', (e) => {
+                if (e.target === albumModal) albumModal.classList.remove('active');
+            });
+
+            resetBtn.addEventListener('click', () => {
+                playTone(523.25, 0.1, 'triangle', 0.2);
+                playTone(659.25, 0.15, 'triangle', 0.2, 0.1);
+                resetGame();
+            });
+
+            window.addEventListener('resize', () => {
+                resizeCanvas();
+                const swimTop = canvas.height * 0.52;
+                const swimBottom = canvas.height * 0.9;
+                fishes.forEach(f => {
+                    if (f.y < swimTop) f.y = swimTop;
+                    if (f.y > swimBottom) f.y = swimBottom;
+                });
+            });
+        }
+
+        function init() {
+            resizeCanvas();
+            setupEvents();
+            updateAlbumUI();
+            startNewRound();
+            hookX = canvas.width / 2;
+            hookY = canvas.height / 2;
+            mouseX = hookX;
+            mouseY = hookY;
+
+            let lastTimestamp = 0;
+            function gameLoop(timestamp) {
+                const deltaTime = timestamp - lastTimestamp;
+                lastTimestamp = timestamp;
+                update(deltaTime);
+                draw();
+                animationFrame = requestAnimationFrame(gameLoop);
+            }
+            animationFrame = requestAnimationFrame(gameLoop);
+        }
+
+        init();
+    })();
+</script>
+</body>
+</html>

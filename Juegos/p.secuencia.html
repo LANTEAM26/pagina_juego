@@ -3,2314 +3,1080 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Adivina la Secuencia</title>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Baloo+2:wght@600;700;800&family=Chewy&display=swap" rel="stylesheet">
+
 <style>
-
-/* =========================================================
-   COLORES
-========================================================= */
-
 :root{
-    --morado:#7666e9;
-    --moradoOscuro:#5746c9;
-
-    --azul:#69b7ef;
-    --verde:#67c987;
-    --amarillo:#f6bd55;
-    --rosa:#ef83a8;
-
-    --texto:#35405f;
-    --textoSuave:#858ca5;
-
-    --fondo:#f6f7ff;
-    --blanco:#ffffff;
-
-    --sombra:
-        0 12px 30px rgba(63,70,120,.12);
+    --morado:#8b7bf2;
+    --moradoOscuro:#6553dc;
+    --texto:#2d2d5a;
+    --textoSuave:#8b8ba7;
 }
 
-
-/* =========================================================
-   RESET
-========================================================= */
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
 
 body{
-
-    min-height:100vh;
-
-    font-family:
-        "Trebuchet MS",
-        "Segoe UI",
-        sans-serif;
-
+    font-family:"Fredoka","Baloo 2",system-ui,sans-serif;
+    font-weight:500;
     color:var(--texto);
-
-    background:
-        radial-gradient(
-            circle at 10% 10%,
-            #eeeaff 0,
-            transparent 25%
-        ),
-
-        radial-gradient(
-            circle at 90% 90%,
-            #fff1d8 0,
-            transparent 25%
-        ),
-
-        var(--fondo);
-
+    background:linear-gradient(180deg,#eaf2ff 0%,#f4eaff 50%,#fff0f6 100%);
+    overflow:hidden;
+    position:relative;
 }
 
+h1,h2,h3{font-family:"Fredoka","Baloo 2",sans-serif;font-weight:700;}
 
-/* =========================================================
-   DECORACIONES DEL FONDO
-========================================================= */
-
-.bg-shape{
-    position:fixed;
-    z-index:-1;
-
-    border-radius:50%;
-
-    opacity:.35;
+/* FONDO DECORATIVO SUAVE */
+.bg-deco{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+.bg-deco::before,
+.bg-deco::after{
+    content:"";position:absolute;border-radius:50%;
+    filter:blur(60px);opacity:.55;
+}
+.bg-deco::before{
+    width:500px;height:500px;
+    background:radial-gradient(circle,#d6b8ff,transparent 70%);
+    top:-200px;left:-150px;
+}
+.bg-deco::after{
+    width:520px;height:520px;
+    background:radial-gradient(circle,#ffe4b5,transparent 70%);
+    bottom:-200px;right:-150px;
 }
 
-.bg-one{
-
-    width:250px;
-    height:250px;
-
-    background:#d9d2ff;
-
-    top:-100px;
-    left:-80px;
-}
-
-.bg-two{
-
-    width:300px;
-    height:300px;
-
-    background:#ffe5ae;
-
-    bottom:-150px;
-    right:-120px;
-}
-
-
-/* =========================================================
-   CONTENEDOR
-========================================================= */
-
+/* LAYOUT */
 .app{
-
-    width:min(1200px,94%);
+    width:min(1240px,96%);
+    height:100vh;
     margin:auto;
-
-    padding:
-        24px
-        0
-        45px;
-
+    padding:20px 0;
+    display:flex;
+    flex-direction:column;
+    position:relative;
+    z-index:1;
+    overflow:hidden;
 }
-
 
 /* =========================================================
    CABECERA
 ========================================================= */
-
 .topbar{
-
-    min-height:78px;
-
-    background:
-        rgba(255,255,255,.94);
-
-    border:
-        1px solid
-        rgba(255,255,255,.9);
-
-    border-radius:24px;
-
-    padding:
-        13px
-        20px;
-
-    display:flex;
-
-    justify-content:
-        space-between;
-
-    align-items:center;
-
-    gap:20px;
-
-    box-shadow:
-        0 10px 35px
-        rgba(56,63,110,.10);
-
-    margin-bottom:35px;
-
+    flex:0 0 auto;
+    display:flex;justify-content:space-between;align-items:center;
+    gap:16px;
+    margin-bottom:8px;
 }
 
-
-.brand{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:13px;
-
-}
-
-
-/* LOGO */
-
+.brand{display:flex;align-items:center;gap:12px;}
 .logo{
-
-    width:51px;
-    height:51px;
-
-    border-radius:16px;
-
-    display:grid;
-    place-items:center;
-
-    background:
-        linear-gradient(
-            145deg,
-            #8b7bf2,
-            #6553dc
-        );
-
-    color:white;
-
-    font-size:26px;
-    font-weight:900;
-
-    box-shadow:
-        0 7px 15px
-        rgba(103,88,231,.28);
-
+    width:44px;height:44px;border-radius:12px;display:grid;place-items:center;
+    background:linear-gradient(145deg,#8b7bf2,#6553dc);
+    color:white;font-size:22px;font-weight:800;
+    box-shadow:0 4px 10px rgba(101,83,220,.35);
+    font-family:"Chewy",sans-serif;
 }
+.brand h1{font-size:17px;font-weight:700;color:var(--texto);}
+.brand p{margin-top:1px;font-size:11px;color:var(--textoSuave);}
 
-
-.brand h1{
-
-    font-size:20px;
-    font-weight:900;
-
-}
-
-
-.brand p{
-
-    margin-top:3px;
-
-    font-size:12px;
-
-    color:#9298ab;
-
-}
-
-
-/* PUNTOS */
+.top-right{display:flex;align-items:center;gap:10px;}
 
 .points{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:9px;
-
-    background:#fff8df;
-
-    border:
-        2px solid
-        #ffe59a;
-
-    color:#a17410;
-
-    padding:
-        9px
-        16px;
-
-    border-radius:16px;
-
-    font-size:14px;
-    font-weight:900;
-
+    display:flex;align-items:center;gap:8px;
+    background:#fff8e5;
+    border:2px solid #ffe0a3;
+    color:#c47b1a;
+    padding:8px 16px;border-radius:14px;
+    font-size:14px;font-weight:700;
 }
-
-
+.points.bump{animation:bump .4s;}
+@keyframes bump{50%{transform:scale(1.12);}}
 .star{
-
-    width:28px;
-    height:28px;
-
-    border-radius:50%;
-
-    display:grid;
-    place-items:center;
-
-    background:#ffc943;
-
-    color:white;
-
+    width:24px;height:24px;border-radius:50%;display:grid;place-items:center;
+    background:linear-gradient(145deg,#ffd54f,#ffaa00);color:white;font-size:14px;
 }
 
+.sound-btn{
+    width:44px;height:44px;border-radius:12px;
+    border:2px solid #e7e9f2;
+    background:white;cursor:pointer;display:grid;place-items:center;
+    font-size:19px;transition:.15s;
+    box-shadow:0 3px 0 #dfe2ec;
+}
+.sound-btn:hover{transform:translateY(-2px);box-shadow:0 5px 0 #dfe2ec;}
+.sound-btn:active{transform:translateY(2px);box-shadow:0 1px 0 #dfe2ec;}
+.sound-btn.muted{background:#f1f2f8;color:#b6b9c9;}
 
 /* =========================================================
-   PRESENTACIÓN
+   PORTADA (estructura idéntica a tu captura)
 ========================================================= */
+#topicScreen{
+    flex:1;
+    display:flex;flex-direction:column;
+    min-height:0;
+    align-items:center;
+    padding-top:14px;
+}
 
 .hero{
-
     text-align:center;
-
-    margin:
-        15px auto
-        37px;
-
+    flex:0 0 auto;
+    margin-bottom:26px;
 }
-
 
 .small-title{
-
     display:inline-block;
-
-    background:#ebe8ff;
-
-    color:#6655d6;
-
+    background:#e0d9ff;
+    color:#6553dc;
     border-radius:50px;
-
-    padding:
-        7px 16px;
-
+    padding:6px 18px;
     font-size:11px;
-
-    font-weight:900;
-
-    letter-spacing:1.5px;
-
-    margin-bottom:15px;
-
+    font-weight:700;
+    letter-spacing:2px;
+    margin-bottom:14px;
 }
-
 
 .hero h2{
-
-    font-size:
-        clamp(
-            31px,
-            5vw,
-            48px
-        );
-
-    line-height:1.1;
-
-    font-weight:900;
-
-    margin-bottom:13px;
-
+    font-size:clamp(34px,5.5vw,64px);
+    line-height:1.05;
+    font-weight:800;
+    color:var(--texto);
+    margin-bottom:14px;
+    letter-spacing:-.5px;
 }
-
-
-.hero h2 span{
-
-    color:var(--morado);
-
-}
-
+.hero h2 span{color:var(--moradoOscuro);}
 
 .hero p{
-
-    width:min(
-        620px,
-        90%
-    );
-
+    width:min(620px,90%);
     margin:auto;
-
     font-size:15px;
-
-    line-height:1.7;
-
-    color:
-        var(--textoSuave);
-
+    line-height:1.5;
+    color:var(--textoSuave);
+    font-weight:500;
 }
-
-
-/* =========================================================
-   TÍTULO CATEGORÍAS
-========================================================= */
 
 .categories-title{
-
     display:flex;
-
     align-items:center;
-
-    gap:14px;
-
+    gap:16px;
+    width:100%;
+    max-width:1100px;
     margin-bottom:20px;
-
+    flex:0 0 auto;
 }
-
-
 .categories-title h3{
-
     white-space:nowrap;
-
-    font-size:14px;
-
-    font-weight:900;
-
-    color:#737b94;
-
+    font-size:13px;
+    font-weight:800;
+    color:#8b8ba7;
+    letter-spacing:1.5px;
 }
-
-
 .categories-title::before,
 .categories-title::after{
-
-    content:"";
-
-    flex:1;
-
-    height:1px;
-
-    background:#e4e6ef;
-
+    content:"";flex:1;height:1px;background:#d8dae6;
 }
 
-
-/* =========================================================
-   TARJETAS
-========================================================= */
-
+/* TARJETAS */
 .topic-grid{
-
+    flex:1;
     display:grid;
-
-    grid-template-columns:
-        repeat(5,1fr);
-
+    grid-template-columns:repeat(5,1fr);
     gap:18px;
-
+    width:100%;
+    max-width:1100px;
+    min-height:0;
+    max-height:520px;
+    margin:0 auto;
 }
-
-
-/* TARJETA COMPLETA */
 
 .topic-card{
-
-    position:relative;
-
-    min-width:0;
-
     background:white;
-
-    border:
-        2px solid
-        rgba(255,255,255,.9);
-
-    border-radius:27px;
-
-    padding:10px;
-
+    border-radius:26px;
+    padding:12px;
     cursor:pointer;
-
     overflow:hidden;
-
-    box-shadow:
-        0 9px 25px
-        rgba(51,59,105,.09);
-
-    transition:
-        transform .25s ease,
-        box-shadow .25s ease;
-
+    display:flex;flex-direction:column;
+    box-shadow:0 12px 28px rgba(120,90,200,.13);
+    transition:transform .25s ease,box-shadow .25s ease;
+    animation:cardIn .5s backwards;
+    min-height:0;
 }
-
+.topic-card:nth-child(1){animation-delay:.05s;}
+.topic-card:nth-child(2){animation-delay:.1s;}
+.topic-card:nth-child(3){animation-delay:.15s;}
+.topic-card:nth-child(4){animation-delay:.2s;}
+.topic-card:nth-child(5){animation-delay:.25s;}
+@keyframes cardIn{from{opacity:0;transform:translateY(20px);}}
 
 .topic-card:hover{
-
-    transform:
-        translateY(-9px);
-
-    box-shadow:
-        0 18px 35px
-        rgba(50,58,110,.16);
-
+    transform:translateY(-8px);
+    box-shadow:0 22px 40px rgba(120,90,200,.2);
 }
-
-
-/* =========================================================
-   IMAGEN GRANDE DE LA TARJETA
-========================================================= */
+.topic-card:focus-visible{outline:3px solid var(--morado);outline-offset:4px;}
 
 .topic-image{
-
     position:relative;
-
-    width:100%;
-
-    height:205px;
-
+    width:100%;flex:1;
+    min-height:0;
     overflow:hidden;
-
-    border-radius:20px;
-
-    background:#eee;
-
+    border-radius:18px;
+    background:#f5f0ff;
 }
-
-
-/* LA IMAGEN REAL */
-
 .topic-image img{
-
-    width:100%;
-    height:100%;
-
-    object-fit:cover;
-
-    display:block;
-
-    transition:
-        transform .35s ease;
-
+    width:100%;height:100%;
+    object-fit:cover;display:block;
+    transition:transform .35s ease;
 }
-
-
-.topic-card:hover
-.topic-image img{
-
-    transform:
-        scale(1.07);
-
-}
-
-
-/* DEGRADADO ABAJO DE IMAGEN */
-
-.topic-image::after{
-
-    content:"";
-
-    position:absolute;
-
-    left:0;
-    right:0;
-    bottom:0;
-
-    height:55%;
-
-    background:
-        linear-gradient(
-            transparent,
-            rgba(0,0,0,.15)
-        );
-
-    pointer-events:none;
-
-}
-
-
-/* =========================================================
-   ETIQUETA SOBRE LA FOTO
-========================================================= */
+.topic-card:hover .topic-image img{transform:scale(1.06);}
 
 .image-label{
-
     position:absolute;
-
-    z-index:3;
-
-    left:13px;
-    bottom:12px;
-
-    padding:
-        6px
-        11px;
-
+    left:10px;bottom:10px;
+    padding:5px 12px;
     border-radius:10px;
-
     color:white;
-
-    font-size:11px;
-
-    font-weight:900;
-
-    letter-spacing:.8px;
-
-    backdrop-filter:
-        blur(8px);
-
-    background:
-        rgba(38,42,69,.55);
-
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:1px;
+    background:rgba(45,45,90,.75);
+    backdrop-filter:blur(6px);
 }
-
-
-/* =========================================================
-   CONTENIDO TARJETA
-========================================================= */
 
 .topic-content{
-
-    padding:
-        14px
-        7px
-        7px;
-
+    flex:0 0 auto;
+    padding:14px 6px 4px;
 }
-
-
 .topic-content h3{
-
-    font-size:19px;
-
-    font-weight:900;
-
+    font-size:20px;
+    font-weight:800;
     margin-bottom:6px;
-
+    color:var(--texto);
 }
-
-
 .topic-content p{
-
-    font-size:12px;
-
+    font-size:12.5px;
     line-height:1.45;
-
-    color:#9299ac;
-
+    color:var(--textoSuave);
     min-height:36px;
-
+    font-weight:500;
 }
-
-
-/* =========================================================
-   BOTÓN DE LA TARJETA
-========================================================= */
 
 .card-play{
-
-    margin-top:13px;
-
-    min-height:39px;
-
-    border-radius:13px;
-
+    margin-top:14px;
+    min-height:38px;
+    border-radius:12px;
     display:flex;
-
     align-items:center;
-
-    justify-content:
-        space-between;
-
-    padding:
-        0
-        8px
-        0
-        12px;
-
-    font-size:12px;
-
-    font-weight:900;
-
+    justify-content:space-between;
+    padding:0 8px 0 14px;
+    font-size:13px;
+    font-weight:800;
+    color:var(--moradoOscuro);
+    background:#f0ebff;
+    transition:background .2s;
 }
-
+.topic-card:hover .card-play{background:#e3dbff;}
 
 .card-play span:last-child{
-
-    width:29px;
-    height:29px;
-
-    border-radius:9px;
-
-    display:grid;
-    place-items:center;
-
+    width:26px;height:26px;
+    border-radius:8px;
+    display:grid;place-items:center;
     background:white;
-
-    box-shadow:
-        0 3px 8px
-        rgba(0,0,0,.08);
-
+    font-size:13px;
+    color:var(--moradoOscuro);
+    box-shadow:0 2px 6px rgba(0,0,0,.08);
 }
 
-
-/* COLORES DIFERENTES */
-
-.animales .card-play{
-
-    background:#fff1dc;
-    color:#cb7624;
-
-}
-
-
-.numeros .card-play{
-
-    background:#e6f3ff;
-    color:#4084c0;
-
-}
-
-
-.formas .card-play{
-
-    background:#eeebff;
-    color:#6553d2;
-
-}
-
-
-.naturaleza .card-play{
-
-    background:#e7f7e9;
-    color:#41905a;
-
-}
-
-
-.colores .card-play{
-
-    background:#ffe9f0;
-    color:#c9577e;
-
-}
-
+/* Colores específicos por categoría en la etiqueta y botón */
+.animales .image-label{background:#f59e0b;}
+.animales .card-play{background:#fff1dc;color:#a35a10;}
+.numeros .image-label{background:#38bdf8;}
+.numeros .card-play{background:#e6f3ff;color:#1565a8;}
+.formas .image-label{background:#8b7bf2;}
+.formas .card-play{background:#eeebff;color:#4a3bb8;}
+.naturaleza .image-label{background:#22c55e;}
+.naturaleza .card-play{background:#e7f7e9;color:#1f8a4d;}
+.colores .image-label{background:#ec4899;}
+.colores .card-play{background:#ffe9f0;color:#a8124a;}
 
 /* =========================================================
-   JUEGO
+   PANTALLA JUEGO
 ========================================================= */
-
 #gameScreen{
-
     display:none;
-
-}
-
-
-.game-wrapper{
-
-    max-width:980px;
-
-    margin:auto;
-
-}
-
-
-/* =========================================================
-   BARRA PROGRESO
-========================================================= */
-
-.progress-panel{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:20px;
-
-    background:white;
-
-    border-radius:20px;
-
-    padding:
-        14px
-        20px;
-
-    box-shadow:var(--sombra);
-
-    margin-bottom:18px;
-
-}
-
-
-.progress-info{
-
-    min-width:115px;
-
-}
-
-
-.progress-info small{
-
-    display:block;
-
-    font-size:10px;
-
-    color:#999fb1;
-
-    font-weight:900;
-
-    letter-spacing:1px;
-
-}
-
-
-.progress-info strong{
-
-    display:block;
-
-    margin-top:3px;
-
-    font-size:16px;
-
-}
-
-
-.progress-track{
-
-    height:12px;
-
     flex:1;
-
-    background:#eceef6;
-
-    border-radius:20px;
-
-    overflow:hidden;
-
+    flex-direction:column;
+    gap:12px;
+    min-height:0;
 }
+#gameScreen.active{display:flex;}
 
-
+.game-top{
+    flex:0 0 auto;
+    display:flex;align-items:center;gap:16px;
+    background:white;
+    border-radius:16px;
+    padding:10px 18px;
+    box-shadow:0 8px 20px rgba(120,90,200,.12);
+}
+.progress-info{min-width:120px;}
+.progress-info small{
+    display:block;font-size:10px;
+    color:var(--textoSuave);font-weight:700;letter-spacing:1px;
+}
+.progress-info strong{
+    display:block;margin-top:1px;
+    font-size:15px;font-weight:800;color:var(--moradoOscuro);
+}
+.progress-track{
+    flex:1;height:14px;background:#eef0f8;border-radius:20px;overflow:hidden;
+}
 .progress-bar{
-
-    height:100%;
-
-    width:20%;
-
-    background:
-        linear-gradient(
-            90deg,
-            #7666e9,
-            #9a8cf4
-        );
-
+    height:100%;width:20%;
+    background:linear-gradient(90deg,#a795ff,#6553dc);
     border-radius:20px;
-
-    transition:
-        width .4s;
-
+    transition:width .5s cubic-bezier(.34,1.56,.64,1);
 }
-
-
-/* =========================================================
-   PANEL DEL EJERCICIO
-========================================================= */
 
 .game-panel{
-
-    position:relative;
-
+    flex:1;min-height:0;
     background:white;
-
-    border-radius:30px;
-
-    padding:
-        35px
-        30px
-        30px;
-
-    box-shadow:
-        0 18px 45px
-        rgba(47,54,105,.12);
-
+    border-radius:26px;
+    padding:18px 22px 16px;
+    box-shadow:0 10px 30px rgba(120,90,200,.14);
+    display:flex;flex-direction:column;gap:10px;
+    overflow:hidden;
 }
-
 
 .topic-name{
-
-    text-align:center;
-
-    color:var(--morado);
-
-    font-size:11px;
-
-    font-weight:900;
-
-    letter-spacing:1.5px;
-
-    margin-bottom:7px;
-
+    align-self:center;
+    color:var(--moradoOscuro);
+    font-size:11px;font-weight:800;
+    letter-spacing:2px;
+    background:#f0ebff;
+    padding:4px 14px;border-radius:20px;
 }
-
 
 .game-panel h2{
-
     text-align:center;
-
-    font-size:
-        clamp(
-            22px,
-            4vw,
-            30px
-        );
-
-    font-weight:900;
-
+    font-size:clamp(19px,2.3vw,26px);
+    font-weight:800;color:var(--texto);
+    line-height:1.2;
 }
-
-
-.instructions{
-
-    text-align:center;
-
-    color:#959bae;
-
-    font-size:13px;
-
-    margin-top:7px;
-
-    margin-bottom:30px;
-
-}
-
-
-/* =========================================================
-   CARTAS DE LA SECUENCIA
-========================================================= */
 
 .sequence{
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    flex-wrap:wrap;
-
-    gap:12px;
-
-    margin-bottom:36px;
-
+    display:flex;align-items:center;justify-content:center;
+    flex-wrap:nowrap;gap:12px;padding:6px 0;min-height:0;
 }
-
 
 .sequence-card{
-
-    width:115px;
-    height:125px;
-
-    position:relative;
-
-    border-radius:22px;
-
-    border:
-        3px solid
-        #edf0f6;
-
-    background:#fff;
-
-    overflow:hidden;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    box-shadow:
-        0 7px 15px
-        rgba(50,60,110,.08);
-
+    width:92px;height:104px;
+    position:relative;border-radius:18px;
+    border:3px solid #eae4ff;
+    background:white;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 6px 14px rgba(120,90,200,.1);
+    animation:seqIn .45s backwards;
+    flex:0 0 auto;
 }
+.sequence-card:nth-child(1){animation-delay:.05s;}
+.sequence-card:nth-child(2){animation-delay:.1s;}
+.sequence-card:nth-child(3){animation-delay:.15s;}
+.sequence-card:nth-child(4){animation-delay:.2s;}
+.sequence-card:nth-child(5){animation-delay:.25s;}
+.sequence-card:nth-child(6){animation-delay:.3s;}
+.sequence-card:nth-child(7){animation-delay:.35s;}
+.sequence-card:nth-child(8){animation-delay:.4s;}
+@keyframes seqIn{from{opacity:0;transform:scale(.7) translateY(15px);}}
 
-
-.sequence-card img{
-
-    width:100%;
-    height:100%;
-
-    object-fit:contain;
-
-    padding:8px;
-
-}
-
-
-/* PARA NÚMEROS Y TEXTO */
-
+.sequence-card img{width:100%;height:100%;object-fit:contain;padding:6px;}
 .sequence-text{
-
-    font-size:34px;
-
-    font-weight:900;
-
-    color:#435073;
-
+    font-size:34px;font-weight:800;color:#4a3bb8;
+    font-family:"Baloo 2",sans-serif;
 }
-
-
-/* CASILLA ? */
 
 .sequence-card.blank{
-
-    background:
-        repeating-linear-gradient(
-            -45deg,
-            #faf9ff,
-            #faf9ff 8px,
-            #f4f1ff 8px,
-            #f4f1ff 16px
-        );
-
-    border:
-        3px dashed
-        #a69af0;
-
-    color:#7565df;
-
-    font-size:38px;
-
-    font-weight:900;
-
+    background:repeating-linear-gradient(-45deg,#faf7ff,#faf7ff 9px,#f0e9ff 9px,#f0e9ff 18px);
+    border:3px dashed #a594d9;
+    color:#6553dc;font-size:38px;font-weight:800;
+    animation:blankPulse 1.8s ease-in-out infinite;
+    font-family:"Baloo 2",sans-serif;
 }
-
-
-/* =========================================================
-   OPCIONES
-========================================================= */
+@keyframes blankPulse{
+    50%{border-color:#6553dc;box-shadow:0 6px 14px rgba(120,90,200,.1),0 0 25px rgba(139,123,242,.4);transform:scale(1.03);}
+}
 
 .options-title{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:14px;
-
-    margin-bottom:18px;
-
-    font-size:11px;
-
-    color:#999fb1;
-
-    font-weight:900;
-
-    letter-spacing:1px;
-
+    display:flex;align-items:center;gap:12px;
+    font-size:11px;color:#a58ec9;font-weight:800;letter-spacing:1.5px;
+    flex:0 0 auto;
+}
+.options-title::before,.options-title::after{
+    content:"";flex:1;height:1px;background:#e5d6ff;
 }
 
-
-.options-title::before,
-.options-title::after{
-
-    content:"";
-
-    flex:1;
-
-    height:1px;
-
-    background:#ebedf3;
-
-}
-
-
-.options{
-
-    display:flex;
-
-    justify-content:center;
-
-    flex-wrap:wrap;
-
-    gap:15px;
-
-}
-
-
-/* CARTA RESPUESTA */
+.options{display:flex;justify-content:center;flex-wrap:nowrap;gap:16px;flex:0 0 auto;}
 
 .option-card{
-
-    width:135px;
-    height:135px;
-
-    position:relative;
-
-    overflow:hidden;
-
-    border-radius:23px;
-
+    width:104px;height:104px;
+    position:relative;overflow:hidden;border-radius:20px;
     background:white;
-
-    border:
-        3px solid
-        #edf0f6;
-
+    border:3px solid #eae4ff;
     cursor:pointer;
-
-    display:grid;
-
-    place-items:center;
-
-    box-shadow:
-        0 7px 0 #e4e7ef,
-        0 12px 18px
-        rgba(48,57,105,.07);
-
-    transition:.2s;
-
+    display:grid;place-items:center;
+    box-shadow:0 6px 14px rgba(120,90,200,.1);
+    transition:transform .15s,box-shadow .15s,border-color .2s;
+    animation:optIn .4s backwards;
+    font-family:inherit;
+    flex:0 0 auto;
 }
+.option-card:nth-child(1){animation-delay:.3s;}
+.option-card:nth-child(2){animation-delay:.38s;}
+.option-card:nth-child(3){animation-delay:.46s;}
+.option-card:nth-child(4){animation-delay:.54s;}
+@keyframes optIn{from{opacity:0;transform:translateY(15px) scale(.9);}}
 
-
-.option-card img{
-
-    width:100%;
-    height:100%;
-
-    object-fit:contain;
-
-    padding:8px;
-
-    pointer-events:none;
-
-}
-
-
+.option-card img{width:100%;height:100%;object-fit:contain;padding:8px;pointer-events:none;}
 .option-card span{
-
-    font-size:34px;
-
-    font-weight:900;
-
-    pointer-events:none;
-
+    font-size:36px;font-weight:800;pointer-events:none;
+    font-family:"Baloo 2",sans-serif;color:#4a3bb8;
 }
-
 
 .option-card:hover:not(:disabled){
-
-    transform:
-        translateY(-6px)
-        scale(1.03);
-
-    border-color:#aca2ef;
-
+    transform:translateY(-5px);
+    border-color:#c4b5ff;
+    box-shadow:0 12px 22px rgba(120,90,200,.18);
 }
-
+.option-card:active:not(:disabled){transform:translateY(-1px);}
+.option-card:focus-visible{outline:3px solid var(--morado);outline-offset:3px;}
 
 .option-card.correct{
-
-    border-color:#52cc99;
-
-    background:#e8fbf3;
-
-    box-shadow:
-        0 7px 0 #bcead7;
-
-    animation:pop .45s;
-
+    border-color:#5fd68a;background:#e8fbf1;
+    box-shadow:0 6px 0 #2eb86a,0 12px 20px rgba(60,200,120,.3);
+    animation:pop .5s;
 }
-
-
+.option-card.correct::after{
+    content:"✔";position:absolute;top:6px;right:8px;color:#1f8a4d;
+    font-size:20px;font-weight:900;
+}
 .option-card.wrong{
-
-    border-color:#ff8c8c;
-
-    background:#fff0f0;
-
-    box-shadow:
-        0 7px 0 #ffd0d0;
-
-    animation:shake .4s;
-
+    border-color:#ff8c8c;background:#fff0f0;
+    box-shadow:0 6px 0 #d84444,0 12px 20px rgba(220,80,80,.3);
+    animation:shake .5s;
+}
+.option-card.wrong::after{
+    content:"✖";position:absolute;top:6px;right:8px;color:#c43838;
+    font-size:20px;font-weight:900;
 }
 
-
-@keyframes pop{
-
-    50%{
-        transform:
-            scale(1.12);
-    }
-
-}
-
-
+@keyframes pop{50%{transform:scale(1.12);}}
 @keyframes shake{
-
-    25%{
-        transform:
-            translateX(-7px);
-    }
-
-    50%{
-        transform:
-            translateX(7px);
-    }
-
-    75%{
-        transform:
-            translateX(-5px);
-    }
-
+    20%{transform:translateX(-9px);}
+    40%{transform:translateX(9px);}
+    60%{transform:translateX(-6px);}
+    80%{transform:translateX(6px);}
 }
-
-
-/* =========================================================
-   MENSAJE
-========================================================= */
 
 .feedback{
-
-    display:none;
-
-    max-width:500px;
-
-    margin:
-        25px auto
-        0;
-
-    padding:
-        13px 18px;
-
-    border-radius:14px;
-
-    text-align:center;
-
-    font-weight:900;
-
-    font-size:14px;
-
+    display:none;max-width:520px;margin:0 auto;
+    padding:12px 20px;border-radius:14px;
+    text-align:center;font-weight:700;font-size:14px;
+    flex:0 0 auto;
 }
-
-
 .feedback.correct-message{
-
-    display:block;
-
-    background:#e4f8ef;
-
-    color:#25805d;
-
-    border:
-        2px solid
-        #bcebd8;
-
+    display:block;background:#e4f8ef;color:#1f8a4d;
+    border:2px solid #b6e6cf;
+    animation:slideUp .4s;
 }
-
-
 .feedback.wrong-message{
-
-    display:block;
-
-    background:#fff0f0;
-
-    color:#bd5151;
-
-    border:
-        2px solid
-        #ffd1d1;
-
+    display:block;background:#fff0f0;color:#bd4141;
+    border:2px solid #ffd1d1;
+    animation:slideUp .4s;
 }
-
-
-/* =========================================================
-   BOTONES
-========================================================= */
+@keyframes slideUp{from{opacity:0;transform:translateY(10px);}}
 
 .actions{
-
-    display:flex;
-
-    justify-content:
-        space-between;
-
-    gap:15px;
-
-    align-items:center;
-
-    margin-top:28px;
-
-    padding-top:22px;
-
-    border-top:
-        1px solid
-        #eceef4;
-
+    display:flex;justify-content:space-between;gap:12px;align-items:center;
+    margin-top:auto;padding-top:12px;
+    border-top:1px solid #eae4ff;
+    flex:0 0 auto;
 }
-
 
 .btn{
-
-    border:0;
-
-    border-radius:14px;
-
-    padding:
-        13px
-        20px;
-
-    cursor:pointer;
-
-    font-weight:900;
-
-    transition:.2s;
-
+    border:0;border-radius:14px;padding:12px 22px;
+    cursor:pointer;font-weight:700;font-family:inherit;font-size:14px;
+    transition:transform .15s,box-shadow .15s;
 }
-
-
-.btn-back{
-
-    background:#f0f2f7;
-
-    color:#747b90;
-
-}
-
-
+.btn-back{background:#f0f2f7;color:#747b90;box-shadow:0 4px 0 #dfe2ec;}
 .btn-next{
-
-    background:
-        linear-gradient(
-            135deg,
-            #7969ec,
-            #5848cd
-        );
-
-    color:white;
-
-    box-shadow:
-        0 6px 15px
-        rgba(101,83,210,.25);
-
+    background:linear-gradient(135deg,#a795ff,#6553dc);color:white;
+    box-shadow:0 4px 0 #4a3bb8;
 }
+.btn:hover{transform:translateY(-2px);}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.2);}
 
-
-.btn:hover{
-
-    transform:
-        translateY(-2px);
-
-}
-
-
-/* =========================================================
-   FINAL
-========================================================= */
-
-#endScreen{
-
-    display:none;
-
-}
-
+/* FINAL */
+#endScreen{display:none;flex:1;align-items:center;justify-content:center;min-height:0;}
+#endScreen.active{display:flex;}
 
 .end-card{
-
-    max-width:620px;
-
-    margin:
-        50px auto;
-
-    padding:
-        50px
-        30px;
-
-    background:white;
-
+    max-width:560px;width:100%;
+    padding:38px 30px;background:white;
     border-radius:30px;
-
-    box-shadow:
-        var(--sombra);
-
+    box-shadow:0 18px 50px rgba(120,90,200,.2);
     text-align:center;
+    animation:endIn .5s cubic-bezier(.34,1.56,.64,1) backwards;
+}
+@keyframes endIn{from{opacity:0;transform:scale(.9);}}
 
+.trophy{
+    font-size:64px;display:inline-block;
+    animation:trophyBounce 1.6s ease-in-out infinite;
+}
+@keyframes trophyBounce{
+    0%,100%{transform:translateY(0) rotate(-5deg);}
+    50%{transform:translateY(-10px) rotate(5deg);}
 }
 
+.end-card h2{font-size:28px;margin:6px 0;color:var(--moradoOscuro);}
+.end-card > p{color:var(--textoSuave);font-size:15px;}
 
-.end-star{
-
-    width:90px;
-    height:90px;
-
-    margin:
-        auto
-        auto
-        20px;
-
-    border-radius:25px;
-
-    display:grid;
-    place-items:center;
-
-    background:#fff2c7;
-
-    color:#dfa200;
-
-    font-size:40px;
-
-    transform:
-        rotate(-6deg);
-
+.stars-result{
+    display:flex;justify-content:center;gap:12px;margin:18px 0;font-size:48px;
+}
+.stars-result span{
+    opacity:.2;transition:.35s cubic-bezier(.34,1.56,.64,1);
+    filter:grayscale(1);
+}
+.stars-result span.on{
+    opacity:1;color:#ffc943;filter:none;
+    text-shadow:0 0 20px rgba(255,201,67,.9);
+    animation:starPop .6s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes starPop{
+    0%{transform:scale(0) rotate(-180deg);}
+    60%{transform:scale(1.35) rotate(20deg);}
+    100%{transform:scale(1) rotate(0);}
 }
 
-
-.end-card h2{
-
-    font-size:32px;
-
-    margin-bottom:9px;
-
-}
-
-
-.end-card p{
-
-    color:#9198aa;
-
-}
-
-
-.results{
-
-    display:grid;
-
-    grid-template-columns:
-        repeat(2,1fr);
-
-    gap:14px;
-
-    margin:
-        28px
-        0;
-
-}
-
-
+.results{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:20px 0;}
 .result{
-
-    padding:20px;
-
-    border-radius:18px;
-
-    background:#f6f7fc;
-
+    padding:18px 14px;border-radius:18px;
+    background:#f7f4ff;
 }
-
-
 .result strong{
-
-    display:block;
-
-    color:var(--morado);
-
-    font-size:27px;
-
+    display:block;color:var(--moradoOscuro);font-size:30px;
+    font-family:"Baloo 2",sans-serif;font-weight:800;
 }
-
-
 .result span{
-
-    display:block;
-
-    margin-top:4px;
-
-    color:#9299ac;
-
-    font-size:11px;
-
-    font-weight:900;
-
+    display:block;margin-top:3px;color:var(--textoSuave);
+    font-size:10px;font-weight:800;letter-spacing:1px;
 }
 
+.end-actions{display:flex;flex-direction:column;gap:10px;align-items:center;margin-top:8px;}
+.end-actions .btn{min-width:230px;}
 
-/* =========================================================
-   RESPONSIVE
-========================================================= */
-
-@media(max-width:1000px){
-
-    .topic-grid{
-
-        grid-template-columns:
-            repeat(3,1fr);
-
-    }
-
+/* Estrellitas al acertar */
+.mini-star{
+    position:fixed;z-index:1000;pointer-events:none;font-size:20px;
+    animation:starBurst 0.9s ease-out forwards;
+}
+@keyframes starBurst{
+    0%{opacity:1;transform:translate(0,0) scale(.5);}
+    100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(1.4) rotate(540deg);}
 }
 
-
-@media(max-width:720px){
-
-    .app{
-
-        width:94%;
-
-    }
-
-
-    .topic-grid{
-
-        grid-template-columns:
-            repeat(2,1fr);
-
-    }
-
-
-    .topic-image{
-
-        height:170px;
-
-    }
-
-
-    .game-panel{
-
-        padding:
-            28px
-            14px;
-
-    }
-
-
-    .sequence-card{
-
-        width:76px;
-        height:86px;
-
-    }
-
-
-    .option-card{
-
-        width:95px;
-        height:95px;
-
-    }
-
+/* RESPONSIVE */
+@media(max-height:760px){
+    .app{padding:10px 0;}
+    .hero{margin-bottom:16px;}
+    .hero h2{font-size:clamp(28px,4vw,42px);}
+    .hero p{font-size:13px;}
+    .small-title{font-size:10px;padding:4px 14px;margin-bottom:8px;}
+    .categories-title{margin-bottom:12px;}
+    .categories-title h3{font-size:11px;}
+    .topic-grid{gap:14px;}
+    .topic-card{padding:9px;border-radius:22px;}
+    .topic-content{padding:10px 4px 2px;}
+    .topic-content h3{font-size:17px;margin-bottom:4px;}
+    .topic-content p{font-size:11px;min-height:30px;}
+    .card-play{min-height:34px;font-size:12px;margin-top:10px;}
+    .game-panel{padding:14px 18px 12px;gap:8px;}
+    .sequence-card{width:78px;height:88px;}
+    .sequence-text{font-size:28px;}
+    .sequence-card.blank{font-size:30px;}
+    .option-card{width:88px;height:88px;}
+    .option-card span{font-size:30px;}
+    .btn{padding:10px 18px;font-size:13px;}
 }
-
-
-@media(max-width:470px){
-
-    .brand p{
-
-        display:none;
-
-    }
-
-
-    .points{
-
-        padding:
-            7px
-            9px;
-
-        font-size:11px;
-
-    }
-
-
-    .topic-grid{
-
-        grid-template-columns:
-            repeat(2,1fr);
-
-        gap:10px;
-
-    }
-
-
-    .topic-card{
-
-        border-radius:20px;
-
-        padding:7px;
-
-    }
-
-
-    .topic-image{
-
-        height:135px;
-
-        border-radius:15px;
-
-    }
-
-
-    .topic-content{
-
-        padding:
-            10px
-            5px
-            5px;
-
-    }
-
-
-    .topic-content h3{
-
-        font-size:16px;
-
-    }
-
-
-    .topic-content p{
-
-        font-size:10px;
-
-    }
-
-
-    .actions{
-
-        flex-direction:column;
-
-    }
-
-
-    .btn{
-
-        width:100%;
-
-    }
-
-}
-
+@media(max-width:900px){.topic-grid{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:600px){.topic-grid{grid-template-columns:repeat(2,1fr);}.options,.sequence{flex-wrap:wrap;}}
 </style>
-
 </head>
 
 <body>
 
-
-<!-- DECORACIÓN -->
-
-<div class="bg-shape bg-one"></div>
-<div class="bg-shape bg-two"></div>
-
+<div class="bg-deco"></div>
 
 <div class="app">
 
-
-<!-- =====================================================
-     CABECERA
-===================================================== -->
-
+<!-- CABECERA -->
 <header class="topbar">
-
     <div class="brand">
-
-        <div class="logo">
-            S
-        </div>
-
+        <div class="logo">S</div>
         <div>
-
-            <h1>
-                Adivina la Secuencia
-            </h1>
-
-            <p>
-                Aprende patrones mientras juegas
-            </p>
-
+            <h1>Adivina la Secuencia</h1>
+            <p>Aprende patrones mientras juegas</p>
         </div>
-
     </div>
 
-
-    <div class="points">
-
-        <span class="star">
-            ★
-        </span>
-
-        <span id="scoreTop">
-            0 puntos
-        </span>
-
+    <div class="top-right">
+        <div class="points" id="pointsBox">
+            <span class="star">★</span>
+            <span id="scoreTop">0 puntos</span>
+        </div>
+        <button class="sound-btn" id="soundBtn" title="Sonido" aria-label="Sonido">🔊</button>
     </div>
-
 </header>
 
-
-
-<!-- =====================================================
-     PANTALLA CATEGORÍAS
-===================================================== -->
-
+<!-- PORTADA -->
 <section id="topicScreen">
 
-
-<div class="hero">
-
-    <div class="small-title">
-        JUEGO DE PATRONES
+    <div class="hero">
+        <div class="small-title">JUEGO DE PATRONES</div>
+        <h2>Observa, piensa y <span>completa</span></h2>
+        <p>Descubre qué elemento continúa cada patrón. Elige una categoría y supera los cinco desafíos.</p>
     </div>
 
-    <h2>
-
-        Observa, piensa y
-
-        <span>
-            completa
-        </span>
-
-    </h2>
-
-    <p>
-
-        Descubre qué elemento continúa cada patrón.
-        Elige una categoría y supera los cinco
-        desafíos.
-
-    </p>
-
-</div>
-
-
-<div class="categories-title">
-
-    <h3>
-        ELIGE UNA CATEGORÍA
-    </h3>
-
-</div>
-
-
-
-<div class="topic-grid">
-
-
-<!-- ================= ANIMALES ================= -->
-
-<article
-    class="topic-card animales"
-    data-topic="animales"
->
-
-    <div class="topic-image">
-
-        <!--
-        CAMBIA ESTA RUTA POR TU IMAGEN
-        -->
-
-        <img
-            src="../assets/img_p.secuencia/p.animales.png"
-            alt="Animales"
-        >
-
-        <div class="image-label">
-            ANIMALES
-        </div>
-
+    <div class="categories-title">
+        <h3>ELIGE UNA CATEGORÍA</h3>
     </div>
 
+    <div class="topic-grid">
 
-    <div class="topic-content">
+        <article class="topic-card animales" data-topic="animales" tabindex="0" role="button">
+            <div class="topic-image">
+                <img src="../assets/img_p.secuencia/p.animales.png" alt="Animales">
+                <div class="image-label">ANIMALES</div>
+            </div>
+            <div class="topic-content">
+                <h3>Animales</h3>
+                <p>Descubre patrones con simpáticos animales.</p>
+                <div class="card-play"><span>Comenzar</span><span>→</span></div>
+            </div>
+        </article>
 
-        <h3>
-            Animales
-        </h3>
+        <article class="topic-card numeros" data-topic="numeros" tabindex="0" role="button">
+            <div class="topic-image">
+                <img src="../assets/img_p.secuencia/p.numeros.png" alt="Números">
+                <div class="image-label">NÚMEROS</div>
+            </div>
+            <div class="topic-content">
+                <h3>Números</h3>
+                <p>Completa divertidas secuencias numéricas.</p>
+                <div class="card-play"><span>Comenzar</span><span>→</span></div>
+            </div>
+        </article>
 
-        <p>
-            Descubre patrones con
-            simpáticos animales.
-        </p>
+        <article class="topic-card formas" data-topic="formas" tabindex="0" role="button">
+            <div class="topic-image">
+                <img src="../assets/img_p.secuencia/p.formas.png" alt="Formas">
+                <div class="image-label">FORMAS</div>
+            </div>
+            <div class="topic-content">
+                <h3>Formas</h3>
+                <p>Reconoce figuras y descubre sus patrones.</p>
+                <div class="card-play"><span>Comenzar</span><span>→</span></div>
+            </div>
+        </article>
 
-        <div class="card-play">
+        <article class="topic-card naturaleza" data-topic="naturaleza" tabindex="0" role="button">
+            <div class="topic-image">
+                <img src="../assets/img_p.secuencia/p.naturaleza.png" alt="Naturaleza">
+                <div class="image-label">NATURALEZA</div>
+            </div>
+            <div class="topic-content">
+                <h3>Naturaleza</h3>
+                <p>Aprende con plantas, flores y naturaleza.</p>
+                <div class="card-play"><span>Comenzar</span><span>→</span></div>
+            </div>
+        </article>
 
-            <span>
-                Comenzar
-            </span>
-
-            <span>
-                →
-            </span>
-
-        </div>
-
-    </div>
-
-</article>
-
-
-
-<!-- ================= NÚMEROS ================= -->
-
-<article
-    class="topic-card numeros"
-    data-topic="numeros"
->
-
-    <div class="topic-image">
-
-        <img
-            src="../assets/img_p.secuencia/p.numeros.png"
-            alt="Números"
-        >
-
-        <div class="image-label">
-            NÚMEROS
-        </div>
-
-    </div>
-
-
-    <div class="topic-content">
-
-        <h3>
-            Números
-        </h3>
-
-        <p>
-            Completa divertidas
-            secuencias numéricas.
-        </p>
-
-        <div class="card-play">
-
-            <span>
-                Comenzar
-            </span>
-
-            <span>
-                →
-            </span>
-
-        </div>
+        <article class="topic-card colores" data-topic="colores" tabindex="0" role="button">
+            <div class="topic-image">
+                <img src="../assets/img_p.secuencia/p.colores.png" alt="Colores">
+                <div class="image-label">COLORES</div>
+            </div>
+            <div class="topic-content">
+                <h3>Colores</h3>
+                <p>Encuentra el color que continúa la secuencia.</p>
+                <div class="card-play"><span>Comenzar</span><span>→</span></div>
+            </div>
+        </article>
 
     </div>
-
-</article>
-
-
-
-<!-- ================= FORMAS ================= -->
-
-<article
-    class="topic-card formas"
-    data-topic="formas"
->
-
-    <div class="topic-image">
-
-        <img
-            src="../assets/img_p.secuencia/p.formas.png"
-            alt="Formas"
-        >
-
-        <div class="image-label">
-            FORMAS
-        </div>
-
-    </div>
-
-
-    <div class="topic-content">
-
-        <h3>
-            Formas
-        </h3>
-
-        <p>
-            Reconoce figuras y
-            descubre sus patrones.
-        </p>
-
-        <div class="card-play">
-
-            <span>
-                Comenzar
-            </span>
-
-            <span>
-                →
-            </span>
-
-        </div>
-
-    </div>
-
-</article>
-
-
-
-<!-- ================= NATURALEZA ================= -->
-
-<article
-    class="topic-card naturaleza"
-    data-topic="naturaleza"
->
-
-    <div class="topic-image">
-
-        <img
-            src="../assets/img_p.secuencia/p.naturaleza.png"
-            alt="Naturaleza"
-        >
-
-        <div class="image-label">
-            NATURALEZA
-        </div>
-
-    </div>
-
-
-    <div class="topic-content">
-
-        <h3>
-            Naturaleza
-        </h3>
-
-        <p>
-            Aprende con plantas,
-            flores y naturaleza.
-        </p>
-
-        <div class="card-play">
-
-            <span>
-                Comenzar
-            </span>
-
-            <span>
-                →
-            </span>
-
-        </div>
-
-    </div>
-
-</article>
-
-
-
-<!-- ================= COLORES ================= -->
-
-<article
-    class="topic-card colores"
-    data-topic="colores"
->
-
-    <div class="topic-image">
-
-        <img
-            src="../assets/img_p.secuencia/p.colores.png"
-            alt="Colores"
-        >
-
-        <div class="image-label">
-            COLORES
-        </div>
-
-    </div>
-
-
-    <div class="topic-content">
-
-        <h3>
-            Colores
-        </h3>
-
-        <p>
-            Encuentra el color que
-            continúa la secuencia.
-        </p>
-
-        <div class="card-play">
-
-            <span>
-                Comenzar
-            </span>
-
-            <span>
-                →
-            </span>
-
-        </div>
-
-    </div>
-
-</article>
-
-
-</div>
-
 </section>
 
-
-
-<!-- =====================================================
-     PANTALLA DEL JUEGO
-===================================================== -->
-
+<!-- JUEGO -->
 <section id="gameScreen">
 
-
-<div class="game-wrapper">
-
-
-<!-- PROGRESO -->
-
-<div class="progress-panel">
-
-    <div class="progress-info">
-
-        <small>
-            TU PROGRESO
-        </small>
-
-        <strong id="levelText">
-            Nivel 1 de 5
-        </strong>
-
+    <div class="game-top">
+        <div class="progress-info">
+            <small>TU PROGRESO</small>
+            <strong id="levelText">Nivel 1 de 5</strong>
+        </div>
+        <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
     </div>
 
+    <div class="game-panel">
+        <div class="topic-name" id="topicName">ANIMALES</div>
+        <h2>¿Qué elemento continúa el patrón?</h2>
 
-    <div class="progress-track">
+        <div class="sequence" id="sequence"></div>
 
-        <div
-            class="progress-bar"
-            id="progressBar"
-        ></div>
+        <div class="options-title">ELIGE TU RESPUESTA</div>
+        <div class="options" id="options"></div>
 
+        <div class="feedback" id="feedback"></div>
+
+        <div class="actions">
+            <button class="btn btn-back" id="backBtn">← Cambiar tema</button>
+            <button class="btn btn-next" id="nextBtn" style="display:none;">Siguiente →</button>
+        </div>
     </div>
-
-</div>
-
-
-
-<!-- PANEL -->
-
-<div class="game-panel">
-
-
-    <div
-        class="topic-name"
-        id="topicName"
-    >
-        ANIMALES
-    </div>
-
-
-    <h2>
-        ¿Qué elemento continúa el patrón?
-    </h2>
-
-
-    <p class="instructions">
-
-        Observa cuidadosamente las cartas
-        y selecciona la respuesta correcta.
-
-    </p>
-
-
-
-    <!-- SECUENCIA -->
-
-    <div
-        class="sequence"
-        id="sequence"
-    ></div>
-
-
-
-    <!-- OPCIONES -->
-
-    <div class="options-title">
-
-        ELIGE TU RESPUESTA
-
-    </div>
-
-
-    <div
-        class="options"
-        id="options"
-    ></div>
-
-
-
-    <!-- MENSAJE -->
-
-    <div
-        class="feedback"
-        id="feedback"
-    ></div>
-
-
-
-    <!-- BOTONES -->
-
-    <div class="actions">
-
-
-        <button
-            class="btn btn-back"
-            id="backBtn"
-        >
-            ← Cambiar tema
-        </button>
-
-
-        <button
-            class="btn btn-next"
-            id="nextBtn"
-            style="display:none;"
-        >
-            Siguiente →
-        </button>
-
-
-    </div>
-
-
-</div>
-
-</div>
-
 </section>
 
-
-
-<!-- =====================================================
-     FINAL
-===================================================== -->
-
+<!-- FINAL -->
 <section id="endScreen">
+    <div class="end-card">
+        <div class="trophy">🏆</div>
+        <h2>¡Excelente trabajo!</h2>
+        <p>Completaste los cinco desafíos.</p>
 
-
-<div class="end-card">
-
-
-    <div class="end-star">
-        ★
-    </div>
-
-
-    <h2>
-        ¡Excelente trabajo!
-    </h2>
-
-
-    <p>
-        Completaste los cinco desafíos.
-    </p>
-
-
-    <div class="results">
-
-
-        <div class="result">
-
-            <strong id="finalScore">
-                0
-            </strong>
-
-            <span>
-                PUNTOS
-            </span>
-
+        <div class="stars-result" id="starsResult">
+            <span>★</span><span>★</span><span>★</span>
         </div>
 
-
-        <div class="result">
-
-            <strong id="finalCorrect">
-                0/5
-            </strong>
-
-            <span>
-                RESPUESTAS CORRECTAS
-            </span>
-
+        <div class="results">
+            <div class="result"><strong id="finalScore">0</strong><span>PUNTOS</span></div>
+            <div class="result"><strong id="finalCorrect">0/5</strong><span>RESPUESTAS CORRECTAS</span></div>
         </div>
 
-
+        <div class="end-actions">
+            <button class="btn btn-next" id="restartBtn">Elegir otra categoría</button>
+        </div>
     </div>
-
-
-    <button
-        class="btn btn-next"
-        id="restartBtn"
-    >
-        Elegir otra categoría
-    </button>
-
-
-</div>
-
 </section>
 
-
 </div>
-
-
 
 <script>
+/* =========================================================
+   AUDIO
+   - Música de fondo: TÚ pones sonidos/fondo.mp3 (loop)
+   - Efectos (hover, click, fallo, aciertos): generados por código
+   - Animales: TÚ pones los MP3 en sonidos/animales/<nombre>.mp3
+     si no existe → fallback al sonido genérico generado
+========================================================= */
+const Sound = (() => {
+    let ctx = null;
+    let masterGain = null;
+    let musicGain = null;
+    let sfxGain = null;
+    let muted = false;
+
+    // Música de fondo del usuario
+    const musicAudio = new Audio("sonidos/fondo.mp3");
+    musicAudio.loop = true;
+    musicAudio.volume = 0.35;
+    let musicStarted = false;
+
+    const animalBuffers = {};
+    const animalNames = ["gato","perro","conejo","pato","panda","tigre","elefante","jirafa","vaca","oveja","rana","tortuga","leon","cocodrilo","serpiente","pandarojo","cebra"];
+
+    function init(){
+        if(ctx) return;
+        try{
+            ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+            masterGain = ctx.createGain();
+            masterGain.gain.value = 1.0;
+            masterGain.connect(ctx.destination);
+
+            sfxGain = ctx.createGain();
+            sfxGain.gain.value = 1.1;
+            sfxGain.connect(masterGain);
+        }catch(e){ console.warn("Audio no disponible", e); }
+    }
+
+    function ensureRunning(){
+        init();
+        if(ctx && ctx.state === "suspended"){
+            ctx.resume().catch(()=>{});
+        }
+    }
+
+    function noteFreq(semiFromA4){
+        return 440 * Math.pow(2, semiFromA4 / 12);
+    }
+
+    function playTone(freq, duration, type="sine", gain=0.6, when=0){
+        if(!ctx) return;
+        const t = ctx.currentTime + when;
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(gain, t + 0.01);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + duration);
+        osc.connect(g); g.connect(sfxGain);
+        osc.start(t); osc.stop(t + duration + 0.05);
+    }
+
+    /* UI */
+    function playHover(){
+        ensureRunning();
+        if(!ctx || muted) return;
+        playTone(noteFreq(24), 0.12, "sine", 0.35);
+        playTone(noteFreq(31), 0.10, "sine", 0.18, 0.02);
+    }
+
+    function playClick(){
+        ensureRunning();
+        if(!ctx || muted) return;
+        playTone(noteFreq(14), 0.07, "triangle", 0.55, 0);
+        playTone(noteFreq(21), 0.10, "triangle", 0.45, 0.035);
+    }
+
+    function playFail(){
+        ensureRunning();
+        if(!ctx || muted) return;
+        const t = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(320, t);
+        osc.frequency.exponentialRampToValueAtTime(110, t + 0.38);
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(0.55, t + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.42);
+        osc.connect(g); g.connect(sfxGain);
+        osc.start(t); osc.stop(t + 0.48);
+
+        const osc2 = ctx.createOscillator();
+        const g2 = ctx.createGain();
+        osc2.type = "square";
+        osc2.frequency.setValueAtTime(210, t);
+        osc2.frequency.exponentialRampToValueAtTime(85, t + 0.38);
+        g2.gain.setValueAtTime(0, t);
+        g2.gain.linearRampToValueAtTime(0.28, t + 0.02);
+        g2.gain.exponentialRampToValueAtTime(0.0001, t + 0.42);
+        osc2.connect(g2); g2.connect(sfxGain);
+        osc2.start(t); osc2.stop(t + 0.48);
+    }
+
+    /* ACIERTO por categoría */
+    function arpeggio(notes, base=0.65, spacing=0.08, type="triangle"){
+        notes.forEach((semi, i)=>{
+            playTone(noteFreq(semi), 0.4, type, base, i * spacing);
+        });
+    }
+    function playWinAnimales(){ arpeggio([7, 12, 16, 19, 24], 0.6, 0.08, "triangle"); }
+    function playWinNumeros(){
+        playTone(noteFreq(19), 0.7, "sine", 0.75, 0);
+        playTone(noteFreq(14), 0.8, "sine", 0.75, 0.13);
+    }
+    function playWinFormas(){
+        arpeggio([12, 19, 24], 0.6, 0.06, "sine");
+        playTone(noteFreq(28), 1.0, "sine", 0.45, 0.2);
+    }
+    function playWinNaturaleza(){ arpeggio([5, 9, 12, 17], 0.6, 0.14, "sine"); }
+    function playWinColores(){ arpeggio([7, 11, 14, 19, 23], 0.65, 0.07, "triangle"); }
+
+    function playCategory(cat){
+        ensureRunning();
+        if(!ctx || muted) return;
+        switch(cat){
+            case "animales":   playWinAnimales(); break;
+            case "numeros":    playWinNumeros(); break;
+            case "formas":     playWinFormas(); break;
+            case "naturaleza": playWinNaturaleza(); break;
+            case "colores":    playWinColores(); break;
+            default:           arpeggio([7, 12, 16], 0.65, 0.08);
+        }
+    }
+
+    /* Animales */
+    function preloadAnimal(name){
+        if(animalBuffers[name]) return animalBuffers[name];
+        const url = "sonidos/animales/" + name + ".mp3";
+        const p = fetch(url)
+            .then(r => { if(!r.ok) throw new Error("no"); return r.arrayBuffer(); })
+            .then(ab => new Promise((res, rej)=> ctx.decodeAudioData(ab, res, rej)))
+            .then(buf => { animalBuffers[name] = buf; return buf; })
+            .catch(()=> null);
+        animalBuffers[name] = p;
+        return p;
+    }
+
+    async function playAnimal(name){
+        ensureRunning();
+        if(!ctx || muted) return;
+        try{
+            const buf = await preloadAnimal(name);
+            if(buf){
+                const src = ctx.createBufferSource();
+                src.buffer = buf;
+                const g = ctx.createGain();
+                g.gain.value = 1.2;
+                src.connect(g); g.connect(sfxGain);
+                src.start();
+                return;
+            }
+        }catch(e){}
+        playWinAnimales();
+    }
+
+    /* Música de fondo (del usuario) */
+    function startMusic(){
+        if(musicStarted || muted) return;
+        musicStarted = true;
+        musicAudio.play().catch(()=>{});
+    }
+    function stopMusic(){ musicAudio.pause(); }
+    function toggleMusic(){
+        if(muted) musicAudio.pause();
+        else musicAudio.play().catch(()=>{});
+    }
+
+    function toggle(){
+        muted = !muted;
+        init();
+        if(masterGain) masterGain.gain.value = muted ? 0 : 1.0;
+        toggleMusic();
+        return muted;
+    }
+
+    function preloadAnimals(){
+        ensureRunning();
+        if(!ctx) return;
+        animalNames.forEach(n => preloadAnimal(n));
+    }
+
+    return {
+        ensureRunning,
+        playHover,
+        playClick,
+        playFail,
+        playCategory,
+        playAnimal,
+        startMusic,
+        stopMusic,
+        toggle,
+        preloadAnimals,
+        isMuted: ()=> muted
+    };
+})();
 
 /* =========================================================
-   DATOS DEL JUEGO
-=========================================================
-
-   IMPORTANTE:
-
-   Aquí puedes usar DOS TIPOS:
-
-   type:"image"
-   para utilizar imágenes
-
-   type:"text"
-   para números o texto.
-
+   DATOS (MISMAS RUTAS DE IMÁGENES)
 ========================================================= */
-
-
 const topics = {
 
-
-/* =========================================================
-   ANIMALES
-========================================================= */
-
 animales:{
-
     type:"image",
-
+    animalSounds:{
+        "../assets/img_p.secuencia/S_Animales/s.gato.png":"gato",
+        "../assets/img_p.secuencia/S_Animales/s.perro.png":"perro",
+        "../assets/img_p.secuencia/S_Animales/s.conejo.png":"conejo",
+        "../assets/img_p.secuencia/S_Animales/s.pato.png":"pato",
+        "../assets/img_p.secuencia/S_Animales/s.panda.png":"panda",
+        "../assets/img_p.secuencia/S_Animales/s.tigre.png":"tigre",
+        "../assets/img_p.secuencia/S_Animales/s.elefante.png":"elefante",
+        "../assets/img_p.secuencia/S_Animales/s.jirafa.png":"jirafa",
+        "../assets/img_p.secuencia/S_Animales/s.vaca.png":"vaca",
+        "../assets/img_p.secuencia/S_Animales/s.oveja.png":"oveja",
+        "../assets/img_p.secuencia/S_Animales/s.rana.png":"rana",
+        "../assets/img_p.secuencia/S_Animales/s.tortuga.png":"tortuga",
+        "../assets/img_p.secuencia/S_Animales/s.leon.png":"leon",
+        "../assets/img_p.secuencia/S_Animales/s.cocodrilo.png":"cocodrilo",
+        "../assets/img_p.secuencia/S_Animales/s.serpiente.png":"serpiente",
+        "../assets/img_p.secuencia/S_Animales/s.pandarojo.png":"pandarojo",
+        "../assets/img_p.secuencia/S_Animales/s.cebra.png":"cebra"
+    },
     sequences:[
-
-
         {
-
             seq:[
-
                 "../assets/img_p.secuencia//S_Animales/s.gato.png",
                 "../assets/img_p.secuencia//S_Animales/s.perro.png",
                 "../assets/img_p.secuencia//S_Animales/s.gato.png",
                 "../assets/img_p.secuencia/S_Animales/s.perro.png",
                 "?"
-
             ],
-
-            answer:
-                "../assets/img_p.secuencia/S_Animales/s.gato.png",
-
+            answer:"../assets/img_p.secuencia/S_Animales/s.gato.png",
             options:[
-
                 "../assets/img_p.secuencia/S_Animales/s.gato.png",
                 "../assets/img_p.secuencia/S_Animales/s.perro.png",
                 "../assets/img_p.secuencia/S_Animales/s.conejo.png",
                 "../assets/img_p.secuencia/S_Animales/s.pato.png"
-
             ]
-
         },
-
-
         {
-
             seq:[
-
                 "../assets/img_p.secuencia//S_Animales/s.panda.png",
                 "../assets/img_p.secuencia//S_Animales/s.tigre.png",
                 "../assets/img_p.secuencia//S_Animales/s.panda.png",
                 "../assets/img_p.secuencia//S_Animales/s.tigre.png",
                 "?"
-
             ],
-
-            answer:
-                "../assets/img_p.secuencia//S_Animales/s.panda.png",
-
+            answer:"../assets/img_p.secuencia//S_Animales/s.panda.png",
             options:[
-
                 "../assets/img_p.secuencia//S_Animales/s.elefante.png",
                 "../assets/img_p.secuencia//S_Animales/s.tigre.png",
                 "../assets/img_p.secuencia//S_Animales/s.panda.png",
                 "../assets/img_p.secuencia//S_Animales/s.jirafa.png"
-
             ]
-
         },
-
-
         {
-
             seq:[
-
                 "../assets/img_p.secuencia//S_Animales/s.vaca.png",
                 "../assets/img_p.secuencia//S_Animales/s.vaca.png",
                 "../assets/img_p.secuencia//S_Animales/s.oveja.png",
                 "../assets/img_p.secuencia//S_Animales/s.vaca.png",
                 "../assets/img_p.secuencia//S_Animales/s.vaca.png",
                 "?"
-
             ],
-
-            answer:
-                "../assets/img_p.secuencia//S_Animales/s.oveja.png",
-
+            answer:"../assets/img_p.secuencia//S_Animales/s.oveja.png",
             options:[
-
                 "../assets/img_p.secuencia//S_Animales/s.oveja.png",
                 "../assets/img_p.secuencia//S_Animales/s.vaca.png",
                 "../assets/img_p.secuencia//S_Animales/s.rana.png",
                 "../assets/img_p.secuencia//S_Animales/s.tortuga.png"
-
             ]
-
         },
-
-
         {
-
             seq:[
-
                 "../assets/img_p.secuencia//S_Animales/s.leon.png",
                 "../assets/img_p.secuencia//S_Animales/s.cocodrilo.png",
                 "../assets/img_p.secuencia//S_Animales/s.leon.png",
                 "../assets/img_p.secuencia//S_Animales/s.cocodrilo.png",
                 "../assets/img_p.secuencia//S_Animales/s.leon.png",
                 "?"
-
             ],
-
-            answer:
-                "../assets/img_p.secuencia//S_Animales/s.cocodrilo.png",
-
+            answer:"../assets/img_p.secuencia//S_Animales/s.cocodrilo.png",
             options:[
-
                 "../assets/img_p.secuencia//S_Animales/s.serpiente.png",
                 "../assets/img_p.secuencia//S_Animales/s.tigre.png",
                 "../assets/img_p.secuencia//S_Animales/s.leon.png",
-                "../assets/img_p.secuencia//S_Animales/s.cocodrilo.png",
-
+                "../assets/img_p.secuencia//S_Animales/s.cocodrilo.png"
             ]
-
         },
-
-
         {
-
             seq:[
-
                 "../assets/img_p.secuencia//S_Animales/s.pandarojo.png",
                 "../assets/img_p.secuencia//S_Animales/s.pandarojo.png",
                 "../assets/img_p.secuencia//S_Animales/s.cebra.png",
@@ -2319,149 +1085,66 @@ animales:{
                 "../assets/img_p.secuencia//S_Animales/s.pandarojo.png",
                 "../assets/img_p.secuencia//S_Animales/s.cebra.png",
                 "?"
-
             ],
-
-            answer:
-                "../assets/img_p.secuencia//S_Animales/s.cebra.png",
-
+            answer:"../assets/img_p.secuencia//S_Animales/s.cebra.png",
             options:[
-
                 "../assets/img_p.secuencia//S_Animales/s.jirafa.png",
                 "../assets/img_p.secuencia//S_Animales/s.cebra.png",
                 "../assets/img_p.secuencia//S_Animales/s.panda.png",
-                "../assets/img_p.secuencia//S_Animales/s.pandarojo.png",
-
+                "../assets/img_p.secuencia//S_Animales/s.pandarojo.png"
             ]
-
         }
-
     ]
-
 },
-
-
-
-/* =========================================================
-   NÚMEROS
-========================================================= */
 
 numeros:{
-
     type:"text",
-
     sequences:[
-
-
-        {
-            seq:["1","2","1","2","?"],
-            answer:"1",
-            options:["1","2","3","4"]
-        },
-
-
-        {
-            seq:["2","4","2","4","?"],
-            answer:"2",
-            options:["2","4","6","8"]
-        },
-
-
-        {
-            seq:["1","2","3","1","2","?"],
-            answer:"3",
-            options:["1","2","3","4"]
-        },
-
-
-        {
-            seq:["5","3","5","3","?"],
-            answer:"5",
-            options:["3","4","5","6"]
-        },
-
-
-        {
-            seq:["7","8","7","8","?"],
-            answer:"7",
-            options:["6","7","8","9"]
-        }
-
+        { seq:["1","2","1","2","?"], answer:"1", options:["1","2","3","4"] },
+        { seq:["2","4","2","4","?"], answer:"2", options:["2","4","6","8"] },
+        { seq:["1","2","3","1","2","?"], answer:"3", options:["1","2","3","4"] },
+        { seq:["5","3","5","3","?"], answer:"5", options:["3","4","5","6"] },
+        { seq:["7","8","7","8","?"], answer:"7", options:["6","7","8","9"] }
     ]
-
 },
-
-
-
-/* =========================================================
-   FORMAS
-========================================================= */
 
 formas:{
-
     type:"image",
-
     sequences:[
-
-
         {
-
             seq:[
-
                 "../assets/img_p.secuencia//S_Formas/s.circulo.png",
                 "../assets/img_p.secuencia//S_Formas/s.triangulo.png",
                 "../assets/img_p.secuencia//S_Formas/s.circulo.png",
                 "../assets/img_p.secuencia//S_Formas/s.triangulo.png",
                 "?"
-
             ],
-
-            answer:
-                "../assets/img_p.secuencia//S_Formas/s.circulo.png",
-
+            answer:"../assets/img_p.secuencia//S_Formas/s.circulo.png",
             options:[
-
                 "../assets/img_p.secuencia//S_Formas/s.circulo.png",
                 "../assets/img_p.secuencia//S_Formas/s.triangulo.png",
                 "../assets/img_p.secuencia//S_Formas/s.cuadrado.png",
                 "../assets/img_p.secuencia//S_Formas/s.estrella.png"
-
             ]
-
         },
-
-
         {
-
             seq:[
-
                 "../assets/img_p.secuencia//S_Formas/s.cuadrado.png",
                 "../assets/img_p.secuencia//S_Formas/s.estrella.png",
                 "../assets/img_p.secuencia//S_Formas/s.cuadrado.png",
                 "../assets/img_p.secuencia//S_Formas/s.estrella.png",
                 "?"
-
             ],
-
-            answer:
-                "../assets/img_p.secuencia//S_Formas/s.cuadrado.png",
-
+            answer:"../assets/img_p.secuencia//S_Formas/s.cuadrado.png",
             options:[
-
                 "../assets/img_p.secuencia//S_Formas/s.rectangulo.png",
                 "../assets/img_p.secuencia//S_Formas/s.triangulo.png",
                 "../assets/img_p.secuencia//S_Formas/s.cuadrado.png",
                 "../assets/img_p.secuencia//S_Formas/s.estrella.png"
-
             ]
-
         },
-
-
         {
-
             seq:[
-
                 "../assets/img_p.secuencia//S_Formas/s.estrella.png",
                 "../assets/img_p.secuencia//S_Formas/s.estrella.png",
                 "../assets/img_p.secuencia//S_Formas/s.luna.png",
@@ -2470,56 +1153,34 @@ formas:{
                 "../assets/img_p.secuencia//S_Formas/s.estrella.png",
                 "../assets/img_p.secuencia//S_Formas/s.luna.png",
                 "?"
-
             ],
-
-            answer:
-                "../assets/img_p.secuencia//S_Formas/s.luna.png",
-
+            answer:"../assets/img_p.secuencia//S_Formas/s.luna.png",
             options:[
-
                 "../assets/img_p.secuencia//S_Formas/s.corazon.png",
                 "../assets/img_p.secuencia//S_Formas/s.triangulo.png",
                 "../assets/img_p.secuencia//S_Formas/s.luna.png",
                 "../assets/img_p.secuencia//S_Formas/s.estrella.png"
-
             ]
-
         },
-
-
         {
-
             seq:[
-
                 "../assets/img_p.secuencia//S_Formas/s.rombo.png",
                 "../assets/img_p.secuencia//S_Formas/s.rombo.png",
                 "../assets/img_p.secuencia//S_Formas/s.corazon.png",
                 "../assets/img_p.secuencia//S_Formas/s.corazon.png",
                 "../assets/img_p.secuencia//S_Formas/s.rombo.png",
                 "?"
-
             ],
-
-            answer:
-                "../assets/img_p.secuencia//S_Formas/s.rombo.png",
-
+            answer:"../assets/img_p.secuencia//S_Formas/s.rombo.png",
             options:[
-
                 "../assets/img_p.secuencia//S_Formas/s.circulo.png",
                 "../assets/img_p.secuencia//S_Formas/s.corazon.png",
                 "../assets/img_p.secuencia//S_Formas/s.triangulo.png",
-                "../assets/img_p.secuencia//S_Formas/s.rombo.png",
-
+                "../assets/img_p.secuencia//S_Formas/s.rombo.png"
             ]
-
         },
-
-
         {
-
             seq:[
-
                 "../assets/img_p.secuencia//S_Formas/s.hexagono.png",
                 "../assets/img_p.secuencia//S_Formas/s.octogono.png",
                 "../assets/img_p.secuencia//S_Formas/s.hexagono.png",
@@ -2527,973 +1188,310 @@ formas:{
                 "../assets/img_p.secuencia//S_Formas/s.hexagono.png",
                 "../assets/img_p.secuencia//S_Formas/s.octogono.png",
                 "?"
-
             ],
-
-            answer:
-                "../assets/img_p.secuencia//S_Formas/s.hexagono.png",
-
+            answer:"../assets/img_p.secuencia//S_Formas/s.hexagono.png",
             options:[
-
                 "../assets/img_p.secuencia//S_Formas/s.hexagono.png",
                 "../assets/img_p.secuencia//S_Formas/s.cuadrado.png",
                 "../assets/img_p.secuencia//S_Formas/s.octogono.png",
-                "../assets/img_p.secuencia//S_Formas/s.rectangulo.png",
-
+                "../assets/img_p.secuencia//S_Formas/s.rectangulo.png"
             ]
-
         }
-
     ]
-
 },
-
-
-
-/* =========================================================
-   NATURALEZA
-========================================================= */
 
 naturaleza:{
-
     type:"image",
-
     sequences:[
-
-
         {
-
-            seq:[
-
-                "img/naturaleza/arbol.png",
-                "img/naturaleza/flor.png",
-                "img/naturaleza/arbol.png",
-                "img/naturaleza/flor.png",
-                "?"
-
-            ],
-
-            answer:
-                "img/naturaleza/arbol.png",
-
-            options:[
-
-                "img/naturaleza/arbol.png",
-                "img/naturaleza/flor.png",
-                "img/naturaleza/sol.png",
-                "img/naturaleza/hoja.png"
-
-            ]
-
+            seq:["img/naturaleza/arbol.png","img/naturaleza/flor.png","img/naturaleza/arbol.png","img/naturaleza/flor.png","?"],
+            answer:"img/naturaleza/arbol.png",
+            options:["img/naturaleza/arbol.png","img/naturaleza/flor.png","img/naturaleza/sol.png","img/naturaleza/hoja.png"]
         },
-
-
         {
-
-            seq:[
-
-                "img/naturaleza/sol.png",
-                "img/naturaleza/flor.png",
-                "img/naturaleza/sol.png",
-                "img/naturaleza/flor.png",
-                "?"
-
-            ],
-
-            answer:
-                "img/naturaleza/sol.png",
-
-            options:[
-
-                "img/naturaleza/arbol.png",
-                "img/naturaleza/flor.png",
-                "img/naturaleza/sol.png",
-                "img/naturaleza/hoja.png"
-
-            ]
-
+            seq:["img/naturaleza/sol.png","img/naturaleza/flor.png","img/naturaleza/sol.png","img/naturaleza/flor.png","?"],
+            answer:"img/naturaleza/sol.png",
+            options:["img/naturaleza/arbol.png","img/naturaleza/flor.png","img/naturaleza/sol.png","img/naturaleza/hoja.png"]
         },
-
-
         {
-
-            seq:[
-
-                "img/naturaleza/hoja.png",
-                "img/naturaleza/arbol.png",
-                "img/naturaleza/hoja.png",
-                "img/naturaleza/arbol.png",
-                "?"
-
-            ],
-
-            answer:
-                "img/naturaleza/hoja.png",
-
-            options:[
-
-                "img/naturaleza/arbol.png",
-                "img/naturaleza/flor.png",
-                "img/naturaleza/sol.png",
-                "img/naturaleza/hoja.png"
-
-            ]
-
+            seq:["img/naturaleza/hoja.png","img/naturaleza/arbol.png","img/naturaleza/hoja.png","img/naturaleza/arbol.png","?"],
+            answer:"img/naturaleza/hoja.png",
+            options:["img/naturaleza/arbol.png","img/naturaleza/flor.png","img/naturaleza/sol.png","img/naturaleza/hoja.png"]
         },
-
-
         {
-
-            seq:[
-
-                "img/naturaleza/flor.png",
-                "img/naturaleza/flor.png",
-                "img/naturaleza/sol.png",
-                "img/naturaleza/flor.png",
-                "img/naturaleza/flor.png",
-                "?"
-
-            ],
-
-            answer:
-                "img/naturaleza/sol.png",
-
-            options:[
-
-                "img/naturaleza/arbol.png",
-                "img/naturaleza/flor.png",
-                "img/naturaleza/sol.png",
-                "img/naturaleza/hoja.png"
-
-            ]
-
+            seq:["img/naturaleza/flor.png","img/naturaleza/flor.png","img/naturaleza/sol.png","img/naturaleza/flor.png","img/naturaleza/flor.png","?"],
+            answer:"img/naturaleza/sol.png",
+            options:["img/naturaleza/arbol.png","img/naturaleza/flor.png","img/naturaleza/sol.png","img/naturaleza/hoja.png"]
         },
-
-
         {
-
-            seq:[
-
-                "img/naturaleza/arbol.png",
-                "img/naturaleza/hoja.png",
-                "img/naturaleza/flor.png",
-                "img/naturaleza/arbol.png",
-                "img/naturaleza/hoja.png",
-                "?"
-
-            ],
-
-            answer:
-                "img/naturaleza/flor.png",
-
-            options:[
-
-                "img/naturaleza/arbol.png",
-                "img/naturaleza/flor.png",
-                "img/naturaleza/sol.png",
-                "img/naturaleza/hoja.png"
-
-            ]
-
+            seq:["img/naturaleza/arbol.png","img/naturaleza/hoja.png","img/naturaleza/flor.png","img/naturaleza/arbol.png","img/naturaleza/hoja.png","?"],
+            answer:"img/naturaleza/flor.png",
+            options:["img/naturaleza/arbol.png","img/naturaleza/flor.png","img/naturaleza/sol.png","img/naturaleza/hoja.png"]
         }
-
     ]
-
 },
 
-
-
-/* =========================================================
-   COLORES
-========================================================= */
-
 colores:{
-
     type:"color",
-
     sequences:[
-
-
-        {
-            seq:["#ef5b5b","#5b83e8","#ef5b5b","#5b83e8","?"],
-            answer:"#ef5b5b",
-            options:["#ef5b5b","#5b83e8","#63c97d","#f5c84c"]
-        },
-
-
-        {
-            seq:["#63c97d","#ef5b5b","#63c97d","#ef5b5b","?"],
-            answer:"#63c97d",
-            options:["#ef5b5b","#63c97d","#5b83e8","#f5c84c"]
-        },
-
-
-        {
-            seq:["#5b83e8","#f5c84c","#5b83e8","#f5c84c","?"],
-            answer:"#5b83e8",
-            options:["#5b83e8","#ef5b5b","#63c97d","#f5c84c"]
-        },
-
-
-        {
-            seq:["#ef5b5b","#63c97d","#5b83e8","#ef5b5b","#63c97d","?"],
-            answer:"#5b83e8",
-            options:["#ef5b5b","#5b83e8","#63c97d","#f5c84c"]
-        },
-
-
-        {
-            seq:["#f5c84c","#63c97d","#f5c84c","#63c97d","?"],
-            answer:"#f5c84c",
-            options:["#ef5b5b","#5b83e8","#63c97d","#f5c84c"]
-        }
-
+        { seq:["#ef5b5b","#5b83e8","#ef5b5b","#5b83e8","?"], answer:"#ef5b5b", options:["#ef5b5b","#5b83e8","#63c97d","#f5c84c"] },
+        { seq:["#63c97d","#ef5b5b","#63c97d","#ef5b5b","?"], answer:"#63c97d", options:["#ef5b5b","#63c97d","#5b83e8","#f5c84c"] },
+        { seq:["#5b83e8","#f5c84c","#5b83e8","#f5c84c","?"], answer:"#5b83e8", options:["#5b83e8","#ef5b5b","#63c97d","#f5c84c"] },
+        { seq:["#ef5b5b","#63c97d","#5b83e8","#ef5b5b","#63c97d","?"], answer:"#5b83e8", options:["#ef5b5b","#5b83e8","#63c97d","#f5c84c"] },
+        { seq:["#f5c84c","#63c97d","#f5c84c","#63c97d","?"], answer:"#f5c84c", options:["#ef5b5b","#5b83e8","#63c97d","#f5c84c"] }
     ]
-
 }
 
 };
 
-
-
 /* =========================================================
-   VARIABLES
+   ESTADO
 ========================================================= */
+let currentTopic = null;
+let currentLevel = 0;
+let score = 0;
+let correctCount = 0;
+let answered = false;
 
-let currentTopic=null;
+const topicScreen = document.getElementById("topicScreen");
+const gameScreen = document.getElementById("gameScreen");
+const endScreen = document.getElementById("endScreen");
+const sequenceContainer = document.getElementById("sequence");
+const optionsContainer = document.getElementById("options");
+const feedback = document.getElementById("feedback");
+const nextBtn = document.getElementById("nextBtn");
+const backBtn = document.getElementById("backBtn");
+const scoreTop = document.getElementById("scoreTop");
+const levelText = document.getElementById("levelText");
+const progressBar = document.getElementById("progressBar");
+const topicName = document.getElementById("topicName");
+const pointsBox = document.getElementById("pointsBox");
+const soundBtn = document.getElementById("soundBtn");
 
-let currentLevel=0;
+function attachHoverSound(el){
+    el.addEventListener("mouseenter", ()=> Sound.playHover());
+}
 
-let score=0;
+document.querySelectorAll(".topic-card").forEach(card=>{
+    attachHoverSound(card);
 
-let correctCount=0;
-
-let answered=false;
-
-
-
-/* =========================================================
-   ELEMENTOS HTML
-========================================================= */
-
-const topicScreen=
-    document.getElementById(
-        "topicScreen"
-    );
-
-
-const gameScreen=
-    document.getElementById(
-        "gameScreen"
-    );
-
-
-const endScreen=
-    document.getElementById(
-        "endScreen"
-    );
-
-
-const sequenceContainer=
-    document.getElementById(
-        "sequence"
-    );
-
-
-const optionsContainer=
-    document.getElementById(
-        "options"
-    );
-
-
-const feedback=
-    document.getElementById(
-        "feedback"
-    );
-
-
-const nextBtn=
-    document.getElementById(
-        "nextBtn"
-    );
-
-
-const backBtn=
-    document.getElementById(
-        "backBtn"
-    );
-
-
-const scoreTop=
-    document.getElementById(
-        "scoreTop"
-    );
-
-
-const levelText=
-    document.getElementById(
-        "levelText"
-    );
-
-
-const progressBar=
-    document.getElementById(
-        "progressBar"
-    );
-
-
-const topicName=
-    document.getElementById(
-        "topicName"
-    );
-
-
-
-/* =========================================================
-   ABRIR CATEGORÍA
-========================================================= */
-
-document
-.querySelectorAll(
-    ".topic-card"
-)
-.forEach(card=>{
-
-
-    card.addEventListener(
-        "click",
-        ()=>{
-
-
-            currentTopic=
-                card.dataset.topic;
-
-
-            currentLevel=0;
-
-            correctCount=0;
-
-
-            topicScreen
-                .style
-                .display=
-                "none";
-
-
-            endScreen
-                .style
-                .display=
-                "none";
-
-
-            gameScreen
-                .style
-                .display=
-                "block";
-
-
-            loadLevel();
-
-
-        }
-    );
-
-
+    const open = ()=>{
+        Sound.playClick();
+        currentTopic = card.dataset.topic;
+        currentLevel = 0;
+        correctCount = 0;
+        score = 0;
+        scoreTop.textContent = "0 puntos";
+        topicScreen.style.display = "none";
+        endScreen.classList.remove("active");
+        endScreen.style.display = "none";
+        gameScreen.style.display = "flex";
+        gameScreen.classList.add("active");
+        loadLevel();
+    };
+    card.addEventListener("click", open);
+    card.addEventListener("keydown", e=>{
+        if(e.key === "Enter" || e.key === " "){ e.preventDefault(); open(); }
+    });
 });
 
+[backBtn, nextBtn, soundBtn, document.getElementById("restartBtn")].forEach(btn=>{
+    if(!btn) return;
+    attachHoverSound(btn);
+});
 
+soundBtn.addEventListener("click", ()=>{
+    const muted = Sound.toggle();
+    soundBtn.textContent = muted ? "🔇" : "🔊";
+    soundBtn.classList.toggle("muted", muted);
+});
 
-/* =========================================================
-   CREAR CONTENIDO DE UNA CARTA
-========================================================= */
-
-function createCardContent(
-    container,
-    value,
-    type
-){
-
-
-    /* CASILLA VACÍA */
-
-    if(value==="?"){
-
-        container
-            .classList
-            .add("blank");
-
-        container.textContent="?";
-
+function createCardContent(container, value, type){
+    if(value === "?"){
+        container.classList.add("blank");
+        container.textContent = "?";
         return;
-
     }
-
-
-
-    /* IMAGEN */
-
-    if(type==="image"){
-
-        const img=
-            document
-            .createElement(
-                "img"
-            );
-
-
-        img.src=value;
-
-        img.alt=
-            "Elemento de la secuencia";
-
-
-        container
-            .appendChild(
-                img
-            );
-
+    if(type === "image"){
+        const img = document.createElement("img");
+        img.src = value;
+        img.alt = "Elemento de la secuencia";
+        img.loading = "lazy";
+        container.appendChild(img);
+    } else if(type === "color"){
+        const circle = document.createElement("div");
+        circle.style.width = "68%";
+        circle.style.height = "68%";
+        circle.style.borderRadius = "50%";
+        circle.style.background = value;
+        circle.style.boxShadow = "inset 0 -8px 0 rgba(0,0,0,.08), 0 4px 10px rgba(0,0,0,.15)";
+        container.appendChild(circle);
+    } else {
+        const span = document.createElement("span");
+        span.className = "sequence-text";
+        span.textContent = value;
+        container.appendChild(span);
     }
-
-
-
-    /* COLOR */
-
-    else if(type==="color"){
-
-        const circle=
-            document
-            .createElement(
-                "div"
-            );
-
-
-        circle.style.width=
-            "65%";
-
-        circle.style.height=
-            "65%";
-
-        circle.style
-            .borderRadius=
-            "50%";
-
-        circle.style
-            .background=
-            value;
-
-        circle.style
-            .boxShadow=
-            "inset 0 -7px 0 rgba(0,0,0,.08)";
-
-
-        container
-            .appendChild(
-                circle
-            );
-
-    }
-
-
-
-    /* TEXTO / NÚMEROS */
-
-    else{
-
-        const span=
-            document
-            .createElement(
-                "span"
-            );
-
-
-        span.className=
-            "sequence-text";
-
-
-        span.textContent=
-            value;
-
-
-        container
-            .appendChild(
-                span
-            );
-
-    }
-
 }
 
-
-
-/* =========================================================
-   CARGAR NIVEL
-========================================================= */
+function shuffle(arr){
+    const a = [...arr];
+    for(let i = a.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
 
 function loadLevel(){
+    answered = false;
 
+    const topic = topics[currentTopic];
+    const exercise = topic.sequences[currentLevel];
 
-    answered=false;
+    sequenceContainer.innerHTML = "";
+    optionsContainer.innerHTML = "";
+    feedback.className = "feedback";
+    feedback.textContent = "";
+    nextBtn.style.display = "none";
 
+    topicName.textContent = currentTopic.toUpperCase();
+    levelText.textContent = `Nivel ${currentLevel + 1} de 5`;
+    progressBar.style.width = `${((currentLevel + 1) / 5) * 100}%`;
 
-    const topic=
-        topics[
-            currentTopic
-        ];
-
-
-    const exercise=
-        topic
-        .sequences[
-            currentLevel
-        ];
-
-
-    sequenceContainer
-        .innerHTML="";
-
-
-    optionsContainer
-        .innerHTML="";
-
-
-    feedback
-        .className=
-        "feedback";
-
-
-    feedback
-        .textContent="";
-
-
-    nextBtn
-        .style
-        .display=
-        "none";
-
-
-
-    /* INFORMACIÓN */
-
-    topicName
-        .textContent=
-        currentTopic
-        .toUpperCase();
-
-
-    levelText
-        .textContent=
-        `Nivel ${currentLevel+1} de 5`;
-
-
-    progressBar
-        .style
-        .width=
-        `${((currentLevel+1)/5)*100}%`;
-
-
-
-    /* =====================================================
-       SECUENCIA
-    ===================================================== */
-
-    exercise
-    .seq
-    .forEach(value=>{
-
-
-        const card=
-            document
-            .createElement(
-                "div"
-            );
-
-
-        card.className=
-            "sequence-card";
-
-
-        createCardContent(
-            card,
-            value,
-            topic.type
-        );
-
-
-        sequenceContainer
-            .appendChild(
-                card
-            );
-
-
+    exercise.seq.forEach(value=>{
+        const card = document.createElement("div");
+        card.className = "sequence-card";
+        createCardContent(card, value, topic.type);
+        sequenceContainer.appendChild(card);
     });
 
-
-
-    /* =====================================================
-       MEZCLAR RESPUESTAS
-    ===================================================== */
-
-    const options=
-        [
-            ...exercise.options
-        ];
-
-
-    options.sort(
-        ()=>Math.random()-.5
-    );
-
-
-
-    /* =====================================================
-       CREAR RESPUESTAS
-    ===================================================== */
-
-    options
-    .forEach(value=>{
-
-
-        const button=
-            document
-            .createElement(
-                "button"
-            );
-
-
-        button.className=
-            "option-card";
-
-
-        button.dataset.value=
-            value;
-
-
-        createCardContent(
-            button,
-            value,
-            topic.type
-        );
-
-
-        button.addEventListener(
-            "click",
-            ()=>{
-
-                checkAnswer(
-                    button,
-                    value
-                );
-
-            }
-        );
-
-
-        optionsContainer
-            .appendChild(
-                button
-            );
-
-
+    const options = shuffle(exercise.options);
+    options.forEach(value=>{
+        const button = document.createElement("button");
+        button.className = "option-card";
+        button.dataset.value = value;
+        button.setAttribute("aria-label", "Opción de respuesta");
+        createCardContent(button, value, topic.type);
+        attachHoverSound(button);
+        button.addEventListener("click", ()=> checkAnswer(button, value));
+        optionsContainer.appendChild(button);
     });
-
-
 }
 
+function checkAnswer(selectedButton, selectedValue){
+    if(answered) return;
+    answered = true;
 
+    Sound.playClick();
 
-/* =========================================================
-   COMPROBAR
-========================================================= */
+    const exercise = topics[currentTopic].sequences[currentLevel];
+    const correct = exercise.answer;
 
-function checkAnswer(
-    selectedButton,
-    selectedValue
-){
+    document.querySelectorAll(".option-card").forEach(b => b.disabled = true);
 
-
-    if(answered){
-        return;
-    }
-
-
-    answered=true;
-
-
-    const exercise=
-
-        topics[
-            currentTopic
-        ]
-        .sequences[
-            currentLevel
-        ];
-
-
-    const correct=
-        exercise.answer;
-
-
-
-    /* BLOQUEAR */
-
-    document
-    .querySelectorAll(
-        ".option-card"
-    )
-    .forEach(button=>{
-
-        button.disabled=true;
-
-    });
-
-
-
-    /* =====================================================
-       CORRECTO
-    ===================================================== */
-
-    if(
-        selectedValue===
-        correct
-    ){
-
-
-        selectedButton
-            .classList
-            .add(
-                "correct"
-            );
-
-
-        score+=10;
-
+    if(selectedValue === correct){
+        selectedButton.classList.add("correct");
+        score += 10;
         correctCount++;
 
+        if(currentTopic === "animales" && topics.animales.animalSounds[correct]){
+            Sound.playAnimal(topics.animales.animalSounds[correct]);
+        } else {
+            Sound.playCategory(currentTopic);
+        }
 
-        feedback
-            .textContent=
-            "¡Muy bien! Descubriste el patrón.";
+        feedback.textContent = "¡Muy bien! Descubriste el patrón. 🎉";
+        feedback.className = "feedback correct-message";
+        burstStars(selectedButton);
+    } else {
+        selectedButton.classList.add("wrong");
+        Sound.playFail();
 
+        feedback.textContent = "Casi. Observa nuevamente el patrón. 💪";
+        feedback.className = "feedback wrong-message";
 
-        feedback
-            .className=
-            "feedback correct-message";
-
-
-    }
-
-
-
-    /* =====================================================
-       INCORRECTO
-    ===================================================== */
-
-    else{
-
-
-        selectedButton
-            .classList
-            .add(
-                "wrong"
-            );
-
-
-        feedback
-            .textContent=
-            "Casi. Observa nuevamente el patrón.";
-
-
-        feedback
-            .className=
-            "feedback wrong-message";
-
-
-
-        /* MOSTRAR RESPUESTA CORRECTA */
-
-        document
-        .querySelectorAll(
-            ".option-card"
-        )
-        .forEach(button=>{
-
-
-            if(
-                button
-                .dataset
-                .value===
-                correct
-            ){
-
-
-                button
-                    .classList
-                    .add(
-                        "correct"
-                    );
-
-
-            }
-
-
+        document.querySelectorAll(".option-card").forEach(b=>{
+            if(b.dataset.value === correct) b.classList.add("correct");
         });
-
-
     }
 
+    scoreTop.textContent = `${score} puntos`;
+    pointsBox.classList.add("bump");
+    setTimeout(()=> pointsBox.classList.remove("bump"), 400);
 
-
-    /* PUNTOS */
-
-    scoreTop
-        .textContent=
-        `${score} puntos`;
-
-
-
-    /* SIGUIENTE */
-
-    nextBtn
-        .style
-        .display=
-        "block";
-
-
+    nextBtn.style.display = "block";
 }
 
+nextBtn.addEventListener("click", ()=>{
+    Sound.playClick();
+    currentLevel++;
+    if(currentLevel >= 5) showEnd();
+    else loadLevel();
+});
 
-
-/* =========================================================
-   SIGUIENTE
-========================================================= */
-
-nextBtn
-.addEventListener(
-    "click",
-    ()=>{
-
-
-        currentLevel++;
-
-
-        if(
-            currentLevel>=5
-        ){
-
-
-            showEnd();
-
-
-        }
-
-        else{
-
-
-            loadLevel();
-
-
-        }
-
-
-    }
-);
-
-
-
-/* =========================================================
-   CAMBIAR TEMA
-========================================================= */
-
-backBtn
-.addEventListener(
-    "click",
-    ()=>{
-
-
-        gameScreen
-            .style
-            .display=
-            "none";
-
-
-        topicScreen
-            .style
-            .display=
-            "block";
-
-
-    }
-);
-
-
-
-/* =========================================================
-   FINAL
-========================================================= */
+backBtn.addEventListener("click", ()=>{
+    Sound.playClick();
+    gameScreen.style.display = "none";
+    gameScreen.classList.remove("active");
+    topicScreen.style.display = "flex";
+});
 
 function showEnd(){
+    gameScreen.style.display = "none";
+    gameScreen.classList.remove("active");
+    endScreen.style.display = "flex";
+    endScreen.classList.add("active");
 
+    document.getElementById("finalScore").textContent = score;
+    document.getElementById("finalCorrect").textContent = `${correctCount}/5`;
 
-    gameScreen
-        .style
-        .display=
-        "none";
-
-
-    endScreen
-        .style
-        .display=
-        "block";
-
-
-    document
-        .getElementById(
-            "finalScore"
-        )
-        .textContent=
-        score;
-
-
-    document
-        .getElementById(
-            "finalCorrect"
-        )
-        .textContent=
-        `${correctCount}/5`;
-
-
+    const starsAvg = correctCount >= 5 ? 3 : correctCount >= 4 ? 2 : correctCount >= 2 ? 1 : 0;
+    const starEls = document.querySelectorAll("#starsResult span");
+    starEls.forEach(s => s.classList.remove("on"));
+    starEls.forEach((s,i)=>{
+        setTimeout(()=>{ if(i < starsAvg) s.classList.add("on"); }, 300 + i * 250);
+    });
 }
 
+document.getElementById("restartBtn").addEventListener("click", ()=>{
+    Sound.playClick();
+    endScreen.style.display = "none";
+    endScreen.classList.remove("active");
+    topicScreen.style.display = "flex";
+});
 
-
-/* =========================================================
-   VOLVER A CATEGORÍAS
-========================================================= */
-
-document
-.getElementById(
-    "restartBtn"
-)
-.addEventListener(
-    "click",
-    ()=>{
-
-
-        endScreen
-            .style
-            .display=
-            "none";
-
-
-        topicScreen
-            .style
-            .display=
-            "block";
-
-
+function burstStars(el){
+    const rect = el.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    for(let i = 0; i < 8; i++){
+        const s = document.createElement("div");
+        s.className = "mini-star";
+        s.textContent = ["⭐","✨","🌟","💫"][i % 4];
+        const angle = (Math.PI * 2 * i) / 8;
+        const dist = 60 + Math.random() * 40;
+        s.style.left = cx + "px";
+        s.style.top = cy + "px";
+        s.style.setProperty("--tx", Math.cos(angle) * dist + "px");
+        s.style.setProperty("--ty", Math.sin(angle) * dist + "px");
+        document.body.appendChild(s);
+        setTimeout(()=> s.remove(), 1100);
     }
-);
+}
 
+/* Arrancar música en el primer gesto */
+let started = false;
+function firstGesture(){
+    if(started) return;
+    started = true;
+    Sound.ensureRunning();
+    Sound.startMusic();
+    Sound.preloadAnimals();
+}
+document.addEventListener("click", firstGesture, { once:false });
+document.addEventListener("keydown", firstGesture, { once:false });
+document.addEventListener("touchstart", firstGesture, { once:false });
 </script>
 
 </body>
