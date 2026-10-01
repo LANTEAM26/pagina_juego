@@ -1663,3 +1663,28 @@ button:focus-visible {
 @media(max-width:650px){.speed-options{grid-template-columns:repeat(2,minmax(0,1fr))}.speed-option span{font-size:12px}.speed-option small{font-size:10px}#canvas-container #move-controls{width:48%}}
 
 #wind-indicator.wind-left .wind-puffs{transform:scaleX(-1)} #wind-indicator.wind-left img{transform:scaleX(-1)}
+
+/* =========================================================
+   V2 · PANEL DE JARDÍN — APROVECHA TODA LA COLUMNA
+   ========================================================= */
+#game-sidebar { gap: 1.1vmin; }
+#hud { background: linear-gradient(160deg,#fffafc,#fff 62%,#f0fff1); border: .35vmin solid #fff; box-shadow:0 .7vmin 1.8vmin #ad7c9630; }
+.hud-lives { background:linear-gradient(180deg,#fff0f7,#ffe1ef); border-color:#ffadd0; }
+#counters-panel {
+    flex:1 1 0; min-height:0; gap:.55vmin; padding:1.1vmin 1.2vmin .7vmin;
+    background:linear-gradient(175deg,#fffefb 0%,#f5fff0 100%);
+    border:.35vmin solid #fff; box-shadow:0 .7vmin 1.8vmin #ad7c9630;
+}
+.counters-title { font-size:clamp(15px,2.4vmin,29px); padding-bottom:.15vmin; border:0; margin:0; }
+.counter-subtitle { font-family:var(--fuente-texto);font-size:clamp(10px,1.45vmin,16px);font-weight:800;color:#79a66d;text-align:center;padding-bottom:.55vmin;border-bottom:.25vmin dashed #badcaf; }
+.counter-row { flex:1 1 0; min-height:0; grid-template-columns:5.1vmin 1fr auto; gap:.7vmin; padding:.35vmin .8vmin; background:#fff; border:.18vmin solid #dff0d8; box-shadow:0 .22vmin .45vmin #7cae7a13; }
+.counter-row:nth-of-type(2n) { background:#fff9fd; border-color:#f5dfea; }
+.counter-row.golden {background:#fffae9;border-color:#f8e5a4;}
+.counter-row.rain {background:#f0faff;border-color:#c6e7fa;}
+.counter-row img {width:min(4.7vmin,44px);height:min(4.7vmin,44px)}
+.counter-qty {min-width:4.5vmin;padding:.2vmin .7vmin}
+.collection-garden {position:relative; flex:1.2 1 0; min-height:4vmin; max-height:13vmin; overflow:hidden; border-radius:1.3vmin; background:linear-gradient(180deg,#eafaff,#f3ffeb 65%,#c6eab3); display:flex;align-items:flex-end;justify-content:center;box-shadow:inset 0 .15vmin .6vmin #a0d1a52b;}
+.garden-sun {position:absolute;top:.1vmin;right:1.2vmin;font-size:clamp(14px,2.8vmin,32px)}
+.garden-flowers {position:relative;z-index:2;font-size:clamp(15px,3vmin,34px);letter-spacing:.3vmin;white-space:nowrap;line-height:1.3;filter:drop-shadow(0 .25vmin .15vmin #78b75b33)}
+.garden-grass {position:absolute;bottom:0;width:100%;height:27%;background:#a3d58d;border-radius:55% 55% 0 0;}
+@media(max-height:540px){.collection-garden{display:none}.counter-row{padding:.15vmin .6vmin}.counter-subtitle{display:none}}

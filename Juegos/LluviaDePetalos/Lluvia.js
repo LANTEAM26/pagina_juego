@@ -124,7 +124,7 @@ const state = {
     lastTime: 0,
     timeWarningShown: false,
 
-    fallSpeedMultiplier: 1,
+    fallSpeedMultiplier: 0.22,
     soundEnabled: true,
     audioCtx: null
 };
@@ -354,6 +354,48 @@ function playSound(name) {
     }
 }
 
+/* Música de fondo. Las rutas corresponden a pagina_juego/Juegos/LluviaDePetalos/ */
+const MUSIC_PATH = '../../assets/musicaFondo/';
+const SOUND_PATH = '../../assets/sounds/';
+const bgm = {
+    intro: new Audio(MUSIC_PATH + 'cancion17.mp3'),
+    game: new Audio(MUSIC_PATH + 'cancion4.mp3'),
+    whoosh: new Audio(SOUND_PATH + 'wooosh.mp3')
+};
+bgm.intro.loop = true;
+bgm.game.loop = true;
+bgm.intro.volume = 0.28;
+bgm.game.volume = 0.23;
+bgm.whoosh.volume = 0.22;
+let activeMusic = 'intro';
+let musicUnlocked = false;
+
+function syncMusic() {
+    const desired = state.soundEnabled ? activeMusic : null;
+    for (const [name, audio] of Object.entries(bgm)) {
+        if (name === 'whoosh') continue;
+        if (name === desired && musicUnlocked) {
+            if (audio.paused) audio.play().catch(() => {});
+        } else audio.pause();
+    }
+}
+function setMusic(name) {
+    activeMusic = name;
+    syncMusic();
+}
+function unlockMusic() {
+    musicUnlocked = true;
+    syncMusic();
+}
+function playWhoosh() {
+    if (!state.soundEnabled || !musicUnlocked) return;
+    bgm.whoosh.currentTime = 0;
+    bgm.whoosh.play().catch(() => {});
+}
+// El navegador requiere una interacción del usuario para iniciar música.
+document.addEventListener('pointerdown', unlockMusic, { once: true });
+document.addEventListener('keydown', unlockMusic, { once: true });
+
 /* =========================================================
    7. VOZ IA (SpeechSynthesis)
    ========================================================= */
@@ -555,7 +597,7 @@ function spawnObject() {
     const margin = 160;
     obj.x = rand(margin, CANVAS_W - margin);
     obj.y = -200;
-    obj.vy = Math.max(0.3, (level.fallSpeed + rand(-level.speedVariance, level.speedVariance)) * state.fallSpeedMultiplier);
+    obj.vy = Math.max(0.08, (level.fallSpeed + rand(-level.speedVariance, level.speedVariance)) * state.fallSpeedMultiplier);
     obj.rot = rand(0, Math.PI * 2);
     obj.rotSpeed = rand(-0.035, 0.035);
     obj.swayPhase = rand(0, Math.PI * 2);
@@ -628,7 +670,8 @@ function update(dt) {
     for (let i = state.objects.length - 1; i >= 0; i--) {
         const o = state.objects[i];
 
-        o.vy += 0.04 * f;
+        // La gravedad también respeta el selector (antes aceleraba todos los objetos por igual).
+        o.vy += 0.04 * state.fallSpeedMultiplier * f;
         o.y  += o.vy * f;
         o.x  += (state.currentWind + Math.sin(now / 800 + o.swayPhase) * 0.6) * f;
         o.rot += o.rotSpeed * f;
@@ -799,6 +842,7 @@ function pauseGame() {
     state.paused = true;
     state.running = false;
     if (dom.pauseOverlay) dom.pauseOverlay.classList.remove('hidden');
+    bgm.game.pause();
     playSound('click');
 }
 
@@ -809,6 +853,7 @@ function resumeGame() {
     state.running = true;
     state.lastTime = performance.now();
     requestAnimationFrame(loop);
+    syncMusic();
     playSound('click');
 }
 
@@ -832,6 +877,8 @@ function quitToMenu() {
     if (dom.introModal)    dom.introModal.classList.remove('hidden');
 
     showIntroPanel(1);
+    bgm.game.currentTime = 0;
+    setMusic('intro');
     playSound('click');
 }
 
@@ -878,6 +925,8 @@ function endGame(won, reason) {
     }
 
     if (dom.endModal) dom.endModal.classList.remove('hidden');
+    bgm.game.currentTime = 0;
+    setMusic('intro');
 }
 
 /* =========================================================
@@ -1077,6 +1126,7 @@ function setupIntroModal() {
         btn.addEventListener('click', () => {
             playSound('click');
             showIntroPanel(parseInt(btn.dataset.next, 10));
+            playWhoosh();
         });
     });
 
@@ -1084,6 +1134,7 @@ function setupIntroModal() {
         btn.addEventListener('click', () => {
             playSound('click');
             showIntroPanel(parseInt(btn.dataset.prev, 10));
+            playWhoosh();
         });
     });
 
@@ -1138,7 +1189,9 @@ function setupMuteButton() {
             dom.btnMute.classList.add('muted');
             dom.btnMute.title = 'Activar sonidos';
             if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            bgm.whoosh.pause();
         }
+        syncMusic();
     });
 }
 
@@ -1146,6 +1199,10 @@ function setupMuteButton() {
    25. START GAME
    ========================================================= */
 function startGame() {
+    unlockMusic();
+    bgm.intro.currentTime = 0;
+    bgm.game.currentTime = 0;
+    setMusic('game');
     dom.introModal.classList.add('hidden');
     dom.endModal.classList.add('hidden');
 
@@ -1203,6 +1260,11 @@ function startGame() {
 /* =========================================================
    26. INIT
    ========================================================= */
+function applySelectedSpeed() {
+        const choice = document.querySelector('input[name="fall-speed"]:checked')?.value || 'normal';
+        state.fallSpeedMultiplier = choice === 'slow' ? 0.22 : choice === 'fast' ? 1.45 : choice === 'custom' ? Number(slider.value) : 0.65;
+    }
+
 async function init() {
     dom.ctx = dom.canvas.getContext('2d');
     dom.canvas.width  = CANVAS_W;
@@ -1220,11 +1282,8 @@ async function init() {
     speedChoices.forEach(input => input.addEventListener('change', () => {
         customPanel.classList.toggle('hidden', document.querySelector('input[name="fall-speed"]:checked').value !== 'custom');
     }));
-    slider.addEventListener('input', () => { speedValue.textContent = Number(slider.value).toFixed(1) + '×'; });
-    function applySelectedSpeed() {
-        const choice = document.querySelector('input[name="fall-speed"]:checked')?.value || 'normal';
-        state.fallSpeedMultiplier = choice === 'slow' ? 0.65 : choice === 'fast' ? 1.5 : choice === 'custom' ? Number(slider.value) : 1;
-    }
+    slider.addEventListener('input', () => { speedValue.textContent = Number(slider.value).toFixed(2) + '×'; });
+
 
 
     if (dom.btnStart) {
