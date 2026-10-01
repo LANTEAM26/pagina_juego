@@ -6,31 +6,51 @@
 
 <title>Adivina la Secuencia</title>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Baloo+2:wght@600;700;800&family=Chewy&display=swap" rel="stylesheet">
+
 <style>
 
 /* =========================================================
-   COLORES
+   PALETA MORADA — ESTILO INFANTIL / FANTÁSTICO
 ========================================================= */
 
 :root{
-    --morado:#7666e9;
-    --moradoOscuro:#5746c9;
+    --morado:#8067e8;
+    --morado2:#a88ff2;
+    --morado3:#c9b9ff;
+    --moradoClaro:#eee8ff;
+    --moradoPalido:#f7f2ff;
+    --moradoOscuro:#5842b5;
+    --violeta:#7056d8;
 
-    --azul:#69b7ef;
-    --verde:#67c987;
-    --amarillo:#f6bd55;
-    --rosa:#ef83a8;
+    --rosa:#efa9c4;
+    --rosaClaro:#f9dce8;
 
-    --texto:#35405f;
-    --textoSuave:#858ca5;
+    --azul:#8dbdd0;
+    --azulClaro:#dceff5;
 
-    --fondo:#f6f7ff;
-    --blanco:#ffffff;
+    --amarillo:#f1ca72;
+    --amarilloClaro:#fff1c9;
 
-    --sombra:
-        0 12px 30px rgba(63,70,120,.12);
+    --verde:#91b77b;
+    --verdeClaro:#e5f1dc;
+
+    --crema:#fffaf2;
+    --crema2:#f7efdf;
+    --blanco:#fffefa;
+
+    --tierra:#66594c;
+
+    --texto:#51475d;
+    --textoSuave:#91869c;
+
+    --fondo1:#eee8ff;
+    --fondo2:#fff3f0;
+    --fondo3:#eaf4f0;
 }
-
 
 /* =========================================================
    RESET
@@ -42,759 +62,1155 @@
     box-sizing:border-box;
 }
 
+html,
 body{
+    width:100%;
+    min-height:100%;
+}
 
-    min-height:100vh;
-
+body{
     font-family:
-        "Trebuchet MS",
-        "Segoe UI",
+        "Fredoka",
+        "Baloo 2",
+        system-ui,
         sans-serif;
 
     color:var(--texto);
 
+    min-height:100vh;
+
+    overflow-x:hidden;
+
     background:
         radial-gradient(
-            circle at 10% 10%,
-            #eeeaff 0,
-            transparent 25%
+            circle at 8% 10%,
+            rgba(201,185,255,.65),
+            transparent 24%
         ),
-
         radial-gradient(
-            circle at 90% 90%,
-            #fff1d8 0,
-            transparent 25%
+            circle at 92% 12%,
+            rgba(249,205,221,.62),
+            transparent 26%
         ),
-
-        var(--fondo);
-
+        radial-gradient(
+            circle at 85% 88%,
+            rgba(184,222,207,.55),
+            transparent 27%
+        ),
+        radial-gradient(
+            circle at 15% 85%,
+            rgba(255,226,172,.42),
+            transparent 24%
+        ),
+        linear-gradient(
+            135deg,
+            var(--fondo1) 0%,
+            var(--fondo2) 52%,
+            var(--fondo3) 100%
+        );
 }
 
-
 /* =========================================================
-   DECORACIONES DEL FONDO
+   FONDO DECORATIVO
 ========================================================= */
 
-.bg-shape{
+.bg-deco{
     position:fixed;
-    z-index:-1;
+
+    inset:0;
+
+    z-index:0;
+
+    pointer-events:none;
+
+    overflow:hidden;
+
+    opacity:.9;
+}
+
+.bg-deco::before,
+.bg-deco::after{
+    content:"";
+
+    position:absolute;
 
     border-radius:50%;
 
-    opacity:.35;
+    pointer-events:none;
 }
 
-.bg-one{
+.bg-deco::before{
+    width:480px;
+    height:480px;
 
-    width:250px;
-    height:250px;
+    left:-170px;
+    top:80px;
 
-    background:#d9d2ff;
+    background:
+        radial-gradient(
+            circle,
+            rgba(143,116,226,.20),
+            rgba(143,116,226,.08) 46%,
+            transparent 72%
+        );
 
-    top:-100px;
-    left:-80px;
+    filter:blur(4px);
 }
 
-.bg-two{
+.bg-deco::after{
+    width:520px;
+    height:520px;
 
-    width:300px;
-    height:300px;
+    right:-190px;
+    bottom:-170px;
 
-    background:#ffe5ae;
+    background:
+        radial-gradient(
+            circle,
+            rgba(239,166,195,.25),
+            rgba(239,166,195,.09) 46%,
+            transparent 72%
+        );
 
-    bottom:-150px;
-    right:-120px;
+    filter:blur(5px);
 }
 
+/* pequeñas luces del fondo */
+
+.bg-deco{
+    background-image:
+        radial-gradient(
+            circle at 12% 17%,
+            rgba(255,255,255,.85) 0 5px,
+            transparent 6px
+        ),
+        radial-gradient(
+            circle at 82% 14%,
+            rgba(255,255,255,.85) 0 6px,
+            transparent 7px
+        ),
+        radial-gradient(
+            circle at 93% 48%,
+            rgba(255,255,255,.75) 0 4px,
+            transparent 5px
+        ),
+        radial-gradient(
+            circle at 7% 73%,
+            rgba(255,255,255,.75) 0 5px,
+            transparent 6px
+        ),
+        radial-gradient(
+            circle at 51% 91%,
+            rgba(255,255,255,.75) 0 5px,
+            transparent 6px
+        );
+}
 
 /* =========================================================
-   CONTENEDOR
+   DECORACIONES INFANTILES
+========================================================= */
+
+.bg-deco .cloud{
+    position:absolute;
+
+    width:100px;
+    height:42px;
+
+    border-radius:999px;
+
+    background:
+        rgba(255,255,255,.45);
+
+    filter:blur(1px);
+
+    opacity:.8;
+}
+
+.bg-deco .cloud::before,
+.bg-deco .cloud::after{
+    content:"";
+
+    position:absolute;
+
+    border-radius:50%;
+
+    background:inherit;
+}
+
+.bg-deco .cloud::before{
+    width:45px;
+    height:45px;
+
+    left:15px;
+    bottom:10px;
+}
+
+.bg-deco .cloud::after{
+    width:55px;
+    height:55px;
+
+    right:13px;
+    bottom:8px;
+}
+
+/* =========================================================
+   APP
 ========================================================= */
 
 .app{
+    width:min(1500px,94vw);
 
-    width:min(1200px,94%);
-    margin:auto;
+    min-height:100vh;
 
-    padding:
-        24px
-        0
-        45px;
+    margin:0 auto;
 
+    padding:22px 0 28px;
+
+    position:relative;
+
+    z-index:1;
 }
-
 
 /* =========================================================
    CABECERA
 ========================================================= */
 
 .topbar{
-
-    min-height:78px;
-
-    background:
-        rgba(255,255,255,.94);
-
-    border:
-        1px solid
-        rgba(255,255,255,.9);
-
-    border-radius:24px;
-
-    padding:
-        13px
-        20px;
-
     display:flex;
 
-    justify-content:
-        space-between;
+    justify-content:space-between;
 
     align-items:center;
 
     gap:20px;
 
-    box-shadow:
-        0 10px 35px
-        rgba(56,63,110,.10);
+    min-height:60px;
 
-    margin-bottom:35px;
-
+    margin-bottom:10px;
 }
 
-
 .brand{
-
     display:flex;
 
     align-items:center;
 
     gap:13px;
-
 }
 
-
-/* LOGO */
-
 .logo{
+    width:52px;
+    height:52px;
 
-    width:51px;
-    height:51px;
-
-    border-radius:16px;
+    border-radius:18px;
 
     display:grid;
+
     place-items:center;
+
+    color:white;
+
+    font-size:28px;
+
+    font-weight:800;
+
+    font-family:"Chewy",sans-serif;
 
     background:
         linear-gradient(
             145deg,
-            #8b7bf2,
-            #6553dc
+            #a78cf0,
+            #7055d3
         );
 
-    color:white;
-
-    font-size:26px;
-    font-weight:900;
+    border:3px solid rgba(255,255,255,.96);
 
     box-shadow:
-        0 7px 15px
-        rgba(103,88,231,.28);
+        0 7px 0 #5842b5,
+        0 12px 24px rgba(94,69,170,.24);
 
+    transform:rotate(-4deg);
 }
-
 
 .brand h1{
-
     font-size:20px;
-    font-weight:900;
 
+    font-weight:800;
+
+    line-height:1;
+
+    color:#50455f;
 }
-
 
 .brand p{
+    margin-top:5px;
 
-    margin-top:3px;
+    font-size:11px;
 
-    font-size:12px;
+    color:#8d8198;
 
-    color:#9298ab;
-
+    font-weight:500;
 }
 
-
-/* PUNTOS */
-
-.points{
-
+.top-right{
     display:flex;
 
     align-items:center;
 
-    gap:9px;
+    gap:10px;
+}
 
-    background:#fff8df;
+.points{
+    display:flex;
 
-    border:
-        2px solid
-        #ffe59a;
+    align-items:center;
 
-    color:#a17410;
+    gap:8px;
 
-    padding:
-        9px
-        16px;
+    padding:9px 15px;
 
-    border-radius:16px;
+    background:
+        linear-gradient(
+            135deg,
+            #fff8d9,
+            #fff2c5
+        );
+
+    border:2px solid #f0d68b;
+
+    border-radius:15px;
+
+    color:#9a6b1d;
 
     font-size:14px;
-    font-weight:900;
+
+    font-weight:800;
+
+    box-shadow:
+        0 4px 0 #dfc88a;
+}
+
+.points.bump{
+    animation:bump .4s;
+}
+
+@keyframes bump{
+
+    50%{
+        transform:
+            scale(1.1)
+            rotate(-2deg);
+    }
 
 }
 
-
 .star{
-
-    width:28px;
-    height:28px;
+    width:25px;
+    height:25px;
 
     border-radius:50%;
 
     display:grid;
-    place-items:center;
 
-    background:#ffc943;
+    place-items:center;
 
     color:white;
 
+    font-size:14px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #f7d978,
+            #dfa83f
+        );
+
+    box-shadow:
+        0 3px 7px rgba(210,160,50,.3);
 }
 
+.sound-btn{
+    width:46px;
+    height:46px;
+
+    border-radius:15px;
+
+    border:2px solid #ddd4ef;
+
+    background:#fffdf9;
+
+    cursor:pointer;
+
+    display:grid;
+
+    place-items:center;
+
+    font-size:20px;
+
+    box-shadow:
+        0 4px 0 #cfc5df,
+        0 8px 15px rgba(80,65,100,.09);
+
+    transition:.18s;
+}
+
+.sound-btn:hover{
+    transform:
+        translateY(-3px)
+        rotate(2deg);
+
+    box-shadow:
+        0 7px 0 #cfc5df,
+        0 12px 18px rgba(80,65,100,.13);
+}
+
+.sound-btn:active{
+    transform:translateY(2px);
+
+    box-shadow:
+        0 2px 0 #cfc5df;
+}
+
+.sound-btn.muted{
+    background:#f0edf5;
+
+    color:#aaa5b1;
+}
 
 /* =========================================================
-   PRESENTACIÓN
+   PORTADA
+========================================================= */
+
+#topicScreen{
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    min-height:calc(100vh - 100px);
+
+    padding-bottom:20px;
+}
+
+/* =========================================================
+   HERO
 ========================================================= */
 
 .hero{
+    width:100%;
 
     text-align:center;
 
-    margin:
-        15px auto
-        37px;
+    padding-top:25px;
 
+    margin-bottom:70px;
 }
-
 
 .small-title{
+    display:inline-flex;
 
-    display:inline-block;
+    align-items:center;
 
-    background:#ebe8ff;
+    justify-content:center;
 
-    color:#6655d6;
+    padding:10px 25px;
 
-    border-radius:50px;
+    border-radius:999px;
 
-    padding:
-        7px 16px;
+    color:#6652a4;
 
-    font-size:11px;
+    background:
+        linear-gradient(
+            135deg,
+            #eee7ff,
+            #e7defd
+        );
 
-    font-weight:900;
+    border:2px solid rgba(255,255,255,.96);
 
-    letter-spacing:1.5px;
+    font-size:14px;
 
-    margin-bottom:15px;
+    font-weight:800;
 
+    letter-spacing:2.3px;
+
+    box-shadow:
+        0 4px 0 #cfc2ed;
+
+    margin-bottom:18px;
 }
 
+/* =========================================================
+   TÍTULO
+========================================================= */
 
 .hero h2{
+    font-family:
+        "Baloo 2",
+        "Fredoka",
+        sans-serif;
 
     font-size:
         clamp(
-            31px,
-            5vw,
-            48px
+            58px,
+            7vw,
+            104px
         );
 
-    line-height:1.1;
+    line-height:.98;
 
-    font-weight:900;
+    font-weight:800;
 
-    margin-bottom:13px;
+    letter-spacing:-3px;
 
+    color:#50455c;
+
+    margin-bottom:21px;
+
+    text-shadow:
+        0 4px 0 rgba(255,255,255,.95),
+        0 9px 22px rgba(90,70,100,.09);
 }
-
 
 .hero h2 span{
+    color:#745ad1;
 
-    color:var(--morado);
+    position:relative;
 
+    display:inline-block;
 }
 
+.hero h2 span::after{
+    content:"";
+
+    position:absolute;
+
+    left:3%;
+
+    right:3%;
+
+    bottom:-5px;
+
+    height:9px;
+
+    background:#e8c8ff;
+
+    border-radius:50%;
+
+    transform:rotate(-2deg);
+
+    z-index:-1;
+
+    opacity:.95;
+}
 
 .hero p{
+    width:min(820px,92%);
 
-    width:min(
-        620px,
-        90%
-    );
+    margin:0 auto;
 
-    margin:auto;
+    color:#8b7e91;
 
-    font-size:15px;
+    font-size:18px;
 
-    line-height:1.7;
+    line-height:1.6;
 
-    color:
-        var(--textoSuave);
-
+    font-weight:500;
 }
 
-
 /* =========================================================
-   TÍTULO CATEGORÍAS
+   CATEGORÍAS
 ========================================================= */
 
 .categories-title{
+    width:100%;
 
     display:flex;
 
     align-items:center;
 
-    gap:14px;
+    gap:17px;
 
-    margin-bottom:20px;
-
+    margin-bottom:27px;
 }
-
-
-.categories-title h3{
-
-    white-space:nowrap;
-
-    font-size:14px;
-
-    font-weight:900;
-
-    color:#737b94;
-
-}
-
 
 .categories-title::before,
 .categories-title::after{
-
     content:"";
+
+    height:2px;
 
     flex:1;
 
-    height:1px;
-
-    background:#e4e6ef;
-
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #d5cbe4
+        );
 }
 
+.categories-title::after{
+    background:
+        linear-gradient(
+            90deg,
+            #d5cbe4,
+            transparent
+        );
+}
+
+.categories-title h3{
+    white-space:nowrap;
+
+    color:#897d91;
+
+    font-size:15px;
+
+    font-weight:800;
+
+    letter-spacing:2px;
+}
+
+/* =========================================================
+   GRID
+========================================================= */
+
+.topic-grid{
+    width:100%;
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(5,minmax(0,1fr));
+
+    gap:24px;
+
+    align-items:stretch;
+
+    transform:translateY(8px);
+}
 
 /* =========================================================
    TARJETAS
 ========================================================= */
 
-.topic-grid{
-
-    display:grid;
-
-    grid-template-columns:
-        repeat(5,1fr);
-
-    gap:18px;
-
-}
-
-
-/* TARJETA COMPLETA */
-
 .topic-card{
-
     position:relative;
 
     min-width:0;
 
-    background:white;
+    background:
+        linear-gradient(
+            180deg,
+            #fffefa 0%,
+            #fffdf9 68%,
+            #f2eafb 100%
+        );
 
-    border:
-        2px solid
-        rgba(255,255,255,.9);
+    border-radius:30px;
 
-    border-radius:27px;
-
-    padding:10px;
+    padding:13px;
 
     cursor:pointer;
 
     overflow:hidden;
 
+    border:3px solid rgba(255,255,255,.97);
+
     box-shadow:
-        0 9px 25px
-        rgba(51,59,105,.09);
+        0 8px 0 rgba(100,78,130,.12),
+        0 18px 35px rgba(92,76,115,.15);
 
     transition:
         transform .25s ease,
         box-shadow .25s ease;
 
+    animation:
+        cardIn .55s backwards;
+
+    aspect-ratio:.74 / 1;
+
+    display:flex;
+
+    flex-direction:column;
 }
 
-
-.topic-card:hover{
-
-    transform:
-        translateY(-9px);
-
-    box-shadow:
-        0 18px 35px
-        rgba(50,58,110,.16);
-
-}
-
-
-/* =========================================================
-   IMAGEN GRANDE DE LA TARJETA
-========================================================= */
-
-.topic-image{
-
-    position:relative;
-
-    width:100%;
-
-    height:205px;
-
-    overflow:hidden;
-
-    border-radius:20px;
-
-    background:#eee;
-
-}
-
-
-/* LA IMAGEN REAL */
-
-.topic-image img{
-
-    width:100%;
-    height:100%;
-
-    object-fit:cover;
-
-    display:block;
-
-    transition:
-        transform .35s ease;
-
-}
-
-
-.topic-card:hover
-.topic-image img{
-
-    transform:
-        scale(1.07);
-
-}
-
-
-/* DEGRADADO ABAJO DE IMAGEN */
-
-.topic-image::after{
-
+.topic-card::before{
     content:"";
 
     position:absolute;
 
-    left:0;
-    right:0;
-    bottom:0;
+    top:-45px;
 
-    height:55%;
+    right:-45px;
+
+    width:115px;
+
+    height:115px;
+
+    border-radius:50%;
 
     background:
-        linear-gradient(
-            transparent,
-            rgba(0,0,0,.15)
-        );
+        rgba(255,255,255,.72);
 
     pointer-events:none;
-
 }
 
-
-/* =========================================================
-   ETIQUETA SOBRE LA FOTO
-========================================================= */
-
-.image-label{
+.topic-card::after{
+    content:"✦";
 
     position:absolute;
 
-    z-index:3;
+    top:9px;
 
-    left:13px;
-    bottom:12px;
+    right:13px;
 
-    padding:
-        6px
-        11px;
+    color:rgba(255,255,255,.98);
+
+    font-size:20px;
+
+    text-shadow:
+        0 2px 5px rgba(80,65,100,.18);
+
+    pointer-events:none;
+}
+
+.topic-card:nth-child(1){
+    animation-delay:.05s;
+}
+
+.topic-card:nth-child(2){
+    animation-delay:.10s;
+}
+
+.topic-card:nth-child(3){
+    animation-delay:.15s;
+}
+
+.topic-card:nth-child(4){
+    animation-delay:.20s;
+}
+
+.topic-card:nth-child(5){
+    animation-delay:.25s;
+}
+
+@keyframes cardIn{
+
+    from{
+        opacity:0;
+
+        transform:
+            translateY(28px)
+            scale(.96);
+    }
+
+}
+
+.topic-card:hover{
+    transform:
+        translateY(-11px)
+        rotate(-.6deg);
+
+    box-shadow:
+        0 12px 0 rgba(100,78,130,.14),
+        0 28px 45px rgba(92,76,115,.22);
+}
+
+.topic-card:nth-child(even):hover{
+    transform:
+        translateY(-11px)
+        rotate(.6deg);
+}
+
+.topic-card:focus-visible{
+    outline:4px solid #a18be5;
+
+    outline-offset:4px;
+}
+
+/* =========================================================
+   IMAGEN
+========================================================= */
+
+.topic-image{
+    position:relative;
+
+    width:100%;
+
+    height:59%;
+
+    flex:0 0 59%;
+
+    overflow:hidden;
+
+    border-radius:23px;
+
+    background:#eee8f5;
+
+    border:3px solid rgba(255,255,255,.95);
+
+    box-shadow:
+        inset 0 -6px 0 rgba(90,70,100,.06),
+        0 4px 12px rgba(80,65,90,.08);
+
+    isolation:isolate;
+}
+
+.topic-image::before{
+    content:"";
+
+    position:absolute;
+
+    width:90px;
+
+    height:90px;
+
+    left:-40px;
+
+    top:-40px;
+
+    border-radius:50%;
+
+    background:
+        rgba(255,255,255,.58);
+
+    z-index:2;
+
+    pointer-events:none;
+}
+
+.topic-image img{
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+    object-position:center;
+
+    display:block;
+
+    transition:
+        transform .45s
+        cubic-bezier(.2,.8,.2,1),
+        filter .3s;
+}
+
+.topic-card:hover .topic-image img{
+    transform:scale(1.08);
+
+    filter:
+        saturate(1.05)
+        contrast(.98)
+        brightness(1.04);
+}
+
+.image-label{
+    position:absolute;
+
+    left:9px;
+
+    bottom:9px;
+
+    padding:5px 10px;
 
     border-radius:10px;
 
     color:white;
 
-    font-size:11px;
+    font-size:9px;
 
-    font-weight:900;
-
-    letter-spacing:.8px;
-
-    backdrop-filter:
-        blur(8px);
-
-    background:
-        rgba(38,42,69,.55);
-
-}
-
-
-/* =========================================================
-   CONTENIDO TARJETA
-========================================================= */
-
-.topic-content{
-
-    padding:
-        14px
-        7px
-        7px;
-
-}
-
-
-.topic-content h3{
-
-    font-size:19px;
-
-    font-weight:900;
-
-    margin-bottom:6px;
-
-}
-
-
-.topic-content p{
-
-    font-size:12px;
-
-    line-height:1.45;
-
-    color:#9299ac;
-
-    min-height:36px;
-
-}
-
-
-/* =========================================================
-   BOTÓN DE LA TARJETA
-========================================================= */
-
-.card-play{
-
-    margin-top:13px;
-
-    min-height:39px;
-
-    border-radius:13px;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:
-        space-between;
-
-    padding:
-        0
-        8px
-        0
-        12px;
-
-    font-size:12px;
-
-    font-weight:900;
-
-}
-
-
-.card-play span:last-child{
-
-    width:29px;
-    height:29px;
-
-    border-radius:9px;
-
-    display:grid;
-    place-items:center;
-
-    background:white;
-
-    box-shadow:
-        0 3px 8px
-        rgba(0,0,0,.08);
-
-}
-
-
-/* COLORES DIFERENTES */
-
-.animales .card-play{
-
-    background:#fff1dc;
-    color:#cb7624;
-
-}
-
-
-.numeros .card-play{
-
-    background:#e6f3ff;
-    color:#4084c0;
-
-}
-
-
-.formas .card-play{
-
-    background:#eeebff;
-    color:#6553d2;
-
-}
-
-
-.naturaleza .card-play{
-
-    background:#e7f7e9;
-    color:#41905a;
-
-}
-
-
-.colores .card-play{
-
-    background:#ffe9f0;
-    color:#c9577e;
-
-}
-
-
-/* =========================================================
-   JUEGO
-========================================================= */
-
-#gameScreen{
-
-    display:none;
-
-}
-
-
-.game-wrapper{
-
-    max-width:980px;
-
-    margin:auto;
-
-}
-
-
-/* =========================================================
-   BARRA PROGRESO
-========================================================= */
-
-.progress-panel{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:20px;
-
-    background:white;
-
-    border-radius:20px;
-
-    padding:
-        14px
-        20px;
-
-    box-shadow:var(--sombra);
-
-    margin-bottom:18px;
-
-}
-
-
-.progress-info{
-
-    min-width:115px;
-
-}
-
-
-.progress-info small{
-
-    display:block;
-
-    font-size:10px;
-
-    color:#999fb1;
-
-    font-weight:900;
+    font-weight:800;
 
     letter-spacing:1px;
 
+    background:rgba(76,60,93,.76);
+
+    border:2px solid rgba(255,255,255,.65);
+
+    backdrop-filter:blur(6px);
+
+    z-index:3;
 }
 
+/* =========================================================
+   CONTENIDO
+========================================================= */
 
-.progress-info strong{
-
-    display:block;
-
-    margin-top:3px;
-
-    font-size:16px;
-
-}
-
-
-.progress-track{
-
-    height:12px;
-
+.topic-content{
     flex:1;
 
-    background:#eceef6;
+    display:flex;
+
+    flex-direction:column;
+
+    padding:14px 7px 3px;
+
+    min-height:0;
+}
+
+.topic-content h3{
+    font-family:
+        "Baloo 2",
+        "Fredoka",
+        sans-serif;
+
+    font-size:26px;
+
+    line-height:1.1;
+
+    font-weight:800;
+
+    color:#51465e;
+
+    margin-bottom:7px;
+}
+
+.topic-content p{
+    font-size:13.5px;
+
+    line-height:1.42;
+
+    color:#918598;
+
+    font-weight:500;
+
+    margin-bottom:10px;
+
+    display:-webkit-box;
+
+    -webkit-line-clamp:2;
+
+    -webkit-box-orient:vertical;
+
+    overflow:hidden;
+}
+
+/* =========================================================
+   BOTÓN TARJETA
+========================================================= */
+
+.card-play{
+    margin-top:auto;
+
+    min-height:42px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:0 7px 0 12px;
+
+    border-radius:13px;
+
+    font-size:13px;
+
+    font-weight:800;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eee8ff,
+            #e5ddfa
+        ) !important;
+
+    color:#6754a7 !important;
+
+    border:2px solid rgba(255,255,255,.92);
+
+    transition:.2s;
+}
+
+.card-play span:last-child{
+    width:29px;
+
+    height:29px;
+
+    display:grid;
+
+    place-items:center;
+
+    border-radius:9px;
+
+    background:#fffdf7;
+
+    color:#725bc7;
+
+    font-size:14px;
+
+    box-shadow:
+        0 2px 5px rgba(70,60,90,.10);
+
+    transition:.2s;
+}
+
+.topic-card:hover
+.card-play span:last-child{
+    transform:translateX(4px);
+}
+
+/* =========================================================
+   COLORES DE CATEGORÍAS
+========================================================= */
+
+.animales .topic-image{
+    background:
+        radial-gradient(
+            circle,
+            #fff0d4,
+            #efd4a8
+        );
+}
+
+.animales .image-label{
+    background:#b87952;
+}
+
+.numeros .topic-image{
+    background:
+        radial-gradient(
+            circle,
+            #e9f5f7,
+            #c9e2e7
+        );
+}
+
+.numeros .image-label{
+    background:#668fa6;
+}
+
+.formas .topic-image{
+    background:
+        radial-gradient(
+            circle,
+            #eee7fa,
+            #d9cdeb
+        );
+}
+
+.formas .image-label{
+    background:#8068a9;
+}
+
+.naturaleza .topic-image{
+    background:
+        radial-gradient(
+            circle,
+            #e8f3df,
+            #c9dfbc
+        );
+}
+
+.naturaleza .image-label{
+    background:#67915f;
+}
+
+.colores .topic-image{
+    background:
+        radial-gradient(
+            circle,
+            #fae9ee,
+            #efcbd5
+        );
+}
+
+.colores .image-label{
+    background:#bd7188;
+}
+
+/* =========================================================
+   PANTALLA DEL JUEGO
+========================================================= */
+
+#gameScreen{
+    display:none;
+
+    flex-direction:column;
+
+    gap:14px;
+
+    min-height:calc(100vh - 100px);
+}
+
+#gameScreen.active{
+    display:flex;
+}
+
+/* =========================================================
+   PROGRESO
+========================================================= */
+
+.game-top{
+    flex:0 0 auto;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.96),
+            rgba(250,246,255,.96)
+        );
 
     border-radius:20px;
 
-    overflow:hidden;
+    padding:11px 18px;
 
+    border:2px solid rgba(255,255,255,.98);
+
+    box-shadow:
+        0 5px 0 rgba(100,80,120,.08),
+        0 12px 25px rgba(100,80,120,.10);
 }
 
+.progress-info{
+    min-width:125px;
+}
+
+.progress-info small{
+    display:block;
+
+    font-size:9px;
+
+    color:#99909e;
+
+    font-weight:800;
+
+    letter-spacing:1px;
+}
+
+.progress-info strong{
+    display:block;
+
+    margin-top:2px;
+
+    font-size:15px;
+
+    color:#705ac0;
+
+    font-weight:800;
+}
+
+.progress-track{
+    flex:1;
+
+    height:14px;
+
+    background:#e9e3ef;
+
+    border-radius:30px;
+
+    overflow:hidden;
+}
 
 .progress-bar{
-
     height:100%;
 
     width:20%;
@@ -802,125 +1218,129 @@ body{
     background:
         linear-gradient(
             90deg,
-            #7666e9,
-            #9a8cf4
+            #b39af5,
+            #7258d2
         );
-
-    border-radius:20px;
-
-    transition:
-        width .4s;
-
-}
-
-
-/* =========================================================
-   PANEL DEL EJERCICIO
-========================================================= */
-
-.game-panel{
-
-    position:relative;
-
-    background:white;
 
     border-radius:30px;
 
-    padding:
-        35px
-        30px
-        30px;
+    transition:
+        width .5s
+        cubic-bezier(.34,1.56,.64,1);
 
     box-shadow:
-        0 18px 45px
-        rgba(47,54,105,.12);
-
+        inset 0 2px 0 rgba(255,255,255,.4);
 }
 
+/* =========================================================
+   PANEL
+========================================================= */
+
+.game-panel{
+    flex:1;
+
+    min-height:0;
+
+    background:
+        linear-gradient(
+            145deg,
+            #fffefa,
+            #fbf7ff
+        );
+
+    border-radius:30px;
+
+    padding:18px 25px 17px;
+
+    border:3px solid rgba(255,255,255,.98);
+
+    box-shadow:
+        0 8px 0 rgba(100,80,120,.08),
+        0 18px 40px rgba(100,80,120,.13);
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:11px;
+
+    overflow:hidden;
+}
 
 .topic-name{
+    align-self:center;
 
-    text-align:center;
-
-    color:var(--morado);
+    color:#6a55ad;
 
     font-size:11px;
 
-    font-weight:900;
+    font-weight:800;
 
-    letter-spacing:1.5px;
+    letter-spacing:2px;
 
-    margin-bottom:7px;
+    background:#eee8ff;
 
+    padding:5px 15px;
+
+    border-radius:30px;
+
+    border:2px solid #d9cef5;
 }
 
-
 .game-panel h2{
-
     text-align:center;
 
     font-size:
         clamp(
-            22px,
-            4vw,
-            30px
+            20px,
+            2.4vw,
+            29px
         );
 
-    font-weight:900;
+    font-weight:800;
 
+    color:#554a5f;
+
+    line-height:1.2;
 }
-
-
-.instructions{
-
-    text-align:center;
-
-    color:#959bae;
-
-    font-size:13px;
-
-    margin-top:7px;
-
-    margin-bottom:30px;
-
-}
-
 
 /* =========================================================
-   CARTAS DE LA SECUENCIA
+   SECUENCIA
 ========================================================= */
 
 .sequence{
-
     display:flex;
 
     align-items:center;
 
     justify-content:center;
 
-    flex-wrap:wrap;
+    flex-wrap:nowrap;
 
     gap:12px;
 
-    margin-bottom:36px;
+    padding:7px 0;
 
+    min-height:0;
 }
 
-
 .sequence-card{
+    width:
+        clamp(
+            76px,
+            7vw,
+            100px
+        );
 
-    width:115px;
-    height:125px;
+    aspect-ratio:.86 / 1;
 
     position:relative;
 
-    border-radius:22px;
+    border-radius:19px;
 
-    border:
-        3px solid
-        #edf0f6;
+    border:3px solid #e1d9eb;
 
-    background:#fff;
+    background:#fffefb;
 
     overflow:hidden;
 
@@ -931,133 +1351,180 @@ body{
     justify-content:center;
 
     box-shadow:
-        0 7px 15px
-        rgba(50,60,110,.08);
+        0 5px 0 rgba(100,80,120,.07),
+        0 8px 15px rgba(100,80,120,.08);
+
+    animation:
+        seqIn .45s backwards;
+
+    flex:0 0 auto;
+}
+
+.sequence-card:nth-child(1){
+    animation-delay:.05s;
+}
+
+.sequence-card:nth-child(2){
+    animation-delay:.10s;
+}
+
+.sequence-card:nth-child(3){
+    animation-delay:.15s;
+}
+
+.sequence-card:nth-child(4){
+    animation-delay:.20s;
+}
+
+.sequence-card:nth-child(5){
+    animation-delay:.25s;
+}
+
+.sequence-card:nth-child(6){
+    animation-delay:.30s;
+}
+
+.sequence-card:nth-child(7){
+    animation-delay:.35s;
+}
+
+.sequence-card:nth-child(8){
+    animation-delay:.40s;
+}
+
+@keyframes seqIn{
+
+    from{
+        opacity:0;
+
+        transform:
+            scale(.7)
+            translateY(15px);
+    }
 
 }
 
-
 .sequence-card img{
-
     width:100%;
     height:100%;
 
     object-fit:contain;
 
-    padding:8px;
-
+    padding:6px;
 }
-
-
-/* PARA NÚMEROS Y TEXTO */
 
 .sequence-text{
-
     font-size:34px;
 
-    font-weight:900;
+    font-weight:800;
 
-    color:#435073;
+    color:#7059bd;
 
+    font-family:
+        "Baloo 2",
+        sans-serif;
 }
 
-
-/* CASILLA ? */
-
 .sequence-card.blank{
-
     background:
         repeating-linear-gradient(
             -45deg,
-            #faf9ff,
-            #faf9ff 8px,
-            #f4f1ff 8px,
-            #f4f1ff 16px
+            #faf7ff,
+            #faf7ff 9px,
+            #eee8f6 9px,
+            #eee8f6 18px
         );
 
-    border:
-        3px dashed
-        #a69af0;
+    border:3px dashed #9a83d8;
 
-    color:#7565df;
+    color:#735bc0;
 
     font-size:38px;
 
-    font-weight:900;
+    font-weight:800;
 
+    animation:
+        blankPulse 1.8s
+        ease-in-out infinite;
+
+    font-family:
+        "Baloo 2",
+        sans-serif;
 }
 
+@keyframes blankPulse{
+
+    50%{
+        border-color:#7055cf;
+
+        box-shadow:
+            0 6px 14px rgba(100,80,160,.1),
+            0 0 25px rgba(160,135,230,.3);
+
+        transform:scale(1.03);
+    }
+
+}
 
 /* =========================================================
    OPCIONES
 ========================================================= */
 
 .options-title{
-
     display:flex;
 
     align-items:center;
 
-    gap:14px;
-
-    margin-bottom:18px;
+    gap:12px;
 
     font-size:11px;
 
-    color:#999fb1;
+    color:#988da0;
 
-    font-weight:900;
+    font-weight:800;
 
-    letter-spacing:1px;
+    letter-spacing:1.5px;
 
+    flex:0 0 auto;
 }
-
 
 .options-title::before,
 .options-title::after{
-
     content:"";
 
     flex:1;
 
-    height:1px;
+    height:2px;
 
-    background:#ebedf3;
-
+    background:#e9e1ef;
 }
 
-
 .options{
-
     display:flex;
 
     justify-content:center;
 
-    flex-wrap:wrap;
+    flex-wrap:nowrap;
 
-    gap:15px;
+    gap:16px;
 
+    flex:0 0 auto;
 }
 
-
-/* CARTA RESPUESTA */
-
 .option-card{
+    width:104px;
 
-    width:135px;
-    height:135px;
+    aspect-ratio:.92 / 1;
 
     position:relative;
 
     overflow:hidden;
 
-    border-radius:23px;
+    border-radius:20px;
 
-    background:white;
+    background:#fffefb;
 
-    border:
-        3px solid
-        #edf0f6;
+    border:3px solid #e2d9eb;
 
     cursor:pointer;
 
@@ -1066,17 +1533,23 @@ body{
     place-items:center;
 
     box-shadow:
-        0 7px 0 #e4e7ef,
-        0 12px 18px
-        rgba(48,57,105,.07);
+        0 5px 0 rgba(100,80,120,.07),
+        0 8px 14px rgba(100,80,120,.10);
 
-    transition:.2s;
+    transition:
+        transform .15s,
+        box-shadow .15s,
+        border-color .2s;
 
+    animation:
+        optIn .4s backwards;
+
+    font-family:inherit;
+
+    flex:0 0 auto;
 }
 
-
 .option-card img{
-
     width:100%;
     height:100%;
 
@@ -1085,307 +1558,435 @@ body{
     padding:8px;
 
     pointer-events:none;
-
 }
 
-
 .option-card span{
+    font-size:36px;
 
-    font-size:34px;
-
-    font-weight:900;
+    font-weight:800;
 
     pointer-events:none;
 
-}
+    font-family:"Baloo 2",sans-serif;
 
+    color:#6651ad;
+}
 
 .option-card:hover:not(:disabled){
-
     transform:
-        translateY(-6px)
+        translateY(-5px)
         scale(1.03);
 
-    border-color:#aca2ef;
+    border-color:#a996e0;
+
+    box-shadow:
+        0 7px 0 rgba(100,80,120,.09),
+        0 15px 25px rgba(100,80,130,.18);
+}
+
+.option-card:active:not(:disabled){
+    transform:translateY(-1px);
+}
+
+.option-card:focus-visible{
+    outline:3px solid #9079d4;
+
+    outline-offset:3px;
+}
+
+@keyframes optIn{
+
+    from{
+        opacity:0;
+
+        transform:
+            translateY(15px)
+            scale(.9);
+    }
 
 }
 
+/* =========================================================
+   RESPUESTAS
+========================================================= */
 
 .option-card.correct{
+    border-color:#76c78d;
 
-    border-color:#52cc99;
-
-    background:#e8fbf3;
+    background:#eaf8ed;
 
     box-shadow:
-        0 7px 0 #bcead7;
+        0 6px 0 #4c9e61,
+        0 12px 20px rgba(70,160,90,.25);
 
-    animation:pop .45s;
-
+    animation:pop .5s;
 }
 
+.option-card.correct::after{
+    content:"✔";
+
+    position:absolute;
+
+    top:5px;
+
+    right:8px;
+
+    color:#3f8450;
+
+    font-size:20px;
+
+    font-weight:900;
+}
 
 .option-card.wrong{
+    border-color:#e5a0aa;
 
-    border-color:#ff8c8c;
-
-    background:#fff0f0;
+    background:#fff0f2;
 
     box-shadow:
-        0 7px 0 #ffd0d0;
+        0 6px 0 #c56a76,
+        0 12px 20px rgba(190,90,110,.25);
 
-    animation:shake .4s;
-
+    animation:shake .5s;
 }
 
+.option-card.wrong::after{
+    content:"✖";
+
+    position:absolute;
+
+    top:5px;
+
+    right:8px;
+
+    color:#b95763;
+
+    font-size:20px;
+
+    font-weight:900;
+}
 
 @keyframes pop{
 
     50%{
-        transform:
-            scale(1.12);
+        transform:scale(1.12);
     }
 
 }
-
 
 @keyframes shake{
 
-    25%{
-        transform:
-            translateX(-7px);
+    20%{
+        transform:translateX(-9px);
     }
 
-    50%{
-        transform:
-            translateX(7px);
+    40%{
+        transform:translateX(9px);
     }
 
-    75%{
-        transform:
-            translateX(-5px);
+    60%{
+        transform:translateX(-6px);
+    }
+
+    80%{
+        transform:translateX(6px);
     }
 
 }
 
-
 /* =========================================================
-   MENSAJE
+   FEEDBACK
 ========================================================= */
 
 .feedback{
-
     display:none;
 
-    max-width:500px;
+    max-width:520px;
 
-    margin:
-        25px auto
-        0;
+    margin:0 auto;
 
-    padding:
-        13px 18px;
+    padding:11px 20px;
 
     border-radius:14px;
 
     text-align:center;
 
-    font-weight:900;
+    font-weight:700;
 
     font-size:14px;
 
+    flex:0 0 auto;
 }
-
 
 .feedback.correct-message{
-
     display:block;
 
-    background:#e4f8ef;
+    background:#e9f7e8;
 
-    color:#25805d;
+    color:#3e8150;
 
-    border:
-        2px solid
-        #bcebd8;
+    border:2px solid #c5dfbd;
 
+    animation:slideUp .4s;
 }
-
 
 .feedback.wrong-message{
-
     display:block;
 
-    background:#fff0f0;
+    background:#fff0f1;
 
-    color:#bd5151;
+    color:#a95761;
 
-    border:
-        2px solid
-        #ffd1d1;
+    border:2px solid #f1cdd1;
 
+    animation:slideUp .4s;
 }
 
+@keyframes slideUp{
+
+    from{
+        opacity:0;
+
+        transform:translateY(10px);
+    }
+
+}
 
 /* =========================================================
    BOTONES
 ========================================================= */
 
 .actions{
-
     display:flex;
 
-    justify-content:
-        space-between;
+    justify-content:space-between;
 
-    gap:15px;
+    gap:12px;
 
     align-items:center;
 
-    margin-top:28px;
+    margin-top:auto;
 
-    padding-top:22px;
+    padding-top:11px;
 
-    border-top:
-        1px solid
-        #eceef4;
+    border-top:2px solid #eee7f1;
 
+    flex:0 0 auto;
 }
 
-
 .btn{
-
     border:0;
 
     border-radius:14px;
 
-    padding:
-        13px
-        20px;
+    padding:12px 22px;
 
     cursor:pointer;
 
-    font-weight:900;
+    font-weight:700;
 
-    transition:.2s;
+    font-family:inherit;
 
+    font-size:14px;
+
+    transition:
+        transform .15s,
+        box-shadow .15s;
 }
-
 
 .btn-back{
+    background:#f0edf4;
 
-    background:#f0f2f7;
+    color:#776c7f;
 
-    color:#747b90;
-
+    box-shadow:
+        0 4px 0 #d9d3df;
 }
 
-
 .btn-next{
-
     background:
         linear-gradient(
             135deg,
-            #7969ec,
-            #5848cd
+            #967ee8,
+            #674ec9
         );
 
     color:white;
 
     box-shadow:
-        0 6px 15px
-        rgba(101,83,210,.25);
-
+        0 4px 0 #5140a3,
+        0 8px 15px rgba(90,70,170,.20);
 }
-
 
 .btn:hover{
-
-    transform:
-        translateY(-2px);
-
+    transform:translateY(-2px);
 }
 
+.btn:active{
+    transform:translateY(2px);
+
+    box-shadow:
+        0 1px 0 rgba(0,0,0,.2);
+}
 
 /* =========================================================
    FINAL
 ========================================================= */
 
 #endScreen{
-
     display:none;
 
+    min-height:calc(100vh - 100px);
+
+    align-items:center;
+
+    justify-content:center;
 }
 
+#endScreen.active{
+    display:flex;
+}
 
 .end-card{
+    max-width:560px;
 
-    max-width:620px;
+    width:100%;
 
-    margin:
-        50px auto;
+    padding:38px 30px;
 
-    padding:
-        50px
-        30px;
-
-    background:white;
+    background:
+        linear-gradient(
+            145deg,
+            #fffefa,
+            #faf5ff
+        );
 
     border-radius:30px;
 
+    border:3px solid rgba(255,255,255,.98);
+
     box-shadow:
-        var(--sombra);
+        0 8px 0 rgba(100,80,120,.08),
+        0 20px 50px rgba(100,80,120,.18);
 
     text-align:center;
 
+    animation:
+        endIn .5s
+        cubic-bezier(.34,1.56,.64,1)
+        backwards;
 }
 
+@keyframes endIn{
 
-.end-star{
+    from{
+        opacity:0;
 
-    width:90px;
-    height:90px;
-
-    margin:
-        auto
-        auto
-        20px;
-
-    border-radius:25px;
-
-    display:grid;
-    place-items:center;
-
-    background:#fff2c7;
-
-    color:#dfa200;
-
-    font-size:40px;
-
-    transform:
-        rotate(-6deg);
+        transform:scale(.9);
+    }
 
 }
 
+.trophy{
+    font-size:64px;
+
+    display:inline-block;
+
+    animation:
+        trophyBounce 1.6s
+        ease-in-out infinite;
+}
+
+@keyframes trophyBounce{
+
+    0%,100%{
+        transform:
+            translateY(0)
+            rotate(-5deg);
+    }
+
+    50%{
+        transform:
+            translateY(-10px)
+            rotate(5deg);
+    }
+
+}
 
 .end-card h2{
+    font-size:30px;
 
-    font-size:32px;
+    margin:6px 0;
 
-    margin-bottom:9px;
-
+    color:#7059bd;
 }
 
+.end-card > p{
+    color:#8c8193;
 
-.end-card p{
-
-    color:#9198aa;
-
+    font-size:15px;
 }
 
+.stars-result{
+    display:flex;
+
+    justify-content:center;
+
+    gap:12px;
+
+    margin:18px 0;
+
+    font-size:48px;
+}
+
+.stars-result span{
+    opacity:.2;
+
+    transition:
+        .35s
+        cubic-bezier(.34,1.56,.64,1);
+
+    filter:grayscale(1);
+}
+
+.stars-result span.on{
+    opacity:1;
+
+    color:#e8bc4e;
+
+    filter:none;
+
+    text-shadow:
+        0 0 20px rgba(232,188,78,.75);
+
+    animation:
+        starPop .6s
+        cubic-bezier(.34,1.56,.64,1);
+}
+
+@keyframes starPop{
+
+    0%{
+        transform:
+            scale(0)
+            rotate(-180deg);
+    }
+
+    60%{
+        transform:
+            scale(1.35)
+            rotate(20deg);
+    }
+
+    100%{
+        transform:
+            scale(1)
+            rotate(0);
+    }
+
+}
 
 .results{
-
     display:grid;
 
     grid-template-columns:
@@ -1393,219 +1994,515 @@ body{
 
     gap:14px;
 
-    margin:
-        28px
-        0;
-
+    margin:20px 0;
 }
 
-
 .result{
-
-    padding:20px;
+    padding:18px 14px;
 
     border-radius:18px;
 
-    background:#f6f7fc;
-
+    background:
+        linear-gradient(
+            135deg,
+            #f2edff,
+            #eee8f8
+        );
 }
-
 
 .result strong{
-
     display:block;
 
-    color:var(--morado);
+    color:#7059bd;
 
-    font-size:27px;
+    font-size:30px;
 
+    font-family:"Baloo 2",sans-serif;
+
+    font-weight:800;
 }
-
 
 .result span{
-
     display:block;
 
-    margin-top:4px;
+    margin-top:3px;
 
-    color:#9299ac;
+    color:#8d8276;
 
-    font-size:11px;
+    font-size:10px;
 
-    font-weight:900;
+    font-weight:800;
 
+    letter-spacing:1px;
 }
 
+.end-actions{
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+    align-items:center;
+
+    margin-top:8px;
+}
+
+.end-actions .btn{
+    min-width:230px;
+}
 
 /* =========================================================
-   RESPONSIVE
+   ESTRELLAS DE ACIERTO
 ========================================================= */
 
-@media(max-width:1000px){
+.mini-star{
+    position:fixed;
 
-    .topic-grid{
+    z-index:1000;
 
-        grid-template-columns:
-            repeat(3,1fr);
+    pointer-events:none;
 
+    font-size:20px;
+
+    animation:
+        starBurst .9s
+        ease-out
+        forwards;
+}
+
+@keyframes starBurst{
+
+    0%{
+        opacity:1;
+
+        transform:
+            translate(0,0)
+            scale(.5);
+    }
+
+    100%{
+        opacity:0;
+
+        transform:
+            translate(var(--tx),var(--ty))
+            scale(1.4)
+            rotate(540deg);
     }
 
 }
 
+/* =========================================================
+   PANTALLAS GRANDES
+========================================================= */
 
-@media(max-width:720px){
+@media(
+    min-width:1101px
+) and (
+    min-height:850px
+){
 
     .app{
-
-        width:94%;
-
+        padding-top:25px;
     }
 
+    .hero{
+        padding-top:30px;
+
+        margin-bottom:82px;
+    }
 
     .topic-grid{
+        gap:27px;
 
-        grid-template-columns:
-            repeat(2,1fr);
-
+        transform:translateY(10px);
     }
 
-
-    .topic-image{
-
-        height:170px;
-
-    }
-
-
-    .game-panel{
-
-        padding:
-            28px
-            14px;
-
-    }
-
-
-    .sequence-card{
-
-        width:76px;
-        height:86px;
-
-    }
-
-
-    .option-card{
-
-        width:95px;
-        height:95px;
-
+    .topic-card{
+        min-height:500px;
     }
 
 }
 
+/* =========================================================
+   COMPUTADORAS CON POCA ALTURA
+========================================================= */
 
-@media(max-width:470px){
+@media(
+    max-height:800px
+) and (
+    min-width:901px
+){
+
+    .app{
+        padding-top:12px;
+
+        padding-bottom:18px;
+    }
+
+    .topbar{
+        min-height:48px;
+
+        margin-bottom:4px;
+    }
+
+    .logo{
+        width:42px;
+        height:42px;
+    }
+
+    .brand h1{
+        font-size:16px;
+    }
 
     .brand p{
-
-        display:none;
-
+        font-size:10px;
     }
 
+    .hero{
+        padding-top:8px;
 
-    .points{
-
-        padding:
-            7px
-            9px;
-
-        font-size:11px;
-
+        margin-bottom:40px;
     }
 
+    .small-title{
+        font-size:12px;
+
+        padding:7px 18px;
+
+        margin-bottom:11px;
+    }
+
+    .hero h2{
+        font-size:55px;
+
+        margin-bottom:10px;
+    }
+
+    .hero p{
+        font-size:14px;
+    }
+
+    .categories-title{
+        margin-bottom:15px;
+    }
 
     .topic-grid{
-
-        grid-template-columns:
-            repeat(2,1fr);
-
-        gap:10px;
-
+        gap:15px;
     }
 
+    .topic-card{
+        padding:9px;
+
+        border-radius:24px;
+
+        min-height:0;
+    }
+
+    .topic-image{
+        border-radius:18px;
+
+        height:56%;
+
+        flex-basis:56%;
+    }
+
+    .topic-content{
+        padding-top:8px;
+    }
+
+    .topic-content h3{
+        font-size:20px;
+    }
+
+    .topic-content p{
+        font-size:11.5px;
+    }
+
+    .card-play{
+        min-height:34px;
+
+        font-size:11px;
+    }
+
+}
+
+/* =========================================================
+   TABLETS
+========================================================= */
+
+@media(max-width:1100px){
+
+    .topic-grid{
+        grid-template-columns:
+            repeat(3,minmax(0,1fr));
+
+        gap:20px;
+    }
 
     .topic-card{
+        aspect-ratio:.80 / 1;
+    }
 
-        border-radius:20px;
+    .hero{
+        margin-bottom:58px;
+    }
+
+    .hero h2{
+        font-size:
+            clamp(
+                52px,
+                7vw,
+                80px
+            );
+    }
+
+}
+
+/* =========================================================
+   MÓVIL
+========================================================= */
+
+@media(max-width:700px){
+
+    body{
+        overflow:auto;
+    }
+
+    .app{
+        width:92vw;
+
+        padding:
+            12px
+            0
+            25px;
+    }
+
+    .topbar{
+        margin-bottom:12px;
+    }
+
+    .brand h1{
+        font-size:15px;
+    }
+
+    .brand p{
+        display:none;
+    }
+
+    .logo{
+        width:42px;
+        height:42px;
+
+        font-size:21px;
+    }
+
+    .points{
+        padding:7px 10px;
+
+        font-size:12px;
+    }
+
+    .sound-btn{
+        width:42px;
+        height:42px;
+    }
+
+    #topicScreen{
+        min-height:auto;
+
+        padding-bottom:25px;
+    }
+
+    .hero{
+        padding-top:12px;
+
+        margin-bottom:43px;
+    }
+
+    .small-title{
+        font-size:11px;
+
+        padding:7px 16px;
+
+        margin-bottom:12px;
+    }
+
+    .hero h2{
+        font-size:46px;
+
+        line-height:1;
+
+        letter-spacing:-2px;
+
+        margin-bottom:15px;
+    }
+
+    .hero p{
+        font-size:14px;
+
+        line-height:1.5;
+    }
+
+    .categories-title{
+        margin-bottom:19px;
+    }
+
+    .categories-title h3{
+        font-size:12px;
+    }
+
+    .topic-grid{
+        grid-template-columns:
+            repeat(2,minmax(0,1fr));
+
+        gap:13px;
+
+        transform:translateY(5px);
+    }
+
+    .topic-card{
+        aspect-ratio:.77 / 1;
+
+        border-radius:22px;
+
+        padding:9px;
+    }
+
+    .topic-image{
+        height:57%;
+
+        flex-basis:57%;
+
+        border-radius:17px;
+    }
+
+    .topic-content{
+        padding:10px 5px 2px;
+    }
+
+    .topic-content h3{
+        font-size:19px;
+    }
+
+    .topic-content p{
+        font-size:11.5px;
+    }
+
+    .card-play{
+        min-height:34px;
+
+        font-size:11px;
+    }
+
+    #gameScreen{
+        min-height:calc(100vh - 75px);
+    }
+
+    .game-top{
+        padding:9px 12px;
+    }
+
+    .progress-info{
+        min-width:100px;
+    }
+
+    .sequence{
+        flex-wrap:wrap;
+    }
+
+    .options{
+        flex-wrap:wrap;
+    }
+
+}
+
+/* =========================================================
+   MÓVIL PEQUEÑO
+========================================================= */
+
+@media(max-width:430px){
+
+    .hero{
+        margin-bottom:35px;
+    }
+
+    .hero h2{
+        font-size:39px;
+    }
+
+    .hero p{
+        font-size:13px;
+    }
+
+    .topic-grid{
+        gap:10px;
+    }
+
+    .topic-card{
+        aspect-ratio:.75 / 1;
 
         padding:7px;
 
+        border-radius:19px;
     }
-
 
     .topic-image{
-
-        height:135px;
-
         border-radius:15px;
-
     }
-
-
-    .topic-content{
-
-        padding:
-            10px
-            5px
-            5px;
-
-    }
-
 
     .topic-content h3{
-
         font-size:16px;
-
     }
-
 
     .topic-content p{
+        font-size:10.5px;
+    }
+
+    .card-play{
+        min-height:30px;
+
+        margin-top:5px;
 
         font-size:10px;
-
     }
 
-
-    .actions{
-
-        flex-direction:column;
-
+    .results{
+        gap:9px;
     }
 
+    .end-card{
+        padding:28px 18px;
+    }
 
-    .btn{
+}
 
-        width:100%;
+/* =========================================================
+   REDUCIR ANIMACIONES
+========================================================= */
 
+@media(prefers-reduced-motion:reduce){
+
+    *,
+    *::before,
+    *::after{
+        animation-duration:.01ms !important;
+
+        animation-iteration-count:1 !important;
+
+        transition-duration:.01ms !important;
     }
 
 }
 
 </style>
-
 </head>
 
 <body>
 
-
-<!-- DECORACIÓN -->
-
-<div class="bg-shape bg-one"></div>
-<div class="bg-shape bg-two"></div>
-
+<div class="bg-deco"></div>
 
 <div class="app">
-
 
 <!-- =====================================================
      CABECERA
@@ -1615,15 +2512,11 @@ body{
 
     <div class="brand">
 
-        <div class="logo">
-            S
-        </div>
+        <div class="logo">S</div>
 
         <div>
 
-            <h1>
-                Adivina la Secuencia
-            </h1>
+            <h1>Adivina la Secuencia</h1>
 
             <p>
                 Aprende patrones mientras juegas
@@ -1633,327 +2526,320 @@ body{
 
     </div>
 
+    <div class="top-right">
 
-    <div class="points">
+        <div
+            class="points"
+            id="pointsBox"
+        >
 
-        <span class="star">
-            ★
-        </span>
+            <span class="star">
+                ★
+            </span>
 
-        <span id="scoreTop">
-            0 puntos
-        </span>
+            <span id="scoreTop">
+                0 puntos
+            </span>
+
+        </div>
+
+        <button
+            class="sound-btn"
+            id="soundBtn"
+            title="Sonido"
+            aria-label="Sonido"
+        >
+            🔊
+        </button>
 
     </div>
 
 </header>
 
 
-
 <!-- =====================================================
-     PANTALLA CATEGORÍAS
+     PORTADA
 ===================================================== -->
 
 <section id="topicScreen">
 
+    <div class="hero">
 
-<div class="hero">
-
-    <div class="small-title">
-        JUEGO DE PATRONES
-    </div>
-
-    <h2>
-
-        Observa, piensa y
-
-        <span>
-            completa
-        </span>
-
-    </h2>
-
-    <p>
-
-        Descubre qué elemento continúa cada patrón.
-        Elige una categoría y supera los cinco
-        desafíos.
-
-    </p>
-
-</div>
-
-
-<div class="categories-title">
-
-    <h3>
-        ELIGE UNA CATEGORÍA
-    </h3>
-
-</div>
-
-
-
-<div class="topic-grid">
-
-
-<!-- ================= ANIMALES ================= -->
-
-<article
-    class="topic-card animales"
-    data-topic="animales"
->
-
-    <div class="topic-image">
-
-        <!--
-        CAMBIA ESTA RUTA POR TU IMAGEN
-        -->
-
-        <img
-            src="../assets/img_p.secuencia/p.animales.png"
-            alt="Animales"
-        >
-
-        <div class="image-label">
-            ANIMALES
+        <div class="small-title">
+            ✦ JUEGO DE PATRONES ✦
         </div>
 
-    </div>
-
-
-    <div class="topic-content">
-
-        <h3>
-            Animales
-        </h3>
+        <h2>
+            Observa, piensa y
+            <span>completa</span>
+        </h2>
 
         <p>
-            Descubre patrones con
-            simpáticos animales.
+            Descubre qué elemento continúa cada patrón.
+            Elige una categoría y supera los cinco desafíos.
         </p>
 
-        <div class="card-play">
-
-            <span>
-                Comenzar
-            </span>
-
-            <span>
-                →
-            </span>
-
-        </div>
-
-    </div>
-
-</article>
-
-
-
-<!-- ================= NÚMEROS ================= -->
-
-<article
-    class="topic-card numeros"
-    data-topic="numeros"
->
-
-    <div class="topic-image">
-
-        <img
-            src="../assets/img_p.secuencia/p.numeros.png"
-            alt="Números"
-        >
-
-        <div class="image-label">
-            NÚMEROS
-        </div>
-
     </div>
 
 
-    <div class="topic-content">
+    <div class="categories-title">
 
         <h3>
-            Números
+            ELIGE UNA CATEGORÍA
         </h3>
-
-        <p>
-            Completa divertidas
-            secuencias numéricas.
-        </p>
-
-        <div class="card-play">
-
-            <span>
-                Comenzar
-            </span>
-
-            <span>
-                →
-            </span>
-
-        </div>
 
     </div>
 
-</article>
 
+    <div class="topic-grid">
 
+        <!-- ANIMALES -->
 
-<!-- ================= FORMAS ================= -->
-
-<article
-    class="topic-card formas"
-    data-topic="formas"
->
-
-    <div class="topic-image">
-
-        <img
-            src="../assets/img_p.secuencia/p.formas.png"
-            alt="Formas"
+        <article
+            class="topic-card animales"
+            data-topic="animales"
+            tabindex="0"
+            role="button"
         >
 
-        <div class="image-label">
-            FORMAS
-        </div>
+            <div class="topic-image">
 
-    </div>
+                <img
+                    src="../assets/img_p.secuencia/p.animales.png"
+                    alt="Animales"
+                >
+
+                <div class="image-label">
+                    ANIMALES
+                </div>
+
+            </div>
+
+            <div class="topic-content">
+
+                <h3>
+                    Animales
+                </h3>
+
+                <p>
+                    Descubre patrones con simpáticos animales.
+                </p>
+
+                <div class="card-play">
+
+                    <span>
+                        Comenzar
+                    </span>
+
+                    <span>
+                        →
+                    </span>
+
+                </div>
+
+            </div>
+
+        </article>
 
 
-    <div class="topic-content">
+        <!-- NÚMEROS -->
 
-        <h3>
-            Formas
-        </h3>
-
-        <p>
-            Reconoce figuras y
-            descubre sus patrones.
-        </p>
-
-        <div class="card-play">
-
-            <span>
-                Comenzar
-            </span>
-
-            <span>
-                →
-            </span>
-
-        </div>
-
-    </div>
-
-</article>
-
-
-
-<!-- ================= NATURALEZA ================= -->
-
-<article
-    class="topic-card naturaleza"
-    data-topic="naturaleza"
->
-
-    <div class="topic-image">
-
-        <img
-            src="../assets/img_p.secuencia/p.naturaleza.png"
-            alt="Naturaleza"
+        <article
+            class="topic-card numeros"
+            data-topic="numeros"
+            tabindex="0"
+            role="button"
         >
 
-        <div class="image-label">
-            NATURALEZA
-        </div>
+            <div class="topic-image">
 
-    </div>
+                <img
+                    src="../assets/img_p.secuencia/p.numeros.png"
+                    alt="Números"
+                >
+
+                <div class="image-label">
+                    NÚMEROS
+                </div>
+
+            </div>
+
+            <div class="topic-content">
+
+                <h3>
+                    Números
+                </h3>
+
+                <p>
+                    Completa divertidas secuencias numéricas.
+                </p>
+
+                <div class="card-play">
+
+                    <span>
+                        Comenzar
+                    </span>
+
+                    <span>
+                        →
+                    </span>
+
+                </div>
+
+            </div>
+
+        </article>
 
 
-    <div class="topic-content">
+        <!-- FORMAS -->
 
-        <h3>
-            Naturaleza
-        </h3>
-
-        <p>
-            Aprende con plantas,
-            flores y naturaleza.
-        </p>
-
-        <div class="card-play">
-
-            <span>
-                Comenzar
-            </span>
-
-            <span>
-                →
-            </span>
-
-        </div>
-
-    </div>
-
-</article>
-
-
-
-<!-- ================= COLORES ================= -->
-
-<article
-    class="topic-card colores"
-    data-topic="colores"
->
-
-    <div class="topic-image">
-
-        <img
-            src="../assets/img_p.secuencia/p.colores.png"
-            alt="Colores"
+        <article
+            class="topic-card formas"
+            data-topic="formas"
+            tabindex="0"
+            role="button"
         >
 
-        <div class="image-label">
-            COLORES
-        </div>
+            <div class="topic-image">
+
+                <img
+                    src="../assets/img_p.secuencia/p.formas.png"
+                    alt="Formas"
+                >
+
+                <div class="image-label">
+                    FORMAS
+                </div>
+
+            </div>
+
+            <div class="topic-content">
+
+                <h3>
+                    Formas
+                </h3>
+
+                <p>
+                    Reconoce figuras y descubre sus patrones.
+                </p>
+
+                <div class="card-play">
+
+                    <span>
+                        Comenzar
+                    </span>
+
+                    <span>
+                        →
+                    </span>
+
+                </div>
+
+            </div>
+
+        </article>
+
+
+        <!-- NATURALEZA -->
+
+        <article
+            class="topic-card naturaleza"
+            data-topic="naturaleza"
+            tabindex="0"
+            role="button"
+        >
+
+            <div class="topic-image">
+
+                <img
+                    src="../assets/img_p.secuencia/p.naturaleza.png"
+                    alt="Naturaleza"
+                >
+
+                <div class="image-label">
+                    NATURALEZA
+                </div>
+
+            </div>
+
+            <div class="topic-content">
+
+                <h3>
+                    Naturaleza
+                </h3>
+
+                <p>
+                    Aprende con plantas, flores y naturaleza.
+                </p>
+
+                <div class="card-play">
+
+                    <span>
+                        Comenzar
+                    </span>
+
+                    <span>
+                        →
+                    </span>
+
+                </div>
+
+            </div>
+
+        </article>
+
+
+        <!-- COLORES -->
+
+        <article
+            class="topic-card colores"
+            data-topic="colores"
+            tabindex="0"
+            role="button"
+        >
+
+            <div class="topic-image">
+
+                <img
+                    src="../assets/img_p.secuencia/p.colores.png"
+                    alt="Colores"
+                >
+
+                <div class="image-label">
+                    COLORES
+                </div>
+
+            </div>
+
+            <div class="topic-content">
+
+                <h3>
+                    Colores
+                </h3>
+
+                <p>
+                    Encuentra el color que continúa la secuencia.
+                </p>
+
+                <div class="card-play">
+
+                    <span>
+                        Comenzar
+                    </span>
+
+                    <span>
+                        →
+                    </span>
+
+                </div>
+
+            </div>
+
+        </article>
 
     </div>
-
-
-    <div class="topic-content">
-
-        <h3>
-            Colores
-        </h3>
-
-        <p>
-            Encuentra el color que
-            continúa la secuencia.
-        </p>
-
-        <div class="card-play">
-
-            <span>
-                Comenzar
-            </span>
-
-            <span>
-                →
-            </span>
-
-        </div>
-
-    </div>
-
-</article>
-
-
-</div>
 
 </section>
-
 
 
 <!-- =====================================================
@@ -1962,891 +2848,1502 @@ body{
 
 <section id="gameScreen">
 
+    <div class="game-top">
 
-<div class="game-wrapper">
+        <div class="progress-info">
 
+            <small>
+                TU PROGRESO
+            </small>
 
-<!-- PROGRESO -->
+            <strong id="levelText">
+                Nivel 1 de 5
+            </strong>
 
-<div class="progress-panel">
+        </div>
 
-    <div class="progress-info">
+        <div class="progress-track">
 
-        <small>
-            TU PROGRESO
-        </small>
+            <div
+                class="progress-bar"
+                id="progressBar"
+            ></div>
 
-        <strong id="levelText">
-            Nivel 1 de 5
-        </strong>
+        </div>
 
     </div>
 
 
-    <div class="progress-track">
+    <div class="game-panel">
 
         <div
-            class="progress-bar"
-            id="progressBar"
+            class="topic-name"
+            id="topicName"
+        >
+            ANIMALES
+        </div>
+
+
+        <h2>
+            ¿Qué elemento continúa el patrón?
+        </h2>
+
+
+        <div
+            class="sequence"
+            id="sequence"
         ></div>
 
-    </div>
 
-</div>
-
-
-
-<!-- PANEL -->
-
-<div class="game-panel">
+        <div class="options-title">
+            ELIGE TU RESPUESTA
+        </div>
 
 
-    <div
-        class="topic-name"
-        id="topicName"
-    >
-        ANIMALES
-    </div>
+        <div
+            class="options"
+            id="options"
+        ></div>
 
 
-    <h2>
-        ¿Qué elemento continúa el patrón?
-    </h2>
+        <div
+            class="feedback"
+            id="feedback"
+        ></div>
 
 
-    <p class="instructions">
+        <div class="actions">
 
-        Observa cuidadosamente las cartas
-        y selecciona la respuesta correcta.
+            <button
+                class="btn btn-back"
+                id="backBtn"
+            >
+                ← Cambiar tema
+            </button>
 
-    </p>
+            <button
+                class="btn btn-next"
+                id="nextBtn"
+                style="display:none;"
+            >
+                Siguiente →
+            </button>
 
-
-
-    <!-- SECUENCIA -->
-
-    <div
-        class="sequence"
-        id="sequence"
-    ></div>
-
-
-
-    <!-- OPCIONES -->
-
-    <div class="options-title">
-
-        ELIGE TU RESPUESTA
+        </div>
 
     </div>
-
-
-    <div
-        class="options"
-        id="options"
-    ></div>
-
-
-
-    <!-- MENSAJE -->
-
-    <div
-        class="feedback"
-        id="feedback"
-    ></div>
-
-
-
-    <!-- BOTONES -->
-
-    <div class="actions">
-
-
-        <button
-            class="btn btn-back"
-            id="backBtn"
-        >
-            ← Cambiar tema
-        </button>
-
-
-        <button
-            class="btn btn-next"
-            id="nextBtn"
-            style="display:none;"
-        >
-            Siguiente →
-        </button>
-
-
-    </div>
-
-
-</div>
-
-</div>
 
 </section>
 
 
-
 <!-- =====================================================
-     FINAL
+     PANTALLA FINAL
 ===================================================== -->
 
 <section id="endScreen">
 
+    <div class="end-card">
 
-<div class="end-card">
+        <div class="trophy">
+            🏆
+        </div>
 
+        <h2>
+            ¡Excelente trabajo!
+        </h2>
 
-    <div class="end-star">
-        ★
-    </div>
-
-
-    <h2>
-        ¡Excelente trabajo!
-    </h2>
-
-
-    <p>
-        Completaste los cinco desafíos.
-    </p>
+        <p>
+            Completaste los cinco desafíos.
+        </p>
 
 
-    <div class="results">
+        <div
+            class="stars-result"
+            id="starsResult"
+        >
 
-
-        <div class="result">
-
-            <strong id="finalScore">
-                0
-            </strong>
-
-            <span>
-                PUNTOS
-            </span>
+            <span>★</span>
+            <span>★</span>
+            <span>★</span>
 
         </div>
 
 
-        <div class="result">
+        <div class="results">
 
-            <strong id="finalCorrect">
-                0/5
-            </strong>
+            <div class="result">
 
-            <span>
-                RESPUESTAS CORRECTAS
-            </span>
+                <strong id="finalScore">
+                    0
+                </strong>
+
+                <span>
+                    PUNTOS
+                </span>
+
+            </div>
+
+
+            <div class="result">
+
+                <strong id="finalCorrect">
+                    0/5
+                </strong>
+
+                <span>
+                    RESPUESTAS CORRECTAS
+                </span>
+
+            </div>
 
         </div>
 
 
+        <div class="end-actions">
+
+            <button
+                class="btn btn-next"
+                id="restartBtn"
+            >
+                Elegir otra categoría
+            </button>
+
+        </div>
+
     </div>
-
-
-    <button
-        class="btn btn-next"
-        id="restartBtn"
-    >
-        Elegir otra categoría
-    </button>
-
-
-</div>
 
 </section>
 
-
 </div>
-
 
 
 <script>
 
 /* =========================================================
-   DATOS DEL JUEGO
-=========================================================
-
-   IMPORTANTE:
-
-   Aquí puedes usar DOS TIPOS:
-
-   type:"image"
-   para utilizar imágenes
-
-   type:"text"
-   para números o texto.
-
+   AUDIO
 ========================================================= */
 
+const Sound = (() => {
+
+    let ctx = null;
+
+    let masterGain = null;
+
+    let sfxGain = null;
+
+    let muted = false;
+
+    const musicAudio =
+        new Audio(
+            "../assets/musicaFondo/cancion5.mp3"
+        );
+
+    musicAudio.loop = true;
+
+    musicAudio.volume = .35;
+
+    let musicStarted = false;
+
+    const animalBuffers = {};
+
+    const animalNames = [
+        "gato",
+        "perro",
+        "conejo",
+        "pato",
+        "panda",
+        "tigre",
+        "elefante",
+        "jirafa",
+        "vaca",
+        "oveja",
+        "rana",
+        "tortuga",
+        "leon",
+        "cocodrilo",
+        "serpiente",
+        "pandarojo",
+        "cebra"
+    ];
+
+
+    function init(){
+
+        if(ctx)
+            return;
+
+        try{
+
+            ctx =
+                new(
+                    window.AudioContext ||
+                    window.webkitAudioContext
+                )();
+
+            masterGain =
+                ctx.createGain();
+
+            masterGain.gain.value = 1;
+
+            masterGain.connect(
+                ctx.destination
+            );
+
+            sfxGain =
+                ctx.createGain();
+
+            sfxGain.gain.value = 1.1;
+
+            sfxGain.connect(
+                masterGain
+            );
+
+        }catch(e){
+
+            console.warn(
+                "Audio no disponible",
+                e
+            );
+
+        }
+
+    }
+
+
+    function ensureRunning(){
+
+        init();
+
+        if(
+            ctx &&
+            ctx.state === "suspended"
+        ){
+
+            ctx.resume().catch(
+                ()=>{}
+            );
+
+        }
+
+    }
+
+
+    function noteFreq(
+        semiFromA4
+    ){
+
+        return 440 *
+            Math.pow(
+                2,
+                semiFromA4 / 12
+            );
+
+    }
+
+
+    function playTone(
+        freq,
+        duration,
+        type="sine",
+        gain=.6,
+        when=0
+    ){
+
+        if(!ctx)
+            return;
+
+        const t =
+            ctx.currentTime + when;
+
+        const osc =
+            ctx.createOscillator();
+
+        const g =
+            ctx.createGain();
+
+        osc.type = type;
+
+        osc.frequency.value =
+            freq;
+
+        g.gain.setValueAtTime(
+            0,
+            t
+        );
+
+        g.gain.linearRampToValueAtTime(
+            gain,
+            t + .01
+        );
+
+        g.gain.exponentialRampToValueAtTime(
+            .0001,
+            t + duration
+        );
+
+        osc.connect(g);
+
+        g.connect(sfxGain);
+
+        osc.start(t);
+
+        osc.stop(
+            t + duration + .05
+        );
+
+    }
+
+
+    function playHover(){
+
+        ensureRunning();
+
+        if(!ctx || muted)
+            return;
+
+        playTone(
+            noteFreq(24),
+            .12,
+            "sine",
+            .35
+        );
+
+        playTone(
+            noteFreq(31),
+            .10,
+            "sine",
+            .18,
+            .02
+        );
+
+    }
+
+
+    function playClick(){
+
+        ensureRunning();
+
+        if(!ctx || muted)
+            return;
+
+        playTone(
+            noteFreq(14),
+            .07,
+            "triangle",
+            .55
+        );
+
+        playTone(
+            noteFreq(21),
+            .10,
+            "triangle",
+            .45,
+            .035
+        );
+
+    }
+
+
+    function playFail(){
+
+        ensureRunning();
+
+        if(!ctx || muted)
+            return;
+
+        const t =
+            ctx.currentTime;
+
+        const osc =
+            ctx.createOscillator();
+
+        const g =
+            ctx.createGain();
+
+        osc.type = "sawtooth";
+
+        osc.frequency.setValueAtTime(
+            320,
+            t
+        );
+
+        osc.frequency.exponentialRampToValueAtTime(
+            110,
+            t + .38
+        );
+
+        g.gain.setValueAtTime(
+            0,
+            t
+        );
+
+        g.gain.linearRampToValueAtTime(
+            .55,
+            t + .02
+        );
+
+        g.gain.exponentialRampToValueAtTime(
+            .0001,
+            t + .42
+        );
+
+        osc.connect(g);
+
+        g.connect(sfxGain);
+
+        osc.start(t);
+
+        osc.stop(t + .48);
+
+    }
+
+
+    function arpeggio(
+        notes,
+        base=.65,
+        spacing=.08,
+        type="triangle"
+    ){
+
+        notes.forEach(
+            (semi,i)=>{
+
+                playTone(
+                    noteFreq(semi),
+                    .4,
+                    type,
+                    base,
+                    i * spacing
+                );
+
+            }
+        );
+
+    }
+
+
+    function playWinAnimales(){
+
+        arpeggio(
+            [7,12,16,19,24],
+            .6,
+            .08,
+            "triangle"
+        );
+
+    }
+
+
+    function playWinNumeros(){
+
+        playTone(
+            noteFreq(19),
+            .7,
+            "sine",
+            .75
+        );
+
+        playTone(
+            noteFreq(14),
+            .8,
+            "sine",
+            .75,
+            .13
+        );
+
+    }
+
+
+    function playWinFormas(){
+
+        arpeggio(
+            [12,19,24],
+            .6,
+            .06,
+            "sine"
+        );
+
+        playTone(
+            noteFreq(28),
+            1,
+            "sine",
+            .45,
+            .2
+        );
+
+    }
+
+
+    function playWinNaturaleza(){
+
+        arpeggio(
+            [5,9,12,17],
+            .6,
+            .14,
+            "sine"
+        );
+
+    }
+
+
+    function playWinColores(){
+
+        arpeggio(
+            [7,11,14,19,23],
+            .65,
+            .07,
+            "triangle"
+        );
+
+    }
+
+
+    function playCategory(cat){
+
+        ensureRunning();
+
+        if(!ctx || muted)
+            return;
+
+        switch(cat){
+
+            case "animales":
+                playWinAnimales();
+                break;
+
+            case "numeros":
+                playWinNumeros();
+                break;
+
+            case "formas":
+                playWinFormas();
+                break;
+
+            case "naturaleza":
+                playWinNaturaleza();
+                break;
+
+            case "colores":
+                playWinColores();
+                break;
+
+            default:
+
+                arpeggio(
+                    [7,12,16],
+                    .65,
+                    .08
+                );
+
+        }
+
+    }
+
+
+    function preloadAnimal(name){
+
+        if(animalBuffers[name])
+            return animalBuffers[name];
+
+        const url =
+            "sonidos/animales/" +
+            name +
+            ".mp3";
+
+        const p =
+            fetch(url)
+
+            .then(
+                r=>{
+
+                    if(!r.ok)
+                        throw new Error("no");
+
+                    return r.arrayBuffer();
+
+                }
+            )
+
+            .then(
+                ab =>
+                    new Promise(
+                        (res,rej)=>
+                            ctx.decodeAudioData(
+                                ab,
+                                res,
+                                rej
+                            )
+                    )
+            )
+
+            .then(
+                buf=>{
+
+                    animalBuffers[name] =
+                        buf;
+
+                    return buf;
+
+                }
+            )
+
+            .catch(
+                ()=>null
+            );
+
+        animalBuffers[name] = p;
+
+        return p;
+
+    }
+
+
+    async function playAnimal(name){
+
+        ensureRunning();
+
+        if(!ctx || muted)
+            return;
+
+        try{
+
+            const buf =
+                await preloadAnimal(
+                    name
+                );
+
+            if(buf){
+
+                const src =
+                    ctx.createBufferSource();
+
+                src.buffer = buf;
+
+                const g =
+                    ctx.createGain();
+
+                g.gain.value = 1.2;
+
+                src.connect(g);
+
+                g.connect(sfxGain);
+
+                src.start();
+
+                return;
+
+            }
+
+        }catch(e){}
+
+        playWinAnimales();
+
+    }
+
+
+    function startMusic(){
+
+        if(
+            musicStarted ||
+            muted
+        )
+            return;
+
+        musicStarted = true;
+
+        musicAudio
+            .play()
+            .catch(
+                ()=>{}
+            );
+
+    }
+
+
+    function toggleMusic(){
+
+        if(muted){
+
+            musicAudio.pause();
+
+        }else{
+
+            musicAudio
+                .play()
+                .catch(
+                    ()=>{}
+                );
+
+        }
+
+    }
+
+
+    function toggle(){
+
+        muted = !muted;
+
+        init();
+
+        if(masterGain){
+
+            masterGain.gain.value =
+                muted ? 0 : 1;
+
+        }
+
+        toggleMusic();
+
+        return muted;
+
+    }
+
+
+    function preloadAnimals(){
+
+        ensureRunning();
+
+        if(!ctx)
+            return;
+
+        animalNames.forEach(
+            n =>
+                preloadAnimal(n)
+        );
+
+    }
+
+
+    return{
+
+        ensureRunning,
+        playHover,
+        playClick,
+        playFail,
+        playCategory,
+        playAnimal,
+        startMusic,
+        toggle,
+        preloadAnimals,
+
+        isMuted:
+            ()=>muted
+
+    };
+
+})();
+
+
+/* =========================================================
+   DATOS
+========================================================= */
 
 const topics = {
 
+    animales:{
 
-/* =========================================================
-   ANIMALES
-========================================================= */
+        type:"image",
 
-animales:{
+        animalSounds:{
 
-    type:"image",
+            "../assets/img_p.secuencia/S_Animales/s.gato.png":"gato",
 
-    sequences:[
+            "../assets/img_p.secuencia/S_Animales/s.perro.png":"perro",
 
+            "../assets/img_p.secuencia/S_Animales/s.conejo.png":"conejo",
 
-        {
+            "../assets/img_p.secuencia/S_Animales/s.pato.png":"pato",
 
-            seq:[
+            "../assets/img_p.secuencia/S_Animales/s.panda.png":"panda",
 
-                "../assets/img_p.secuencia//S_Animales/s.gato.png",
-                "../assets/img_p.secuencia//S_Animales/s.perro.png",
-                "../assets/img_p.secuencia//S_Animales/s.gato.png",
-                "../assets/img_p.secuencia/S_Animales/s.perro.png",
-                "?"
+            "../assets/img_p.secuencia/S_Animales/s.tigre.png":"tigre",
 
-            ],
+            "../assets/img_p.secuencia/S_Animales/s.elefante.png":"elefante",
 
-            answer:
-                "../assets/img_p.secuencia/S_Animales/s.gato.png",
+            "../assets/img_p.secuencia/S_Animales/s.jirafa.png":"jirafa",
 
-            options:[
+            "../assets/img_p.secuencia/S_Animales/s.vaca.png":"vaca",
 
-                "../assets/img_p.secuencia/S_Animales/s.gato.png",
-                "../assets/img_p.secuencia/S_Animales/s.perro.png",
-                "../assets/img_p.secuencia/S_Animales/s.conejo.png",
-                "../assets/img_p.secuencia/S_Animales/s.pato.png"
+            "../assets/img_p.secuencia/S_Animales/s.oveja.png":"oveja",
 
-            ]
+            "../assets/img_p.secuencia/S_Animales/s.rana.png":"rana",
 
-        },
+            "../assets/img_p.secuencia/S_Animales/s.tortuga.png":"tortuga",
 
+            "../assets/img_p.secuencia/S_Animales/s.leon.png":"leon",
 
-        {
+            "../assets/img_p.secuencia/S_Animales/s.cocodrilo.png":"cocodrilo",
 
-            seq:[
+            "../assets/img_p.secuencia/S_Animales/s.serpiente.png":"serpiente",
 
-                "../assets/img_p.secuencia//S_Animales/s.panda.png",
-                "../assets/img_p.secuencia//S_Animales/s.tigre.png",
-                "../assets/img_p.secuencia//S_Animales/s.panda.png",
-                "../assets/img_p.secuencia//S_Animales/s.tigre.png",
-                "?"
+            "../assets/img_p.secuencia/S_Animales/s.pandarojo.png":"pandarojo",
 
-            ],
-
-            answer:
-                "../assets/img_p.secuencia//S_Animales/s.panda.png",
-
-            options:[
-
-                "../assets/img_p.secuencia//S_Animales/s.elefante.png",
-                "../assets/img_p.secuencia//S_Animales/s.tigre.png",
-                "../assets/img_p.secuencia//S_Animales/s.panda.png",
-                "../assets/img_p.secuencia//S_Animales/s.jirafa.png"
-
-            ]
+            "../assets/img_p.secuencia/S_Animales/s.cebra.png":"cebra"
 
         },
 
-
-        {
-
-            seq:[
-
-                "../assets/img_p.secuencia//S_Animales/s.vaca.png",
-                "../assets/img_p.secuencia//S_Animales/s.vaca.png",
-                "../assets/img_p.secuencia//S_Animales/s.oveja.png",
-                "../assets/img_p.secuencia//S_Animales/s.vaca.png",
-                "../assets/img_p.secuencia//S_Animales/s.vaca.png",
-                "?"
-
-            ],
-
-            answer:
-                "../assets/img_p.secuencia//S_Animales/s.oveja.png",
-
-            options:[
-
-                "../assets/img_p.secuencia//S_Animales/s.oveja.png",
-                "../assets/img_p.secuencia//S_Animales/s.vaca.png",
-                "../assets/img_p.secuencia//S_Animales/s.rana.png",
-                "../assets/img_p.secuencia//S_Animales/s.tortuga.png"
-
-            ]
-
-        },
-
-
-        {
-
-            seq:[
-
-                "../assets/img_p.secuencia//S_Animales/s.leon.png",
-                "../assets/img_p.secuencia//S_Animales/s.cocodrilo.png",
-                "../assets/img_p.secuencia//S_Animales/s.leon.png",
-                "../assets/img_p.secuencia//S_Animales/s.cocodrilo.png",
-                "../assets/img_p.secuencia//S_Animales/s.leon.png",
-                "?"
-
-            ],
-
-            answer:
-                "../assets/img_p.secuencia//S_Animales/s.cocodrilo.png",
-
-            options:[
-
-                "../assets/img_p.secuencia//S_Animales/s.serpiente.png",
-                "../assets/img_p.secuencia//S_Animales/s.tigre.png",
-                "../assets/img_p.secuencia//S_Animales/s.leon.png",
-                "../assets/img_p.secuencia//S_Animales/s.cocodrilo.png",
-
-            ]
-
-        },
-
-
-        {
-
-            seq:[
-
-                "../assets/img_p.secuencia//S_Animales/s.pandarojo.png",
-                "../assets/img_p.secuencia//S_Animales/s.pandarojo.png",
-                "../assets/img_p.secuencia//S_Animales/s.cebra.png",
-                "../assets/img_p.secuencia//S_Animales/s.cebra.png",
-                "../assets/img_p.secuencia//S_Animales/s.pandarojo.png",
-                "../assets/img_p.secuencia//S_Animales/s.pandarojo.png",
-                "../assets/img_p.secuencia//S_Animales/s.cebra.png",
-                "?"
-
-            ],
-
-            answer:
-                "../assets/img_p.secuencia//S_Animales/s.cebra.png",
-
-            options:[
-
-                "../assets/img_p.secuencia//S_Animales/s.jirafa.png",
-                "../assets/img_p.secuencia//S_Animales/s.cebra.png",
-                "../assets/img_p.secuencia//S_Animales/s.panda.png",
-                "../assets/img_p.secuencia//S_Animales/s.pandarojo.png",
-
-            ]
-
-        }
-
-    ]
-
-},
-
-
-
-/* =========================================================
-   NÚMEROS
-========================================================= */
-
-numeros:{
-
-    type:"text",
-
-    sequences:[
-
-
-        {
-            seq:["1","2","1","2","?"],
-            answer:"1",
-            options:["1","2","3","4"]
-        },
-
-
-        {
-            seq:["2","4","2","4","?"],
-            answer:"2",
-            options:["2","4","6","8"]
-        },
-
-
-        {
-            seq:["1","2","3","1","2","?"],
-            answer:"3",
-            options:["1","2","3","4"]
-        },
-
-
-        {
-            seq:["5","3","5","3","?"],
-            answer:"5",
-            options:["3","4","5","6"]
-        },
-
-
-        {
-            seq:["7","8","7","8","?"],
-            answer:"7",
-            options:["6","7","8","9"]
-        }
-
-    ]
-
-},
-
-
-
-/* =========================================================
-   FORMAS
-========================================================= */
-
-formas:{
-
-    type:"image",
-
-    sequences:[
-
-
-        {
-
-            seq:[
-
-                "../assets/img_p.secuencia//S_Formas/s.circulo.png",
-                "../assets/img_p.secuencia//S_Formas/s.triangulo.png",
-                "../assets/img_p.secuencia//S_Formas/s.circulo.png",
-                "../assets/img_p.secuencia//S_Formas/s.triangulo.png",
-                "?"
-
-            ],
-
-            answer:
-                "../assets/img_p.secuencia//S_Formas/s.circulo.png",
-
-            options:[
-
-                "../assets/img_p.secuencia//S_Formas/s.circulo.png",
-                "../assets/img_p.secuencia//S_Formas/s.triangulo.png",
-                "../assets/img_p.secuencia//S_Formas/s.cuadrado.png",
-                "../assets/img_p.secuencia//S_Formas/s.estrella.png"
-
-            ]
-
-        },
-
-
-        {
-
-            seq:[
-
-                "../assets/img_p.secuencia//S_Formas/s.cuadrado.png",
-                "../assets/img_p.secuencia//S_Formas/s.estrella.png",
-                "../assets/img_p.secuencia//S_Formas/s.cuadrado.png",
-                "../assets/img_p.secuencia//S_Formas/s.estrella.png",
-                "?"
-
-            ],
-
-            answer:
-                "../assets/img_p.secuencia//S_Formas/s.cuadrado.png",
-
-            options:[
-
-                "../assets/img_p.secuencia//S_Formas/s.rectangulo.png",
-                "../assets/img_p.secuencia//S_Formas/s.triangulo.png",
-                "../assets/img_p.secuencia//S_Formas/s.cuadrado.png",
-                "../assets/img_p.secuencia//S_Formas/s.estrella.png"
-
-            ]
-
-        },
-
-
-        {
-
-            seq:[
-
-                "../assets/img_p.secuencia//S_Formas/s.estrella.png",
-                "../assets/img_p.secuencia//S_Formas/s.estrella.png",
-                "../assets/img_p.secuencia//S_Formas/s.luna.png",
-                "../assets/img_p.secuencia//S_Formas/s.luna.png",
-                "../assets/img_p.secuencia//S_Formas/s.estrella.png",
-                "../assets/img_p.secuencia//S_Formas/s.estrella.png",
-                "../assets/img_p.secuencia//S_Formas/s.luna.png",
-                "?"
-
-            ],
-
-            answer:
-                "../assets/img_p.secuencia//S_Formas/s.luna.png",
-
-            options:[
-
-                "../assets/img_p.secuencia//S_Formas/s.corazon.png",
-                "../assets/img_p.secuencia//S_Formas/s.triangulo.png",
-                "../assets/img_p.secuencia//S_Formas/s.luna.png",
-                "../assets/img_p.secuencia//S_Formas/s.estrella.png"
-
-            ]
-
-        },
-
-
-        {
-
-            seq:[
-
-                "../assets/img_p.secuencia//S_Formas/s.rombo.png",
-                "../assets/img_p.secuencia//S_Formas/s.rombo.png",
-                "../assets/img_p.secuencia//S_Formas/s.corazon.png",
-                "../assets/img_p.secuencia//S_Formas/s.corazon.png",
-                "../assets/img_p.secuencia//S_Formas/s.rombo.png",
-                "?"
-
-            ],
-
-            answer:
-                "../assets/img_p.secuencia//S_Formas/s.rombo.png",
-
-            options:[
-
-                "../assets/img_p.secuencia//S_Formas/s.circulo.png",
-                "../assets/img_p.secuencia//S_Formas/s.corazon.png",
-                "../assets/img_p.secuencia//S_Formas/s.triangulo.png",
-                "../assets/img_p.secuencia//S_Formas/s.rombo.png",
-
-            ]
-
-        },
-
-
-        {
-
-            seq:[
-
-                "../assets/img_p.secuencia//S_Formas/s.hexagono.png",
-                "../assets/img_p.secuencia//S_Formas/s.octogono.png",
-                "../assets/img_p.secuencia//S_Formas/s.hexagono.png",
-                "../assets/img_p.secuencia//S_Formas/s.octogono.png",
-                "../assets/img_p.secuencia//S_Formas/s.hexagono.png",
-                "../assets/img_p.secuencia//S_Formas/s.octogono.png",
-                "?"
-
-            ],
-
-            answer:
-                "../assets/img_p.secuencia//S_Formas/s.hexagono.png",
-
-            options:[
-
-                "../assets/img_p.secuencia//S_Formas/s.hexagono.png",
-                "../assets/img_p.secuencia//S_Formas/s.cuadrado.png",
-                "../assets/img_p.secuencia//S_Formas/s.octogono.png",
-                "../assets/img_p.secuencia//S_Formas/s.rectangulo.png",
-
-            ]
-
-        }
-
-    ]
-
-},
-
-
-
-/* =========================================================
-   NATURALEZA
-========================================================= */
-
-naturaleza:{
-
-    type:"image",
-
-    sequences:[
-
-
-        {
-
-            seq:[
-
-                "img/naturaleza/arbol.png",
-                "img/naturaleza/flor.png",
-                "img/naturaleza/arbol.png",
-                "img/naturaleza/flor.png",
-                "?"
-
-            ],
-
-            answer:
-                "img/naturaleza/arbol.png",
-
-            options:[
-
-                "img/naturaleza/arbol.png",
-                "img/naturaleza/flor.png",
-                "img/naturaleza/sol.png",
-                "img/naturaleza/hoja.png"
-
-            ]
-
-        },
-
-
-        {
-
-            seq:[
-
-                "img/naturaleza/sol.png",
-                "img/naturaleza/flor.png",
-                "img/naturaleza/sol.png",
-                "img/naturaleza/flor.png",
-                "?"
-
-            ],
-
-            answer:
-                "img/naturaleza/sol.png",
-
-            options:[
-
-                "img/naturaleza/arbol.png",
-                "img/naturaleza/flor.png",
-                "img/naturaleza/sol.png",
-                "img/naturaleza/hoja.png"
-
-            ]
-
-        },
-
-
-        {
-
-            seq:[
-
-                "img/naturaleza/hoja.png",
-                "img/naturaleza/arbol.png",
-                "img/naturaleza/hoja.png",
-                "img/naturaleza/arbol.png",
-                "?"
-
-            ],
-
-            answer:
-                "img/naturaleza/hoja.png",
-
-            options:[
-
-                "img/naturaleza/arbol.png",
-                "img/naturaleza/flor.png",
-                "img/naturaleza/sol.png",
-                "img/naturaleza/hoja.png"
-
-            ]
-
-        },
-
-
-        {
-
-            seq:[
-
-                "img/naturaleza/flor.png",
-                "img/naturaleza/flor.png",
-                "img/naturaleza/sol.png",
-                "img/naturaleza/flor.png",
-                "img/naturaleza/flor.png",
-                "?"
-
-            ],
-
-            answer:
-                "img/naturaleza/sol.png",
-
-            options:[
-
-                "img/naturaleza/arbol.png",
-                "img/naturaleza/flor.png",
-                "img/naturaleza/sol.png",
-                "img/naturaleza/hoja.png"
-
-            ]
-
-        },
-
-
-        {
-
-            seq:[
-
-                "img/naturaleza/arbol.png",
-                "img/naturaleza/hoja.png",
-                "img/naturaleza/flor.png",
-                "img/naturaleza/arbol.png",
-                "img/naturaleza/hoja.png",
-                "?"
-
-            ],
-
-            answer:
-                "img/naturaleza/flor.png",
-
-            options:[
-
-                "img/naturaleza/arbol.png",
-                "img/naturaleza/flor.png",
-                "img/naturaleza/sol.png",
-                "img/naturaleza/hoja.png"
-
-            ]
-
-        }
-
-    ]
-
-},
-
-
-
-/* =========================================================
-   COLORES
-========================================================= */
-
-colores:{
-
-    type:"color",
-
-    sequences:[
-
-
-        {
-            seq:["#ef5b5b","#5b83e8","#ef5b5b","#5b83e8","?"],
-            answer:"#ef5b5b",
-            options:["#ef5b5b","#5b83e8","#63c97d","#f5c84c"]
-        },
-
-
-        {
-            seq:["#63c97d","#ef5b5b","#63c97d","#ef5b5b","?"],
-            answer:"#63c97d",
-            options:["#ef5b5b","#63c97d","#5b83e8","#f5c84c"]
-        },
-
-
-        {
-            seq:["#5b83e8","#f5c84c","#5b83e8","#f5c84c","?"],
-            answer:"#5b83e8",
-            options:["#5b83e8","#ef5b5b","#63c97d","#f5c84c"]
-        },
-
-
-        {
-            seq:["#ef5b5b","#63c97d","#5b83e8","#ef5b5b","#63c97d","?"],
-            answer:"#5b83e8",
-            options:["#ef5b5b","#5b83e8","#63c97d","#f5c84c"]
-        },
-
-
-        {
-            seq:["#f5c84c","#63c97d","#f5c84c","#63c97d","?"],
-            answer:"#f5c84c",
-            options:["#ef5b5b","#5b83e8","#63c97d","#f5c84c"]
-        }
-
-    ]
-
-}
+        sequences:[
+
+            {
+                seq:[
+                    "../assets/img_p.secuencia/S_Animales/s.gato.png",
+                    "../assets/img_p.secuencia/S_Animales/s.perro.png",
+                    "../assets/img_p.secuencia/S_Animales/s.gato.png",
+                    "../assets/img_p.secuencia/S_Animales/s.perro.png",
+                    "?"
+                ],
+
+                answer:
+                    "../assets/img_p.secuencia/S_Animales/s.gato.png",
+
+                options:[
+                    "../assets/img_p.secuencia/S_Animales/s.gato.png",
+                    "../assets/img_p.secuencia/S_Animales/s.perro.png",
+                    "../assets/img_p.secuencia/S_Animales/s.conejo.png",
+                    "../assets/img_p.secuencia/S_Animales/s.pato.png"
+                ]
+            },
+
+            {
+                seq:[
+                    "../assets/img_p.secuencia/S_Animales/s.panda.png",
+                    "../assets/img_p.secuencia/S_Animales/s.tigre.png",
+                    "../assets/img_p.secuencia/S_Animales/s.panda.png",
+                    "../assets/img_p.secuencia/S_Animales/s.tigre.png",
+                    "?"
+                ],
+
+                answer:
+                    "../assets/img_p.secuencia/S_Animales/s.panda.png",
+
+                options:[
+                    "../assets/img_p.secuencia/S_Animales/s.elefante.png",
+                    "../assets/img_p.secuencia/S_Animales/s.tigre.png",
+                    "../assets/img_p.secuencia/S_Animales/s.panda.png",
+                    "../assets/img_p.secuencia/S_Animales/s.jirafa.png"
+                ]
+            },
+
+            {
+                seq:[
+                    "../assets/img_p.secuencia/S_Animales/s.vaca.png",
+                    "../assets/img_p.secuencia/S_Animales/s.vaca.png",
+                    "../assets/img_p.secuencia/S_Animales/s.oveja.png",
+                    "../assets/img_p.secuencia/S_Animales/s.vaca.png",
+                    "../assets/img_p.secuencia/S_Animales/s.vaca.png",
+                    "?"
+                ],
+
+                answer:
+                    "../assets/img_p.secuencia/S_Animales/s.oveja.png",
+
+                options:[
+                    "../assets/img_p.secuencia/S_Animales/s.oveja.png",
+                    "../assets/img_p.secuencia/S_Animales/s.vaca.png",
+                    "../assets/img_p.secuencia/S_Animales/s.rana.png",
+                    "../assets/img_p.secuencia/S_Animales/s.tortuga.png"
+                ]
+            },
+
+            {
+                seq:[
+                    "../assets/img_p.secuencia/S_Animales/s.leon.png",
+                    "../assets/img_p.secuencia/S_Animales/s.cocodrilo.png",
+                    "../assets/img_p.secuencia/S_Animales/s.leon.png",
+                    "../assets/img_p.secuencia/S_Animales/s.cocodrilo.png",
+                    "../assets/img_p.secuencia/S_Animales/s.leon.png",
+                    "?"
+                ],
+
+                answer:
+                    "../assets/img_p.secuencia/S_Animales/s.cocodrilo.png",
+
+                options:[
+                    "../assets/img_p.secuencia/S_Animales/s.serpiente.png",
+                    "../assets/img_p.secuencia/S_Animales/s.tigre.png",
+                    "../assets/img_p.secuencia/S_Animales/s.leon.png",
+                    "../assets/img_p.secuencia/S_Animales/s.cocodrilo.png"
+                ]
+            },
+
+            {
+                seq:[
+                    "../assets/img_p.secuencia/S_Animales/s.pandarojo.png",
+                    "../assets/img_p.secuencia/S_Animales/s.pandarojo.png",
+                    "../assets/img_p.secuencia/S_Animales/s.cebra.png",
+                    "../assets/img_p.secuencia/S_Animales/s.cebra.png",
+                    "../assets/img_p.secuencia/S_Animales/s.pandarojo.png",
+                    "../assets/img_p.secuencia/S_Animales/s.pandarojo.png",
+                    "../assets/img_p.secuencia/S_Animales/s.cebra.png",
+                    "?"
+                ],
+
+                answer:
+                    "../assets/img_p.secuencia/S_Animales/s.cebra.png",
+
+                options:[
+                    "../assets/img_p.secuencia/S_Animales/s.jirafa.png",
+                    "../assets/img_p.secuencia/S_Animales/s.cebra.png",
+                    "../assets/img_p.secuencia/S_Animales/s.panda.png",
+                    "../assets/img_p.secuencia/S_Animales/s.pandarojo.png"
+                ]
+            }
+
+        ]
+
+    },
+
+
+    numeros:{
+
+        type:"text",
+
+        sequences:[
+
+            {
+                seq:[
+                    "1",
+                    "2",
+                    "1",
+                    "2",
+                    "?"
+                ],
+
+                answer:"1",
+
+                options:[
+                    "1",
+                    "2",
+                    "3",
+                    "4"
+                ]
+            },
+
+            {
+                seq:[
+                    "2",
+                    "4",
+                    "2",
+                    "4",
+                    "?"
+                ],
+
+                answer:"2",
+
+                options:[
+                    "2",
+                    "4",
+                    "6",
+                    "8"
+                ]
+            },
+
+            {
+                seq:[
+                    "1",
+                    "2",
+                    "3",
+                    "1",
+                    "2",
+                    "?"
+                ],
+
+                answer:"3",
+
+                options:[
+                    "1",
+                    "2",
+                    "3",
+                    "4"
+                ]
+            },
+
+            {
+                seq:[
+                    "5",
+                    "3",
+                    "5",
+                    "3",
+                    "?"
+                ],
+
+                answer:"5",
+
+                options:[
+                    "3",
+                    "4",
+                    "5",
+                    "6"
+                ]
+            },
+
+            {
+                seq:[
+                    "7",
+                    "8",
+                    "7",
+                    "8",
+                    "?"
+                ],
+
+                answer:"7",
+
+                options:[
+                    "6",
+                    "7",
+                    "8",
+                    "9"
+                ]
+            }
+
+        ]
+
+    },
+
+
+    formas:{
+
+        type:"image",
+
+        sequences:[
+
+            {
+                seq:[
+                    "../assets/img_p.secuencia/S_Formas/s.circulo.png",
+                    "../assets/img_p.secuencia/S_Formas/s.triangulo.png",
+                    "../assets/img_p.secuencia/S_Formas/s.circulo.png",
+                    "../assets/img_p.secuencia/S_Formas/s.triangulo.png",
+                    "?"
+                ],
+
+                answer:
+                    "../assets/img_p.secuencia/S_Formas/s.circulo.png",
+
+                options:[
+                    "../assets/img_p.secuencia/S_Formas/s.circulo.png",
+                    "../assets/img_p.secuencia/S_Formas/s.triangulo.png",
+                    "../assets/img_p.secuencia/S_Formas/s.cuadrado.png",
+                    "../assets/img_p.secuencia/S_Formas/s.estrella.png"
+                ]
+            },
+
+            {
+                seq:[
+                    "../assets/img_p.secuencia/S_Formas/s.cuadrado.png",
+                    "../assets/img_p.secuencia/S_Formas/s.estrella.png",
+                    "../assets/img_p.secuencia/S_Formas/s.cuadrado.png",
+                    "../assets/img_p.secuencia/S_Formas/s.estrella.png",
+                    "?"
+                ],
+
+                answer:
+                    "../assets/img_p.secuencia/S_Formas/s.cuadrado.png",
+
+                options:[
+                    "../assets/img_p.secuencia/S_Formas/s.rectangulo.png",
+                    "../assets/img_p.secuencia/S_Formas/s.triangulo.png",
+                    "../assets/img_p.secuencia/S_Formas/s.cuadrado.png",
+                    "../assets/img_p.secuencia/S_Formas/s.estrella.png"
+                ]
+            },
+
+            {
+                seq:[
+                    "../assets/img_p.secuencia/S_Formas/s.estrella.png",
+                    "../assets/img_p.secuencia/S_Formas/s.estrella.png",
+                    "../assets/img_p.secuencia/S_Formas/s.luna.png",
+                    "../assets/img_p.secuencia/S_Formas/s.luna.png",
+                    "../assets/img_p.secuencia/S_Formas/s.estrella.png",
+                    "../assets/img_p.secuencia/S_Formas/s.estrella.png",
+                    "../assets/img_p.secuencia/S_Formas/s.luna.png",
+                    "?"
+                ],
+
+                answer:
+                    "../assets/img_p.secuencia/S_Formas/s.luna.png",
+
+                options:[
+                    "../assets/img_p.secuencia/S_Formas/s.corazon.png",
+                    "../assets/img_p.secuencia/S_Formas/s.triangulo.png",
+                    "../assets/img_p.secuencia/S_Formas/s.luna.png",
+                    "../assets/img_p.secuencia/S_Formas/s.estrella.png"
+                ]
+            },
+
+            {
+                seq:[
+                    "../assets/img_p.secuencia/S_Formas/s.rombo.png",
+                    "../assets/img_p.secuencia/S_Formas/s.rombo.png",
+                    "../assets/img_p.secuencia/S_Formas/s.corazon.png",
+                    "../assets/img_p.secuencia/S_Formas/s.corazon.png",
+                    "../assets/img_p.secuencia/S_Formas/s.rombo.png",
+                    "?"
+                ],
+
+                answer:
+                    "../assets/img_p.secuencia/S_Formas/s.rombo.png",
+
+                options:[
+                    "../assets/img_p.secuencia/S_Formas/s.circulo.png",
+                    "../assets/img_p.secuencia/S_Formas/s.corazon.png",
+                    "../assets/img_p.secuencia/S_Formas/s.triangulo.png",
+                    "../assets/img_p.secuencia/S_Formas/s.rombo.png"
+                ]
+            },
+
+            {
+                seq:[
+                    "../assets/img_p.secuencia/S_Formas/s.hexagono.png",
+                    "../assets/img_p.secuencia/S_Formas/s.octogono.png",
+                    "../assets/img_p.secuencia/S_Formas/s.hexagono.png",
+                    "../assets/img_p.secuencia/S_Formas/s.octogono.png",
+                    "../assets/img_p.secuencia/S_Formas/s.hexagono.png",
+                    "../assets/img_p.secuencia/S_Formas/s.octogono.png",
+                    "?"
+                ],
+
+                answer:
+                    "../assets/img_p.secuencia/S_Formas/s.hexagono.png",
+
+                options:[
+                    "../assets/img_p.secuencia/S_Formas/s.hexagono.png",
+                    "../assets/img_p.secuencia/S_Formas/s.cuadrado.png",
+                    "../assets/img_p.secuencia/S_Formas/s.octogono.png",
+                    "../assets/img_p.secuencia/S_Formas/s.rectangulo.png"
+                ]
+            }
+
+        ]
+
+    },
+
+
+    naturaleza:{
+
+        type:"image",
+
+        sequences:[
+
+            {
+                seq:[
+                    "img/naturaleza/arbol.png",
+                    "img/naturaleza/flor.png",
+                    "img/naturaleza/arbol.png",
+                    "img/naturaleza/flor.png",
+                    "?"
+                ],
+
+                answer:
+                    "img/naturaleza/arbol.png",
+
+                options:[
+                    "img/naturaleza/arbol.png",
+                    "img/naturaleza/flor.png",
+                    "img/naturaleza/sol.png",
+                    "img/naturaleza/hoja.png"
+                ]
+            },
+
+            {
+                seq:[
+                    "img/naturaleza/sol.png",
+                    "img/naturaleza/flor.png",
+                    "img/naturaleza/sol.png",
+                    "img/naturaleza/flor.png",
+                    "?"
+                ],
+
+                answer:
+                    "img/naturaleza/sol.png",
+
+                options:[
+                    "img/naturaleza/arbol.png",
+                    "img/naturaleza/flor.png",
+                    "img/naturaleza/sol.png",
+                    "img/naturaleza/hoja.png"
+                ]
+            },
+
+            {
+                seq:[
+                    "img/naturaleza/hoja.png",
+                    "img/naturaleza/arbol.png",
+                    "img/naturaleza/hoja.png",
+                    "img/naturaleza/arbol.png",
+                    "?"
+                ],
+
+                answer:
+                    "img/naturaleza/hoja.png",
+
+                options:[
+                    "img/naturaleza/arbol.png",
+                    "img/naturaleza/flor.png",
+                    "img/naturaleza/sol.png",
+                    "img/naturaleza/hoja.png"
+                ]
+            },
+
+            {
+                seq:[
+                    "img/naturaleza/flor.png",
+                    "img/naturaleza/flor.png",
+                    "img/naturaleza/sol.png",
+                    "img/naturaleza/flor.png",
+                    "img/naturaleza/flor.png",
+                    "?"
+                ],
+
+                answer:
+                    "img/naturaleza/sol.png",
+
+                options:[
+                    "img/naturaleza/arbol.png",
+                    "img/naturaleza/flor.png",
+                    "img/naturaleza/sol.png",
+                    "img/naturaleza/hoja.png"
+                ]
+            },
+
+            {
+                seq:[
+                    "img/naturaleza/arbol.png",
+                    "img/naturaleza/hoja.png",
+                    "img/naturaleza/flor.png",
+                    "img/naturaleza/arbol.png",
+                    "img/naturaleza/hoja.png",
+                    "?"
+                ],
+
+                answer:
+                    "img/naturaleza/flor.png",
+
+                options:[
+                    "img/naturaleza/arbol.png",
+                    "img/naturaleza/flor.png",
+                    "img/naturaleza/sol.png",
+                    "img/naturaleza/hoja.png"
+                ]
+            }
+
+        ]
+
+    },
+
+
+    colores:{
+
+        type:"color",
+
+        sequences:[
+
+            {
+                seq:[
+                    "#ef5b5b",
+                    "#5b83e8",
+                    "#ef5b5b",
+                    "#5b83e8",
+                    "?"
+                ],
+
+                answer:"#ef5b5b",
+
+                options:[
+                    "#ef5b5b",
+                    "#5b83e8",
+                    "#63c97d",
+                    "#f5c84c"
+                ]
+            },
+
+            {
+                seq:[
+                    "#63c97d",
+                    "#ef5b5b",
+                    "#63c97d",
+                    "#ef5b5b",
+                    "?"
+                ],
+
+                answer:"#63c97d",
+
+                options:[
+                    "#ef5b5b",
+                    "#63c97d",
+                    "#5b83e8",
+                    "#f5c84c"
+                ]
+            },
+
+            {
+                seq:[
+                    "#5b83e8",
+                    "#f5c84c",
+                    "#5b83e8",
+                    "#f5c84c",
+                    "?"
+                ],
+
+                answer:"#5b83e8",
+
+                options:[
+                    "#5b83e8",
+                    "#ef5b5b",
+                    "#63c97d",
+                    "#f5c84c"
+                ]
+            },
+
+            {
+                seq:[
+                    "#ef5b5b",
+                    "#63c97d",
+                    "#5b83e8",
+                    "#ef5b5b",
+                    "#63c97d",
+                    "?"
+                ],
+
+                answer:"#5b83e8",
+
+                options:[
+                    "#ef5b5b",
+                    "#5b83e8",
+                    "#63c97d",
+                    "#f5c84c"
+                ]
+            },
+
+            {
+                seq:[
+                    "#f5c84c",
+                    "#63c97d",
+                    "#f5c84c",
+                    "#63c97d",
+                    "?"
+                ],
+
+                answer:"#f5c84c",
+
+                options:[
+                    "#ef5b5b",
+                    "#5b83e8",
+                    "#63c97d",
+                    "#f5c84c"
+                ]
+            }
+
+        ]
+
+    }
 
 };
 
 
-
 /* =========================================================
-   VARIABLES
+   ESTADO
 ========================================================= */
 
-let currentTopic=null;
+let currentTopic = null;
 
-let currentLevel=0;
+let currentLevel = 0;
 
-let score=0;
+let score = 0;
 
-let correctCount=0;
+let correctCount = 0;
 
-let answered=false;
-
+let answered = false;
 
 
 /* =========================================================
-   ELEMENTOS HTML
+   ELEMENTOS
 ========================================================= */
 
-const topicScreen=
+const topicScreen =
     document.getElementById(
         "topicScreen"
     );
 
-
-const gameScreen=
+const gameScreen =
     document.getElementById(
         "gameScreen"
     );
 
-
-const endScreen=
+const endScreen =
     document.getElementById(
         "endScreen"
     );
 
-
-const sequenceContainer=
+const sequenceContainer =
     document.getElementById(
         "sequence"
     );
 
-
-const optionsContainer=
+const optionsContainer =
     document.getElementById(
         "options"
     );
 
-
-const feedback=
+const feedback =
     document.getElementById(
         "feedback"
     );
 
-
-const nextBtn=
+const nextBtn =
     document.getElementById(
         "nextBtn"
     );
 
-
-const backBtn=
+const backBtn =
     document.getElementById(
         "backBtn"
     );
 
-
-const scoreTop=
+const scoreTop =
     document.getElementById(
         "scoreTop"
     );
 
-
-const levelText=
+const levelText =
     document.getElementById(
         "levelText"
     );
 
-
-const progressBar=
+const progressBar =
     document.getElementById(
         "progressBar"
     );
 
-
-const topicName=
+const topicName =
     document.getElementById(
         "topicName"
     );
 
+const pointsBox =
+    document.getElementById(
+        "pointsBox"
+    );
+
+const soundBtn =
+    document.getElementById(
+        "soundBtn"
+    );
+
+
+/* =========================================================
+   SONIDO HOVER
+========================================================= */
+
+function attachHoverSound(el){
+
+    el.addEventListener(
+        "mouseenter",
+        ()=>{
+            Sound.playHover();
+        }
+    );
+
+}
 
 
 /* =========================================================
@@ -2854,57 +4351,129 @@ const topicName=
 ========================================================= */
 
 document
-.querySelectorAll(
-    ".topic-card"
-)
-.forEach(card=>{
+.querySelectorAll(".topic-card")
+.forEach(
+    card=>{
 
+        attachHoverSound(card);
 
-    card.addEventListener(
-        "click",
-        ()=>{
+        const open = ()=>{
 
+            Sound.playClick();
 
-            currentTopic=
+            currentTopic =
                 card.dataset.topic;
 
+            currentLevel = 0;
 
-            currentLevel=0;
+            correctCount = 0;
 
-            correctCount=0;
+            score = 0;
 
+            scoreTop.textContent =
+                "0 puntos";
 
-            topicScreen
-                .style
-                .display=
+            topicScreen.style.display =
                 "none";
 
+            endScreen.classList.remove(
+                "active"
+            );
 
-            endScreen
-                .style
-                .display=
+            endScreen.style.display =
                 "none";
 
+            gameScreen.style.display =
+                "flex";
 
-            gameScreen
-                .style
-                .display=
-                "block";
-
+            gameScreen.classList.add(
+                "active"
+            );
 
             loadLevel();
 
-
-        }
-    );
+        };
 
 
-});
+        card.addEventListener(
+            "click",
+            open
+        );
 
+
+        card.addEventListener(
+            "keydown",
+            e=>{
+
+                if(
+                    e.key === "Enter" ||
+                    e.key === " "
+                ){
+
+                    e.preventDefault();
+
+                    open();
+
+                }
+
+            }
+        );
+
+    }
+);
 
 
 /* =========================================================
-   CREAR CONTENIDO DE UNA CARTA
+   BOTONES
+========================================================= */
+
+[
+    backBtn,
+    nextBtn,
+    soundBtn,
+    document.getElementById(
+        "restartBtn"
+    )
+]
+.forEach(
+    btn=>{
+
+        if(!btn)
+            return;
+
+        attachHoverSound(btn);
+
+    }
+);
+
+
+/* =========================================================
+   SONIDO
+========================================================= */
+
+soundBtn.addEventListener(
+    "click",
+    ()=>{
+
+        const muted =
+            Sound.toggle();
+
+        soundBtn.textContent =
+            muted
+                ? "🔇"
+                : "🔊";
+
+        soundBtn.classList.toggle(
+            "muted",
+            muted
+        );
+
+    }
+);
+
+
+/* =========================================================
+   CREAR CONTENIDO
 ========================================================= */
 
 function createCardContent(
@@ -2913,116 +4482,128 @@ function createCardContent(
     type
 ){
 
+    if(value === "?"){
 
-    /* CASILLA VACÍA */
+        container.classList.add(
+            "blank"
+        );
 
-    if(value==="?"){
-
-        container
-            .classList
-            .add("blank");
-
-        container.textContent="?";
+        container.textContent =
+            "?";
 
         return;
 
     }
 
 
+    if(type === "image"){
 
-    /* IMAGEN */
-
-    if(type==="image"){
-
-        const img=
-            document
-            .createElement(
+        const img =
+            document.createElement(
                 "img"
             );
 
+        img.src = value;
 
-        img.src=value;
-
-        img.alt=
+        img.alt =
             "Elemento de la secuencia";
 
+        img.loading =
+            "lazy";
 
-        container
-            .appendChild(
-                img
-            );
+        container.appendChild(
+            img
+        );
 
     }
 
 
+    else if(type === "color"){
 
-    /* COLOR */
-
-    else if(type==="color"){
-
-        const circle=
-            document
-            .createElement(
+        const circle =
+            document.createElement(
                 "div"
             );
 
+        circle.style.width =
+            "68%";
 
-        circle.style.width=
-            "65%";
+        circle.style.height =
+            "68%";
 
-        circle.style.height=
-            "65%";
-
-        circle.style
-            .borderRadius=
+        circle.style.borderRadius =
             "50%";
 
-        circle.style
-            .background=
+        circle.style.background =
             value;
 
-        circle.style
-            .boxShadow=
-            "inset 0 -7px 0 rgba(0,0,0,.08)";
+        circle.style.boxShadow =
+            "inset 0 -8px 0 rgba(0,0,0,.08), 0 4px 10px rgba(0,0,0,.15)";
 
-
-        container
-            .appendChild(
-                circle
-            );
+        container.appendChild(
+            circle
+        );
 
     }
 
 
-
-    /* TEXTO / NÚMEROS */
-
     else{
 
-        const span=
-            document
-            .createElement(
+        const span =
+            document.createElement(
                 "span"
             );
 
-
-        span.className=
+        span.className =
             "sequence-text";
 
-
-        span.textContent=
+        span.textContent =
             value;
 
-
-        container
-            .appendChild(
-                span
-            );
+        container.appendChild(
+            span
+        );
 
     }
 
 }
 
+
+/* =========================================================
+   MEZCLAR
+========================================================= */
+
+function shuffle(arr){
+
+    const a =
+        [...arr];
+
+    for(
+        let i = a.length - 1;
+        i > 0;
+        i--
+    ){
+
+        const j =
+            Math.floor(
+                Math.random() *
+                (i + 1)
+            );
+
+        [
+            a[i],
+            a[j]
+        ] =
+        [
+            a[j],
+            a[i]
+        ];
+
+    }
+
+    return a;
+
+}
 
 
 /* =========================================================
@@ -3031,178 +4612,136 @@ function createCardContent(
 
 function loadLevel(){
 
+    answered = false;
 
-    answered=false;
+    const topic =
+        topics[currentTopic];
 
-
-    const topic=
-        topics[
-            currentTopic
-        ];
-
-
-    const exercise=
-        topic
-        .sequences[
+    const exercise =
+        topic.sequences[
             currentLevel
         ];
 
 
-    sequenceContainer
-        .innerHTML="";
+    sequenceContainer.innerHTML =
+        "";
 
+    optionsContainer.innerHTML =
+        "";
 
-    optionsContainer
-        .innerHTML="";
-
-
-    feedback
-        .className=
+    feedback.className =
         "feedback";
 
+    feedback.textContent =
+        "";
 
-    feedback
-        .textContent="";
-
-
-    nextBtn
-        .style
-        .display=
+    nextBtn.style.display =
         "none";
 
 
-
-    /* INFORMACIÓN */
-
-    topicName
-        .textContent=
-        currentTopic
-        .toUpperCase();
+    topicName.textContent =
+        currentTopic.toUpperCase();
 
 
-    levelText
-        .textContent=
-        `Nivel ${currentLevel+1} de 5`;
+    levelText.textContent =
+        `Nivel ${currentLevel + 1} de 5`;
 
 
-    progressBar
-        .style
-        .width=
-        `${((currentLevel+1)/5)*100}%`;
+    progressBar.style.width =
+        `${
+            (
+                (currentLevel + 1)
+                / 5
+            ) * 100
+        }%`;
 
 
+    exercise.seq.forEach(
+        value=>{
 
-    /* =====================================================
-       SECUENCIA
-    ===================================================== */
+            const card =
+                document.createElement(
+                    "div"
+                );
 
-    exercise
-    .seq
-    .forEach(value=>{
+            card.className =
+                "sequence-card";
 
-
-        const card=
-            document
-            .createElement(
-                "div"
+            createCardContent(
+                card,
+                value,
+                topic.type
             );
 
-
-        card.className=
-            "sequence-card";
-
-
-        createCardContent(
-            card,
-            value,
-            topic.type
-        );
-
-
-        sequenceContainer
-            .appendChild(
+            sequenceContainer.appendChild(
                 card
             );
 
-
-    });
-
-
-
-    /* =====================================================
-       MEZCLAR RESPUESTAS
-    ===================================================== */
-
-    const options=
-        [
-            ...exercise.options
-        ];
-
-
-    options.sort(
-        ()=>Math.random()-.5
+        }
     );
 
 
-
-    /* =====================================================
-       CREAR RESPUESTAS
-    ===================================================== */
-
-    options
-    .forEach(value=>{
+    const options =
+        shuffle(
+            exercise.options
+        );
 
 
-        const button=
-            document
-            .createElement(
-                "button"
+    options.forEach(
+        value=>{
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+            button.className =
+                "option-card";
+
+            button.dataset.value =
+                value;
+
+            button.setAttribute(
+                "aria-label",
+                "Opción de respuesta"
             );
 
 
-        button.className=
-            "option-card";
+            createCardContent(
+                button,
+                value,
+                topic.type
+            );
 
 
-        button.dataset.value=
-            value;
-
-
-        createCardContent(
-            button,
-            value,
-            topic.type
-        );
-
-
-        button.addEventListener(
-            "click",
-            ()=>{
-
-                checkAnswer(
-                    button,
-                    value
-                );
-
-            }
-        );
-
-
-        optionsContainer
-            .appendChild(
+            attachHoverSound(
                 button
             );
 
 
-    });
+            button.addEventListener(
+                "click",
+                ()=>{
+                    checkAnswer(
+                        button,
+                        value
+                    );
+                }
+            );
 
+
+            optionsContainer.appendChild(
+                button
+            );
+
+        }
+    );
 
 }
 
 
-
 /* =========================================================
-   COMPROBAR
+   COMPROBAR RESPUESTA
 ========================================================= */
 
 function checkAnswer(
@@ -3210,221 +4749,200 @@ function checkAnswer(
     selectedValue
 ){
 
-
-    if(answered){
+    if(answered)
         return;
-    }
+
+    answered = true;
+
+    Sound.playClick();
 
 
-    answered=true;
-
-
-    const exercise=
-
-        topics[
-            currentTopic
-        ]
+    const exercise =
+        topics[currentTopic]
         .sequences[
             currentLevel
         ];
 
 
-    const correct=
+    const correct =
         exercise.answer;
 
-
-
-    /* BLOQUEAR */
 
     document
     .querySelectorAll(
         ".option-card"
     )
-    .forEach(button=>{
+    .forEach(
+        b=>{
+            b.disabled = true;
+        }
+    );
 
-        button.disabled=true;
-
-    });
-
-
-
-    /* =====================================================
-       CORRECTO
-    ===================================================== */
 
     if(
-        selectedValue===
-        correct
+        selectedValue === correct
     ){
 
+        selectedButton.classList.add(
+            "correct"
+        );
 
-        selectedButton
-            .classList
-            .add(
-                "correct"
-            );
-
-
-        score+=10;
+        score += 10;
 
         correctCount++;
 
 
-        feedback
-            .textContent=
-            "¡Muy bien! Descubriste el patrón.";
+        if(
+            currentTopic === "animales" &&
+            topics.animales.animalSounds[
+                correct
+            ]
+        ){
+
+            Sound.playAnimal(
+                topics.animales.animalSounds[
+                    correct
+                ]
+            );
+
+        }else{
+
+            Sound.playCategory(
+                currentTopic
+            );
+
+        }
 
 
-        feedback
-            .className=
+        feedback.textContent =
+            "¡Muy bien! Descubriste el patrón. 🎉";
+
+        feedback.className =
             "feedback correct-message";
 
 
+        burstStars(
+            selectedButton
+        );
+
     }
-
-
-
-    /* =====================================================
-       INCORRECTO
-    ===================================================== */
 
     else{
 
+        selectedButton.classList.add(
+            "wrong"
+        );
 
-        selectedButton
-            .classList
-            .add(
-                "wrong"
-            );
-
-
-        feedback
-            .textContent=
-            "Casi. Observa nuevamente el patrón.";
+        Sound.playFail();
 
 
-        feedback
-            .className=
+        feedback.textContent =
+            "Casi. Observa nuevamente el patrón. 💪";
+
+        feedback.className =
             "feedback wrong-message";
 
-
-
-        /* MOSTRAR RESPUESTA CORRECTA */
 
         document
         .querySelectorAll(
             ".option-card"
         )
-        .forEach(button=>{
+        .forEach(
+            b=>{
 
+                if(
+                    b.dataset.value ===
+                    correct
+                ){
 
-            if(
-                button
-                .dataset
-                .value===
-                correct
-            ){
-
-
-                button
-                    .classList
-                    .add(
+                    b.classList.add(
                         "correct"
                     );
 
+                }
 
             }
-
-
-        });
-
+        );
 
     }
 
 
-
-    /* PUNTOS */
-
-    scoreTop
-        .textContent=
+    scoreTop.textContent =
         `${score} puntos`;
 
 
+    pointsBox.classList.add(
+        "bump"
+    );
 
-    /* SIGUIENTE */
 
-    nextBtn
-        .style
-        .display=
+    setTimeout(
+        ()=>{
+            pointsBox.classList.remove(
+                "bump"
+            );
+        },
+        400
+    );
+
+
+    nextBtn.style.display =
         "block";
 
-
 }
-
 
 
 /* =========================================================
    SIGUIENTE
 ========================================================= */
 
-nextBtn
-.addEventListener(
+nextBtn.addEventListener(
     "click",
     ()=>{
 
+        Sound.playClick();
 
         currentLevel++;
 
 
         if(
-            currentLevel>=5
+            currentLevel >= 5
         ){
-
 
             showEnd();
 
-
-        }
-
-        else{
-
+        }else{
 
             loadLevel();
 
-
         }
-
 
     }
 );
-
 
 
 /* =========================================================
-   CAMBIAR TEMA
+   VOLVER
 ========================================================= */
 
-backBtn
-.addEventListener(
+backBtn.addEventListener(
     "click",
     ()=>{
 
+        Sound.playClick();
 
-        gameScreen
-            .style
-            .display=
+        gameScreen.style.display =
             "none";
 
+        gameScreen.classList.remove(
+            "active"
+        );
 
-        topicScreen
-            .style
-            .display=
-            "block";
-
+        topicScreen.style.display =
+            "flex";
 
     }
 );
-
 
 
 /* =========================================================
@@ -3433,41 +4951,87 @@ backBtn
 
 function showEnd(){
 
-
-    gameScreen
-        .style
-        .display=
+    gameScreen.style.display =
         "none";
 
-
-    endScreen
-        .style
-        .display=
-        "block";
+    gameScreen.classList.remove(
+        "active"
+    );
 
 
-    document
-        .getElementById(
-            "finalScore"
-        )
-        .textContent=
+    endScreen.style.display =
+        "flex";
+
+    endScreen.classList.add(
+        "active"
+    );
+
+
+    document.getElementById(
+        "finalScore"
+    ).textContent =
         score;
 
 
-    document
-        .getElementById(
-            "finalCorrect"
-        )
-        .textContent=
+    document.getElementById(
+        "finalCorrect"
+    ).textContent =
         `${correctCount}/5`;
 
+
+    const starsAvg =
+        correctCount >= 5
+            ? 3
+            : correctCount >= 4
+                ? 2
+                : correctCount >= 2
+                    ? 1
+                    : 0;
+
+
+    const starEls =
+        document.querySelectorAll(
+            "#starsResult span"
+        );
+
+
+    starEls.forEach(
+        s=>{
+            s.classList.remove(
+                "on"
+            );
+        }
+    );
+
+
+    starEls.forEach(
+        (s,i)=>{
+
+            setTimeout(
+                ()=>{
+
+                    if(
+                        i < starsAvg
+                    ){
+
+                        s.classList.add(
+                            "on"
+                        );
+
+                    }
+
+                },
+                300 + i * 250
+            );
+
+        }
+    );
 
 }
 
 
-
 /* =========================================================
-   VOLVER A CATEGORÍAS
+   REINICIAR
 ========================================================= */
 
 document
@@ -3478,20 +5042,150 @@ document
     "click",
     ()=>{
 
+        Sound.playClick();
 
-        endScreen
-            .style
-            .display=
+        endScreen.style.display =
             "none";
 
+        endScreen.classList.remove(
+            "active"
+        );
 
-        topicScreen
-            .style
-            .display=
-            "block";
-
+        topicScreen.style.display =
+            "flex";
 
     }
+);
+
+
+/* =========================================================
+   ESTRELLAS
+========================================================= */
+
+function burstStars(el){
+
+    const rect =
+        el.getBoundingClientRect();
+
+    const cx =
+        rect.left +
+        rect.width / 2;
+
+    const cy =
+        rect.top +
+        rect.height / 2;
+
+
+    for(
+        let i = 0;
+        i < 8;
+        i++
+    ){
+
+        const s =
+            document.createElement(
+                "div"
+            );
+
+        s.className =
+            "mini-star";
+
+        s.textContent =
+            [
+                "⭐",
+                "✨",
+                "🌟",
+                "💫"
+            ][i % 4];
+
+
+        const angle =
+            (
+                Math.PI * 2 * i
+            ) / 8;
+
+
+        const dist =
+            60 +
+            Math.random() * 40;
+
+
+        s.style.left =
+            cx + "px";
+
+        s.style.top =
+            cy + "px";
+
+
+        s.style.setProperty(
+            "--tx",
+            Math.cos(angle) *
+            dist +
+            "px"
+        );
+
+
+        s.style.setProperty(
+            "--ty",
+            Math.sin(angle) *
+            dist +
+            "px"
+        );
+
+
+        document.body.appendChild(
+            s
+        );
+
+
+        setTimeout(
+            ()=>{
+                s.remove();
+            },
+            1100
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   PRIMER GESTO
+========================================================= */
+
+let started = false;
+
+
+function firstGesture(){
+
+    if(started)
+        return;
+
+    started = true;
+
+    Sound.ensureRunning();
+
+    Sound.startMusic();
+
+    Sound.preloadAnimals();
+
+}
+
+
+document.addEventListener(
+    "click",
+    firstGesture
+);
+
+document.addEventListener(
+    "keydown",
+    firstGesture
+);
+
+document.addEventListener(
+    "touchstart",
+    firstGesture
 );
 
 </script>
