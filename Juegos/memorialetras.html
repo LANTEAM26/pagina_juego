@@ -219,6 +219,11 @@
 </head>
 <body>
 
+    <!-- MÚSICA DE FONDO DESDE LA CARPETA ASSETS -->
+    <audio id="bgm" loop>
+        <source src="../assets/musicaFondo/cancion1.mp3" type="audio/mpeg">
+    </audio>
+
     <div class="decorations">
         <div class="sun">☀️</div>
         <div class="cloud c1" style="position:absolute; top:10%; left:10%; font-size:40px;">☁️</div>
@@ -249,6 +254,47 @@
     </div>
 
     <script>
+        // MOTOR DE SONIDO (WEB AUDIO API + MÚSICA DE FONDO)
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+        let audioInitialized = false;
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            if (!audioInitialized) {
+                const bgm = document.getElementById('bgm');
+                bgm.volume = 0.25;
+                bgm.play().catch(e => console.log("Autoplay bloqueado hasta interacción"));
+                audioInitialized = true;
+            }
+        }
+
+        function playTone(freq, type, duration, vol = 0.1) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        function sfxClick() { playTone(600, 'sine', 0.08, 0.1); }
+        function sfxMatch() { playTone(587.33, 'triangle', 0.2, 0.15); setTimeout(() => playTone(880, 'triangle', 0.3, 0.15), 100); }
+        function sfxWrong() { playTone(200, 'sine', 0.25, 0.15); }
+        function sfxVictory() { 
+            let notes = [523.25, 659.25, 783.99, 1046.50]; 
+            notes.forEach((freq, i) => { setTimeout(() => playTone(freq, 'square', 0.3, 0.1), i * 150); });
+        }
+
         const alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R'];
         
         let cards = [];
@@ -260,6 +306,8 @@
         const promptBox = document.getElementById('prompt-box');
 
         function initGame() {
+            initAudio();
+            sfxClick();
             gridEl.innerHTML = '';
             cards = [];
             flippedCards = [];
@@ -282,9 +330,11 @@
         }
 
         function flipCard(card) {
+            initAudio();
             if (isChecking) return;
             if (card.classList.contains('flipped') || card.classList.contains('matched')) return;
 
+            sfxClick();
             card.classList.add('flipped');
             card.innerText = card.dataset.letter;
             flippedCards.push(card);
@@ -294,6 +344,7 @@
                 let [card1, card2] = flippedCards;
 
                 if (card1.dataset.letter === card2.dataset.letter) {
+                    sfxMatch();
                     card1.classList.add('matched');
                     card2.classList.add('matched');
                     matchedPairs++;
@@ -302,10 +353,12 @@
 
                     if (matchedPairs === 18) {
                         setTimeout(() => {
+                            sfxVictory();
                             document.getElementById('modal').classList.add('active');
                         }, 400);
                     }
                 } else {
+                    sfxWrong();
                     setTimeout(() => {
                         card1.classList.remove('flipped');
                         card1.innerText = '';
@@ -319,6 +372,8 @@
         }
 
         function closeModal() {
+            initAudio();
+            sfxClick();
             document.getElementById('modal').classList.remove('active');
         }
 
