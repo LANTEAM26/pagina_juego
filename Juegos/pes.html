@@ -1,0 +1,3950 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Pesca de Letras - Alfabeto Español</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    user-select:none;
+    -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+}
+
+body{
+    font-family:'Segoe UI',Arial,sans-serif;
+    background:#041521;
+}
+
+#game-container{
+    position:relative;
+    width:100vw;
+    height:100vh;
+    overflow:hidden;
+    background:#063b5c;
+}
+
+canvas{
+    display:block;
+    width:100%;
+    height:100%;
+    cursor:crosshair;
+    touch-action:none;
+}
+
+/* =========================================================
+   INDICACIÓN SUPERIOR
+========================================================= */
+
+.top-bar{
+    position:absolute;
+    top:18px;
+    left:0;
+    right:0;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    z-index:20;
+    pointer-events:none;
+}
+
+.top-indicator{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    min-width:310px;
+    max-width:440px;
+
+    background:rgba(8,30,47,.88);
+    backdrop-filter:blur(15px);
+    -webkit-backdrop-filter:blur(15px);
+
+    border:2px solid rgba(255,217,102,.75);
+    border-radius:22px;
+
+    padding:9px 20px 9px 10px;
+
+    box-shadow:
+        0 12px 35px rgba(0,0,0,.42),
+        inset 0 1px 0 rgba(255,255,255,.15);
+
+    animation:slideDown .55s cubic-bezier(.34,1.56,.64,1);
+}
+
+@keyframes slideDown{
+    0%{
+        transform:translateY(-50px) scale(.9);
+        opacity:0;
+    }
+    100%{
+        transform:translateY(0) scale(1);
+        opacity:1;
+    }
+}
+
+.target-letter{
+    flex-shrink:0;
+
+    width:62px;
+    height:62px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:17px;
+
+    background:linear-gradient(
+        145deg,
+        #34495e,
+        #172431
+    );
+
+    color:#ffe477;
+
+    font-size:2.3rem;
+    font-weight:900;
+
+    border:3px solid #f1c40f;
+
+    box-shadow:
+        0 0 0 4px rgba(241,196,15,.18),
+        inset 0 -6px 0 rgba(0,0,0,.35),
+        0 7px 18px rgba(0,0,0,.35);
+
+    text-shadow:3px 3px 0 rgba(0,0,0,.5);
+
+    animation:letterPulse 2.2s ease-in-out infinite;
+}
+
+@keyframes letterPulse{
+    0%,100%{
+        transform:scale(1);
+    }
+    50%{
+        transform:scale(1.06);
+    }
+}
+
+.info-text{
+    display:flex;
+    flex-direction:column;
+    line-height:1.15;
+}
+
+.info-text .label{
+    color:#ffd966;
+    font-size:.72rem;
+    font-weight:900;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    margin-bottom:5px;
+}
+
+.info-text .hint{
+    color:white;
+    font-size:1rem;
+    font-weight:600;
+    text-shadow:0 2px 5px rgba(0,0,0,.5);
+}
+
+.info-text .hint strong{
+    color:#ffe477;
+}
+
+/* =========================================================
+   CONTROLES
+========================================================= */
+
+.top-controls{
+    position:absolute;
+    right:18px;
+    top:18px;
+
+    display:flex;
+    gap:9px;
+    align-items:center;
+
+    pointer-events:auto;
+}
+
+.music-btn,
+.album-btn{
+    border:none;
+    border-radius:30px;
+    padding:11px 17px;
+
+    font-family:inherit;
+    font-weight:800;
+    font-size:.92rem;
+
+    cursor:pointer;
+
+    display:flex;
+    align-items:center;
+    gap:7px;
+
+    transition:.08s;
+}
+
+.music-btn{
+    background:linear-gradient(145deg,#bb8fce,#8e44ad);
+    color:white;
+
+    border:2px solid #d7bde2;
+
+    box-shadow:
+        0 5px 0 #6c3483,
+        0 8px 18px rgba(0,0,0,.3);
+}
+
+.music-btn.playing{
+    background:linear-gradient(145deg,#58d68d,#27ae60);
+    border-color:#abebc6;
+    box-shadow:
+        0 5px 0 #1e8449,
+        0 8px 18px rgba(0,0,0,.3);
+}
+
+.music-btn:active,
+.album-btn:active{
+    transform:translateY(4px);
+}
+
+.music-btn input{
+    display:none;
+}
+
+.sound-btn{
+    width:48px;
+    height:48px;
+
+    border:none;
+    border-radius:50%;
+
+    background:linear-gradient(145deg,#5dade2,#3498db);
+
+    border:2px solid #a9cce3;
+
+    font-size:1.35rem;
+
+    cursor:pointer;
+
+    box-shadow:
+        0 5px 0 #1f618d,
+        0 8px 18px rgba(0,0,0,.3);
+}
+
+.sound-btn.muted{
+    background:linear-gradient(145deg,#95a5a6,#7f8c8d);
+    box-shadow:
+        0 5px 0 #566573,
+        0 8px 18px rgba(0,0,0,.3);
+}
+
+.album-btn{
+    background:linear-gradient(145deg,#f7dc6f,#f1c40f);
+    color:#1e2b3a;
+
+    border:2px solid #fff3d1;
+
+    box-shadow:
+        0 5px 0 #b78a1e,
+        0 8px 18px rgba(0,0,0,.3);
+}
+
+.album-btn .badge{
+    background:#c0392b;
+    color:white;
+
+    padding:3px 8px;
+    border-radius:20px;
+
+    font-size:.75rem;
+}
+
+/* =========================================================
+   ALBUM
+========================================================= */
+
+.album-modal{
+    position:absolute;
+    inset:0;
+
+    display:none;
+
+    align-items:center;
+    justify-content:center;
+
+    padding:20px;
+
+    background:rgba(2,15,25,.78);
+
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+
+    z-index:100;
+}
+
+.album-modal.active{
+    display:flex;
+}
+
+.album-content{
+    width:100%;
+    max-width:900px;
+    max-height:88vh;
+
+    overflow-y:auto;
+
+    background:linear-gradient(160deg,#fff9ec,#fdf1d6);
+
+    border:6px solid #f1c40f;
+    border-radius:30px;
+
+    padding:25px;
+
+    box-shadow:
+        0 30px 70px rgba(0,0,0,.6);
+}
+
+.album-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding-bottom:14px;
+    margin-bottom:20px;
+
+    border-bottom:4px solid #f1c40f;
+}
+
+.album-header h2{
+    color:#1e2b3a;
+    font-size:1.8rem;
+}
+
+.close-album{
+    width:48px;
+    height:48px;
+
+    border:none;
+    border-radius:50%;
+
+    background:linear-gradient(145deg,#e74c3c,#c0392b);
+
+    color:white;
+    font-size:1.4rem;
+    font-weight:bold;
+
+    cursor:pointer;
+
+    box-shadow:0 5px 0 #a82315;
+}
+
+.album-grid{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:10px;
+}
+
+.album-letter{
+    aspect-ratio:1;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+
+    background:linear-gradient(145deg,#e8eef3,#d0dae0);
+
+    border:3px solid #b0bec5;
+    border-radius:15px;
+
+    color:#8494a3;
+
+    font-size:1.7rem;
+    font-weight:900;
+
+    box-shadow:inset 0 -5px 0 #b0bec5;
+}
+
+.album-letter .mini{
+    font-size:.75rem;
+    color:#94a3b1;
+}
+
+.album-letter.caught{
+    background:linear-gradient(145deg,#58d68d,#2ecc71);
+    color:white;
+
+    border-color:#27ae60;
+
+    box-shadow:
+        0 0 15px rgba(46,204,113,.5),
+        inset 0 -5px 0 #1e8e4a;
+}
+
+.album-letter.caught .mini{
+    color:#eaffd0;
+}
+
+.counter{
+    margin-top:20px;
+
+    padding:12px;
+
+    text-align:center;
+
+    font-weight:800;
+
+    color:#1e2b3a;
+
+    background:rgba(241,196,15,.15);
+
+    border:2px dashed #f1c40f;
+    border-radius:14px;
+}
+
+.reset-btn{
+    display:block;
+
+    margin:17px auto 0;
+
+    border:none;
+    border-radius:30px;
+
+    padding:13px 28px;
+
+    background:linear-gradient(145deg,#5dade2,#3498db);
+
+    color:white;
+
+    font-family:inherit;
+    font-weight:800;
+    font-size:1rem;
+
+    cursor:pointer;
+
+    box-shadow:0 5px 0 #1f618d;
+}
+
+/* =========================================================
+   VICTORIA
+========================================================= */
+
+.win-overlay{
+    position:absolute;
+    inset:0;
+
+    display:none;
+
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+
+    background:rgba(0,0,0,.35);
+
+    backdrop-filter:blur(4px);
+
+    z-index:50;
+}
+
+.win-overlay.active{
+    display:flex;
+}
+
+.win-card{
+    background:linear-gradient(160deg,#fff,#fff5dc);
+
+    padding:40px 55px;
+
+    border-radius:35px;
+
+    text-align:center;
+
+    border:6px solid #f1c40f;
+
+    box-shadow:0 30px 80px rgba(0,0,0,.5);
+
+    animation:popIn .5s cubic-bezier(.34,1.56,.64,1);
+}
+
+@keyframes popIn{
+    from{
+        transform:scale(.5);
+        opacity:0;
+    }
+    to{
+        transform:scale(1);
+        opacity:1;
+    }
+}
+
+.win-card h1{
+    color:#1e2b3a;
+    font-size:2.6rem;
+    margin-bottom:10px;
+}
+
+.win-card p{
+    color:#5d6d7e;
+    font-weight:700;
+    font-size:1.2rem;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:1000px){
+
+    .top-controls{
+        top:auto;
+        bottom:15px;
+        right:50%;
+        transform:translateX(50%);
+    }
+
+    .top-indicator{
+        margin-top:0;
+    }
+}
+
+@media(max-width:650px){
+
+    .top-indicator{
+        min-width:0;
+        width:calc(100% - 30px);
+        max-width:390px;
+    }
+
+    .target-letter{
+        width:53px;
+        height:53px;
+        font-size:1.9rem;
+    }
+
+    .info-text .label{
+        font-size:.6rem;
+    }
+
+    .info-text .hint{
+        font-size:.8rem;
+    }
+
+    .music-btn{
+        padding:9px 12px;
+        font-size:.78rem;
+    }
+
+    .sound-btn{
+        width:43px;
+        height:43px;
+    }
+
+    .album-btn{
+        padding:9px 12px;
+        font-size:.78rem;
+    }
+
+    .album-grid{
+        grid-template-columns:repeat(5,1fr);
+    }
+
+    .win-card{
+        margin:20px;
+        padding:30px 20px;
+    }
+
+    .win-card h1{
+        font-size:2rem;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div id="game-container">
+
+<canvas id="gameCanvas"></canvas>
+
+<!-- INDICACIÓN -->
+<div class="top-bar">
+
+    <div class="top-indicator" id="topIndicator">
+
+        <div class="target-letter" id="targetLetterDisplay">
+            A
+        </div>
+
+        <div class="info-text">
+            <div class="label">
+                Pesca esta letra
+            </div>
+
+            <div class="hint">
+                Busca su pareja en <strong>minúscula</strong>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- CONTROLES -->
+<div class="top-controls">
+
+    <button class="music-btn" id="musicBtn">
+        <input type="file" id="musicInput" accept="audio/*">
+        <span id="musicIcon">🎵</span>
+        <span id="musicLabel">Música</span>
+    </button>
+
+    <button class="sound-btn" id="soundBtn">
+        🔊
+    </button>
+
+    <button class="album-btn" id="albumBtn">
+        📖 Álbum
+        <span class="badge" id="albumCount">0/27</span>
+    </button>
+
+</div>
+
+<!-- VICTORIA -->
+<div class="win-overlay" id="winOverlay">
+
+    <div class="win-card">
+
+        <h1>
+            🎉 ¡FELICIDADES! 🎉
+        </h1>
+
+        <p>
+            Has completado el álbum de las 27 letras
+        </p>
+
+    </div>
+
+</div>
+
+<!-- ALBUM -->
+<div class="album-modal" id="albumModal">
+
+    <div class="album-content">
+
+        <div class="album-header">
+
+            <h2>
+                🐟 Álbum de Pesca
+            </h2>
+
+            <button class="close-album" id="closeAlbumBtn">
+                ✕
+            </button>
+
+        </div>
+
+        <div class="album-grid" id="albumGrid"></div>
+
+        <div class="counter" id="albumCounter">
+            0 de 27 letras capturadas
+        </div>
+
+        <button class="reset-btn" id="resetBtn">
+            🔄 Reiniciar juego
+        </button>
+
+    </div>
+
+</div>
+
+</div>
+
+<script>
+
+(function(){
+
+"use strict";
+
+/* =========================================================
+   ELEMENTOS
+========================================================= */
+
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+const targetLetterDisplay =
+    document.getElementById("targetLetterDisplay");
+
+const topIndicator =
+    document.getElementById("topIndicator");
+
+const albumBtn =
+    document.getElementById("albumBtn");
+
+const albumModal =
+    document.getElementById("albumModal");
+
+const closeAlbumBtn =
+    document.getElementById("closeAlbumBtn");
+
+const albumGrid =
+    document.getElementById("albumGrid");
+
+const albumCountSpan =
+    document.getElementById("albumCount");
+
+const albumCounter =
+    document.getElementById("albumCounter");
+
+const resetBtn =
+    document.getElementById("resetBtn");
+
+const winOverlay =
+    document.getElementById("winOverlay");
+
+const soundBtn =
+    document.getElementById("soundBtn");
+
+const musicBtn =
+    document.getElementById("musicBtn");
+
+const musicInput =
+    document.getElementById("musicInput");
+
+const musicIcon =
+    document.getElementById("musicIcon");
+
+const musicLabel =
+    document.getElementById("musicLabel");
+
+
+/* =========================================================
+   AUDIO
+========================================================= */
+
+let audioCtx = null;
+let soundEnabled = true;
+
+function initAudio(){
+
+    if(!audioCtx){
+
+        try{
+
+            audioCtx =
+                new(window.AudioContext ||
+                window.webkitAudioContext)();
+
+        }catch(e){
+
+            console.warn(
+                "Web Audio API no disponible"
+            );
+
+        }
+
+    }
+
+    if(audioCtx &&
+       audioCtx.state === "suspended"){
+
+        audioCtx.resume();
+
+    }
+
+}
+
+function playTone(
+    frequency,
+    duration,
+    type="sine",
+    volume=.3,
+    delay=0
+){
+
+    if(!soundEnabled || !audioCtx)
+        return;
+
+    const start =
+        audioCtx.currentTime + delay;
+
+    const osc =
+        audioCtx.createOscillator();
+
+    const gain =
+        audioCtx.createGain();
+
+    osc.type = type;
+
+    osc.frequency.setValueAtTime(
+        frequency,
+        start
+    );
+
+    gain.gain.setValueAtTime(
+        0,
+        start
+    );
+
+    gain.gain.linearRampToValueAtTime(
+        volume,
+        start+.01
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        volume*.7,
+        start+duration*.3
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        .001,
+        start+duration
+    );
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.start(start);
+    osc.stop(start+duration+.05);
+}
+
+function playCorrectSound(){
+
+    if(!soundEnabled)
+        return;
+
+    initAudio();
+
+    if(!audioCtx)
+        return;
+
+    const notes =
+        [523.25,659.25,783.99,1046.50];
+
+    notes.forEach((f,i)=>{
+
+        playTone(
+            f,
+            .25,
+            "triangle",
+            .25,
+            i*.08
+        );
+
+    });
+
+}
+
+function playIncorrectSound(){
+
+    if(!soundEnabled)
+        return;
+
+    initAudio();
+
+    if(!audioCtx)
+        return;
+
+    const start =
+        audioCtx.currentTime;
+
+    const osc =
+        audioCtx.createOscillator();
+
+    const gain =
+        audioCtx.createGain();
+
+    osc.type="sawtooth";
+
+    osc.frequency.setValueAtTime(
+        280,
+        start
+    );
+
+    osc.frequency.exponentialRampToValueAtTime(
+        110,
+        start+.4
+    );
+
+    gain.gain.setValueAtTime(
+        0,
+        start
+    );
+
+    gain.gain.linearRampToValueAtTime(
+        .2,
+        start+.02
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        .001,
+        start+.45
+    );
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.start(start);
+    osc.stop(start+.5);
+
+}
+
+function playCastSound(){
+
+    if(!soundEnabled)
+        return;
+
+    initAudio();
+
+    if(!audioCtx)
+        return;
+
+    const start =
+        audioCtx.currentTime;
+
+    const osc =
+        audioCtx.createOscillator();
+
+    const gain =
+        audioCtx.createGain();
+
+    osc.type="sine";
+
+    osc.frequency.setValueAtTime(
+        600,
+        start
+    );
+
+    osc.frequency.exponentialRampToValueAtTime(
+        200,
+        start+.2
+    );
+
+    gain.gain.setValueAtTime(
+        .12,
+        start
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        .001,
+        start+.25
+    );
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.start(start);
+    osc.stop(start+.3);
+
+}
+
+function playVictorySound(){
+
+    if(!soundEnabled)
+        return;
+
+    initAudio();
+
+    if(!audioCtx)
+        return;
+
+    const melody=[
+
+        {f:523.25,t:0,d:.2},
+        {f:659.25,t:.15,d:.2},
+        {f:783.99,t:.3,d:.2},
+        {f:1046.5,t:.45,d:.4},
+        {f:783.99,t:.75,d:.15},
+        {f:1046.5,t:.9,d:.6}
+
+    ];
+
+    melody.forEach(note=>{
+
+        playTone(
+            note.f,
+            note.d,
+            "triangle",
+            .3,
+            note.t
+        );
+
+    });
+
+}
+
+
+/* =========================================================
+   BOTON SONIDO
+========================================================= */
+
+soundBtn.addEventListener("click",e=>{
+
+    e.stopPropagation();
+
+    soundEnabled=!soundEnabled;
+
+    soundBtn.textContent =
+        soundEnabled ? "🔊":"🔇";
+
+    soundBtn.classList.toggle(
+        "muted",
+        !soundEnabled
+    );
+
+    if(soundEnabled){
+
+        initAudio();
+
+        playTone(
+            880,
+            .1,
+            "sine",
+            .2
+        );
+
+    }
+
+});
+
+
+/* =========================================================
+   MUSICA
+========================================================= */
+
+const bgMusic = new Audio();
+
+bgMusic.loop=true;
+bgMusic.volume=.35;
+
+let musicLoaded=false;
+let musicPlaying=false;
+
+musicBtn.addEventListener("click",e=>{
+
+    e.stopPropagation();
+
+    if(!musicLoaded){
+
+        musicInput.click();
+
+        return;
+
+    }
+
+    if(musicPlaying){
+
+        bgMusic.pause();
+
+        musicPlaying=false;
+
+        musicIcon.textContent="🎵";
+        musicLabel.textContent="Música";
+
+        musicBtn.classList.remove(
+            "playing"
+        );
+
+    }else{
+
+        bgMusic.play().then(()=>{
+
+            musicPlaying=true;
+
+            musicIcon.textContent="⏸";
+            musicLabel.textContent="Pausar";
+
+            musicBtn.classList.add(
+                "playing"
+            );
+
+        });
+
+    }
+
+});
+
+musicInput.addEventListener(
+    "change",
+    e=>{
+
+        const file =
+            e.target.files[0];
+
+        if(!file)
+            return;
+
+        bgMusic.src =
+            URL.createObjectURL(file);
+
+        bgMusic.load();
+
+        musicLoaded=true;
+
+        bgMusic.play().then(()=>{
+
+            musicPlaying=true;
+
+            musicIcon.textContent="⏸";
+            musicLabel.textContent="Pausar";
+
+            musicBtn.classList.add(
+                "playing"
+            );
+
+        }).catch(()=>{
+
+            musicIcon.textContent="▶";
+            musicLabel.textContent="Reproducir";
+
+        });
+
+    }
+);
+
+
+/* =========================================================
+   JUEGO
+========================================================= */
+
+const SPANISH_ALPHABET=[
+
+    "a","b","c","d","e","f","g","h","i","j","k","l","m",
+    "n","ñ","o","p","q","r","s","t","u","v","w","x","y","z"
+
+];
+
+let caughtLetters=new Set();
+
+let currentTargetLower="a";
+
+let fishes=[];
+let bubbles=[];
+let particles=[];
+let seaweed=[];
+let clouds=[];
+let waves=[];
+
+let hookX=0;
+let hookY=0;
+
+let hookActive=false;
+
+let mouseX=0;
+let mouseY=0;
+
+let hookTargetX=0;
+let hookTargetY=0;
+
+let time=0;
+
+
+/* =========================================================
+   BARCO
+========================================================= */
+
+const boat={
+
+    x:0,
+    y:0,
+
+    width:155,
+    height:75
+
+};
+
+
+/* =========================================================
+   RESIZE
+========================================================= */
+
+function resizeCanvas(){
+
+    canvas.width=
+        window.innerWidth;
+
+    canvas.height=
+        window.innerHeight;
+
+    /*
+       El bote queda sobre la superficie.
+       La superficie está aproximadamente
+       al 32% de la pantalla.
+    */
+
+    boat.x=
+        Math.max(
+            30,
+            canvas.width*.07
+        );
+
+    boat.y=
+        canvas.height*.27;
+
+    initBubbles();
+    initSeaweed();
+    initClouds();
+    initWaves();
+
+}
+
+
+/* =========================================================
+   BURBUJAS
+========================================================= */
+
+function initBubbles(){
+
+    bubbles=[];
+
+    const count=
+        Math.floor(
+            canvas.width/18
+        );
+
+    for(let i=0;i<count;i++){
+
+        bubbles.push({
+
+            x:Math.random()*canvas.width,
+
+            y:
+                canvas.height*.35+
+                Math.random()*
+                canvas.height*.65,
+
+            radius:
+                Math.random()*8+2,
+
+            speed:
+                Math.random()*.8+.35,
+
+            alpha:
+                Math.random()*.25+.08,
+
+            wobble:
+                Math.random()*Math.PI*2,
+
+            wobbleSpeed:
+                Math.random()*.03+.01
+
+        });
+
+    }
+
+}
+
+
+/* =========================================================
+   ALGAS
+========================================================= */
+
+function initSeaweed(){
+
+    seaweed=[];
+
+    const count=
+        Math.floor(
+            canvas.width/100
+        )+4;
+
+    for(let i=0;i<count;i++){
+
+        seaweed.push({
+
+            x:
+                Math.random()*canvas.width,
+
+            height:
+                Math.random()*100+60,
+
+            width:
+                Math.random()*10+7,
+
+            phase:
+                Math.random()*Math.PI*2,
+
+            speed:
+                Math.random()*.02+.01,
+
+            color:
+                `hsl(
+                    ${Math.random()*35+115},
+                    ${Math.random()*25+45}%,
+                    ${Math.random()*15+25}%
+                )`
+
+        });
+
+    }
+
+}
+
+
+/* =========================================================
+   NUBES
+========================================================= */
+
+function initClouds(){
+
+    clouds=[];
+
+    for(let i=0;i<7;i++){
+
+        clouds.push({
+
+            x:
+                Math.random()*canvas.width,
+
+            y:
+                40+Math.random()*
+                canvas.height*.17,
+
+            scale:
+                .6+Math.random()*.9,
+
+            speed:
+                .05+Math.random()*.08
+
+        });
+
+    }
+
+}
+
+
+/* =========================================================
+   OLAS
+========================================================= */
+
+function initWaves(){
+
+    waves=[];
+
+    for(let i=0;i<14;i++){
+
+        waves.push({
+
+            x:
+                Math.random()*canvas.width,
+
+            offset:
+                Math.random()*Math.PI*2,
+
+            length:
+                70+Math.random()*90,
+
+            alpha:
+                .12+Math.random()*.16
+
+        });
+
+    }
+
+}
+
+
+/* =========================================================
+   CREAR PEZ
+========================================================= */
+
+function createFish(letter,isTarget=false){
+
+    const sizeBase=
+        Math.random()*13+28;
+
+    const hue=
+        Math.random()*360;
+
+    const color=
+        `hsl(${hue},75%,55%)`;
+
+    const tailColor=
+        `hsl(${(hue+30)%360},70%,40%)`;
+
+    const finColor=
+        `hsl(${(hue+60)%360},80%,65%)`;
+
+    return{
+
+        letter,
+
+        isTarget,
+
+        /*
+           CAMBIO:
+           los peces ahora empiezan cerca
+           del borde izquierdo para que
+           aparezcan mucho más rápido.
+        */
+
+        x:
+            -Math.random()*220-50,
+
+        y:0,
+
+        /*
+           CAMBIO:
+           peces más rápidos.
+        */
+
+        vx:
+            Math.random()*1.7+1.15,
+
+        vy:
+            (Math.random()-.5)*.4,
+
+        size:sizeBase,
+
+        color:
+            isTarget
+            ?`hsl(
+                ${Math.random()*40+180},
+                80%,
+                60%
+             )`
+            :color,
+
+        tailColor:
+            isTarget
+            ?`hsl(
+                ${Math.random()*40+180},
+                75%,
+                40%
+             )`
+            :tailColor,
+
+        finColor:
+            isTarget
+            ?`hsl(
+                ${Math.random()*40+180},
+                85%,
+                70%
+             )`
+            :finColor,
+
+        wobble:
+            Math.random()*Math.PI*2,
+
+        wobbleSpeed:
+            Math.random()*.05+.025,
+
+        caught:false,
+
+        catchProgress:0,
+
+        finPhase:
+            Math.random()*Math.PI*2
+
+    };
+
+}
+
+
+/* =========================================================
+   NUEVA RONDA
+========================================================= */
+
+function startNewRound(){
+
+    if(caughtLetters.size>=27){
+
+        targetLetterDisplay.textContent="✓";
+
+        return;
+
+    }
+
+    const remaining=
+        SPANISH_ALPHABET.filter(
+            l=>!caughtLetters.has(l)
+        );
+
+    if(!remaining.length)
+        return;
+
+    const targetLower=
+        remaining[
+            Math.floor(
+                Math.random()*remaining.length
+            )
+        ];
+
+    currentTargetLower=
+        targetLower;
+
+    targetLetterDisplay.textContent=
+        targetLower.toUpperCase();
+
+    topIndicator.style.animation="none";
+
+    void topIndicator.offsetWidth;
+
+    topIndicator.style.animation=
+        "slideDown .55s cubic-bezier(.34,1.56,.64,1)";
+
+    fishes=[];
+
+    /*
+       ZONA DE PECES:
+       empieza justo debajo de la superficie.
+    */
+
+    const swimTop=
+        canvas.height*.43;
+
+    const swimBottom=
+        canvas.height*.86;
+
+    /*
+       CAMBIO:
+       ahora aparecen 9 peces,
+       en lugar de 5-8.
+    */
+
+    const decoyCount=
+        Math.floor(Math.random()*3)+8;
+
+    const targetFish=
+        createFish(
+            targetLower,
+            true
+        );
+
+    targetFish.y=
+        swimTop+
+        Math.random()*
+        (swimBottom-swimTop);
+
+    /*
+       El pez objetivo aparece
+       rápidamente.
+    */
+
+    targetFish.x=
+        -80-Math.random()*120;
+
+    fishes.push(targetFish);
+
+    const availableDecoys=
+        SPANISH_ALPHABET.filter(
+            l=>
+                l!==targetLower &&
+                !caughtLetters.has(l)
+        );
+
+    for(let i=0;i<decoyCount;i++){
+
+        const pool=
+            availableDecoys.length
+            ?availableDecoys
+            :SPANISH_ALPHABET.filter(
+                l=>l!==targetLower
+            );
+
+        const letter=
+            pool[
+                Math.floor(
+                    Math.random()*pool.length
+                )
+            ];
+
+        const fish=
+            createFish(
+                letter,
+                false
+            );
+
+        fish.y=
+            swimTop+
+            Math.random()*
+            (swimBottom-swimTop);
+
+        /*
+           Distribución inicial mucho más rápida.
+        */
+
+        fish.x=
+            -50-
+            Math.random()*(
+                300+i*55
+            );
+
+        fishes.push(fish);
+
+    }
+
+}
+
+
+/* =========================================================
+   UPDATE
+========================================================= */
+
+function update(deltaTime){
+
+    const dt=
+        Math.min(
+            deltaTime/16.67,
+            2.5
+        );
+
+    time+=deltaTime*.001;
+
+
+    /* BURBUJAS */
+
+    bubbles.forEach(b=>{
+
+        b.y-=b.speed*dt;
+
+        b.x+=
+            Math.sin(b.wobble)*
+            .4*
+            dt;
+
+        b.wobble+=
+            b.wobbleSpeed*dt;
+
+        if(
+            b.y<
+            canvas.height*.30
+        ){
+
+            b.y=
+                canvas.height;
+
+            b.x=
+                Math.random()*
+                canvas.width;
+
+        }
+
+    });
+
+
+    /* NUBES */
+
+    clouds.forEach(c=>{
+
+        c.x+=c.speed*dt;
+
+        if(
+            c.x>
+            canvas.width+200
+        ){
+
+            c.x=-200;
+
+        }
+
+    });
+
+
+    /* OLAS */
+
+    waves.forEach(w=>{
+
+        w.x-=.2*dt;
+
+        if(
+            w.x+w.length<0
+        ){
+
+            w.x=
+                canvas.width+
+                Math.random()*100;
+
+        }
+
+    });
+
+
+    /* ANZUELO */
+
+    if(hookActive){
+
+        hookX+=
+            (hookTargetX-hookX)*
+            .25*
+            dt;
+
+        hookY+=
+            (hookTargetY-hookY)*
+            .25*
+            dt;
+
+    }else if(mouseX>0&&mouseY>0){
+
+        hookX+=
+            (mouseX-hookX)*
+            .12*
+            dt;
+
+        hookY+=
+            (mouseY-hookY)*
+            .12*
+            dt;
+
+    }
+
+
+    const swimTop=
+        canvas.height*.43;
+
+    const swimBottom=
+        canvas.height*.86;
+
+
+    /* PECES */
+
+    for(
+        let i=fishes.length-1;
+        i>=0;
+        i--
+    ){
+
+        const f=fishes[i];
+
+        if(!f.caught){
+
+            f.x+=f.vx*dt;
+
+            f.y+=
+                Math.sin(f.wobble)*
+                .45*
+                dt;
+
+            f.wobble+=
+                f.wobbleSpeed*dt;
+
+            f.finPhase+=
+                .1*dt;
+
+            if(f.y<swimTop)
+                f.y=swimTop;
+
+            if(f.y>swimBottom)
+                f.y=swimBottom;
+
+
+            /*
+               Cuando sale por la derecha,
+               vuelve inmediatamente por la izquierda.
+            */
+
+            if(
+                f.x>
+                canvas.width+100
+            ){
+
+                f.x=
+                    -80-
+                    Math.random()*180;
+
+                f.y=
+                    swimTop+
+                    Math.random()*
+                    (swimBottom-swimTop);
+
+            }
+
+        }else{
+
+            f.catchProgress+=
+                .028*dt;
+
+            if(f.catchProgress>=1){
+
+                if(
+                    !caughtLetters.has(
+                        f.letter
+                    )
+                ){
+
+                    caughtLetters.add(
+                        f.letter
+                    );
+
+                    updateAlbumUI();
+
+                    if(
+                        f.letter===
+                        currentTargetLower
+                    ){
+
+                        setTimeout(()=>{
+
+                            if(
+                                caughtLetters.size<27
+                            ){
+
+                                startNewRound();
+
+                            }else{
+
+                                targetLetterDisplay
+                                    .textContent="✓";
+
+                                winOverlay
+                                    .classList
+                                    .add("active");
+
+                                playVictorySound();
+
+                            }
+
+                        },350);
+
+                    }
+
+                }
+
+                fishes.splice(i,1);
+
+                continue;
+
+            }
+
+            const targetX=
+                boat.x+
+                boat.width/2;
+
+            const targetY=
+                canvas.height*.34;
+
+            const t=
+                f.catchProgress;
+
+            const ctrlX=
+                (f.x+targetX)/2;
+
+            const ctrlY=
+                Math.min(
+                    f.y,
+                    targetY
+                )-120;
+
+            const mt=1-t;
+
+            f.x=
+                mt*mt*f.x+
+                2*mt*t*ctrlX+
+                t*t*targetX;
+
+            f.y=
+                mt*mt*f.y+
+                2*mt*t*ctrlY+
+                t*t*targetY;
+
+        }
+
+    }
+
+
+    /* PARTICULAS */
+
+    for(
+        let i=particles.length-1;
+        i>=0;
+        i--
+    ){
+
+        const p=particles[i];
+
+        p.x+=p.vx*dt;
+        p.y+=p.vy*dt;
+
+        p.vy+=.12*dt;
+
+        p.life-=.018*dt;
+
+        if(p.life<=0)
+            particles.splice(i,1);
+
+    }
+
+
+    /* COLISION ANZUELO */
+
+    if(
+        hookActive &&
+        currentTargetLower
+    ){
+
+        for(const f of fishes){
+
+            if(f.caught)
+                continue;
+
+            const dx=
+                hookX-f.x;
+
+            const dy=
+                hookY-f.y;
+
+            const dist=
+                Math.sqrt(
+                    dx*dx+dy*dy
+                );
+
+            if(
+                dist<
+                f.size*.95
+            ){
+
+                if(
+                    f.letter===
+                    currentTargetLower
+                ){
+
+                    playCorrectSound();
+
+                    f.caught=true;
+
+                    f.catchProgress=0;
+
+                    hookActive=false;
+
+                    for(let i=0;i<20;i++){
+
+                        particles.push({
+
+                            x:f.x,
+                            y:f.y,
+
+                            vx:
+                                (Math.random()-.5)*8,
+
+                            vy:
+                                (Math.random()-.5)*8-3,
+
+                            size:
+                                Math.random()*7+3,
+
+                            color:
+                                `hsl(
+                                    ${Math.random()*360},
+                                    90%,
+                                    70%
+                                )`,
+
+                            life:1
+
+                        });
+
+                    }
+
+                }else{
+
+                    playIncorrectSound();
+
+                    /*
+                       El pez incorrecto
+                       escapa.
+                    */
+
+                    f.vx=
+                        Math.abs(f.vx)*.7;
+
+                    hookActive=false;
+
+                }
+
+                break;
+
+            }
+
+        }
+
+    }
+
+    albumCountSpan.textContent=
+        `${caughtLetters.size}/27`;
+
+}
+
+
+/* =========================================================
+   DIBUJAR
+========================================================= */
+
+function draw(){
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    /*
+       ======================================================
+       CIELO
+       ======================================================
+    */
+
+    const skyGrad=
+        ctx.createLinearGradient(
+            0,
+            0,
+            0,
+            canvas.height*.34
+        );
+
+    skyGrad.addColorStop(
+        0,
+        "#55c7ef"
+    );
+
+    skyGrad.addColorStop(
+        .55,
+        "#8ee4f7"
+    );
+
+    skyGrad.addColorStop(
+        1,
+        "#d7f6ff"
+    );
+
+    ctx.fillStyle=skyGrad;
+
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height*.36
+    );
+
+
+    /*
+       SOL
+    */
+
+    const sunX=
+        canvas.width*.82;
+
+    const sunY=
+        canvas.height*.11;
+
+    const sunGlow=
+        ctx.createRadialGradient(
+            sunX,
+            sunY,
+            5,
+            sunX,
+            sunY,
+            100
+        );
+
+    sunGlow.addColorStop(
+        0,
+        "rgba(255,248,180,.95)"
+    );
+
+    sunGlow.addColorStop(
+        1,
+        "rgba(255,235,130,0)"
+    );
+
+    ctx.fillStyle=sunGlow;
+
+    ctx.beginPath();
+
+    ctx.arc(
+        sunX,
+        sunY,
+        100,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+
+
+    ctx.fillStyle="#fff5b5";
+
+    ctx.beginPath();
+
+    ctx.arc(
+        sunX,
+        sunY,
+        30,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+
+
+    /*
+       NUBES
+    */
+
+    clouds.forEach(c=>{
+
+        ctx.save();
+
+        ctx.globalAlpha=.55;
+
+        ctx.fillStyle="white";
+
+        ctx.beginPath();
+
+        ctx.arc(
+            c.x,
+            c.y,
+            25*c.scale,
+            0,
+            Math.PI*2
+        );
+
+        ctx.arc(
+            c.x+28*c.scale,
+            c.y-10*c.scale,
+            32*c.scale,
+            0,
+            Math.PI*2
+        );
+
+        ctx.arc(
+            c.x+65*c.scale,
+            c.y,
+            23*c.scale,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+
+        ctx.restore();
+
+    });
+
+
+    /*
+       ======================================================
+       SUPERFICIE DEL MAR
+       ======================================================
+    */
+
+    const surfaceY=
+        canvas.height*.34;
+
+
+    const waterGrad=
+        ctx.createLinearGradient(
+            0,
+            surfaceY,
+            0,
+            canvas.height
+        );
+
+    waterGrad.addColorStop(
+        0,
+        "#168dcc"
+    );
+
+    waterGrad.addColorStop(
+        .12,
+        "#0877b0"
+    );
+
+    waterGrad.addColorStop(
+        .4,
+        "#075d91"
+    );
+
+    waterGrad.addColorStop(
+        1,
+        "#033b60"
+    );
+
+    ctx.fillStyle=waterGrad;
+
+    ctx.fillRect(
+        0,
+        surfaceY,
+        canvas.width,
+        canvas.height-surfaceY
+    );
+
+
+    /*
+       Línea brillante de superficie
+    */
+
+    ctx.save();
+
+    ctx.strokeStyle=
+        "rgba(220,250,255,.9)";
+
+    ctx.lineWidth=4;
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        0,
+        surfaceY
+    );
+
+    for(
+        let x=0;
+        x<=canvas.width;
+        x+=25
+    ){
+
+        const y=
+            surfaceY+
+            Math.sin(
+                x*.018+
+                time*1.8
+            )*3;
+
+        ctx.lineTo(x,y);
+
+    }
+
+    ctx.stroke();
+
+    ctx.restore();
+
+
+    /*
+       REFLEJOS DE SUPERFICIE
+    */
+
+    ctx.save();
+
+    ctx.globalAlpha=.18;
+
+    for(let i=0;i<16;i++){
+
+        const x=
+            (i*130+
+            time*25)%
+            (canvas.width+180)-90;
+
+        const y=
+            surfaceY+
+            10+
+            Math.sin(
+                time+i
+            )*4;
+
+        ctx.fillStyle="white";
+
+        ctx.beginPath();
+
+        ctx.ellipse(
+            x,
+            y,
+            55,
+            4,
+            0,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+
+    }
+
+    ctx.restore();
+
+
+    /*
+       RAYOS DE LUZ
+    */
+
+    ctx.save();
+
+    ctx.globalCompositeOperation="screen";
+
+    for(let i=0;i<8;i++){
+
+        const x=
+            i*canvas.width/7+
+            Math.sin(time*.3+i)*30;
+
+        const grad=
+            ctx.createLinearGradient(
+                x,
+                surfaceY,
+                x+120,
+                canvas.height
+            );
+
+        grad.addColorStop(
+            0,
+            "rgba(180,240,255,.09)"
+        );
+
+        grad.addColorStop(
+            1,
+            "rgba(180,240,255,0)"
+        );
+
+        ctx.fillStyle=grad;
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            x,
+            surfaceY
+        );
+
+        ctx.lineTo(
+            x+60,
+            surfaceY
+        );
+
+        ctx.lineTo(
+            x+190,
+            canvas.height
+        );
+
+        ctx.lineTo(
+            x+60,
+            canvas.height
+        );
+
+        ctx.closePath();
+
+        ctx.fill();
+
+    }
+
+    ctx.restore();
+
+
+    /*
+       FONDO DEL MAR
+    */
+
+    const floorY=
+        canvas.height*.86;
+
+    const sandGrad=
+        ctx.createLinearGradient(
+            0,
+            floorY,
+            0,
+            canvas.height
+        );
+
+    sandGrad.addColorStop(
+        0,
+        "rgba(25,105,105,.1)"
+    );
+
+    sandGrad.addColorStop(
+        1,
+        "rgba(15,65,65,.85)"
+    );
+
+    ctx.fillStyle=sandGrad;
+
+    ctx.fillRect(
+        0,
+        floorY,
+        canvas.width,
+        canvas.height-floorY
+    );
+
+
+    /*
+       ALGAS
+    */
+
+    drawSeaweed();
+
+
+    /*
+       CORALES
+    */
+
+    drawCorals();
+
+
+    /*
+       BURBUJAS
+    */
+
+    bubbles.forEach(b=>{
+
+        const bGrad=
+            ctx.createRadialGradient(
+                b.x-b.radius*.3,
+                b.y-b.radius*.3,
+                b.radius*.1,
+                b.x,
+                b.y,
+                b.radius
+            );
+
+        bGrad.addColorStop(
+            0,
+            `rgba(
+                255,
+                255,
+                255,
+                ${b.alpha+.25}
+            )`
+        );
+
+        bGrad.addColorStop(
+            .7,
+            `rgba(
+                190,
+                240,
+                255,
+                ${b.alpha}
+            )`
+        );
+
+        bGrad.addColorStop(
+            1,
+            "rgba(100,200,240,0)"
+        );
+
+        ctx.fillStyle=bGrad;
+
+        ctx.beginPath();
+
+        ctx.arc(
+            b.x,
+            b.y,
+            b.radius,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+
+        ctx.strokeStyle=
+            `rgba(
+                255,
+                255,
+                255,
+                ${b.alpha+.12}
+            )`;
+
+        ctx.lineWidth=1.2;
+
+        ctx.stroke();
+
+    });
+
+
+    /*
+       PECES
+    */
+
+    fishes.forEach(f=>{
+        drawFish(f);
+    });
+
+
+    /*
+       PARTICULAS
+    */
+
+    particles.forEach(p=>{
+
+        ctx.globalAlpha=p.life;
+
+        ctx.fillStyle=p.color;
+
+        ctx.beginPath();
+
+        ctx.arc(
+            p.x,
+            p.y,
+            p.size,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+
+        ctx.globalAlpha=1;
+
+    });
+
+
+    /*
+       BARCO
+    */
+
+    drawBoat();
+
+
+    /*
+       ANZUELO
+    */
+
+    drawHook();
+
+}
+
+
+/* =========================================================
+   ALGAS
+========================================================= */
+
+function drawSeaweed(){
+
+    seaweed.forEach(s=>{
+
+        const sway=
+            Math.sin(
+                time*2+
+                s.phase
+            )*12;
+
+        const baseX=s.x;
+
+        const baseY=
+            canvas.height;
+
+        const topX=
+            baseX+sway;
+
+        const topY=
+            baseY-s.height;
+
+        const midX=
+            baseX+sway*.4;
+
+        const midY=
+            baseY-s.height*.5;
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            baseX-s.width/2,
+            baseY
+        );
+
+        ctx.quadraticCurveTo(
+            midX-s.width/4,
+            midY,
+            topX-s.width/4,
+            topY
+        );
+
+        ctx.quadraticCurveTo(
+            topX,
+            topY-12,
+            topX+s.width/4,
+            topY
+        );
+
+        ctx.quadraticCurveTo(
+            midX+s.width/4,
+            midY,
+            baseX+s.width/2,
+            baseY
+        );
+
+        ctx.closePath();
+
+        ctx.fillStyle=s.color;
+
+        ctx.fill();
+
+    });
+
+}
+
+
+/* =========================================================
+   CORALES
+========================================================= */
+
+function drawCorals(){
+
+    const baseY=
+        canvas.height;
+
+    const positions=[
+        80,250,480,720,950,1150,1350
+    ];
+
+    positions.forEach((x,idx)=>{
+
+        if(x>canvas.width)
+            return;
+
+        const h=
+            55+
+            Math.sin(idx*1.7)*20;
+
+        const hue=
+            10+idx*15;
+
+        ctx.strokeStyle=
+            `hsl(
+                ${hue},
+                70%,
+                45%
+            )`;
+
+        ctx.lineWidth=8;
+
+        ctx.lineCap="round";
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            x,
+            baseY
+        );
+
+        ctx.quadraticCurveTo(
+            x-20,
+            baseY-h*.6,
+            x-15,
+            baseY-h
+        );
+
+        ctx.stroke();
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            x,
+            baseY
+        );
+
+        ctx.quadraticCurveTo(
+            x+20,
+            baseY-h*.55,
+            x+18,
+            baseY-h*.9
+        );
+
+        ctx.stroke();
+
+    });
+
+}
+
+
+/* =========================================================
+   BARCO
+========================================================= */
+
+function drawBoat(){
+
+    const bx=boat.x;
+    const by=boat.y;
+    const bw=boat.width;
+    const bh=boat.height;
+
+    /*
+       Sombra sobre el agua
+    */
+
+    ctx.save();
+
+    ctx.globalAlpha=.2;
+
+    ctx.fillStyle="#001b2b";
+
+    ctx.beginPath();
+
+    ctx.ellipse(
+        bx+bw/2,
+        by+bh+17,
+        bw*.55,
+        10,
+        0,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+
+    ctx.restore();
+
+
+    /*
+       HULL
+    */
+
+    const hullGrad=
+        ctx.createLinearGradient(
+            bx,
+            by+25,
+            bx,
+            by+bh
+        );
+
+    hullGrad.addColorStop(
+        0,
+        "#c56a35"
+    );
+
+    hullGrad.addColorStop(
+        .5,
+        "#9b4f21"
+    );
+
+    hullGrad.addColorStop(
+        1,
+        "#5d2e0a"
+    );
+
+    ctx.fillStyle=hullGrad;
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        bx-15,
+        by+25
+    );
+
+    ctx.lineTo(
+        bx+bw+15,
+        by+25
+    );
+
+    ctx.quadraticCurveTo(
+        bx+bw+5,
+        by+bh,
+        bx+bw-15,
+        by+bh
+    );
+
+    ctx.lineTo(
+        bx+15,
+        by+bh
+    );
+
+    ctx.quadraticCurveTo(
+        bx-5,
+        by+bh,
+        bx-15,
+        by+25
+    );
+
+    ctx.closePath();
+
+    ctx.fill();
+
+    ctx.strokeStyle="#3e1e08";
+    ctx.lineWidth=3;
+
+    ctx.stroke();
+
+
+    /*
+       BORDE SUPERIOR
+    */
+
+    ctx.strokeStyle="#f1c40f";
+    ctx.lineWidth=3;
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        bx-8,
+        by+38
+    );
+
+    ctx.quadraticCurveTo(
+        bx+bw/2,
+        by+48,
+        bx+bw+8,
+        by+38
+    );
+
+    ctx.stroke();
+
+
+    /*
+       CABINA
+    */
+
+    const cabinGrad=
+        ctx.createLinearGradient(
+            bx,
+            by+4,
+            bx,
+            by+27
+        );
+
+    cabinGrad.addColorStop(
+        0,
+        "#ffffff"
+    );
+
+    cabinGrad.addColorStop(
+        1,
+        "#d8e4e8"
+    );
+
+    ctx.fillStyle=cabinGrad;
+
+    ctx.fillRect(
+        bx+20,
+        by+5,
+        bw-40,
+        23
+    );
+
+    ctx.strokeStyle="#704019";
+    ctx.lineWidth=2;
+
+    ctx.strokeRect(
+        bx+20,
+        by+5,
+        bw-40,
+        23
+    );
+
+
+    /*
+       VENTANAS
+    */
+
+    for(let i=0;i<3;i++){
+
+        ctx.fillStyle="#5dc8ed";
+
+        ctx.beginPath();
+
+        ctx.arc(
+            bx+40+i*30,
+            by+16,
+            6,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+
+        ctx.strokeStyle="#5d3a1a";
+        ctx.lineWidth=2;
+
+        ctx.stroke();
+
+    }
+
+
+    /*
+       MASTIL
+    */
+
+    const mastX=
+        bx+bw*.5;
+
+    const mastTopY=
+        by-55;
+
+    ctx.fillStyle="#5d3a1a";
+
+    ctx.fillRect(
+        mastX-3,
+        mastTopY,
+        6,
+        by+10-mastTopY
+    );
+
+
+    /*
+       VELA DERECHA
+    */
+
+    const windSway=
+        Math.sin(time*1.5)*4;
+
+    const sailGrad=
+        ctx.createLinearGradient(
+            mastX,
+            mastTopY,
+            mastX+60,
+            by
+        );
+
+    sailGrad.addColorStop(
+        0,
+        "#ffffff"
+    );
+
+    sailGrad.addColorStop(
+        1,
+        "#dce8ec"
+    );
+
+    ctx.fillStyle=sailGrad;
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        mastX+3,
+        mastTopY+5
+    );
+
+    ctx.quadraticCurveTo(
+        mastX+50+windSway,
+        mastTopY+35,
+        mastX+55+windSway,
+        by
+    );
+
+    ctx.lineTo(
+        mastX+3,
+        by
+    );
+
+    ctx.closePath();
+
+    ctx.fill();
+
+    ctx.strokeStyle="#bdc3c7";
+    ctx.lineWidth=1.5;
+
+    ctx.stroke();
+
+
+    /*
+       VELA IZQUIERDA
+    */
+
+    ctx.fillStyle="#f5f5f5";
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        mastX-3,
+        mastTopY+5
+    );
+
+    ctx.quadraticCurveTo(
+        mastX-45+windSway,
+        mastTopY+30,
+        mastX-50+windSway,
+        by
+    );
+
+    ctx.lineTo(
+        mastX-3,
+        by
+    );
+
+    ctx.closePath();
+
+    ctx.fill();
+
+    ctx.stroke();
+
+
+    /*
+       BANDERA
+    */
+
+    ctx.fillStyle="#e74c3c";
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        mastX,
+        mastTopY-2
+    );
+
+    ctx.lineTo(
+        mastX+28+windSway*.5,
+        mastTopY+8
+    );
+
+    ctx.lineTo(
+        mastX,
+        mastTopY+18
+    );
+
+    ctx.closePath();
+
+    ctx.fill();
+
+
+    ctx.fillStyle="#f1c40f";
+
+    ctx.beginPath();
+
+    ctx.arc(
+        mastX,
+        mastTopY-5,
+        4,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+
+}
+
+
+/* =========================================================
+   PEZ
+========================================================= */
+
+function drawFish(f){
+
+    const x=f.x;
+    const y=f.y;
+    const size=f.size;
+
+    ctx.save();
+
+    ctx.translate(x,y);
+
+
+    /*
+       SOMBRA
+    */
+
+    ctx.save();
+
+    ctx.globalAlpha=.15;
+
+    ctx.fillStyle="#001c2c";
+
+    ctx.beginPath();
+
+    ctx.ellipse(
+        0,
+        size*.8,
+        size*1.1,
+        size*.2,
+        0,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+
+    ctx.restore();
+
+
+    /*
+       COLA
+    */
+
+    const tailWag=
+        Math.sin(f.finPhase)*.3;
+
+    ctx.save();
+
+    ctx.translate(
+        -size*.8,
+        0
+    );
+
+    ctx.rotate(tailWag);
+
+    ctx.fillStyle=f.tailColor;
+
+    ctx.beginPath();
+
+    ctx.moveTo(0,0);
+
+    ctx.lineTo(
+        -size*.7,
+        -size*.55
+    );
+
+    ctx.quadraticCurveTo(
+        -size*.4,
+        0,
+        -size*.7,
+        size*.55
+    );
+
+    ctx.closePath();
+
+    ctx.fill();
+
+    ctx.restore();
+
+
+    /*
+       ALETAS
+    */
+
+    ctx.fillStyle=f.finColor;
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        -size*.2,
+        -size*.65
+    );
+
+    ctx.quadraticCurveTo(
+        size*.1,
+        -size,
+        size*.5,
+        -size*.55
+    );
+
+    ctx.quadraticCurveTo(
+        size*.2,
+        -size*.5,
+        -size*.2,
+        -size*.65
+    );
+
+    ctx.fill();
+
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        -size*.1,
+        size*.6
+    );
+
+    ctx.quadraticCurveTo(
+        size*.2,
+        size*.95,
+        size*.4,
+        size*.55
+    );
+
+    ctx.quadraticCurveTo(
+        size*.1,
+        size*.5,
+        -size*.1,
+        size*.6
+    );
+
+    ctx.fill();
+
+
+    /*
+       CUERPO
+    */
+
+    const bodyGrad=
+        ctx.createRadialGradient(
+            -size*.3,
+            -size*.3,
+            size*.1,
+            0,
+            0,
+            size*1.2
+        );
+
+    bodyGrad.addColorStop(
+        0,
+        "#ffffff"
+    );
+
+    bodyGrad.addColorStop(
+        .18,
+        f.color
+    );
+
+    bodyGrad.addColorStop(
+        1,
+        f.color
+    );
+
+    ctx.fillStyle=bodyGrad;
+
+    ctx.beginPath();
+
+    ctx.ellipse(
+        0,
+        0,
+        size*1.05,
+        size*.72,
+        0,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+
+
+    /*
+       BRILLO
+    */
+
+    ctx.save();
+
+    ctx.globalAlpha=.35;
+
+    ctx.fillStyle="white";
+
+    ctx.beginPath();
+
+    ctx.ellipse(
+        -size*.1,
+        -size*.35,
+        size*.7,
+        size*.2,
+        -.2,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+
+    ctx.restore();
+
+
+    /*
+       BORDE
+    */
+
+    ctx.strokeStyle="rgba(0,0,0,.25)";
+    ctx.lineWidth=1.5;
+
+    ctx.beginPath();
+
+    ctx.ellipse(
+        0,
+        0,
+        size*1.05,
+        size*.72,
+        0,
+        0,
+        Math.PI*2
+    );
+
+    ctx.stroke();
+
+
+    /*
+       OJO
+    */
+
+    ctx.fillStyle="white";
+
+    ctx.beginPath();
+
+    ctx.arc(
+        size*.5,
+        -size*.12,
+        size*.22,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+
+    ctx.fillStyle="#111";
+
+    ctx.beginPath();
+
+    ctx.arc(
+        size*.55,
+        -size*.14,
+        size*.11,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+
+
+    /*
+       LETRA
+    */
+
+    ctx.font=
+        `900 ${size}px 'Segoe UI',Arial`;
+
+    ctx.textAlign="center";
+    ctx.textBaseline="middle";
+
+    ctx.strokeStyle=
+        "rgba(0,0,0,.5)";
+
+    ctx.lineWidth=3;
+
+    ctx.strokeText(
+        f.letter,
+        0,
+        0
+    );
+
+    ctx.fillStyle="white";
+
+    ctx.fillText(
+        f.letter,
+        0,
+        0
+    );
+
+
+    /*
+       INDICADOR DEL PEZ OBJETIVO
+    */
+
+    if(f.isTarget){
+
+        ctx.fillStyle="#ffe477";
+
+        ctx.beginPath();
+
+        ctx.arc(
+            size*.7,
+            size*.4,
+            size*.13,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+
+    }
+
+    ctx.restore();
+
+}
+
+
+/* =========================================================
+   ANZUELO
+========================================================= */
+
+function drawHook(){
+
+    if(
+        !hookActive &&
+        (!mouseX||!mouseY)
+    )
+        return;
+
+    /*
+       La línea comienza
+       justo por debajo del barco,
+       atraviesa la superficie
+       y entra al agua.
+    */
+
+    const startX=
+        boat.x+
+        boat.width*.55;
+
+    const startY=
+        boat.y+
+        boat.height*.35;
+
+    const dx=
+        hookX-startX;
+
+    const dy=
+        hookY-startY;
+
+    const dist=
+        Math.sqrt(
+            dx*dx+
+            dy*dy
+        );
+
+    const sag=
+        Math.min(
+            dist*.13,
+            35
+        );
+
+    const ctrlX=
+        (startX+hookX)/2;
+
+    const ctrlY=
+        (startY+hookY)/2+sag;
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        startX,
+        startY
+    );
+
+    ctx.quadraticCurveTo(
+        ctrlX,
+        ctrlY,
+        hookX,
+        hookY
+    );
+
+    ctx.strokeStyle=
+        "rgba(255,255,255,.9)";
+
+    ctx.lineWidth=2;
+
+    ctx.setLineDash([6,4]);
+
+    ctx.stroke();
+
+    ctx.setLineDash([]);
+
+
+    /*
+       BRILLO DEL ANZUELO
+    */
+
+    const glow=
+        ctx.createRadialGradient(
+            hookX,
+            hookY,
+            2,
+            hookX,
+            hookY,
+            18
+        );
+
+    glow.addColorStop(
+        0,
+        "rgba(255,220,100,.9)"
+    );
+
+    glow.addColorStop(
+        1,
+        "rgba(255,220,100,0)"
+    );
+
+    ctx.fillStyle=glow;
+
+    ctx.beginPath();
+
+    ctx.arc(
+        hookX,
+        hookY,
+        18,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+
+
+    /*
+       FLOTADOR / ANZUELO
+    */
+
+    const hookGrad=
+        ctx.createRadialGradient(
+            hookX-3,
+            hookY-3,
+            1,
+            hookX,
+            hookY,
+            8
+        );
+
+    hookGrad.addColorStop(
+        0,
+        "#fff0a0"
+    );
+
+    hookGrad.addColorStop(
+        1,
+        "#e67e22"
+    );
+
+    ctx.fillStyle=hookGrad;
+
+    ctx.beginPath();
+
+    ctx.arc(
+        hookX,
+        hookY,
+        8,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+
+    ctx.strokeStyle="#b35e0e";
+    ctx.lineWidth=2.5;
+
+    ctx.stroke();
+
+
+    /*
+       GANCHO
+    */
+
+    ctx.beginPath();
+
+    ctx.arc(
+        hookX-3,
+        hookY-3,
+        3,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fillStyle="white";
+
+    ctx.fill();
+
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        hookX-4,
+        hookY+8
+    );
+
+    ctx.quadraticCurveTo(
+        hookX-2,
+        hookY+16,
+        hookX+4,
+        hookY+14
+    );
+
+    ctx.strokeStyle="#b35e0e";
+    ctx.lineWidth=2.5;
+    ctx.lineCap="round";
+
+    ctx.stroke();
+
+}
+
+
+/* =========================================================
+   ALBUM
+========================================================= */
+
+function updateAlbumUI(){
+
+    albumGrid.innerHTML="";
+
+    SPANISH_ALPHABET.forEach(letter=>{
+
+        const div=
+            document.createElement("div");
+
+        div.className=
+            "album-letter"+
+            (
+                caughtLetters.has(letter)
+                ?" caught"
+                :""
+            );
+
+        div.textContent=
+            letter.toUpperCase();
+
+        const small=
+            document.createElement("div");
+
+        small.className="mini";
+
+        small.textContent=letter;
+
+        div.appendChild(small);
+
+        albumGrid.appendChild(div);
+
+    });
+
+    const count=
+        caughtLetters.size;
+
+    albumCounter.textContent=
+        `${count} de 27 letras capturadas`;
+
+    albumCountSpan.textContent=
+        `${count}/27`;
+
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+function resetGame(){
+
+    caughtLetters.clear();
+
+    updateAlbumUI();
+
+    winOverlay.classList.remove(
+        "active"
+    );
+
+    hookActive=false;
+
+    albumModal.classList.remove(
+        "active"
+    );
+
+    startNewRound();
+
+}
+
+
+/* =========================================================
+   EVENTOS
+========================================================= */
+
+function setupEvents(){
+
+    canvas.addEventListener(
+        "mousemove",
+        e=>{
+
+            const rect=
+                canvas.getBoundingClientRect();
+
+            const scaleX=
+                canvas.width/rect.width;
+
+            const scaleY=
+                canvas.height/rect.height;
+
+            mouseX=
+                (e.clientX-rect.left)*
+                scaleX;
+
+            mouseY=
+                (e.clientY-rect.top)*
+                scaleY;
+
+            if(!hookActive){
+
+                hookTargetX=mouseX;
+                hookTargetY=mouseY;
+
+            }
+
+        }
+    );
+
+
+    canvas.addEventListener(
+        "mousedown",
+        e=>{
+
+            e.preventDefault();
+
+            initAudio();
+
+            const rect=
+                canvas.getBoundingClientRect();
+
+            const scaleX=
+                canvas.width/rect.width;
+
+            const scaleY=
+                canvas.height/rect.height;
+
+            hookTargetX=
+                (e.clientX-rect.left)*
+                scaleX;
+
+            hookTargetY=
+                (e.clientY-rect.top)*
+                scaleY;
+
+            hookActive=true;
+
+            playCastSound();
+
+        }
+    );
+
+
+    canvas.addEventListener(
+        "mouseup",
+        ()=>{
+            hookActive=false;
+        }
+    );
+
+
+    canvas.addEventListener(
+        "mouseleave",
+        ()=>{
+            hookActive=false;
+        }
+    );
+
+
+    canvas.addEventListener(
+        "touchstart",
+        e=>{
+
+            e.preventDefault();
+
+            initAudio();
+
+            const rect=
+                canvas.getBoundingClientRect();
+
+            const touch=
+                e.touches[0];
+
+            const scaleX=
+                canvas.width/rect.width;
+
+            const scaleY=
+                canvas.height/rect.height;
+
+            hookTargetX=
+                (touch.clientX-rect.left)*
+                scaleX;
+
+            hookTargetY=
+                (touch.clientY-rect.top)*
+                scaleY;
+
+            hookActive=true;
+
+            mouseX=hookTargetX;
+            mouseY=hookTargetY;
+
+            playCastSound();
+
+        },
+        {passive:false}
+    );
+
+
+    canvas.addEventListener(
+        "touchmove",
+        e=>{
+
+            e.preventDefault();
+
+            const rect=
+                canvas.getBoundingClientRect();
+
+            const touch=
+                e.touches[0];
+
+            const scaleX=
+                canvas.width/rect.width;
+
+            const scaleY=
+                canvas.height/rect.height;
+
+            hookTargetX=
+                (touch.clientX-rect.left)*
+                scaleX;
+
+            hookTargetY=
+                (touch.clientY-rect.top)*
+                scaleY;
+
+            mouseX=hookTargetX;
+            mouseY=hookTargetY;
+
+        },
+        {passive:false}
+    );
+
+
+    canvas.addEventListener(
+        "touchend",
+        e=>{
+
+            e.preventDefault();
+
+            hookActive=false;
+
+        },
+        {passive:false}
+    );
+
+
+    /*
+       ALBUM
+    */
+
+    albumBtn.addEventListener(
+        "click",
+        ()=>{
+
+            initAudio();
+
+            playTone(
+                660,
+                .08,
+                "sine",
+                .15
+            );
+
+            albumModal.classList.add(
+                "active"
+            );
+
+            updateAlbumUI();
+
+        }
+    );
+
+
+    closeAlbumBtn.addEventListener(
+        "click",
+        ()=>{
+
+            playTone(
+                440,
+                .08,
+                "sine",
+                .15
+            );
+
+            albumModal.classList.remove(
+                "active"
+            );
+
+        }
+    );
+
+
+    albumModal.addEventListener(
+        "click",
+        e=>{
+
+            if(
+                e.target===
+                albumModal
+            ){
+
+                albumModal.classList.remove(
+                    "active"
+                );
+
+            }
+
+        }
+    );
+
+
+    resetBtn.addEventListener(
+        "click",
+        ()=>{
+
+            playTone(
+                523.25,
+                .1,
+                "triangle",
+                .2
+            );
+
+            playTone(
+                659.25,
+                .15,
+                "triangle",
+                .2,
+                .1
+            );
+
+            resetGame();
+
+        }
+    );
+
+
+    window.addEventListener(
+        "resize",
+        ()=>{
+
+            resizeCanvas();
+
+            const swimTop=
+                canvas.height*.43;
+
+            const swimBottom=
+                canvas.height*.86;
+
+            fishes.forEach(f=>{
+
+                if(f.y<swimTop)
+                    f.y=swimTop;
+
+                if(f.y>swimBottom)
+                    f.y=swimBottom;
+
+            });
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   INICIO
+========================================================= */
+
+function init(){
+
+    resizeCanvas();
+
+    setupEvents();
+
+    updateAlbumUI();
+
+    startNewRound();
+
+    hookX=
+        boat.x+
+        boat.width/2;
+
+    hookY=
+        canvas.height*.55;
+
+    mouseX=hookX;
+    mouseY=hookY;
+
+    let lastTimestamp=0;
+
+    function gameLoop(timestamp){
+
+        const deltaTime=
+            timestamp-lastTimestamp;
+
+        lastTimestamp=timestamp;
+
+        update(deltaTime);
+
+        draw();
+
+        requestAnimationFrame(
+            gameLoop
+        );
+
+    }
+
+    requestAnimationFrame(
+        gameLoop
+    );
+
+}
+
+init();
+
+})();
+
+</script>
+
+</body>
+</html>
