@@ -1,1 +1,0 @@
-Copia index.html, css/styles.css y js/main.js a la raíz de pagin_juego. Conserva tu carpeta Recursos_profesores/Robots_Aula completa (assets, css, robots e index.html). Esta actualización añade solo la tarjeta y el enlace; no incluye el contenido de Robots_Aula, que no fue adjuntado.
