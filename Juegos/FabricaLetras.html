@@ -7,21 +7,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --factory-bg: #ffeaa7;
-            --belt-color: #636e72;
+            --font-main: 'Fredoka', sans-serif;
             --box-upper: #0984e3;
             --box-lower: #00b894;
-            --font-main: 'Fredoka', sans-serif;
+            --box-trash: #e74c3c;
         }
 
         body {
             font-family: var(--font-main);
-            background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+            background: linear-gradient(135deg, #74b9ff 0%, #ffeaa7 100%);
             margin: 0;
             padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             min-height: 100vh;
             touch-action: none;
             overflow: hidden;
@@ -30,81 +30,97 @@
 
         h1 {
             color: #d63031;
-            margin: 10px 0 5px 0;
-            font-size: 38px;
+            margin: 5px 0;
+            font-size: 36px;
             text-shadow: 2px 2px 0px #fff, 0 5px 15px rgba(0,0,0,0.1);
             text-align: center;
-            letter-spacing: 1px;
         }
 
-        /* SELECTOR DE MODO / NIVEL */
-        .mode-selector {
+        /* CONTROLES SUPERIORES (Modos y Toggle) */
+        .controls-panel {
             display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
+            gap: 15px;
+            margin-bottom: 8px;
             z-index: 20;
+            flex-wrap: wrap;
+            justify-content: center;
         }
-        .mode-btn {
+
+        .mode-btn, .toggle-btn {
             background: #fff;
-            border: 3px solid #d63031;
-            padding: 6px 15px;
+            border: 3px solid #0984e3;
+            padding: 6px 16px;
             border-radius: 20px;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: bold;
-            color: #d63031;
+            color: #0984e3;
             cursor: pointer;
-            box-shadow: 0 4px 0 #d63031;
+            box-shadow: 0 4px 0 #0984e3;
             transition: all 0.1s;
+            font-family: var(--font-main);
         }
-        .mode-btn.active {
-            background: #d63031;
+        .mode-btn.active, .toggle-btn.active {
+            background: #0984e3;
             color: #fff;
             transform: translateY(2px);
-            box-shadow: 0 2px 0 #8b0000;
+            box-shadow: 0 2px 0 #05508c;
+        }
+        .toggle-btn {
+            border-color: #e67e22;
+            color: #d35400;
+            box-shadow: 0 4px 0 #d35400;
+        }
+        .toggle-btn.active {
+            background: #e67e22;
+            color: #fff;
+            box-shadow: 0 2px 0 #b9770e;
         }
 
         .status-bar {
             display: flex;
             gap: 25px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 8px 25px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 6px 22px;
             border-radius: 30px;
-            font-size: 20px;
+            font-size: 18px;
             color: #2d3436;
             box-shadow: 0 6px 0 rgba(0,0,0,0.1);
-            margin-bottom: 15px;
-            border: 3px solid #fff;
+            margin-bottom: 10px;
+            border: 3px solid #ff7675;
+            font-weight: 700;
         }
 
-        /* BOTÓN DE SONIDO */
+        /* BOTÓN DE SONIDO (IZQUIERDA) */
         .sound-btn {
             position: fixed;
-            top: 15px;
-            right: 15px;
-            width: 50px;
-            height: 50px;
+            bottom: 20px;
+            left: 20px;
+            width: 55px;
+            height: 55px;
             background: #fff;
-            border: 3px solid #d63031;
+            border: 4px solid #0984e3;
             border-radius: 50%;
-            font-size: 24px;
+            font-size: 26px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 4px 0 #d63031;
+            box-shadow: 0 6px 0 #05508c;
             z-index: 50;
+            transition: transform 0.1s;
         }
+        .sound-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #05508c; }
 
-        /* ESCENARIO DE LA FÁBRICA */
+        /* ESCENARIO DE LA FÁBRICA ANCHO */
         .factory-area {
             position: relative;
-            width: 100%;
-            max-width: 900px;
-            height: 450px;
-            background: #74b9ff;
-            border-radius: 30px;
+            width: 92vw;
+            max-width: 1100px;
+            height: 420px;
+            background: linear-gradient(180deg, #74b9ff 0%, #0984e3 100%);
+            border-radius: 25px;
             border: 6px solid #fff;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -112,109 +128,115 @@
             box-sizing: border-box;
         }
 
-        /* CINTA TRANSPORTADORA */
+        /* CINTA TRANSPORTADORA CONTINUA */
         .conveyor-belt {
             position: absolute;
-            top: 200px;
+            top: 190px;
             left: 0;
             width: 100%;
-            height: 70px;
-            background: var(--belt-color);
-            border-top: 6px solid #2d3436;
-            border-bottom: 6px solid #2d3436;
-            background-image: repeating-linear-gradient(45deg, transparent, transparent 30px, #b2bec3 30px, #b2bec3 50px);
+            height: 75px;
+            background-color: #2d3436;
+            border-top: 6px solid #1e272c;
+            border-bottom: 6px solid #1e272c;
+            background-image: linear-gradient(90deg, rgba(255,255,255,0.08) 50%, rgba(0,0,0,0.25) 50%);
+            background-size: 60px 100px;
             animation: moveBelt 2s linear infinite;
             z-index: 5;
         }
 
-        .conveyor-belt.fast {
-            animation-duration: 1s;
-        }
+        .conveyor-belt.fast { animation-duration: 1s; }
 
         @keyframes moveBelt {
             0% { background-position: 0 0; }
-            100% { background-position: 80px 0; }
+            100% { background-position: 60px 0; }
         }
 
         /* CAJAS DE CLASIFICACIÓN */
         .boxes-container {
             display: flex;
-            justify-content: space-between;
-            padding: 20px 50px;
+            justify-content: space-around;
+            align-items: flex-end;
+            padding: 15px 25px;
             z-index: 10;
-            margin-top: 10px;
         }
 
         .factory-box {
-            width: 180px;
-            height: 120px;
-            border-radius: 15px;
+            width: 210px;
+            height: 110px;
+            border-radius: 18px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             border: 4px solid #fff;
-            box-shadow: 0 8px 0 rgba(0,0,0,0.2);
-            font-size: 20px;
+            box-shadow: 0 8px 0 rgba(0,0,0,0.25);
+            font-size: 19px;
             font-weight: 900;
             color: white;
             text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
             position: relative;
         }
 
-        .box-upper { background: var(--box-upper); box-shadow: 0 8px 0 #074b83; }
+        .box-upper { background: var(--box-upper); box-shadow: 0 8px 0 #05508c; }
         .box-lower { background: var(--box-lower); box-shadow: 0 8px 0 #006248; }
+        .box-trash { background: var(--box-trash); box-shadow: 0 8px 0 #962d22; width: 170px; height: 100px; font-size: 17px; display: none; }
+        .box-trash.active-trash { display: flex; }
 
-        .factory-box span {
-            font-size: 35px;
-            margin-top: 5px;
-        }
+        .factory-box span { font-size: 32px; margin-top: 4px; }
+        .box-trash span { font-size: 30px; }
 
-        /* GALLETA CON LETRA */
+        /* GALLETA / FIGURA */
         .cookie {
             position: absolute;
-            top: 195px;
-            width: 80px;
-            height: 80px;
-            background: #e17055;
-            border: 4px dashed #fab1a0;
-            border-radius: 50%;
+            top: 185px;
+            width: 85px;
+            height: 85px;
+            background: #fdcb6e;
+            border: 4px solid #f1c40f;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 45px;
+            font-size: 42px;
             font-weight: 900;
-            color: #fff;
-            box-shadow: 0 8px 0 #b33939, inset 0 5px 10px rgba(255,255,255,0.4);
+            color: #d35400;
+            box-shadow: 0 8px 0 #e17055, inset 0 5px 10px rgba(255,255,255,0.6);
             cursor: grab;
             z-index: 20;
             font-family: 'Nunito', sans-serif;
             transition: transform 0.1s;
         }
+        .cookie.shape {
+            background: #a29bfe;
+            border-color: #6c5ce7;
+            box-shadow: 0 8px 0 #4834d4, inset 0 5px 10px rgba(255,255,255,0.6);
+            border-radius: 50%;
+            color: #fff;
+        }
         .cookie:active { cursor: grabbing; }
 
-        /* MODAL DE VICTORIA / FIN */
+        /* MODAL DE VICTORIA */
         .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(5px); display: flex; justify-content: center; align-items: center;
+            position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(6px); display: flex; justify-content: center; align-items: center;
             z-index: 100; visibility: hidden; opacity: 0; transition: all 0.3s;
         }
         .modal-overlay.active { visibility: visible; opacity: 1; }
         .modal-box {
             background: #fff; padding: 35px; border-radius: 30px; text-align: center;
             max-width: 85%; transform: scale(0.7); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.3); border: 6px solid #d63031;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4); border: 6px solid #0984e3;
         }
         .modal-overlay.active .modal-box { transform: scale(1); }
-        .modal-title { font-size: 32px; margin-bottom: 10px; color: #d63031; }
+        .modal-title { font-size: 32px; margin-bottom: 10px; color: #0984e3; }
         .modal-btn {
             background: #00b894; border: none; padding: 12px 30px;
             font-size: 20px; color: white; border-radius: 20px; font-weight: bold;
             cursor: pointer; box-shadow: 0 5px 0 #006248; margin-top: 15px;
+            font-family: var(--font-main);
         }
         .modal-btn:active { transform: translateY(4px); box-shadow: none; }
 
-        /* ESTRELLITAS */
         .sparkle {
             position: absolute; font-size: 35px; pointer-events: none; z-index: 100;
             animation: popOut 0.6s ease-out forwards;
@@ -235,9 +257,10 @@
 
     <h1>🍪 La Fábrica de Letras 🏭</h1>
 
-    <div class="mode-selector">
+    <div class="controls-panel">
         <button id="mode-chill" class="mode-btn active" onclick="setGameMode('chill')">🧸 Modo Tranquilo</button>
         <button id="mode-fast" class="mode-btn" onclick="setGameMode('fast')">⚡ Fábrica Rápida</button>
+        <button id="toggle-shapes" class="toggle-btn active" onclick="toggleShapesMode()">✨ Con Figuras (Trash)</button>
     </div>
     
     <div class="status-bar">
@@ -245,19 +268,23 @@
     </div>
 
     <div class="factory-area" id="factoryArea">
-        <!-- Cajas de clasificación -->
         <div class="boxes-container">
             <div class="factory-box box-upper" id="boxUpper">
                 MAYÚSCULAS
                 <span id="upper-sample">A</span>
             </div>
+            
+            <div class="factory-box box-trash active-trash" id="boxTrash">
+                BASURA
+                <span>🗑️</span>
+            </div>
+
             <div class="factory-box box-lower" id="boxLower">
                 minúsculas
                 <span id="lower-sample">a</span>
             </div>
         </div>
 
-        <!-- Cinta transportadora -->
         <div class="conveyor-belt" id="conveyorBelt"></div>
     </div>
 
@@ -270,7 +297,6 @@
     </div>
 
     <script>
-        // MOTOR DE AUDIO WEB API
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx, soundEnabled = false;
 
@@ -290,8 +316,10 @@
             osc.start(); osc.stop(audioCtx.currentTime + duration);
         }
 
+        function sfxPickup() { playTone(400, 'sine', 0.1, 0.1); }
         function sfxCorrect() { playTone(587.33, 'triangle', 0.2, 0.15); setTimeout(() => playTone(880, 'triangle', 0.3, 0.15), 100); }
-        function sfxWrong() { playTone(200, 'sine', 0.3, 0.2); }
+        function sfxTrash() { playTone(180, 'sawtooth', 0.2, 0.2); }
+        function sfxWrong() { playTone(150, 'sine', 0.3, 0.2); }
         function sfxVictory() { [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => setTimeout(() => playTone(f, 'square', 0.3, 0.05), i * 150)); }
 
         function toggleSound() {
@@ -307,7 +335,6 @@
             }
         }
 
-        // LÓGICA DEL JUEGO
         const letterPairs = [
             { upper: 'A', lower: 'a' }, { upper: 'B', lower: 'b' }, { upper: 'C', lower: 'c' },
             { upper: 'D', lower: 'd' }, { upper: 'E', lower: 'e' }, { upper: 'F', lower: 'f' },
@@ -315,14 +342,16 @@
             { upper: 'S', lower: 's' }
         ];
 
+        const shapesList = ['⭐', '⬛', '🟢', '🔺', '🔷', '⬡'];
+
         let score = 0;
-        let gameMode = 'chill'; // 'chill' o 'fast'
+        let gameMode = 'chill'; 
+        let useShapes = true;
         let currentCookie = null;
-        let currentPair = null;
-        let isSpawning = false;
 
         const factoryArea = document.getElementById('factoryArea');
         const conveyorBelt = document.getElementById('conveyorBelt');
+        const boxTrash = document.getElementById('boxTrash');
 
         function setGameMode(mode) {
             gameMode = mode;
@@ -337,36 +366,54 @@
             restartGame();
         }
 
+        function toggleShapesMode() {
+            useShapes = !useShapes;
+            const btn = document.getElementById('toggle-shapes');
+            if (useShapes) {
+                btn.classList.add('active');
+                btn.innerText = '✨ Con Figuras (Trash)';
+                boxTrash.classList.add('active-trash');
+            } else {
+                btn.classList.remove('active');
+                btn.innerText = '🔤 Solo Letras';
+                boxTrash.classList.remove('active-trash');
+            }
+            restartGame();
+        }
+
         function spawnCookie() {
             if (score >= 10 || currentCookie) return;
 
-            // Elegir par de letras aleatorio
-            currentPair = letterPairs[Math.floor(Math.random() * letterPairs.length)];
-            let isUpper = Math.random() < 0.5;
-            let letterChar = isUpper ? currentPair.upper : currentPair.lower;
-            let type = isUpper ? 'upper' : 'lower';
-
             currentCookie = document.createElement('div');
             currentCookie.className = 'cookie';
-            currentCookie.innerText = letterChar;
-            currentCookie.dataset.type = type;
 
-            // Posición inicial en la cinta (izquierda)
+            let isShape = useShapes && (Math.random() < 0.3);
+            if (isShape) {
+                let randomShape = shapesList[Math.floor(Math.random() * shapesList.length)];
+                currentCookie.innerText = randomShape;
+                currentCookie.dataset.type = 'shape';
+                currentCookie.classList.add('shape');
+            } else {
+                let pair = letterPairs[Math.floor(Math.random() * letterPairs.length)];
+                let isUpper = Math.random() < 0.5;
+                currentCookie.innerText = isUpper ? pair.upper : pair.lower;
+                currentCookie.dataset.type = isUpper ? 'upper' : 'lower';
+            }
+
             currentCookie.style.left = '20px';
+            currentCookie.style.top = '185px'; // Posición exacta en la línea de la cinta
             factoryArea.appendChild(currentCookie);
 
             makeDraggable(currentCookie);
 
-            // Movimiento automático de la cinta
             let pos = 20;
-            let speed = gameMode === 'fast' ? 2.5 : 1.2;
+            let speed = gameMode === 'fast' ? 2.3 : 1.1;
 
             function move() {
                 if (!currentCookie || currentCookie.dataset.dragging === 'true') return;
                 pos += speed;
                 currentCookie.style.left = pos + 'px';
 
-                // Si llega al final de la cinta sin ser clasificada
                 if (pos > factoryArea.offsetWidth - 100) {
                     currentCookie.remove();
                     currentCookie = null;
@@ -399,6 +446,7 @@
 
             function dragStart(e) {
                 initAudio();
+                sfxPickup();
                 e.preventDefault();
                 cancelAnimationFrame(elm.animFrame);
                 elm.dataset.dragging = 'true';
@@ -430,78 +478,73 @@
                 let cookieRect = elm.getBoundingClientRect();
                 let upperRect = document.getElementById('boxUpper').getBoundingClientRect();
                 let lowerRect = document.getElementById('boxLower').getBoundingClientRect();
+                let trashRect = boxTrash.getBoundingClientRect();
 
                 let droppedInBox = false;
 
-                // Comprobar caja Mayúsculas
                 if (cookieRect.left < upperRect.right && cookieRect.right > upperRect.left &&
                     cookieRect.top < upperRect.bottom && cookieRect.bottom > upperRect.top) {
                     if (elm.dataset.type === 'upper') {
-                        correctDrop(upperRect);
-                    } else {
-                        wrongDrop(startLeft, startTop);
+                        correctDrop(upperRect, true);
+                        droppedInBox = true;
                     }
-                    droppedInBox = true;
                 }
-                // Comprobar caja minúsculas
                 else if (cookieRect.left < lowerRect.right && cookieRect.right > lowerRect.left &&
                            cookieRect.top < lowerRect.bottom && cookieRect.bottom > lowerRect.top) {
                     if (elm.dataset.type === 'lower') {
-                        correctDrop(lowerRect);
-                    } else {
-                        wrongDrop(startLeft, startTop);
+                        correctDrop(lowerRect, true);
+                        droppedInBox = true;
                     }
-                    droppedInBox = true;
+                }
+                else if (useShapes && boxTrash.classList.contains('active-trash') &&
+                           cookieRect.left < trashRect.right && cookieRect.right > trashRect.left &&
+                           cookieRect.top < trashRect.bottom && cookieRect.bottom > trashRect.top) {
+                    if (elm.dataset.type === 'shape') {
+                        correctDrop(trashRect, false);
+                        droppedInBox = true;
+                    }
                 }
 
+                // SI SE DEJA EN UNA ZONA NO VÁLIDA: HACE SNAP AUTOMÁTICO A LA LÍNEA DE LA CINTA
                 if (!droppedInBox) {
-                    // Si la suelta fuera, reanuda su movimiento en la cinta
-                    let pos = elm.offsetLeft;
-                    let speed = gameMode === 'fast' ? 2.5 : 1.2;
-                    function moveBack() {
-                        if (!elm || elm.dataset.dragging === 'true') return;
-                        pos += speed; elm.style.left = pos + 'px';
-                        if (pos > factoryArea.offsetWidth - 100) { elm.remove(); currentCookie = null; setTimeout(spawnCookie, 800); return; }
-                        elm.animFrame = requestAnimationFrame(moveBack);
-                    }
-                    elm.animFrame = requestAnimationFrame(moveBack);
+                    sfxWrong();
+                    elm.style.transition = 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                    elm.style.top = '185px'; // Regresa directo a la altura de la cinta
+                    
+                    setTimeout(() => {
+                        elm.style.transition = 'none';
+                        let pos = elm.offsetLeft;
+                        let speed = gameMode === 'fast' ? 2.3 : 1.1;
+                        function resumeMove() {
+                            if (!elm || elm.dataset.dragging === 'true') return;
+                            pos += speed; elm.style.left = pos + 'px';
+                            if (pos > factoryArea.offsetWidth - 100) { elm.remove(); currentCookie = null; setTimeout(spawnCookie, 800); return; }
+                            elm.animFrame = requestAnimationFrame(resumeMove);
+                        }
+                        elm.animFrame = requestAnimationFrame(resumeMove);
+                    }, 300);
                 }
             }
         }
 
-        function correctDrop(boxRect) {
-            sfxCorrect();
+        function correctDrop(boxRect, isLetter) {
+            if (isLetter) {
+                sfxCorrect();
+                score++;
+                document.getElementById('score').innerText = score;
+            } else {
+                sfxTrash();
+            }
             createSparkles(boxRect.left + boxRect.width/2, boxRect.top + boxRect.height/2);
             currentCookie.remove();
             currentCookie = null;
-            score++;
-            document.getElementById('score').innerText = score;
 
             if (score >= 10) {
                 sfxVictory();
                 document.getElementById('modal').classList.add('active');
             } else {
-                setTimeout(spawnCookie, 600);
+                setTimeout(spawnCookie, 500);
             }
-        }
-
-        function wrongDrop(origLeft, origTop) {
-            sfxWrong();
-            currentCookie.style.transition = 'all 0.3s';
-            currentCookie.style.left = origLeft + 'px';
-            currentCookie.style.top = origTop + 'px';
-            setTimeout(() => {
-                currentCookie.style.transition = 'none';
-                let pos = origLeft;
-                let speed = gameMode === 'fast' ? 2.5 : 1.2;
-                function moveAgain() {
-                    if (!currentCookie || currentCookie.dataset.dragging === 'true') return;
-                    pos += speed; currentCookie.style.left = pos + 'px';
-                    if (pos > factoryArea.offsetWidth - 100) { currentCookie.remove(); currentCookie = null; setTimeout(spawnCookie, 800); return; }
-                    currentCookie.animFrame = requestAnimationFrame(moveAgain);
-                }
-                currentCookie.animFrame = requestAnimationFrame(moveAgain);
-            }, 300);
         }
 
         function restartGame() {
@@ -512,7 +555,6 @@
             setTimeout(spawnCookie, 500);
         }
 
-        // Iniciar juego
         setTimeout(spawnCookie, 500);
     </script>
 </body>

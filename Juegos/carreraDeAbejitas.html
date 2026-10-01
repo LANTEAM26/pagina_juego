@@ -63,7 +63,7 @@
         .timer-container.warning {
             border-color: #e74c3c;
             color: #c0392b;
-            box-shadow: 0 4px 0 #c0392b, 0 10px 20px rgba(231,76,60,0.3);
+            box-shadow: 0 4px 0 #e74c3c, 0 10px 20px rgba(231,76,60,0.3);
             animation: pulseTimer 1s infinite alternate;
         }
         @keyframes pulseTimer {
@@ -96,7 +96,6 @@
 
         .grid-wrapper { position: relative; margin-bottom: 15px; padding: 10px; background: #ffe0b2; border-radius: 15px; box-shadow: 0 8px 0 #ffb74d, 0 15px 25px rgba(0,0,0,0.25); z-index: 10;}
         
-        /* Grid dinámico que se adapta desde JS */
         #grid { display: grid; gap: 6px; background-color: var(--grid-bg); border-radius: 10px; padding: 6px; transition: all 0.3s;}
         #drawing-canvas { position: absolute; top: 10px; left: 10px; z-index: 10; cursor: crosshair; border-radius: 10px; }
 
@@ -108,7 +107,6 @@
         .green::after { content: '🍃'; }
         .green { background-color: #a9dfbf; box-shadow: inset 0 0 15px var(--p2-main); }
 
-        /* Obstáculos Nuevos */
         .obstacle-cell { background-color: #95a5a6 !important; box-shadow: inset 0 -4px 0 #7f8c8d !important; }
         .obstacle-cell::after { content: '🪨'; font-size: 28px; position: absolute; }
 
@@ -136,7 +134,6 @@
         .player1 button.cmd-btn { background-color: var(--p1-main); box-shadow: 0 4px 0 var(--p1-dark); }
         .player2 button.cmd-btn { background-color: var(--p2-main); box-shadow: 0 4px 0 var(--p2-dark); }
         
-        /* Botón de Borrar (Deshacer) */
         .undo-btn { background-color: #e74c3c !important; box-shadow: 0 4px 0 #c0392b !important; }
 
         .seq-container { display: flex; flex-wrap: wrap; gap: 4px; min-height: 35px; background: rgba(255,255,255,0.7); padding: 6px; border-radius: 10px; width: 90%; border: 2px dashed rgba(0,0,0,0.1); margin-top: 5px;}
@@ -162,6 +159,11 @@
 </head>
 <body>
 
+    <!-- MÚSICA DE FONDO DESDE LA CARPETA ASSETS -->
+    <audio id="bgm" loop>
+        <source src="../assets/musicaFondo/cancion1.mp3" type="audio/mpeg">
+    </audio>
+
     <div class="decorations">
         <div class="sun">☀️</div>
         <div class="grass"></div>
@@ -169,14 +171,12 @@
 
     <h1>¡Carrera de Abejitas! 🐝</h1>
     
-    <!-- Selector de Dificultad Dinámico -->
     <div class="difficulty-selector">
         <button id="diff-1" class="diff-btn active" onclick="setDifficulty(1)">⭐ Pequeño (4x4)</button>
         <button id="diff-2" class="diff-btn" onclick="setDifficulty(2)">⭐⭐ Mediano (5x5)</button>
         <button id="diff-3" class="diff-btn" onclick="setDifficulty(3)">⭐⭐⭐ Grande (6x6)</button>
     </div>
 
-    <!-- Contenedor del Temporizador con botón Play/Pause -->
     <div id="timer-display" class="timer-container">
         <button id="timer-ctrl-btn" class="timer-btn" onclick="toggleTimer()">▶</button>
         <span>⏳ <span id="time-left">02:00</span></span>
@@ -232,6 +232,47 @@
     </div>
 
     <script>
+        // MOTOR DE SONIDO (WEB AUDIO API + MÚSICA DE FONDO)
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+        let audioInitialized = false;
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            if (!audioInitialized) {
+                const bgm = document.getElementById('bgm');
+                bgm.volume = 0.25;
+                bgm.play().catch(e => console.log("Autoplay bloqueado hasta interacción"));
+                audioInitialized = true;
+            }
+        }
+
+        function playTone(freq, type, duration, vol = 0.1) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        function sfxClick() { playTone(600, 'sine', 0.08, 0.1); }
+        function sfxMove() { playTone(350, 'triangle', 0.1, 0.1); }
+        function sfxEat() { playTone(880, 'sine', 0.15, 0.15); setTimeout(() => playTone(1174.66, 'sine', 0.2, 0.15), 80); }
+        function sfxVictory() { 
+            let notes = [523.25, 659.25, 783.99, 1046.50]; 
+            notes.forEach((freq, i) => { setTimeout(() => playTone(freq, 'square', 0.3, 0.1), i * 150); });
+        }
+
         let currentDifficulty = 1;
         let gridSize = 4; 
         let isExecuting = false;
@@ -247,9 +288,8 @@
         const ctx = canvas.getContext('2d');
         let isDrawing = false;
 
-        // Variables del temporizador con control manual
         let timerInterval = null;
-        let timeLeft = 120; // 2 minutos
+        let timeLeft = 120; 
         let isTimerRunning = false;
 
         function formatTime(seconds) {
@@ -259,6 +299,8 @@
         }
 
         function toggleTimer() {
+            initAudio();
+            sfxClick();
             if (currentDifficulty === 1) return;
             isTimerRunning = !isTimerRunning;
             let btn = document.getElementById('timer-ctrl-btn');
@@ -272,7 +314,7 @@
 
         function setupTimer() {
             clearInterval(timerInterval);
-            isTimerRunning = false; // Arranca pausado
+            isTimerRunning = false; 
             
             if (currentDifficulty > 1) {
                 timeLeft = 120;
@@ -286,7 +328,6 @@
                 btn.innerText = "▶";
                 
                 timerInterval = setInterval(() => {
-                    // Solo descuenta si el timer está activo, no se están moviendo las abejas y no hay modales abiertos
                     if (!isTimerRunning || isExecuting || document.getElementById('modal').classList.contains('active')) return;
                     
                     timeLeft--;
@@ -294,11 +335,13 @@
                     
                     if (timeLeft === 30) {
                         display.classList.add('warning');
+                        playTone(300, 'sawtooth', 0.2, 0.15);
                     }
                     
                     if (timeLeft <= 0) {
                         isTimerRunning = false;
                         clearInterval(timerInterval);
+                        playTone(150, 'sawtooth', 0.4, 0.2);
                         showModal("¡Se acabó el tiempo! ⏰", "Tienen que programar más rápido. ¡Vuelvan a intentarlo!", resetGame);
                     }
                 }, 1000);
@@ -308,6 +351,8 @@
         }
 
         function setDifficulty(level) {
+            initAudio();
+            sfxClick();
             if (isExecuting) return;
             currentDifficulty = level;
             gridSize = level === 1 ? 4 : (level === 2 ? 5 : 6);
@@ -484,7 +529,11 @@
                 sprite.innerHTML = `<img src="../assets/robots/BeebotEmoji.png" alt="Bee" style="width: 80%; height: 80%; object-fit: contain; pointer-events: none; ${filterColor}">`;
                 
                 orientation.appendChild(sprite); container.appendChild(orientation); cell.appendChild(container);
-                if (cell.classList.contains(playerNum === 1 ? 'blue' : 'green')) cell.classList.remove(playerNum === 1 ? 'blue' : 'green');
+                
+                if (cell.classList.contains(playerNum === 1 ? 'blue' : 'green')) {
+                    cell.classList.remove(playerNum === 1 ? 'blue' : 'green');
+                    sfxEat();
+                }
                 return container;
             }
 
@@ -496,14 +545,23 @@
         }
 
         function undoCommand(player) {
+            initAudio();
+            sfxClick();
             if (isExecuting || bees[player].commands.length === 0) return;
             bees[player].commands.pop();
             updateSequenceUI(player);
         }
 
-        function addCommand(player, cmd) { if(isExecuting) return; bees[player].commands.push(cmd); updateSequenceUI(player); }
+        function addCommand(player, cmd) { 
+            initAudio();
+            sfxClick();
+            if(isExecuting) return; 
+            bees[player].commands.push(cmd); 
+            updateSequenceUI(player); 
+        }
+
         function updateSequenceUI(player) {
-            const symbols = { 'F': '⬆️', 'B': '⬇️', 'R': '↻', 'L': '↺' }; 
+            const symbols = { 'F': '⬆️', 'B': '⬇️️', 'R': '↻', 'L': '↺' }; 
             const container = document.getElementById(`seq${player}`); container.innerHTML = ''; 
             bees[player].commands.forEach(cmd => { const span = document.createElement('span'); span.className = 'cmd-block'; span.innerText = symbols[cmd]; container.appendChild(span); });
         }
@@ -532,11 +590,14 @@
         }
 
         function executeCommands() {
+            initAudio();
+            sfxClick();
             if ((bees[1].commands.length === 0 && bees[2].commands.length === 0) || isExecuting) return;
             isExecuting = true; document.getElementById('go-btn').style.opacity = "0.5";
             let step = 0; const maxSteps = Math.max(bees[1].commands.length, bees[2].commands.length);
             const interval = setInterval(() => {
                 if (step >= maxSteps) { clearInterval(interval); checkWin(); return; }
+                sfxMove();
                 if (step < bees[1].commands.length) processMove(1, bees[1].commands[step]);
                 if (step < bees[2].commands.length) processMove(2, bees[2].commands[step]);
                 drawBees(); step++;
@@ -552,6 +613,8 @@
         }
         
         function closeModal() { 
+            initAudio();
+            sfxClick();
             document.getElementById('modal').classList.remove('active'); 
             if(modalCallback) {
                 modalCallback();
@@ -564,6 +627,7 @@
             const greensLeft = document.querySelectorAll('.green').length;
             
             setTimeout(() => {
+                sfxVictory();
                 if (bluesLeft === 0 && greensLeft === 0) {
                     showModal("¡Empate! 🎉", "¡Ambos equipos recolectaron todo al mismo tiempo!");
                 } else if (bluesLeft === 0) {
@@ -581,6 +645,8 @@
         }
 
         function resetGame() {
+            initAudio();
+            sfxClick();
             bees[1] = { pos: {x: 0, y: 0}, dir: 0, commands: [] }; 
             bees[2] = { pos: {x: gridSize-1, y: gridSize-1}, dir: 2, commands: [] }; 
             
@@ -588,11 +654,9 @@
             updateSequenceUI(1); updateSequenceUI(2); document.getElementById('go-btn').style.opacity = "1"; ctx.clearRect(0, 0, canvas.width, canvas.height);
             initGrid(); spawnSquares(); drawBees();
             
-            // Configurar y dejar el temporizador listo en pausa para que el usuario le de Play
             setupTimer();
         }
 
-        // Inicio automático
         resetGame();
     </script>
 </body>
