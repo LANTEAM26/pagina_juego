@@ -1,0 +1,142 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&display=swap');
+:root{font-family:Nunito,system-ui,sans-serif;color:#285477;background:#9bdfff}*{box-sizing:border-box}body{margin:0}button,a{font:inherit}button{cursor:pointer}a{text-decoration:none}button:focus-visible,a:focus-visible{outline:3px solid #ffb51d;outline-offset:3px}[hidden]{display:none!important}.game{height:100dvh;min-height:490px;padding:12px;display:flex;flex-direction:column;gap:12px;background:linear-gradient(140deg,#a6e8ff,#d3f4ff 60%,#b8e6b2)}.topbar{min-height:70px;display:flex;align-items:center;gap:18px;background:#fffdf6;border:4px solid white;border-radius:22px;padding:8px 16px;box-shadow:0 5px 0 #70afd1}.back{padding:10px 15px;border-radius:13px;background:#e4f4ff;color:#327eaf;font-weight:900;white-space:nowrap}.brand{flex:1;display:flex;flex-direction:column}.brand small{font-size:10px;letter-spacing:.12em;color:#6998b7;font-weight:900}.brand strong{font:700 clamp(18px,2vw,30px) Fredoka}.topstats{display:flex;align-items:center;gap:12px;font-size:23px;font-weight:900}.topstats #stars{color:#e7b337}.icon-btn{border:2px solid #d2e9f9;background:#e7f5ff;border-radius:12px;width:43px;height:43px;font-size:23px}.layout{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(295px,.72fr);gap:12px;flex:1;min-height:0}.map-area{min-height:0;display:flex;flex-direction:column;gap:8px}.map-caption{display:flex;justify-content:space-between;gap:10px;align-items:center;background:#fffffff0;border:2px solid white;border-radius:13px;padding:8px 14px;font-weight:900;font-size:clamp(11px,.95vw,15px)}.map-caption span{color:#508a71}.map-caption.bottom{font-size:11px}.map-frame{position:relative;flex:1;min-height:0;display:grid;place-items:center;background:linear-gradient(#9de0ff,#b8eab6);border:5px solid white;border-radius:20px;overflow:hidden;box-shadow:0 5px 0 #72b0cc}.map{position:relative;width:min(100%,calc((100dvh - 174px)*1.5));max-height:100%;aspect-ratio:12/8;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-template-rows:repeat(8,minmax(0,1fr));overflow:hidden;box-shadow:0 0 0 2px #ffffff70}.tile{position:relative;display:grid;place-items:center;min-width:0;min-height:0;font-size:clamp(15px,3.5vw,45px);background:#a8d99b;border:1px solid #ffffff27;user-select:none}.tile.grass{background:repeating-linear-gradient(45deg,#a8db97 0 12px,#b3e4a1 12px 24px)}.tile.sidewalk{background:linear-gradient(135deg,#f0efe4 0 48%,#d8dcd6 49% 51%,#f0efe4 52%);border-color:#d6dbd3}.tile.road,.tile.crosswalk{background:#82939e}.tile.road:after{content:'';position:absolute;top:49%;left:0;right:0;border-top:2px dashed #f5e3a1}.tile.crosswalk:after{content:'';position:absolute;inset:4% 9%;background:repeating-linear-gradient(90deg,#fff 0 13%,transparent 13% 23%)}.tile.school,.tile.home{background:#d6efac}.tile.home{box-shadow:inset 0 0 0 3px #ffd86a;animation:glow 2s infinite alternate}.tile.decor{background:#a9dc99}.tile img{width:94%;height:94%;object-fit:contain;position:absolute}.tile .fallback{position:relative;z-index:1}.tile img:not([hidden])+.fallback{display:none}@keyframes glow{to{filter:brightness(1.12)}}.player,.car{position:absolute;z-index:4;display:grid;place-items:center;width:calc(100% / 12);height:calc(100% / 8);font-size:clamp(18px,3.4vw,46px);pointer-events:none;transition:left .19s linear,top .19s linear,transform .15s}.player{z-index:6;filter:drop-shadow(0 3px 2px #0005)}.player img,.car img{width:90%;height:90%;object-fit:contain;position:absolute;z-index:2}.player img:not([hidden])+.player-fallback,.car img:not([hidden])+span{display:none}.car{z-index:5}.car-one{top:37.5%}.car-two{top:50%}.sidebar{min-height:0;overflow:auto;display:flex;flex-direction:column;gap:9px;scrollbar-width:thin}.card{background:#fffdf7;border:3px solid white;border-radius:19px;box-shadow:0 4px 0 #74b1cf;padding:12px 15px}.mission small{color:#448fc1;font-weight:900;letter-spacing:.08em}.mission h2{font:700 clamp(21px,2vw,31px) Fredoka;color:#338ecb;margin:3px 0}.mission p{font-size:clamp(11px,.95vw,14px);font-weight:800;margin:5px 0}.checks{display:grid;gap:5px;margin-top:10px;font-size:clamp(11px,.92vw,14px);font-weight:900}.checks>div{border-radius:9px;padding:6px 9px;background:#eaf5ff}.checks>div.done{background:#ddf7e5;color:#298654}.signal-title{display:flex;justify-content:space-between;align-items:center;font-size:14px}.signal-title span{background:#fff1cd;border-radius:8px;padding:3px 10px;font:700 19px Fredoka}.lights{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:7px}.signal-box{background:#eaf5fc;border:2px solid #d6eafa;border-radius:12px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px}.signal-box small{font-weight:900;font-size:11px}.signal-box b{font:700 13px Fredoka}.traffic-light{display:flex;gap:5px;padding:5px 7px;background:#344b5d;border-radius:9px}.traffic-light i{width:18px;height:18px;border-radius:50%;background:#455560;border:2px solid #607381}.traffic-light .red.on{background:#ff5256;box-shadow:0 0 10px #ff6262}.traffic-light .yellow.on{background:#ffd34d;box-shadow:0 0 10px #ffd34d}.traffic-light .green.on{background:#51e188;box-shadow:0 0 10px #51e188}.pedestrian-light{display:flex;gap:8px;background:#344b5d;border-radius:9px;padding:5px 8px;font-size:17px}.pedestrian-light>div{opacity:.25}.pedestrian-light>div.on{opacity:1}.safety{margin:7px 0 0;text-align:center;font-size:11px;font-weight:900;color:#4d7890}.controls>strong{display:block;text-align:center;font:700 16px Fredoka}.buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:9px 0}.buttons button{min-height:65px;display:flex;align-items:center;justify-content:center;flex-direction:column;border:3px solid white;border-radius:14px;background:#87c9f5;color:#fff;box-shadow:0 4px 0 #4b96c5}.buttons button.forward{background:#58cd88;box-shadow:0 4px 0 #309a60}.buttons span{font-size:27px;font-weight:900;line-height:1}.buttons small{font-size:10px;font-weight:900}.buttons button:active{transform:translateY(3px);box-shadow:none}.direction{text-align:center;font-size:12px;font-weight:800}.feedback{padding:10px 13px;border:3px solid #fff;border-radius:15px;background:#fff4d2;color:#815e27;font-weight:900;font-size:13px;min-height:44px}.feedback.bad{background:#ffe1df;color:#a13f3a}.feedback.good{background:#dcf6e2;color:#258050}.overlay,.rotate{position:fixed;inset:0;z-index:20;display:grid;place-items:center;background:#32658c99;padding:20px}.rotate{z-index:30;background:#91dafa}.dialog{width:min(100%,520px);text-align:center;background:#fffdf4;border:5px solid white;border-radius:28px;padding:28px;box-shadow:0 10px 0 #669dbd}.dialog-icon{font-size:62px}.dialog h2{font:700 clamp(30px,4vw,45px) Fredoka;color:#348fca;margin:6px}.dialog p{font-weight:800}.dialog-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:20px}.dialog-actions button,.dialog-actions a{padding:12px 16px;border:3px solid white;border-radius:13px;background:#78c3ef;color:#fff;font-weight:900;box-shadow:0 4px 0 #4c8bb3}.dialog-actions .primary{background:#55c884;box-shadow:0 4px 0 #2e9860}.final-stars{font:700 64px Fredoka;color:#f5bc35;letter-spacing:6px}@media(max-width:1000px){.game{padding:7px;gap:7px}.topbar{min-height:51px;padding:5px 9px}.brand strong{font-size:17px}.topstats{font-size:17px;gap:6px}.icon-btn{width:32px;height:32px;font-size:16px}.layout{grid-template-columns:minmax(0,1.6fr) minmax(230px,.8fr);gap:7px}.card{padding:8px}.sidebar{gap:5px}.map{width:min(100%,calc((100dvh - 126px)*1.5))}.buttons button{min-height:47px}.buttons span{font-size:21px}.mission p,.checks{font-size:10px}.safety{font-size:10px}.tile{font-size:clamp(15px,3vw,30px)}}@media(max-width:700px) and (orientation:portrait){.game{height:auto;min-height:100dvh}.layout{grid-template-columns:1fr}.map-frame{min-height:300px}.map{width:min(100%,calc(100vw - 22px))}.sidebar{overflow:visible}.rotate:not([hidden]){display:grid}}@media(max-height:520px) and (orientation:landscape){.game{min-height:0}.topbar{min-height:43px}.map{width:min(100%,calc((100dvh - 105px)*1.5))}.map-caption{padding:4px 9px}.card{padding:5px 8px}.checks{gap:2px;margin-top:4px}.checks>div{padding:3px 6px}.mission h2{font-size:18px}.mission p{margin:2px}.lights{margin-top:3px}.signal-box{padding:3px}.buttons{margin:4px 0}.buttons button{min-height:36px}.buttons span{font-size:17px}.feedback{padding:5px;min-height:30px}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;animation:none!important}}
+
+/* Personaje con cuatro vistas fijas, sin rotar la ilustración ni animar al caminar. */
+.player{transform:none!important}
+.player img{width:98%;height:98%;object-fit:contain}
+
+/* Texturas compartidas entre todos los niveles. */
+.tile.grass,.tile.school,.tile.home{background:#8fcd78 url('../assets/decoracion/pasto.png') center/cover no-repeat;}
+.tile.sidewalk{background:#c8c8c8 url('../assets/carreteras/acera.png') center/cover no-repeat;}
+.tile.road{background:#353132 url('../assets/carreteras/pista1.png') center/100% 100% no-repeat;}
+.tile.road:after{display:none;}
+.tile.crosswalk{background:#c8c8c8 url('../assets/carreteras/peatonal.png') center/100% 100% no-repeat;}
+.tile.crosswalk:after{display:none;}
+.tile img{object-fit:contain;}
+/* Los GIF de autos tienen perspectiva lateral: se conservan sin girarlos. */
+.car img{width:98%;height:90%;object-fit:contain;}
+
+/* Rediseño de otoño: capas discretas, iconos dibujados en CSS y controles en cuatro direcciones. */
+.game{position:relative;isolation:isolate;background:linear-gradient(130deg,#e5f6ee 0%,#c8e6dd 42%,#fceacb 100%)}
+.game>.topbar,.game>.layout{position:relative;z-index:1}
+.autumn-leaves{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.falling-leaf{position:absolute;top:-25px;left:var(--x);width:var(--size);height:calc(var(--size)*.72);border-radius:2px 85% 2px 85%;background:#d78c45;opacity:.58;animation:leaf-fall var(--duration) linear var(--delay) infinite}
+.falling-leaf:nth-child(3n){background:#a9ad57}.falling-leaf:nth-child(4n){background:#e6b761}
+@keyframes leaf-fall{0%{transform:translate3d(0,-20px,0) rotate(0deg)}50%{transform:translate3d(55px,48vh,0) rotate(170deg)}100%{transform:translate3d(-30px,105vh,0) rotate(390deg)}}
+.topbar{background:#fffaf0;box-shadow:0 5px 0 #c9c8ac}.brand strong{color:#376e65}.brand small{color:#879a7d}.back,.icon-btn{background:#eef4e9;color:#436d63;border-color:#d6e3d4}
+.map-frame{background:linear-gradient(135deg,#dcefd6,#b9d8b2);box-shadow:0 5px 0 #9dbd9e}
+.map-caption{background:#fffaf0}.map-caption strong,.controls>strong{color:#4e7969}.map-caption span{color:#64836c}
+.tile.destination{box-shadow:inset 0 0 0 4px #f4bd58}.tile.destination:after{content:'';position:absolute;inset:27%;border:4px dashed #f4bf55;border-radius:50%;animation:glow 1.2s infinite alternate}
+.tile .foliage{width:55%;height:45%;border-radius:55% 45% 60% 35%;background:#7eac65;box-shadow:10px -5px #a2c579,-7px 4px #608f55}
+.tile .foliage.flowers{width:35%;height:35%;background:#edc4cf;box-shadow:9px 2px #fff0b5,-7px 3px #e6a4be}
+.car-one img,.car-two img{transform:scaleX(-1)} /* GIF originales miran al lado opuesto de su trayectoria */
+.car img{width:99%;height:82%}.tile img{width:91%;height:91%}
+.card{background:#fffcf4;box-shadow:0 4px 0 #abc5ac}.mission h2{color:#4b8b78}.mission small{color:#598f7e}
+.signals{background:#fffdf8;border-color:#fff7df;padding:15px;box-shadow:0 5px 0 #a2bda8}
+.signal-title{color:#436c60;font:700 clamp(15px,1.3vw,20px) Fredoka}.signal-title span{background:#f8edcb;color:#91692c;border:1px solid #ebd6a6}
+.signal-hint{margin-top:8px;color:#668175;font-size:12px;font-weight:900}
+.lights{gap:10px;margin-top:10px}.signal-box{background:#f4f8f1;border:2px solid #d6e6d9;border-radius:16px;padding:12px 6px;gap:8px}
+.signal-box small{color:#507a6c;font-size:12px}.signal-box b{color:#426b60;font-size:clamp(11px,1vw,15px);text-align:center;min-height:17px}
+.traffic-light,.pedestrian-light{min-height:52px;align-items:center;justify-content:center;border-radius:13px;background:#304744;padding:9px 12px}
+.traffic-light i{width:clamp(17px,1.8vw,28px);height:clamp(17px,1.8vw,28px);border:2px solid #73877e}
+.pedestrian-light{display:flex;gap:9px}.pedestrian-light>div{display:grid;place-items:center;width:31px;height:35px;opacity:.25;border-radius:7px}
+.pedestrian-light .ped-stop{color:#ef7771}.pedestrian-light .ped-go{color:#8fe0a5}
+.person-icon{display:block;position:relative;width:11px;height:18px;background:currentColor;border-radius:5px 5px 3px 3px}
+.person-icon:before{content:'';position:absolute;left:1px;top:-9px;width:9px;height:9px;border-radius:50%;background:currentColor}
+.person-icon:after{content:'';position:absolute;left:-4px;top:5px;width:19px;height:19px;border-left:4px solid currentColor;border-right:4px solid currentColor;border-bottom:4px solid transparent;transform:skew(-8deg)}
+.person-icon.walking:after{transform:skew(-22deg) rotate(-13deg)}
+.safety{font-size:clamp(11px,1vw,14px);line-height:1.4;margin-top:10px;background:#f1f7e9;border-radius:10px;padding:9px;color:#507661}
+.buttons{grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.buttons button{min-height:69px;background:#80b7b1;box-shadow:0 4px 0 #548b82;padding:4px 2px}
+.buttons button.forward{background:#5ca67d;box-shadow:0 4px 0 #397857}
+.buttons button.backward{background:#e3b86d;box-shadow:0 4px 0 #ac8749}
+.buttons small{font-size:clamp(8px,.8vw,11px)}
+.topstats #hearts{color:#df7d74;letter-spacing:1px}.topstats #stars{color:#e0aa46}.icon-btn{font-size:clamp(10px,.9vw,15px);font-weight:900;width:auto;min-width:43px;padding:0 10px}
+@media(max-width:1000px){.buttons button{min-height:52px}.signal-box{padding:7px 3px}.signals{padding:8px}.signal-hint{font-size:10px}.safety{padding:5px}}
+@media(max-height:600px) and (orientation:landscape){.buttons button{min-height:43px}.signal-box{gap:3px}.traffic-light,.pedestrian-light{min-height:38px;padding:4px}.safety{margin-top:4px}.signal-hint{margin-top:3px}}
+@media(prefers-reduced-motion:reduce){.falling-leaf{animation:none;display:none}}
+
+/* Estadísticas y recordatorio educativo al finalizar */
+.result-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:16px 0}.result-stats>div{display:grid;gap:4px;padding:12px 7px;background:#eff8f2;border:2px solid #d6e9db;border-radius:15px}.result-stats small{font-size:10px;font-weight:900;letter-spacing:.08em;color:#60846d}.result-stats strong{font:700 clamp(20px,3vw,32px) Fredoka;color:#387e64}.learning-report{text-align:left;padding:12px 16px;border-radius:16px;background:#fff3da;border:2px solid #f2dfb3;max-height:27vh;overflow:auto}.learning-report h3{font:700 18px Fredoka;color:#8c6329;margin:0 0 8px}.learning-report p{font-size:13px;margin:7px 0;line-height:1.4}.learning-report .lesson-ok{color:#397a59}.learning-report .lesson-bad{color:#975139}.dialog:has(.result-stats){width:min(100%,630px);max-height:95dvh;overflow:auto}.feedback{transition:background .2s}.feedback.bad{animation:notice-bad .4s ease-out}.feedback.good{animation:notice-good .4s ease-out}@keyframes notice-bad{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}@keyframes notice-good{from{filter:brightness(1.13)}to{filter:brightness(1)}}.signals.ready{border-color:#70c991;box-shadow:0 4px 0 #6fae84}.signals.waiting{border-color:#f0d49b}.signals.danger{border-color:#e8a5a0}.signal-hint{font-weight:900}.feedback{font-size:clamp(12px,1vw,15px)}@media(max-height:650px) and (orientation:landscape){.dialog:has(.result-stats){padding:10px 16px}.result-stats{margin:7px 0}.result-stats>div{padding:5px}.learning-report{max-height:21vh;padding:7px}}
+
+/* Mensajes educativos dentro de TU RECORRIDO */
+.route-notice{display:flex;align-items:center;gap:14px;min-height:62px;border:3px solid #fff7e6;background:#fff5d8;transition:background .2s;}
+.route-notice strong{flex:0 0 auto;color:#466f60;letter-spacing:.04em;}
+.route-notice #map-status{flex:1;color:#795a30;font-size:clamp(12px,1.1vw,17px);font-weight:900;text-align:center;line-height:1.3;}
+.route-notice.bad{background:#ffe5df;border-color:#f4b8a9;}
+.route-notice.bad #map-status{color:#994638;}
+.route-notice.good{background:#ddf4df;border-color:#a9d9b3;}
+.route-notice.good #map-status{color:#326d46;}
+/* Teclado: avanzar arriba, izquierda/retroceder/derecha abajo. */
+.buttons.keyboard-layout{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,auto);gap:8px;}
+.keyboard-layout #forward{grid-column:2;grid-row:1;}
+.keyboard-layout #left{grid-column:1;grid-row:2;}
+.keyboard-layout #backward{grid-column:2;grid-row:2;}
+.keyboard-layout #right{grid-column:3;grid-row:2;}
+.keyboard-layout button{min-height:54px;}
+@media(max-height:650px) and (orientation:landscape){.route-notice{min-height:44px;padding:5px 9px}.keyboard-layout button{min-height:37px}.keyboard-layout{gap:4px!important}}
+
+/* NIVEL 1 · EDICIÓN CIUDAD ILUSTRADA. Sin emojis en el escenario. */
+:root{--forest:#375e51;--cream:#fffaf0;--mint:#d7e9d8;--gold:#d8a354}
+.game{background:radial-gradient(ellipse at 10% 5%,#fff4d6 0%,transparent 35%),radial-gradient(ellipse at 90% 100%,#d1e7c5 0%,transparent 40%),linear-gradient(130deg,#e7f2e8,#d4ebe2 55%,#f9e7d0)}
+.topbar{border:2px solid #fff;box-shadow:0 5px 0 #b6c9b2,0 12px 26px #526d4b19;background:linear-gradient(120deg,#fffdf6,#f6f9eb)}
+.brand strong{letter-spacing:.01em}.topstats #stars{filter:drop-shadow(0 1px #9e763a)}
+.map-caption{border:2px solid #fff;box-shadow:0 4px 0 #adc8b4,0 8px 15px #7a94751c;background:linear-gradient(100deg,#fffaf0,#f1f8e9)}
+.route-notice{border-left:8px solid #e6bc6d}.route-notice.good{border-left-color:#75b18c}.route-notice.bad{border-left-color:#db8778}
+.map-frame{border:7px solid #fffdf5;border-radius:26px;background:linear-gradient(145deg,#d4eacb,#b6d4b2);box-shadow:0 6px 0 #a5c2aa,0 15px 32px #476f5722}
+.map{box-shadow:0 0 0 3px #eff5e5,0 8px 25px #314a3a26}
+.tile{border:1px solid #fff9;isolation:isolate}.tile.grass{background-size:cover}.tile.sidewalk{border-color:#eceee7}
+.tile.school,.tile.home{background:#90c778 url('../assets/decoracion/pasto.png') center/cover no-repeat}
+.tile img{width:96%;height:96%;z-index:1;filter:drop-shadow(0 3px 2px #20382740)}
+.tile.grass img{width:110%;height:110%;object-fit:contain;overflow:visible}
+.tile.school img,.tile.home img{width:100%;height:110%}
+.tile img.npc{height:78%;width:65%;object-fit:contain;bottom:2%;top:auto;filter:drop-shadow(0 2px 2px #23392e55);z-index:2}
+.tile.destination{background:#d9d9cc url('../assets/carreteras/acera.png') center/cover no-repeat;box-shadow:inset 0 0 0 4px #f1c977}
+.tile.destination:after{content:'';inset:23%;border:3px dashed #e9b95e;border-radius:50%;background:#ffe0a155;animation:glow 1.5s infinite alternate}
+.tile.crosswalk{box-shadow:inset 0 0 0 2px #fffc}
+.player{filter:drop-shadow(0 4px 3px #273b325c)}.car{filter:drop-shadow(0 2px 2px #1717174d)}
+.sidebar{padding:2px 4px 8px 0;gap:12px}
+.card{border:2px solid #fff;border-radius:24px;box-shadow:0 5px 0 #afc5ac,0 12px 24px #4b765021;background:linear-gradient(155deg,#fffef9,#faf7ee);padding:15px 18px}
+.mission{border-top:5px solid #89b6a2}.mission h2{color:#3e7564}.mission p{color:#62746b}
+.checks>div{border:1px solid #d9e8da;border-left:5px solid #a4c5ad;background:#f3f8ef;border-radius:12px;padding:8px 10px}.checks>div.done{border-left-color:#4eae79;background:#e0f3e4}
+.signals{border-top:5px solid #e4c17b}.signal-box{background:linear-gradient(180deg,#f6fbf5,#eaf4ec);border:2px solid #d6e6d8;box-shadow:inset 0 2px 8px #a3bea41a}.traffic-light,.pedestrian-light{box-shadow:inset 0 3px 8px #132a2c70,0 3px 0 #bfd2c6}.safety{border-left:4px solid #83b59a;text-align:left}
+.controls{border-top:5px solid #90c0b3}.keyboard-layout button{border-radius:17px;box-shadow:0 5px 0 #507d77,0 8px 12px #31594a25;transition:transform .13s,filter .13s}.keyboard-layout button:hover{filter:brightness(1.08);transform:translateY(-2px)}.keyboard-layout button:active{transform:translateY(3px)}
+@media(max-width:1000px){.card{padding:8px 10px;border-radius:16px}.sidebar{gap:7px}.map-frame{border-width:4px}.tile.grass img{width:105%;height:105%}}
+
+/* TARJETAS ILUSTRADAS Y CIUDAD: edición con los nuevos assets */
+.topbar{background:linear-gradient(110deg,#fffdf7 0%,#f3f8ed 70%,#e8f3e9 100%);border-radius:25px;box-shadow:0 6px 0 #a5c7b5,0 15px 25px #4b796019}
+.brand{border-left:4px solid #dfb777;padding-left:15px}.brand small{font-size:clamp(10px,.9vw,13px);color:#65897b}.brand strong{font-size:clamp(21px,2.4vw,36px)}
+.map-caption{border-radius:17px}.route-notice{background:linear-gradient(95deg,#fff9e9,#fff1ce);border-left:8px solid #e6ad56}.route-notice #map-status{font-size:clamp(12px,1.15vw,18px)}
+.map-frame{background:radial-gradient(ellipse at 50% 25%,#e4f4cf,#a8d7bc);border-radius:30px}
+.tile.decor-tower img,.tile.decor-office img{width:108%;height:115%;bottom:0;top:auto;object-fit:contain}
+.tile.decor-shop img,.tile.decor-cafe img,.tile.decor-store img{width:112%;height:110%;bottom:0;top:auto;object-fit:contain}
+.tile.decor-tree img{width:110%;height:110%}.tile img.npc{height:80%;width:74%;z-index:3;bottom:0}
+.tile.decor-school img{width:110%;height:110%;bottom:0;top:auto}.tile.decor-home img{width:115%;height:115%;bottom:0;top:auto}
+.sidebar .card{position:relative;overflow:hidden;background:linear-gradient(150deg,#fffefa,#f5f8ed);border-radius:23px;border:2px solid #fff;box-shadow:0 5px 0 #a8c9b1,0 13px 24px #56796118}
+.sidebar .card:before{content:'';position:absolute;inset:0 auto auto 0;width:100%;height:5px;background:linear-gradient(90deg,#8cbb9e,#e7c57d,#a6cfbe)}
+.mission h2{font-size:clamp(22px,2.2vw,34px)}.checks>div{box-shadow:0 2px 0 #d5e6d8;background:linear-gradient(95deg,#f4faf1,#eaf4ee)}
+.signals .signal-box{border-radius:19px;background:linear-gradient(145deg,#f7fbf4,#e7f3eb);box-shadow:0 3px 0 #c7dcca}.signals.ready{background:linear-gradient(140deg,#f7fff7,#e6f8e8)}
+.controls{background:linear-gradient(160deg,#fffef8,#eaf5ed)!important}.keyboard-layout button{border:2px solid #ffffffc0;box-shadow:0 5px 0 #59867b,0 9px 14px #385f4b2b}.keyboard-layout button:focus-visible{outline:4px solid #efc164}
+@media(max-height:690px) and (orientation:landscape){.topbar{min-height:58px}.card{padding:9px 12px!important}.checks{gap:3px}.checks>div{padding:5px 7px}.route-notice{min-height:43px}}
+
+/* Los GIF nuevos ya están dibujados mirando hacia su dirección. */
+.car-one img,.car-two img{transform:none!important;object-fit:contain}
+
+/* Fondo GIF del proyecto y acabado de tarjetas */
+body{background-image:linear-gradient(120deg,rgba(230,249,239,.90),rgba(231,245,255,.86)),url('../../assetsInicio/fondo/fondo.gif')!important;background-position:center!important;background-size:cover!important;background-attachment:fixed!important}
+.card{border:2px solid rgba(140,186,169,.65)!important;box-shadow:0 6px 0 rgba(83,136,115,.23),0 14px 30px rgba(43,81,88,.08)!important;background:rgba(255,253,246,.96)!important}
+
+/* El fondo ilustrado es exclusivo de la pantalla de inicio. */
+html,body{background-image:none!important;background-attachment:scroll!important}
+
+/* CORRECCIÓN: únicamente la columna de misión, semáforos y controles se desplaza. */
+@media (min-width:951px) {
+  .game { height:100dvh; min-height:0; overflow:hidden; }
+  .layout { flex:1; min-height:0; overflow:hidden; }
+  .map-area { min-height:0; overflow:hidden; }
+  .sidebar { min-height:0; max-height:100%; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain; padding:4px 12px 22px 4px; gap:17px; scrollbar-width:thin; scrollbar-color:#8fb8a2 #e8f3e9; }
+  .sidebar > .card { flex:0 0 auto; }
+  .sidebar::-webkit-scrollbar { width:10px; }
+  .sidebar::-webkit-scrollbar-track { background:#e8f3e9; border-radius:12px; }
+  .sidebar::-webkit-scrollbar-thumb { background:#8fb8a2; border-radius:12px; border:2px solid #e8f3e9; }
+}

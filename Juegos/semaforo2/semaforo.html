@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#a9dfff">
+  <title>El Semáforo Travieso | Inicio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/menu.css">
+</head>
+<body>
+  <main class="menu-scene">
+    <div class="sky" aria-hidden="true"><div class="sun"></div><div class="cloud cloud-a"></div><div class="cloud cloud-b"></div></div>
+    <img class="scene-img school" src="assets/images/menu-escuela.png" alt="" onerror="this.hidden=true">
+    <img class="scene-img child" src="assets/images/menu-nino.png" alt="" onerror="this.hidden=true">
+    <img class="scene-img family" src="assets/images/menu-familia.png" alt="" onerror="this.hidden=true">
+    <div class="road" aria-hidden="true"><div class="crosswalk"></div></div>
+    <img class="scene-img car" src="assets/images/menu-auto.png" alt="" onerror="this.hidden=true">
+    <div class="signal-decoration" aria-hidden="true"><i></i><i></i><i></i></div>
+
+    <section class="main-card" aria-labelledby="game-title">
+      <p class="eyebrow">UNA AVENTURA DE EDUCACIÓN VIAL</p>
+      <img class="custom-logo" src="assets/images/logo.png" alt="" onerror="this.hidden=true">
+      <h1 id="game-title">EL SEMÁFORO <span>TRAVIESO</span></h1>
+      <p class="description">¡Explora la ciudad, completa misiones y aprende a cruzar de forma segura!</p>
+      <div class="actions">
+        <a class="btn btn-play" href="niveles.html">▶ ¡JUGAR!</a>
+        <button class="btn btn-sound" id="sound-toggle" type="button" aria-label="Activar sonido" aria-pressed="false">🔇</button>
+      </div>
+      <p class="landscape">↔ Se recomienda jugar con la pantalla en horizontal.</p>
+      <button class="credits-link" id="credits-open" type="button">Créditos</button>
+    </section>
+
+    <dialog id="credits-dialog" class="credits-dialog">
+      <h2>🌟 Créditos</h2>
+      <p><strong>El Semáforo Travieso</strong><br>Un videojuego educativo sobre seguridad vial.</p>
+      <p>Personaliza aquí los nombres del equipo, ilustradores, música y recursos utilizados.</p>
+      <form method="dialog"><button class="btn btn-play">Cerrar</button></form>
+    </dialog>
+    <aside class="rotate-overlay" id="rotate-overlay" hidden><div class="rotate-card"><span>📱 ↻</span><h2>¡Gira tu dispositivo!</h2><p>Para disfrutar de la ciudad, coloca tu pantalla en horizontal.</p></div></aside>
+  </main>
+  <audio id="menu-music" src="assetsInicio/musica/cancion1.mp3" loop preload="none"></audio>
+  <script>
+    const music = document.getElementById('menu-music');
+    const soundButton = document.getElementById('sound-toggle');
+    const savedSound = localStorage.getItem('semaforo-sound') !== 'off';
+    let soundOn = savedSound;
+    function paintSound() { soundButton.textContent = soundOn ? '🔊' : '🔇'; soundButton.setAttribute('aria-pressed', String(soundOn)); soundButton.setAttribute('aria-label', soundOn ? 'Silenciar música' : 'Activar música'); }
+    paintSound();
+    music.volume = 0.32;
+    if (soundOn) music.play().catch(() => {});
+    document.addEventListener('pointerdown', () => { if (soundOn && music.paused) music.play().catch(() => {}); }, {passive:true});
+    soundButton.addEventListener('click', async () => {
+      soundOn = !soundOn;
+      localStorage.setItem('semaforo-sound', soundOn ? 'on' : 'off');
+      paintSound();
+      if (soundOn) { try { await music.play(); } catch (_) { /* El archivo es opcional. */ } }
+      else music.pause();
+    });
+    const credits = document.getElementById('credits-dialog');
+    document.getElementById('credits-open').addEventListener('click', () => credits.showModal());
+    const rotate = document.getElementById('rotate-overlay');
+    function checkOrientation() { rotate.hidden = !(matchMedia('(orientation: portrait)').matches && matchMedia('(max-width: 900px)').matches); }
+    addEventListener('resize', checkOrientation); checkOrientation();
+  </script>
+</body>
+</html>

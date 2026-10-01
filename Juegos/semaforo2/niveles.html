@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#a9dfff">
+  <title>El Semáforo Travieso | Niveles</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/niveles.css">
+</head>
+<body>
+  <main class="levels-page">
+    <section class="levels-shell" id="levels-screen" aria-labelledby="levels-heading">
+      <header class="levels-header">
+        <a class="back-button" href="index.html">← VOLVER</a>
+        <div class="heading"><span>¡ESCOGE TU AVENTURA!</span><h1 id="levels-heading">MAPA DE NIVELES</h1><p>Recorre la ciudad y conviértete en un peatón responsable.</p></div>
+        <div class="progress"><strong id="completed-count">0/10</strong><small>COMPLETADOS</small></div>
+      </header>
+      <div class="level-grid" id="level-grid" aria-label="Lista de niveles"></div>
+      <footer class="levels-footer"><span>⭐ Completa las misiones para ganar estrellas.</span><button type="button" id="sound-toggle" class="sound-button" aria-label="Activar sonido" aria-pressed="false">🔇</button></footer>
+    </section>
+
+    <section class="mission-screen" id="mission-screen" hidden aria-labelledby="mission-title">
+      <div class="mission-panel">
+        <div class="mission-illustration"><img id="mission-image" src="assets/images/nivel-01.png" alt="Ilustración de la misión"><span id="mission-number">NIVEL 1</span></div>
+        <div class="mission-content"><p class="eyebrow">TU PRÓXIMA MISIÓN</p><h2 id="mission-title"></h2><p id="mission-story"></p><div class="objectives"><h3>🎯 TUS OBJETIVOS</h3><ul id="mission-objectives"></ul></div><p class="mission-note" id="mission-note">Antes de jugar, verás las instrucciones del nivel.</p><div class="mission-actions"><button class="back-button" id="mission-back" type="button">← NIVELES</button><button class="play-button" id="mission-play" type="button">▶ ¡JUGAR!</button></div></div>
+      </div>
+    </section>
+
+    <section class="tutorial-screen" id="tutorial-screen" hidden aria-labelledby="tutorial-title"><div class="tutorial-panel"><p class="eyebrow">ANTES DE COMENZAR</p><h2 id="tutorial-title">¿Cómo jugar?</h2><div class="tutorial-grid"><article><span>⬆️</span><h3>Avanza y gira</h3><p>Usa los botones para avanzar una casilla y girar a la izquierda o derecha.</p></article><article><span>🚦</span><h3>Observa las señales</h3><p>Espera el verde peatonal y comprueba que los vehículos se hayan detenido.</p></article><article><span>🚸</span><h3>Cruza con cuidado</h3><p>Utiliza el paso peatonal, termina de cruzar y llega a tu destino.</p></article><article class="spatial-card"><div class="spatial-compass" aria-hidden="true"><span>↶</span><strong>↑</strong><span>↷</span></div><h3>Muévete según tu personaje</h3><p>Avanzar y retroceder dependen de hacia dónde mira el personaje, <b>no de tu posición frente a la pantalla</b>. Si mira a la izquierda y avanzas, caminará hacia la izquierda. Primero gira para cambiar su dirección.</p></article></div><p id="tutorial-specific" class="tutorial-specific"></p><div class="tutorial-actions"><button class="back-button" id="tutorial-back" type="button">← MISIÓN</button><a class="play-button" id="tutorial-start" href="levels/nivel-01/index.html">▶ COMENZAR NIVEL</a></div></div></section>
+
+    <aside class="rotate-overlay" id="rotate-overlay" hidden><div class="rotate-card"><span>📱 ↻</span><h2>¡Gira tu dispositivo!</h2><p>Este juego está diseñado para jugar en horizontal.</p></div></aside>
+  </main>
+  <audio id="menu-music" src="assetsInicio/musica/cancion3.mp3" loop preload="none"></audio>
+  <script>
+    const LEVELS = [
+      {title:'Camino a casa',story:'Saliste de la escuela. ¡Tu familia te espera! Busca el paso peatonal y cruza la avenida de forma segura.',objectives:['Encuentra el paso peatonal.','Espera la señal peatonal verde.','Cruza y llega hasta tu familia.'],tip:'Los autos deben estar completamente detenidos antes de que cruces.'},
+      {title:'La gran avenida',story:'Debes llegar a la biblioteca atravesando dos calles con semáforos independientes.',objectives:['Encuentra los dos cruces.','Observa la señal correspondiente a cada cruce.','Llega a la biblioteca.'],tip:'Cada semáforo controla su propio cruce.'},
+      {title:'Un día en el parque',story:'¡Es hora de jugar! Algunos autos giran cerca del parque.',objectives:['Encuentra el parque.','Observa los autos que giran.','Cruza cuando todos hayan cedido el paso.'],tip:'Aunque tengas verde peatonal, comprueba que los autos que giran se detengan.'},
+      {title:'La calle escondida',story:'Visita a tu amigo sin cruzar entre los autos estacionados.',objectives:['Busca un cruce visible.','Evita pasar entre vehículos estacionados.','Llega a casa de tu amigo.'],tip:'Los vehículos estacionados pueden impedir que te vean.'},
+      {title:'Ayuda a tu hermanito',story:'Acompaña a tu hermanito desde el parque hasta casa.',objectives:['Mantente junto a tu hermanito.','Esperen juntos la señal segura.','Lleguen juntos a casa.'],tip:'Si no hay tiempo suficiente para cruzar juntos, esperen el siguiente ciclo.'},
+      {title:'El cruce complicado',story:'Una gran intersección separa tu casa del mercado.',objectives:['Identifica la señal de tu cruce.','Observa los vehículos que giran.','Cruza la intersección con seguridad.'],tip:'El verde de otra dirección no significa que puedas cruzar.'},
+      {title:'Los mandados de mamá',story:'¡Mamá necesita tu ayuda! Visita el supermercado, la biblioteca y la panadería antes de regresar a casa.',objectives:['Compra leche y huevos en el supermercado.','Devuelve un libro en la biblioteca.','Recoge el pan y regresa a casa.'],tip:'Puedes elegir el orden de los tres mandados, pero siempre debes cruzar de forma segura.',special:true},
+      {title:'Un día de lluvia',story:'Llueve y los autos necesitan más espacio para detenerse.',objectives:['Evita los charcos y obstáculos.','Comprueba que los autos se detengan por completo.','Regresa a casa.'],tip:'Con lluvia, la visibilidad y el frenado de los vehículos pueden empeorar.'},
+      {title:'La ruta bloqueada',story:'Unas obras han cerrado la acera. ¡Busca un camino alternativo!',objectives:['Reconoce las barreras.','Encuentra un desvío seguro.','Llega a tu destino sin caminar por la calzada.'],tip:'No entres en una zona de obras ni camines entre vehículos.'},
+      {title:'Regreso al anochecer',story:'Empieza a oscurecer. Busca calles iluminadas para volver con tu familia.',objectives:['Camina por las aceras.','Elige cruces visibles e iluminados.','Regresa a casa.'],tip:'Ser visible y observar el tránsito es especialmente importante al anochecer.'}
+    ];
+    const $ = id => document.getElementById(id);
+    const grid = $('level-grid');
+    let selected = 0;
+    function readProgress() { try { return JSON.parse(localStorage.getItem('semaforo-progress') || '{}'); } catch { return {}; } }
+    function unlocked(index, progress) { return index === 0 || Number(progress[index - 1] || 0) > 0; }
+    function show(which) { for (const id of ['levels-screen','mission-screen','tutorial-screen']) $(id).hidden = id !== which; }
+    function renderLevels() {
+      const progress = readProgress();
+      grid.replaceChildren();
+      $('completed-count').textContent = `${LEVELS.filter((_,i) => Number(progress[i] || 0) > 0).length}/10`;
+      LEVELS.forEach((level, i) => {
+        const open = unlocked(i,progress);
+        const card = document.createElement('button'); card.type = 'button'; card.className = 'level-card' + (!open ? ' locked' : '') + (level.special ? ' special' : ''); card.disabled = !open;
+        const img = document.createElement('img'); img.src = `assets/images/nivel-${String(i+1).padStart(2,'0')}.png`; img.alt = ''; img.loading = 'lazy'; img.onerror = () => { img.hidden = true; };
+        const art = document.createElement('div'); art.className = 'card-art'; art.append(img);
+        if (!open) { const lock = document.createElement('span'); lock.className='lock'; lock.textContent='🔒'; art.append(lock); }
+        const body = document.createElement('div'); body.className='card-body';
+        const num = document.createElement('small'); num.textContent=`NIVEL ${i+1}`;
+        const title = document.createElement('strong'); title.textContent=level.title;
+        const stars = document.createElement('span'); stars.className='card-stars'; const earned = Math.max(0,Math.min(3,Number(progress[i]||0))); stars.textContent=open ? '★'.repeat(earned)+'☆'.repeat(3-earned) : 'BLOQUEADO';
+        body.append(num,title,stars); card.append(art,body); card.addEventListener('click',()=>openMission(i)); grid.append(card);
+      });
+    }
+    function openMission(index) {
+      selected=index; const level=LEVELS[index];
+      $('mission-number').textContent=`NIVEL ${index+1}`; $('mission-title').textContent=level.title; $('mission-story').textContent=level.story;
+      $('mission-image').src=`assets/images/nivel-${String(index+1).padStart(2,'0')}.png`; $('mission-image').onerror=function(){this.hidden=true;}; $('mission-image').hidden=false;
+      $('mission-objectives').replaceChildren(); level.objectives.forEach(objective=>{const li=document.createElement('li');li.textContent=objective;$('mission-objectives').append(li);});
+      $('mission-note').textContent='Antes de jugar, verás las instrucciones del nivel.';
+      const implemented = index===0 || index===1; $('mission-play').disabled=!implemented; $('mission-play').textContent=implemented?'▶ ¡JUGAR!':'🚧 NIVEL EN PREPARACIÓN';
+      $('tutorial-specific').textContent=level.tip;
+      $('tutorial-start').href=`levels/nivel-${String(index+1).padStart(2,'0')}/index.html`;
+      show('mission-screen');
+    }
+    $('mission-back').addEventListener('click',()=>{renderLevels();show('levels-screen');});
+    $('mission-play').addEventListener('click',()=>{if(selected<=1)show('tutorial-screen');});
+    $('tutorial-back').addEventListener('click',()=>show('mission-screen'));
+    const music=$('menu-music'), sound=$('sound-toggle'); let soundOn=localStorage.getItem('semaforo-sound')!=='off';
+    music.volume=.30; if(soundOn)music.play().catch(()=>{}); document.addEventListener('pointerdown',()=>{if(soundOn&&music.paused)music.play().catch(()=>{})},{passive:true});
+    function paintSound(){sound.textContent=soundOn?'🔊':'🔇';sound.setAttribute('aria-pressed',String(soundOn));sound.setAttribute('aria-label',soundOn?'Silenciar música':'Activar música');}
+    sound.addEventListener('click',async()=>{soundOn=!soundOn;localStorage.setItem('semaforo-sound',soundOn?'on':'off');paintSound();if(soundOn){try{await music.play();}catch{}}else music.pause();});paintSound();
+    const rotate=$('rotate-overlay'); function checkOrientation(){rotate.hidden=!(matchMedia('(orientation:portrait)').matches&&matchMedia('(max-width:900px)').matches);}addEventListener('resize',checkOrientation);checkOrientation();
+    renderLevels();
+  </script>
+</body>
+</html>

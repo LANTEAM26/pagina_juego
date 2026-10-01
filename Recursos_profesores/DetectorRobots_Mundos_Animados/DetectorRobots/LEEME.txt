@@ -1,0 +1,9 @@
+DETECTOR DE ROBOTS — EDICIÓN MUNDOS ANIMADOS
+
+Abre index.html para seleccionar Bee-Bot, Rugged o Ludio.
+Cada robot tiene su escenario, sus sonidos y su temporizador.
+Sorpresa: 10 a 20 segundos. Predeterminados: 7, 10, 15, 20 segundos. Personalizado: 1 a 300 segundos.
+Pausar conserva el tiempo restante. Detener cancela.
+Al terminar, el sonido de celebración se reproduce 7 veces; el botón Silenciar lo detiene de inmediato.
+Los sonidos se sintetizan con Web Audio y no necesitan conexión.
+En celulares, activa el sonido y pulsa Iniciar para habilitar el audio.
