@@ -2547,3 +2547,125 @@ button:focus-visible {
     .robot-img { animation: none; }
     .robot-portal { animation: none; }
 }
+
+/* === Rediseño integrado: navegación, portales y uniones suaves === */
+:root { --header-h: 76px; --c-ray-primario:#a78bfa; --c-ray-secundario:#7dd3fc; --c-ray-acento:#b9a0ff; --c-ray-sombra:rgba(147,125,239,.24); }
+.site-header {border-radius:26px; border-color:rgba(125,211,252,.3);box-shadow:0 12px 36px rgba(5,8,28,.35),0 0 22px rgba(104,132,241,.09)}
+.header-inner{max-width:1920px;gap:14px}.main-nav{gap:5px;flex-wrap:nowrap}.nav-btn{border:1px solid transparent; padding:9px 13px;transition:background .25s,border-color .25s,color .25s,box-shadow .25s}
+.nav-btn.nav-beebot{border-color:rgba(255,221,99,.36);background:rgba(255,221,99,.07)}
+.nav-btn.nav-rayet{border-color:rgba(172,154,255,.43);background:rgba(144,121,255,.09)}
+.nav-btn.nav-ludio{border-color:rgba(107,192,255,.4);background:rgba(97,141,255,.09)}
+.nav-btn.nav-recursos{border-color:rgba(111,228,199,.3);background:rgba(111,228,199,.07)}
+.nav-btn.nav-beebot:hover,.nav-btn.nav-beebot.is-active{border-color:#ffe78b;color:#ffe78b;box-shadow:0 0 16px rgba(255,224,120,.16)}
+.nav-btn.nav-rayet:hover,.nav-btn.nav-rayet.is-active{border-color:#a5b4fc;color:#c4b5fd;box-shadow:0 0 17px rgba(165,180,252,.2)}
+.nav-btn.nav-ludio:hover,.nav-btn.nav-ludio.is-active{border-color:#7dd3fc;color:#93c5fd;box-shadow:0 0 17px rgba(125,211,252,.18)}
+.nav-indicator{display:none}
+.hero-worlds{display:flex;justify-content:center;align-items:start;flex-wrap:wrap;gap:clamp(18px,3vw,54px);max-width:980px;margin-inline:auto}
+.world-preview{cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:14px;min-width:140px;text-decoration:none;transition:transform .3s ease}
+.world-preview:focus-visible{outline:3px solid #fff;border-radius:22px;outline-offset:7px}
+.wp-orb{transition:transform .35s,border-color .35s,box-shadow .35s}
+.wp-inicial .wp-orb{border-color:rgba(255,224,105,.52);box-shadow:0 0 26px rgba(255,224,105,.1)}
+.wp-primaria .wp-orb{border-color:rgba(169,162,255,.58);box-shadow:0 0 28px rgba(155,154,255,.13)}
+.wp-secundaria .wp-orb{border-color:rgba(125,211,252,.57);box-shadow:0 0 28px rgba(125,211,252,.13)}
+.wp-recursos .wp-orb{border-color:rgba(110,231,183,.57);box-shadow:0 0 28px rgba(110,231,183,.12)}
+.wp-teacher-icon{display:flex;align-items:center;justify-content:center;font-size:clamp(2.8rem,5vw,4.3rem);background:radial-gradient(circle at 30% 25%,rgba(118,233,194,.22),rgba(35,45,79,.82))}
+.world-preview:hover{transform:translateY(-5px)}.world-preview:hover .wp-orb{box-shadow:0 0 28px rgba(182,201,255,.28)}
+.wp-label{letter-spacing:.11em}.wp-recursos .wp-label{color:#a7f3d0}
+/* Transiciones atmosféricas: sin carreteras ni edificios cortados */
+.transition{height:clamp(180px,20vw,310px);overflow:hidden;z-index:2;isolation:isolate}
+.transition>div{display:none!important}
+.transition::before,.transition::after{content:"";position:absolute;inset:0;pointer-events:none}
+.transition-1{background:linear-gradient(180deg,#171b38 0%,#252d4a 18%,#465e69 42%,#91b8b6 68%,#d6efff 100%)}
+.transition-1::before{background:radial-gradient(ellipse 55% 70% at 24% 55%,rgba(255,231,156,.2),transparent 80%)}
+.transition-2{background:linear-gradient(180deg,#b8e0a0 0%,#b7dfbd 16%,#abcfc9 36%,#a6c5d6 67%,#b8d4f0 100%)}
+.transition-2::before{background:radial-gradient(ellipse 55% 70% at 70% 48%,rgba(194,175,255,.16),transparent 85%)}
+.transition-3{background:linear-gradient(180deg,#a8bfd9 0%,#94aecf 15%,#7384af 38%,#414e82 61%,#1b2755 83%,#0a0e27 100%)}
+.transition-3::before{background:radial-gradient(ellipse 60% 70% at 65% 68%,rgba(125,211,252,.19),transparent 82%),radial-gradient(ellipse 45% 65% at 25% 40%,rgba(171,137,250,.17),transparent 85%)}
+.transition::after{background:linear-gradient(90deg,transparent,rgba(255,255,255,.055) 47%,transparent);opacity:.65}
+.card-inicial{--c1:#f4d86d;--c2:#a6d89a;border:1px solid rgba(230,193,69,.42);box-shadow:0 24px 60px rgba(15,23,42,.13),0 0 36px rgba(245,215,98,.14)}
+.card-primaria{--c1:#aa9af9;--c2:#80d9ef;border:1px solid rgba(161,148,248,.45);box-shadow:0 24px 60px rgba(15,23,42,.13),0 0 40px rgba(145,143,239,.16)}
+.card-secundaria{--c1:#70c7f9;--c2:#a78bfa;border:1px solid rgba(130,166,255,.46);box-shadow:0 24px 65px rgba(4,8,36,.38),0 0 42px rgba(120,116,255,.13)}
+.btn-primaria{background:linear-gradient(125deg,#c4b5fd,#86d6f3);color:#242445;box-shadow:0 12px 28px rgba(130,143,240,.23)}
+section[id]{scroll-margin-top:110px}
+@media(max-width:850px){.hero-worlds{gap:20px}.world-preview{min-width:115px}.site-header{border-radius:20px}.nav-btn{padding:10px 12px}.transition{height:170px}}
+@media(prefers-reduced-motion:reduce){.world-preview,.wp-orb{transition:none}}
+
+/* Tarjeta Robots del Aula: tercer recurso del profesor */
+@media (min-width: 1050px) {
+    .recursos-grid { max-width: 1240px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+.resource-card-robots .resource-icon {
+    background: linear-gradient(135deg, #819bff, #ae7df0);
+    box-shadow: 0 16px 40px rgba(129,155,255,.32), 0 0 40px rgba(174,125,240,.22);
+}
+.resource-card-robots::before { background: linear-gradient(90deg, #819bff, #ae7df0); }
+.btn-resource-robots {
+    background: linear-gradient(135deg, #718ef1, #a77bea);
+    box-shadow: 0 12px 30px rgba(113,142,241,.28), inset 0 2px 0 rgba(255,255,255,.2);
+}
+\n\n/* === Ajuste recursos profesor: tarjetas y botones perfectamente alineados === */
+.recursos-grid { align-items: stretch; }
+.resource-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.resource-icon-wrap { flex: 0 0 auto; }
+.resource-title { flex: 0 0 auto; }
+.resource-desc {
+    flex: 1 1 auto;
+    min-height: 76px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+}
+.resource-card > .btn-resource {
+    margin-top: auto;
+    flex: 0 0 auto;
+}
+.resource-card-robots .resource-icon {
+    box-shadow:
+        0 16px 40px rgba(129,155,255,.45),
+        0 0 50px rgba(174,125,240,.35),
+        inset 0 -4px 0 rgba(0,0,0,.20),
+        inset 0 4px 0 rgba(255,255,255,.25);
+}
+.btn-resource-robots {
+    background: linear-gradient(135deg, #718ef1 0%, #a77bea 100%);
+    color: var(--c-blanco);
+    box-shadow:
+        0 14px 34px rgba(113,142,241,.45),
+        0 0 34px rgba(167,123,234,.38),
+        inset 0 -4px 0 rgba(0,0,0,.22),
+        inset 0 4px 0 rgba(255,255,255,.24);
+}
+.resource-card-robots:hover .btn-resource-robots {
+    box-shadow:
+        0 18px 42px rgba(113,142,241,.58),
+        0 0 48px rgba(167,123,234,.52),
+        inset 0 -4px 0 rgba(0,0,0,.22),
+        inset 0 4px 0 rgba(255,255,255,.28);
+}
+@media (max-width: 700px) {
+    .resource-desc { min-height: 0; }
+}
+
+
+/* === Organización por etapa educativa === */
+.world-preview { min-width: 150px; }
+.wp-stage {
+    display:block; margin-top:6px; font-size:.60rem; font-weight:800;
+    letter-spacing:.08em; color:rgba(224,232,255,.68); white-space:nowrap;
+}
+.wp-inicial .wp-stage { color:#f4dc75; }
+.wp-primaria .wp-stage { color:#9fdfff; }
+.wp-secundaria .wp-stage { color:#b8a8ff; }
+.wp-recursos .wp-stage { color:#cbd5e8; }
+.hud-level {
+    width:auto !important; min-width:max-content; padding:5px 10px; border-radius:6px;
+    letter-spacing:.08em; font-size:.68rem; white-space:nowrap;
+}
+.card-inicial .hud-level { background:rgba(126,217,87,.16); color:#e9f57c; border:1px solid rgba(233,245,124,.28); }
+.card-primaria .hud-level { background:rgba(90,174,255,.15); color:#9fdfff; border:1px solid rgba(159,223,255,.28); }
+.card-secundaria .hud-level { background:rgba(139,105,255,.16); color:#c6b8ff; border:1px solid rgba(198,184,255,.30); }
+@media (max-width: 760px){ .wp-stage{font-size:.52rem}.world-preview{min-width:120px}.hud-level{font-size:.58rem;padding:4px 7px} }

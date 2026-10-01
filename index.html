@@ -21,6 +21,7 @@
 <!-- ============================================================
      BOTÓN FLOTANTE: SONIDO
      ============================================================ -->
+<audio id="mainMusic" src="assets/musicaFondo/cancion17.mp3" loop autoplay preload="auto"></audio>
 <button id="soundToggle" class="sound-toggle" aria-label="Activar o desactivar sonido" title="Sonido">
     <span class="sound-icon sound-on" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -84,7 +85,7 @@
                         <path d="M12 12c0-4 3-7 8-7 0 5-3 7-8 7z"/>
                     </svg>
                 </span>
-                <span class="nav-btn-txt">Juega con BeeBot</span>
+                <span class="nav-btn-txt">Bee-Bot</span>
             </a>
 
             <a href="#primaria" class="nav-btn nav-rayet nav-primaria" data-nav="primaria">
@@ -94,7 +95,7 @@
                         <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
                     </svg>
                 </span>
-                <span class="nav-btn-txt">Juega con Rugged</span>
+                <span class="nav-btn-txt">Rugged</span>
             </a>
 
             <a href="#secundaria" class="nav-btn nav-ludio nav-secundaria" data-nav="secundaria">
@@ -105,7 +106,7 @@
                         <path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2"/>
                     </svg>
                 </span>
-                <span class="nav-btn-txt">Juega con Ludio</span>
+                <span class="nav-btn-txt">Ludio</span>
             </a>
 
             <a href="#recursos" class="nav-btn nav-recursos" data-nav="recursos">
@@ -115,7 +116,7 @@
                         <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
                     </svg>
                 </span>
-                <span class="nav-btn-txt">Recursos</span>
+                <span class="nav-btn-txt">Profesores</span>
             </a>
 
             <a href="#sobre-nosotros" class="nav-btn nav-ayuda" data-nav="sobre-nosotros">
@@ -237,27 +238,35 @@
         </button>
 
         <!-- Preview de los 3 robots -->
-        <div class="hero-worlds" aria-hidden="true">
-            <div class="world-preview wp-inicial" style="--delay: .5s;">
+        <div class="hero-worlds" aria-label="Elige una sección de la página">
+            <a href="#inicial" class="world-preview wp-inicial" aria-label="Ir a inicial" style="--delay: .5s;">
                 <div class="wp-orb">
                     <img src="assets/robots/beebot.png" alt="" class="wp-robot-img">
                 </div>
                 <span class="wp-label">BEEBOT</span>
-            </div>
+                <span class="wp-stage">EDUCACIÓN INICIAL</span>
+            </a>
 
-            <div class="world-preview wp-primaria" style="--delay: .7s;">
+            <a href="#primaria" class="world-preview wp-primaria" aria-label="Ir a primaria" style="--delay: .7s;">
                 <div class="wp-orb">
                     <img src="assets/robots/rayet.png" alt="" class="wp-robot-img">
                 </div>
                 <span class="wp-label">RUGGED</span>
-            </div>
+                <span class="wp-stage">EDUCACIÓN PRIMARIA</span>
+            </a>
 
-            <div class="world-preview wp-secundaria" style="--delay: .9s;">
+            <a href="#secundaria" class="world-preview wp-secundaria" aria-label="Ir a secundaria" style="--delay: .9s;">
                 <div class="wp-orb">
                     <img src="assets/robots/ludio.png" alt="" class="wp-robot-img">
                 </div>
                 <span class="wp-label">LUDIO</span>
-            </div>
+                <span class="wp-stage">EDUCACIÓN SECUNDARIA</span>
+            </a>
+            <a href="#recursos" class="world-preview wp-recursos" aria-label="Ir a recursos para profesores" style="--delay: 1.1s;">
+                <span class="wp-orb wp-teacher-icon" aria-hidden="true">📚</span>
+                <span class="wp-label">PROFESORES</span>
+                <span class="wp-stage">RECURSOS PARA EL AULA</span>
+            </a>
         </div>
 
         <div class="scroll-hint" aria-hidden="true">
@@ -357,7 +366,7 @@
             <div class="card-hud">
                 <span class="hud-dot"></span>
                 <span class="hud-line"></span>
-                <span class="hud-level">NIVEL 01</span>
+                <span class="hud-level">INICIAL · 3–5 AÑOS</span>
             </div>
 
             <div class="card-level">
@@ -377,8 +386,8 @@
             </h3>
 
             <p class="card-desc">
-                Descubre, juega y aprende mientras ayudas a BeeBot a superar
-                diferentes desafíos.
+                Explora un jardín lleno de sorpresas: reconoce colores, descubre letras,
+                cuenta objetos y aprende a orientarte con pequeñas aventuras.
             </p>
 
             <ul class="tag-list">
@@ -526,7 +535,7 @@
             <div class="card-hud">
                 <span class="hud-dot"></span>
                 <span class="hud-line"></span>
-                <span class="hud-level">NIVEL 02</span>
+                <span class="hud-level">PRIMARIA · 6–11 AÑOS</span>
             </div>
 
             <div class="card-level">
@@ -545,7 +554,8 @@
             </h3>
 
             <p class="card-desc">
-                Supera misiones, resuelve problemas y desarrolla tu pensamiento lógico.
+                Recorre una ciudad de desafíos: resuelve acertijos, practica matemáticas
+                y descubre nuevas formas de aprender mientras completas misiones.
             </p>
 
             <ul class="tag-list">
@@ -679,7 +689,7 @@
             <div class="robot-portal portal-cyber" aria-hidden="true"></div>
             <div class="robot-platform platform-cyber" aria-hidden="true"></div>
             <div class="robot-display has-image" data-robot="ludio">
-                <img src="assets/robots/ludio.png" alt="Ludio — Robot cyber de desafíos" class="robot-img">
+                <img src="assets/robots/ludio.png" alt="Ludio — Robot de desafíos para secundaria" class="robot-img">
             </div>
         </div>
 
@@ -687,7 +697,7 @@
             <div class="card-hud">
                 <span class="hud-dot"></span>
                 <span class="hud-line"></span>
-                <span class="hud-level">NIVEL 03</span>
+                <span class="hud-level">SECUNDARIA · 12–16 AÑOS</span>
             </div>
 
             <div class="card-level">
@@ -702,12 +712,13 @@
             </div>
 
             <h3 class="card-title">
-                <span class="card-title-main">DESAFÍOS CON</span>
+                <span class="card-title-main">LABORATORIO DE</span>
                 <span class="card-title-accent">LUDIO</span>
             </h3>
 
             <p class="card-desc">
-                Desarrolla algoritmos, programación y lógica mediante desafíos interactivos.
+                Entra en un laboratorio futurista y pon a prueba tus ideas con retos
+                de lógica, ciencias, robótica y programación.
             </p>
 
             <ul class="tag-list">
@@ -842,6 +853,30 @@
                    data-sound="enter">
                     <span class="btn-glow"></span>
                     <span class="btn-label">Abrir tabla</span>
+                    <span class="btn-arrow">›</span>
+                </a>
+            </article>
+
+            <!-- TARJETA: ROBOTS DEL AULA -->
+            <article class="resource-card resource-card-robots reveal-child" data-reveal="4">
+                <div class="resource-icon-wrap">
+                    <div class="resource-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="4" y="7" width="16" height="13" rx="3"/>
+                            <path d="M12 3v4M9 3h6M4 12H2M22 12h-2"/>
+                            <circle cx="9" cy="12" r="1" fill="currentColor"/>
+                            <circle cx="15" cy="12" r="1" fill="currentColor"/>
+                            <path d="M9 16h6"/>
+                        </svg>
+                    </div>
+                </div>
+                <h3 class="resource-title">Robots del aula</h3>
+                <p class="resource-desc">Accede a las herramientas y actividades de los robots para acompañar tus clases.</p>
+                <a href="Recursos_profesores/Robots_Aula/index.html"
+                   target="_blank" rel="noopener noreferrer"
+                   class="btn btn-resource btn-resource-robots" data-sound="enter">
+                    <span class="btn-glow"></span>
+                    <span class="btn-label">Abrir robots del aula</span>
                     <span class="btn-arrow">›</span>
                 </a>
             </article>

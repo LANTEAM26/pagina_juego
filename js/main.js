@@ -666,3 +666,34 @@ console.log(
     'background: linear-gradient(90deg, #7ed957, #ff8c42, #00e5ff, #b14aed); color: #fff; padding: 6px 12px; border-radius: 6px; font-weight: 900;',
     'color: #00e5ff; font-weight: 700; padding: 4px;'
 );
+/* Música ambiental principal: los navegadores requieren una interacción para reproducirla. */
+(function initMainMusic(){
+ const music=document.getElementById('mainMusic');
+ const toggle=document.getElementById('soundToggle');
+ if(!music)return;
+ music.volume=0.30;
+ let userStarted=false;
+ const enabled=()=>Sound.isEnabled();
+ async function start(){
+  if(!enabled()||document.hidden)return;
+  try{
+   await music.play();
+   userStarted=true;
+  }catch(e){
+   // Chrome/Brave y otros navegadores pueden bloquear audio con sonido
+   // hasta la primera interacción real del usuario.
+  }
+ }
+ // Intentar reproducir desde el primer instante. Si el navegador lo bloquea,
+ // el primer clic/toque/tecla lo inicia automáticamente.
+ start();
+ window.addEventListener('load', start, {once:true});
+ document.addEventListener('pointerdown',function firstGesture(event){
+  if(event.target.closest('#soundToggle'))return;
+  if(!userStarted)start();
+ },{passive:true});
+ document.addEventListener('keydown',function firstKey(event){if(!userStarted&&event.key!=='Escape')start()});
+ if(toggle)toggle.addEventListener('click',()=>{if(enabled())start();else music.pause()});
+ document.addEventListener('visibilitychange',()=>{if(document.hidden)music.pause();else if(userStarted&&enabled())start()});
+ window.addEventListener('pagehide',()=>music.pause());
+})();
