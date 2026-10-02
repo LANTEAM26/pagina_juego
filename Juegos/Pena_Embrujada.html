@@ -399,6 +399,21 @@ footer { color: #c6a493; }
 .tile { overflow: hidden; padding: 8px; }
 @media (max-width: 550px) { .asset-grid, .images-assets { grid-template-columns: 1fr; } .personal-panel summary .mini { display: block; margin: 6px 0 0; } }
 
+
+/* SUMAS CRIOLLAS */
+.math-lane { height: 370px; background: linear-gradient(#211108,#100b08); }
+.math-floor { position:absolute;bottom:0;left:0;right:0;height:5px;background:#ff8a32;box-shadow:0 0 20px #ff6a3266; }
+.math-problem { background:#422013;border:2px solid #ff8a32;border-radius:12px;padding:15px 4px;text-align:center;font-size:clamp(17px,2.5vw,27px);font-weight:900;margin-top:12px;color:#fff5e9; }
+.number-drop { position:absolute;left:calc(50% - 28px);width:56px;height:48px;background:linear-gradient(135deg,#ffae55,#ff742e);border:2px solid #ffd09b;border-radius:13px;color:#231107;font-size:24px;font-weight:900;box-shadow:0 4px 0 #9b341c;touch-action:manipulation; }
+.number-drop:hover { filter:brightness(1.15); }
+.number-drop:disabled { opacity:1; }
+.number-drop.answer-correct { background:#ffe4a1;border-color:#fff3d0;box-shadow:0 0 22px #ffbe6c88; }
+.number-drop.answer-muted { opacity:.32; }
+.math-problem.math-correct { background:#70441c; }
+.math-problem.math-wrong { background:#772616; }
+.sample-preview { margin-left:6px; }
+@media(max-width:550px){.math-lane{height:340px}.number-drop{width:50px;left:calc(50% - 25px);height:46px;font-size:22px}.math-problem{font-size:18px;padding:13px 2px}.math-column{min-width:0}}
+
 </style>
 </head>
 <body>
@@ -452,9 +467,9 @@ footer { color: #c6a493; }
   <p class="mini">Cada imagen aparece en dos cartas. Puedes reemplazar una pareja o las seis. PNG, JPG, WebP o GIF.</p>
   <div class="asset-grid images-assets" id="media-images"></div>
   <h3>Ritmo de Medianoche · Tus 4 sonidos</h3>
-  <p class="mini">Un MP3 por botón. Se recomiendan clips de 1 a 2 segundos (máximo 15). El juego deja que termine cada sonido antes del siguiente.</p>
+  <p class="mini">Un MP3 por botón. Cada pulsación reproduce solo los primeros 3 segundos como máximo, aunque tu archivo sea más largo.</p>
   <div class="asset-grid" id="media-samples"></div>
-  <p class="mini">La canción de Compás Criollo acompaña el juego; las notas conservan su patrón original.</p>
+  <p class="mini">Tu canción acompaña Sumas Criollas mientras resuelves los problemas.</p>
   <button class="primary" id="export-personal-page" type="button">↓ Descargar mi página personalizada</button>
   <p class="mini">Incluye tus archivos dentro del HTML para abrirlo o compartirlo con tu música e imágenes.</p>
   <p id="media-status" class="media-status" role="status" aria-live="polite">Cargando tus recursos…</p>
@@ -484,12 +499,12 @@ footer { color: #c6a493; }
 </div>
 </button>
 <button class="card" data-game="rhythm">
-<span class="icon">🥁</span>
-<h3>Compás Criollo</h3>
-<p>Toca cajón, guitarra y palmas al llegar las notas a la línea.</p>
+<span class="icon">➕</span>
+<h3>Sumas Criollas</h3>
+<p>Resuelve las sumas y toca la respuesta correcta mientras cae. ¡Una correcta por columna!</p>
 <div class="card-foot">
 <span>Jugar</span>
-<span class="tag">Ritmo</span>
+<span class="tag">Sumas</span>
 </div>
 </button>
 <button class="card" data-game="memory">
@@ -522,7 +537,7 @@ footer { color: #c6a493; }
 <div class="medal" id="medal-catch">
 <b>🍬</b>Cazadulces</div>
 <div class="medal" id="medal-rhythm">
-<b>🥁</b>Alma de la peña</div>
+<b>➕</b>Maestro de sumas</div>
 <div class="medal" id="medal-memory">
 <b>🧠</b>Memoria mágica</div>
 <div class="medal" id="medal-adventure">
@@ -647,9 +662,9 @@ let audio=null,sound=false,musicBeat=-1;
 // Las rutas vacías mantienen los recursos originales. También puedes usar el panel.
 const MIS_RECURSOS = {
   fondo: '',
-  compas: 'audios/Le_Dije_a_Papá.mp3',
-  imagenes: ['img/cajon.png', 'img/guitarra.png', 'img/palmas.png', 'img/calabaza.png', 'img/fantasma.png', 'img/caramelos.png'],
-  sonidos: ['audios/cajon.mp3', 'audios/guitarra.mp3', '', ''] // A: cajón · S: guitarra · D: palmas · F: melodía
+  compas: '../assets/audios_P.Enbrujada/Le_Dije_a_Papá.mp3',
+  imagenes: ['../assets/img_P.Enbrujada/cajon.png', '../assets/img_P.Enbrujada/guitarra.png', '../assets/img_P.Enbrujada/palmas.png', '../assets/img_P.Enbrujada/calabaza.png', '../assets/img_P.Enbrujada/fantasma.png', '../assets/img_P.Enbrujada/caramelos.png'],
+  sonidos: ['../assets/audios_P.Enbrujada/cajon.mp3', '../assets/audios_P.Enbrujada/guitarra.mp3', '../assets/audios_P.Enbrujada/palmas.mp3', '../assets/audios_P.Enbrujada/Le_Dije_a_Papá.mp3'] // A: cajón · S: guitarra · D: palmas · F: melodía
 };
 const personalMedia = {
   background: new Audio(), compas: new Audio(),
@@ -666,7 +681,7 @@ function updateSoundButton() {
   $('sound').setAttribute('aria-label', sound ? 'Desactivar sonido' : 'Activar sonido');
 }
 function stopSamples() {
-  for (const source of personalMedia.activeSamples) { try { source.stop(); } catch {} }
+  for (const source of personalMedia.activeSamples) { try { if (source.pause) { clearTimeout(source._cutoffTimer); source.pause(); source.currentTime=0; } else source.stop(); } catch {} }
   personalMedia.activeSamples.clear();
 }
 function safePlay(track) {
@@ -698,20 +713,48 @@ function syncPersonalMusic() {
   } else { compas.pause(); safePlay(background); }
 }
 function playPersonalSample(i) {
-  const buffer = personalMedia.samples[i];
-  if (!buffer || !sound || !audio) return false;
-  // Un sonido por vez: una pulsación nueva reemplaza la anterior.
+  const sample = personalMedia.samples[i];
+  if (!sample || !sound || personalMedia.effects<=0) return false;
   stopSamples();
-  const source = audio.createBufferSource(), gain = audio.createGain();
-  source.buffer = buffer; gain.gain.value = personalMedia.effects;
-  source.connect(gain); gain.connect(audio.destination);
+  if (sample.element) {
+    const track=sample.element; track.volume=personalMedia.effects; track.currentTime=0;
+    personalMedia.activeSamples.add(track);
+    track.onended=()=>{clearTimeout(track._cutoffTimer);personalMedia.activeSamples.delete(track);};
+    track._sampleEndsAt = running ? elapsed + Math.min(3,sample.duration) : null;
+    track._cutoffTimer=setTimeout(()=>{track.pause();personalMedia.activeSamples.delete(track);},Math.min(3,sample.duration)*1000);
+    track.play().catch(()=>{personalMedia.activeSamples.delete(track);mediaMessage('No se pudo reproducir '+MIS_RECURSOS.sonidos[i]+'. Usa «Elegir archivo» para cargar el MP3.');});
+    return true;
+  }
+  if (!audio) return false;
+  const source=audio.createBufferSource(),gain=audio.createGain();
+  source.buffer=sample; gain.gain.value=personalMedia.effects;
+  source.connect(gain);gain.connect(audio.destination);
   personalMedia.activeSamples.add(source);
-  source.onended = () => personalMedia.activeSamples.delete(source);
-  source.start(); return true;
+  source.onended=()=>personalMedia.activeSamples.delete(source);
+  source.start();source.stop(audio.currentTime+Math.min(3,sample.duration));return true;
+}
+function loadNativeSample(src) {
+  return new Promise((resolve,reject)=>{
+    const element=new Audio();element.preload='auto';
+    const timer=setTimeout(()=>{element.pause();reject(Error('No se pudo cargar '+src));},8000);
+    element.onloadedmetadata=()=>{clearTimeout(timer);resolve({element,duration:Math.min(3,Number(element.duration)||1)});};
+    element.onerror=()=>{clearTimeout(timer);reject(Error('No se encuentra o no se puede reproducir '+src));};
+    element.src=src;element.load();
+  });
+}
+async function loadConfiguredSample(src) {
+  // Audio nativo evita el bloqueo de fetch al abrir el HTML con doble clic.
+  if (location.protocol==='file:' && !src.startsWith('data:')) return loadNativeSample(src);
+  try {
+    initAudio();
+    const response=await fetch(src);
+    if(!response.ok)throw Error('Archivo no encontrado');
+    return await audio.decodeAudioData(await response.arrayBuffer());
+  } catch { return loadNativeSample(src); }
 }
 function sequenceInterval() {
   const base = difficulty === 'easy' ? .85 : difficulty === 'hard' ? .52 : .68;
-  return Math.max(base, ...personalMedia.samples.map(buffer => buffer ? buffer.duration + .18 : 0));
+  return Math.max(base, ...personalMedia.samples.map(buffer => buffer ? Math.min(3,buffer.duration) + .18 : 0));
 }
 function sequenceTimeLimit() { return Math.max(120, Math.ceil(personalMedia.sequenceInterval * 70 + 30)); }
 function renderMemoryFace(button, symbol) {
@@ -766,7 +809,6 @@ async function applyMedia(key, blob, name, persist = true) {
       if (!audio) throw Error('Este navegador no pudo iniciar el audio.');
       const buffer = await audio.decodeAudioData(await blob.arrayBuffer());
       if (key.startsWith('sample-')) {
-        if (buffer.duration > 15) throw Error('Para Medianoche elige un sonido de hasta 15 segundos; se recomiendan clips de 1 a 2 segundos.');
         personalMedia.samples[Number(key.split('-')[1])] = buffer;
       }
     }
@@ -790,9 +832,7 @@ async function restoreDefaultSlot(key) {
   else if (key.startsWith('sample-')) {
     const i = Number(key.split('-')[1]); personalMedia.samples[i] = null;
     if (MIS_RECURSOS.sonidos[i]) {
-      initAudio(); const response = await fetch(MIS_RECURSOS.sonidos[i]);
-      if (!response.ok) throw Error('No se pudo cargar el sonido configurado.');
-      personalMedia.samples[i] = await audio.decodeAudioData(await response.arrayBuffer());
+      personalMedia.samples[i] = await loadConfiguredSample(MIS_RECURSOS.sonidos[i]);
     }
   } else {
     const track = personalMedia[key]; track.pause(); track.removeAttribute('src');
@@ -802,12 +842,17 @@ async function restoreDefaultSlot(key) {
   }
 }
 function mediaSlot(key, label, image = false) {
-  return '<div class="asset-slot" data-media-slot="' + key + '"><label><b>' + label + '</b><input type="file" data-upload="' + key + '" accept="' + (image ? 'image/png,image/jpeg,image/webp,image/gif' : 'audio/mpeg,audio/wav,audio/ogg,audio/mp4,.mp3') + '"></label>' + (image ? '<img class="asset-preview" alt="Vista previa" hidden>' : '') + '<span class="asset-name">Recurso original</span><button class="soft" type="button" data-remove="' + key + '" disabled>Quitar mi archivo</button></div>';
+  return '<div class="asset-slot" data-media-slot="' + key + '"><label><b>' + label + '</b><input type="file" data-upload="' + key + '" accept="' + (image ? 'image/png,image/jpeg,image/webp,image/gif' : 'audio/mpeg,audio/wav,audio/ogg,audio/mp4,.mp3') + '"></label>' + (image ? '<img class="asset-preview" alt="Vista previa" hidden>' : '') + '<span class="asset-name">Recurso original</span><button class="soft" type="button" data-remove="' + key + '" disabled>Quitar mi archivo</button>' + (key.startsWith('sample-') ? '<button class="soft sample-preview" type="button" data-test-sample="'+key.split('-')[1]+'">▶ Probar</button>' : '') + '</div>';
 }
 async function initializePersonalMedia() {
-  $('media-background').innerHTML = mediaSlot('background', 'Música de la página') + mediaSlot('compas', 'Música de Compás Criollo');
+  $('media-background').innerHTML = mediaSlot('background', 'Música de la página') + mediaSlot('compas', 'Música de Sumas Criollas');
   $('media-images').innerHTML = Array.from({ length: 6 }, (_, i) => mediaSlot('image-' + i, 'Pareja ' + (i + 1), true)).join('');
   $('media-samples').innerHTML = ['A · Cajón', 'S · Guitarra', 'D · Palmas', 'F · Melodía'].map((label, i) => mediaSlot('sample-' + i, label)).join('');
+  document.querySelectorAll('[data-test-sample]').forEach(button=>button.onclick=async()=>{
+    await initAudio();sound=true;updateSoundButton();personalMedia.background.pause();personalMedia.compas.pause();
+    const i=Number(button.dataset.testSample);
+    if(!playPersonalSample(i)){if(i===3)tone(523,.22,'triangle',.07);else drum(i);mediaMessage(MIS_RECURSOS.sonidos[i]?'Tu MP3 no se cargó; selecciona el archivo en este espacio.':'Este botón usa el sonido original.');}
+  });
   document.querySelectorAll('[data-upload]').forEach(input => {
     input.disabled = true;
     input.addEventListener('change', async () => {
@@ -834,7 +879,7 @@ async function initializePersonalMedia() {
     if (MIS_RECURSOS.fondo) personalMedia.background.src = MIS_RECURSOS.fondo;
     if (MIS_RECURSOS.compas) personalMedia.compas.src = MIS_RECURSOS.compas;
     for (let i = 0; i < 4; i++) if (MIS_RECURSOS.sonidos[i]) {
-      try { await restoreDefaultSlot('sample-' + i); } catch { mediaMessage('No se pudo cargar un sonido configurado; se usará el original.'); }
+      try { await restoreDefaultSlot('sample-' + i); refreshMediaSlot('sample-'+i, MIS_RECURSOS.sonidos[i]); } catch { mediaMessage('No se pudo cargar '+MIS_RECURSOS.sonidos[i]+'. Cárgalo con «Elegir archivo».'); }
     }
     const records = await storedMedia('read');
     for (const record of records || []) {
@@ -855,13 +900,13 @@ $('effects-volume').oninput = event => { personalMedia.effects = Number(event.ta
 $('preview-background').onclick = () => { initAudio(); sound = true; updateSoundButton(); syncPersonalMusic(); };
 $('stop-preview').onclick = () => { sound = false; updateSoundButton(); syncPersonalMusic(); };
 
-function initAudio(){
+async function initAudio(){
   if(!audio){
     try{
       audio=new(window.AudioContext||window.webkitAudioContext)()
     }catch{
     }
-  }if(audio?.state==='suspended')audio.resume()
+  }if(audio?.state==='suspended'){try{await audio.resume();}catch{mediaMessage('Pulsa Sonido para activar el audio.');}}
 }function tone(freq=440,len=.12,type='sine',gain=.08){
   if(!sound||!audio||personalMedia.effects<=0)return;
   let o=audio.createOscillator(),g=audio.createGain();
@@ -873,7 +918,24 @@ function initAudio(){
   g.connect(audio.destination);
   o.start();
   o.stop(audio.currentTime+len)
-}function drum(i){
+}// Efecto de error: dos tonos descendentes, distintos del sonido de acierto.
+function playErrorSound() {
+  if (!sound || !audio || personalMedia.effects<=0) return;
+  for (const [delay, frequency] of [[0,310],[.22,185]]) {
+    const oscillator=audio.createOscillator(),gain=audio.createGain();
+    const start=audio.currentTime+delay;
+    oscillator.type='sawtooth';
+    oscillator.frequency.setValueAtTime(frequency,start);
+    oscillator.frequency.exponentialRampToValueAtTime(65,start+.2);
+    gain.gain.setValueAtTime(.001,start);
+    gain.gain.linearRampToValueAtTime(.065*personalMedia.effects,start+.015);
+    gain.gain.exponentialRampToValueAtTime(.001,start+.21);
+    oscillator.connect(gain);gain.connect(audio.destination);
+    oscillator.start(start);oscillator.stop(start+.22);
+  }
+}
+
+function drum(i){
   tone([100,330,950][i],.1,['triangle','triangle','square'][i],.06)
 }function music(){
   if (mode === 'sequence' || personalMedia.background.getAttribute('src') || (mode === 'rhythm' && personalMedia.compas.getAttribute('src'))) return;
@@ -890,7 +952,7 @@ function initAudio(){
   $('sound').setAttribute('aria-pressed',String(sound));
   $('sound').setAttribute('aria-label',sound?'Desactivar sonido':'Activar sonido');
   syncPersonalMusic();
-  if(sound)tone(523,.15)
+  if(sound){initAudio().then(()=>tone(523,.15));}
 };
 let previousFocus=null;
 function modal(html){
@@ -914,16 +976,16 @@ function modal(html){
     syncPersonalMusic();
     keys={
     }
-  }modal('<div class="big">👻</div><h2 id="modal-title">Bienvenido a la peña</h2><p>Una fiesta de Halloween con cajón, guitarra y palmas.</p><ul><li><b>Aventura:</b> completa los cinco retos y suma sus puntos.</li><li><b>Caza Fantasmas:</b> captura 18 fantasmas. Evita las calaveras. Tienes 3 vidas.</li><li><b>Ritmo de Medianoche:</b> repite los sonidos en orden con A, S, D y F. Supera cinco rondas.</li><li><b>Dulces:</b> flechas ← →, botones o arrastra en el escenario. 🍬 y 🎸 +20 · ♪ +35 · 🎃 −1 vida · 🦇 −1 vida.</li><li><b>Ritmo:</b> pulsa A, S, D o los instrumentos cuando una nota toque la línea naranja.</li><li><b>Parejas:</b> toca dos cartas. Encuentra seis parejas antes de que termine el tiempo.</li><li>Gana una medalla al alcanzar la meta de cada reto. Puedes volver a intentar las veces que quieras.</li></ul><button class="primary" id="close-help">¡Entendido!</button>');
+  }modal('<div class="big">👻</div><h2 id="modal-title">Bienvenido a la peña</h2><p>Una fiesta de Halloween con cajón, guitarra y palmas.</p><ul><li><b>Aventura:</b> completa los cinco retos y suma sus puntos.</li><li><b>Caza Fantasmas:</b> captura 18 fantasmas. Evita las calaveras. Tienes 3 vidas.</li><li><b>Ritmo de Medianoche:</b> repite los sonidos en orden con A, S, D y F. Supera cinco rondas.</li><li><b>Dulces:</b> flechas ← →, botones o arrastra en el escenario. 🍬 y 🎸 +20 · ♪ +35 · 🎃 −1 vida · 🦇 −1 vida.</li><li><b>Sumas Criollas:</b> lee las sumas de abajo y toca el número correcto de su columna mientras cae. Hay una respuesta correcta entre tres. Completa 8 sumas con 5 vidas.</li><li><b>Parejas:</b> toca dos cartas. Encuentra seis parejas antes de que termine el tiempo.</li><li>Gana una medalla al alcanzar la meta de cada reto. Puedes volver a intentar las veces que quieras.</li></ul><button class="primary" id="close-help">¡Entendido!</button>');
   $('close-help').onclick=()=>{
     closeModal();
     if(running) { paused=false; syncPersonalMusic(); }
   }
 }$('help').onclick=help;
 const order=['ghost','catch','memory','rhythm','sequence'],titles={
-  ghost:'Caza Fantasmas',sequence:'Ritmo de Medianoche',catch:'Rescate Criollo',rhythm:'Compás Criollo',memory:'Memoria Embrujada'
+  ghost:'Caza Fantasmas',sequence:'Ritmo de Medianoche',catch:'Rescate Criollo',rhythm:'Sumas Criollas',memory:'Memoria Embrujada'
 },descs={
-  ghost:'Captura 18 fantasmas. Las calaveras son trampas. Tienes 3 vidas.',sequence:'Observa y escucha. Después repite la secuencia con A, S, D y F.',catch:'Atrapa 🍬 y ♪. Esquiva 🎃 y 🦇. Meta: 300 puntos.',rhythm:'Toca cuando las notas crucen la línea naranja. Meta: 500 puntos.',memory:'Encuentra las 6 parejas antes de que termine el tiempo.'
+  ghost:'Captura 18 fantasmas. Las calaveras son trampas. Tienes 3 vidas.',sequence:'Observa y escucha. Después repite la secuencia con A, S, D y F.',catch:'Atrapa 🍬 y ♪. Esquiva 🎃 y 🦇. Meta: 300 puntos.',rhythm:'Resuelve las 3 sumas de abajo y toca sus respuestas mientras caen. Cada suma tiene 3 opciones y solo una correcta. Meta: 8 aciertos. Tienes 5 vidas.',memory:'Encuentra las 6 parejas antes de que termine el tiempo.'
 };
 function begin(k,isCampaign=false){
   campaign=isCampaign;
@@ -963,13 +1025,15 @@ function prepare(k){
   if(k==='memory')setupMemory();
   updateStats();
   modal('<div class="big">'+({
-    ghost:'👻',sequence:'🎶',catch:'🍬',rhythm:'🥁',memory:'🎃'
+    ghost:'👻',sequence:'🎶',catch:'🍬',rhythm:'➕',memory:'🎃'
   }[k])+'</div><h2 id="modal-title">'+titles[k]+'</h2><p>'+descs[k]+'</p><p>'+({
-    ghost:'Haz clic o toca los fantasmas. También puedes seleccionarlos con Tab y capturarlos con Enter. Las trampas y los fantasmas que escapan rompen tu racha.',sequence:'Cajón: A · Guitarra: S · Palmas: D · Melodía: F. Cada ronda añade un sonido. Puedes escuchar una vez más por ronda.',catch:'Mueve la canasta con las flechas o con el dedo. Tienes 5 vidas.',rhythm:'A: cajón · S: guitarra · D: palmas. También puedes tocar los botones.',memory:'Cada pareja suma 100 puntos. Al terminar, el tiempo restante suma puntos extra.'
+    ghost:'Haz clic o toca los fantasmas. También puedes seleccionarlos con Tab y capturarlos con Enter. Las trampas y los fantasmas que escapan rompen tu racha.',sequence:'Cajón: A · Guitarra: S · Palmas: D · Melodía: F. Cada ronda añade un sonido. Puedes escuchar una vez más por ronda.',catch:'Mueve la canasta con las flechas o con el dedo. Tienes 5 vidas.',rhythm:'Toca o haz clic en el número que responde a la suma de su columna. Puedes elegirlo mientras cae. Los errores y respuestas que escapan cuestan una vida.',memory:'Cada pareja suma 100 puntos. Al terminar, el tiempo restante suma puntos extra.'
   }[k])+'</p><button class="primary" id="start">¡Vamos a jugar!</button>');
-  $('start').onclick=()=>{
+  $('start').onclick=async()=>{
+    $('start').disabled=true;
+    await initAudio();
+    if(mode==='sequence'||mode==='rhythm'){sound=true;updateSoundButton();}
     closeModal();
-    initAudio();
     running=true;
     if (mode === 'sequence') personalMedia.sequenceInterval = sequenceInterval();
     syncPersonalMusic();
@@ -978,8 +1042,8 @@ function prepare(k){
   }
 }function updateStats(){
   $('score').textContent=score;
-  $('time').textContent=Math.max(0,Math.ceil((mode==='memory'?cfg[difficulty].memory:mode==='sequence'?sequenceTimeLimit():cfg[difficulty].duration)-elapsed))+' s';
-  $('extra').innerHTML=mode==='catch'?'Vidas <b>'+lives+' ♥</b>':mode==='memory'?'Parejas <b>'+pairs+'/6</b>':mode==='ghost'?'Vidas <b>'+ghostLives+' ♥</b>':mode==='sequence'?'Vidas <b>'+sequenceLives+' ♥</b>':'Racha <b>'+combo+'</b>'
+  $('time').textContent=Math.max(0,Math.ceil((mode==='memory'?cfg[difficulty].memory:mode==='sequence'?sequenceTimeLimit():mode==='rhythm'?mathTimeLimit():cfg[difficulty].duration)-elapsed))+' s';
+  $('extra').innerHTML=mode==='catch'?'Vidas <b>'+lives+' ♥</b>':mode==='memory'?'Parejas <b>'+pairs+'/6</b>':mode==='ghost'?'Vidas <b>'+ghostLives+' ♥</b>':mode==='sequence'?'Vidas <b>'+sequenceLives+' ♥</b>':'Vidas <b>'+mathLives+' ♥</b> · Sumas <b>'+hits+'/8</b>'
 }function finish(reason=''){
   running=false;
   stopSamples();
@@ -987,8 +1051,8 @@ function prepare(k){
   cancelAnimationFrame(raf);
   keys={
   };
-  const won=mode==='ghost'?ghostHits>=18:mode==='sequence'?sequenceCompleted===5:mode==='catch'?score>=300:mode==='rhythm'?score>=500:pairs===6;
-  const stars=!won?0:mode==='ghost'?(ghostMistakes===0?3:ghostMistakes<=2?2:1):mode==='sequence'?(sequenceMistakes===0?3:sequenceMistakes===1?2:1):mode==='memory'?(moves<=8?3:moves<=12?2:1):mode==='rhythm'?(hits/(hits+misses||1)>.85?3:2):(lives===5?3:lives>=3?2:1);
+  const won=mode==='ghost'?ghostHits>=18:mode==='sequence'?sequenceCompleted===5:mode==='catch'?score>=300:mode==='rhythm'?hits>=8:pairs===6;
+  const stars=!won?0:mode==='ghost'?(ghostMistakes===0?3:ghostMistakes<=2?2:1):mode==='sequence'?(sequenceMistakes===0?3:sequenceMistakes===1?2:1):mode==='memory'?(moves<=8?3:moves<=12?2:1):mode==='rhythm'?(misses===0?3:misses<=2?2:1):(lives===5?3:lives>=3?2:1);
   total+=score;
   if(campaign)campaignWins[chapter]=won;
   if(won&&!saved.medals.includes(mode)){
@@ -1101,9 +1165,6 @@ document.addEventListener('keydown',e=>{
   if(mode==='sequence'&&!e.repeat){
     const i=['a','s','d','f'].indexOf(e.key.toLowerCase());
     if(i>=0)sequenceHit(i)
-  }if(mode==='rhythm'&&!e.repeat){
-    let i=['a','s','d'].indexOf(e.key.toLowerCase());
-    if(i>=0)hit(i)
   }
 });
 document.addEventListener('keyup',e=>{
@@ -1201,67 +1262,81 @@ canvas.addEventListener('pointermove',e=>{
   });
   ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>$(id).addEventListener(ev,()=>keys[key]=false))
 });
+// SUMAS CRIOLLAS: tres problemas, tres respuestas por problema y una correcta.
 let notes=[],nextNote=0,combo=0,maxCombo=0,hits=0,misses=0,noteIndex=0;
-function setupRhythm(){
-  notes=[];
-  nextNote=1.4;
-  combo=0;
-  maxCombo=0;
-  hits=0;
-  misses=0;
-  noteIndex=0;
-  $('lanes').innerHTML=['Cajón','Guitarra','Palmas'].map((x,i)=>'<div><div class="lane" id="lane-'+i+'"><div class="hit-line"></div></div><button class="pad" data-pad="'+i+'">'+['🥁','🎸','👏'][i]+' '+['A','S','D'][i]+'</button><div class="lane-name">'+x+'</div></div>').join('');
-  document.querySelectorAll('[data-pad]').forEach(b=>b.addEventListener('pointerdown',e=>{
-    e.preventDefault();
-    hit(Number(b.dataset.pad))
-  }))
-}function rhythmTick(){
-  const travel=cfg[difficulty].travel;
-  while(elapsed>=nextNote&&nextNote+travel<cfg[difficulty].duration-.2){
-    const lane=[0,1,2,0,2,1,0,1,2,1,0,2][noteIndex++%12];
-    const el=document.createElement('div');
-    el.className='note';
-    el.textContent=['A','S','D'][lane];
-    $('lane-'+lane).appendChild(el);
-    notes.push({
-      lane,target:nextNote+travel,el
-    });
-    nextNote+=difficulty==='hard'?.48:.7
-  }notes.forEach(n=>{
-    const height=$('lane-'+n.lane).clientHeight;
-    n.el.style.top=((-46)+(elapsed-(n.target-travel))/travel*(height-42+46)-23)+'px';
-    if(elapsed>n.target+cfg[difficulty].window){
-      n.dead=true;
-      n.el.remove();
-      combo=0;
-      misses++;
-      say('Se escapó una nota. ¡Sigue el ritmo!')
-    }
-  });
-  notes=notes.filter(n=>!n.dead);
-  $('song-progress').style.width=(elapsed/cfg[difficulty].duration*100)+'%'
-}function hit(i){
-  if(!running||paused||mode!=='rhythm')return;
-  drum(i);
-  const b=document.querySelector('[data-pad="'+i+'"]');
-  b.classList.add('active');
-  setTimeout(()=>b.classList.remove('active'),120);
-  const n=notes.filter(n=>n.lane===i).sort((a,b)=>Math.abs(a.target-elapsed)-Math.abs(b.target-elapsed))[0];
-  if(n&&Math.abs(n.target-elapsed)<=cfg[difficulty].window){
-    let perfect=Math.abs(n.target-elapsed)<cfg[difficulty].window*.45;
-    n.el.remove();
-    notes=notes.filter(x=>x!==n);
-    combo++;
-    maxCombo=Math.max(maxCombo,combo);
-    hits++;
-    let points=(perfect?50:30)+(combo>=5?10:0);
-    score+=points;
-    say((perfect?'¡Perfecto!':'¡Buen ritmo!')+' +'+points+(combo>=5?' · Racha x'+combo:''))
-  }else{
-    combo=0;
-    say('Espera a que la nota llegue a la línea.')
-  }updateStats()
+let mathRounds=[],mathLives=5,mathRoundId=0;
+function mathTimeLimit() { return difficulty === 'easy' ? 90 : difficulty === 'hard' ? 65 : 80; }
+function makeMathProblem() {
+  const limit = (difficulty === 'easy' ? 5 : difficulty === 'hard' ? 20 : 10) + Math.floor(hits / 3) * 2;
+  const a = 1 + Math.floor(Math.random() * limit), b = 1 + Math.floor(Math.random() * limit);
+  const correct = a + b, options = [correct];
+  while (options.length < 3) {
+    const value = Math.max(0, correct + (Math.random() < .5 ? -1 : 1) * (1 + Math.floor(Math.random() * 7)));
+    if (!options.includes(value)) options.push(value);
+  }
+  return { a, b, correct, options: shuffle(options) };
 }
+function setupRhythm() {
+  notes=[]; combo=0; maxCombo=0; hits=0; misses=0; mathLives=5; mathRoundId=0; mathRounds=[];
+  $('lanes').innerHTML = [0,1,2].map(i => '<div class="math-column"><div class="lane math-lane" id="lane-'+i+'" aria-label="Respuestas de la suma '+(i+1)+'"><div class="math-floor"></div></div><div class="math-problem" id="problem-'+i+'"></div><div class="lane-name">Suma '+(i+1)+'</div></div>').join('');
+  for (let i=0;i<3;i++) newMathRound(i, i * .9);
+  $('song-progress').style.width='0%';
+}
+function newMathRound(lane, delay=.65) {
+  const old = mathRounds[lane];
+  if (old) old.buttons.forEach(button => button.remove());
+  const problem=makeMathProblem();
+  const round={...problem,id:++mathRoundId,lane,born:elapsed+delay,done:false,buttons:[]};
+  mathRounds[lane]=round;
+  $('problem-'+lane).textContent=problem.a+' + '+problem.b+' = ?';
+  $('problem-'+lane).classList.remove('math-correct','math-wrong');
+  problem.options.forEach((value,index) => {
+    const button=document.createElement('button'); button.className='number-drop'; button.type='button';
+    button.textContent=String(value); button.setAttribute('aria-label','Responder '+value+' a '+problem.a+' más '+problem.b);
+    button.style.top=(-190+index*64)+'px';
+    button.onclick=()=>answerMath(lane,round.id,value);
+    $('lane-'+lane).appendChild(button); round.buttons.push(button);
+  });
+}
+function resolveMath(round, correct, timedOut=false) {
+  // Protege de doble clic y de errores repetidos durante la misma caída.
+  if(round.done)return;
+  round.done=true; round.nextAt=elapsed+.7;
+  round.buttons.forEach(button=>{button.disabled=true;button.classList.add(Number(button.textContent)===round.correct?'answer-correct':'answer-muted');});
+  if(correct){
+    hits++;combo++;maxCombo=Math.max(maxCombo,combo);score+=100;
+    $('problem-'+round.lane).classList.add('math-correct');
+    say('¡Correcto! '+round.a+' + '+round.b+' = '+round.correct+' · +100');tone(784,.14);
+  }else{
+    misses++;mathLives--;combo=0;
+    $('problem-'+round.lane).classList.add('math-wrong');
+    say((timedOut?'La respuesta se escapó. ':'Casi. ')+round.a+' + '+round.b+' = '+round.correct+' · −1 vida');playErrorSound();
+  }
+  updateStats();
+  if(hits>=8)finish('Resolviste 8 sumas. ¡Excelente!');
+  else if(mathLives<=0)finish('Resolviste '+hits+' sumas. Vuelve a intentarlo.');
+}
+function answerMath(lane,id,value) {
+  if(!running||paused||mode!=='rhythm')return;
+  const round=mathRounds[lane];
+  if(!round||round.id!==id||round.done||elapsed<round.born)return;
+  resolveMath(round,value===round.correct);
+}
+function rhythmTick() {
+  for(const round of [...mathRounds]){
+    if(!running)return;
+    if(round.done){if(elapsed>=round.nextAt)newMathRound(round.lane);continue;}
+    const age=elapsed-round.born;
+    if(age<0)continue;
+    const speed=difficulty==='easy'?31:difficulty==='hard'?52:39;
+    const height=$('lane-'+round.lane).clientHeight;
+    round.buttons.forEach((button,i)=>{button.style.top=(-190+i*64+age*speed)+'px';});
+    const correctIndex=round.options.indexOf(round.correct);
+    if(-190+correctIndex*64+age*speed>=height)resolveMath(round,false,true);
+  }
+  $('song-progress').style.width=Math.min(100,hits/8*100)+'%';
+}
+
 let deck=[],first=null,second=null,lock=false,pairs=0,moves=0,revealUntil=0;
 const symbols=['🎸','🥁','👏','🎃','👻','🍬'];
 function shuffle(a){
@@ -1314,6 +1389,7 @@ function shuffle(a){
   }else{
     lock=true;
     revealUntil=elapsed+1;
+    playErrorSound();
     say('Mira bien y recuerda sus lugares.')
   }updateStats()
 }function memoryTick(){
@@ -1344,8 +1420,8 @@ function loop(now){
     if(!running)return;
     updateStats();
     if(feedbackUntil&&elapsed>feedbackUntil)$('feedback').textContent='';
-    if(elapsed>=(mode==='memory'?cfg[difficulty].memory:mode==='sequence'?sequenceTimeLimit():cfg[difficulty].duration)){
-      finish(mode==='rhythm'?'Notas acertadas: '+hits+'. Mejor racha: '+maxCombo+'.':'¡Tiempo cumplido!');
+    if(elapsed>=(mode==='memory'?cfg[difficulty].memory:mode==='sequence'?sequenceTimeLimit():mode==='rhythm'?mathTimeLimit():cfg[difficulty].duration)){
+      finish(mode==='rhythm'?'Sumas resueltas: '+hits+' de 8.':'¡Tiempo cumplido!');
       return
     }
   }raf=requestAnimationFrame(loop)
@@ -1464,12 +1540,13 @@ function seqEnable(on){
 function seqFlash(i){
   document.querySelectorAll('[data-seq]').forEach(b=>b.classList.remove('active'));
   document.querySelector('[data-seq="'+i+'"]').classList.add('active');
-  sequencePadUntil=elapsed+Math.max(.28, personalMedia.samples[i]?.duration || 0);
+  sequencePadUntil=elapsed+Math.max(.28, Math.min(3,personalMedia.samples[i]?.duration || 0));
   if (playPersonalSample(i)) return;
   if(i===3)tone(523,.22,'triangle',.07);
   else drum(i)
 }
 function sequenceTick(){
+  for (const sample of personalMedia.activeSamples) if(sample.pause && sample._sampleEndsAt!==null && elapsed>=sample._sampleEndsAt){sample.pause();personalMedia.activeSamples.delete(sample);}
   if(sequencePadUntil&&elapsed>sequencePadUntil){
     document.querySelectorAll('[data-seq]').forEach(b=>b.classList.remove('active'));
     sequencePadUntil=0
@@ -1504,6 +1581,7 @@ function sequenceHit(i){
   if(i!==sequence[sequenceInput]){
     sequenceLives--;
     sequenceMistakes++;
+    playErrorSound();
     sequencePhase='retry';
     sequencePhaseAt=elapsed+1.1;
     seqEnable(false);
