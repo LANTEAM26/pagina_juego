@@ -121,7 +121,29 @@ const raw=[
 ['Una hoja',[[160,250],[210,160],[300,105],[405,130],[455,220],[410,310],[300,350],[205,320],[160,250]]],
 ['Una semilla',[[300,90],[390,125],[445,205],[425,295],[355,355],[255,355],[180,300],[155,210],[205,130],[300,90]]],
 ['Una flor',[[300,210],[250,155],[265,90],[330,90],[350,155],[300,210],[375,175],[435,215],[410,275],[350,270],[300,210],[325,305],[300,370],[245,340],[255,270],[300,210]]],
-['Una mariposa',[[300,225],[235,155],[155,125],[105,180],[135,250],[210,270],[155,330],[220,360],[300,295],[300,225],[380,155],[445,125],[495,180],[465,250],[390,270],[445,330],[380,360],[300,295]]],
+['Una mariposa',[
+[300,225],
+[245,165],
+[180,115],
+[120,135],
+[95,195],
+[125,250],
+[190,275],
+[145,330],
+[205,365],
+[265,320],
+[300,275],
+[335,320],
+[395,365],
+[455,330],
+[410,275],
+[475,250],
+[505,195],
+[480,135],
+[420,115],
+[355,165],
+[300,225]
+]],
 ['Un árbol',[[300,70],[380,145],[355,145],[420,220],[385,220],[450,290],[335,290],[335,375],[265,375],[265,290],[150,290],[215,220],[180,220],[245,145],[220,145],[300,70]]],
 ['Un hongo',[[145,235],[165,165],[225,110],[300,90],[375,110],[435,165],[455,235],[340,235],[350,355],[250,355],[260,235],[145,235]]],
 
@@ -179,24 +201,20 @@ function makeLevel(entry,index){
 
   const chain=entry[1].map(getId);
 
-  // Se usan únicamente las conexiones dibujadas en la figura original.
-  // No se añaden puntos artificiales que deformen la silueta.
+  // Dibujamos todas las conexiones del trazo original.
   for(let i=0;i<chain.length-1;i++){
     const a=chain[i];
     const b=chain[i+1];
     if(a!==b) edges.push([a,b]);
   }
 
-  // Cerramos la silueta solo si el último punto no coincide con el primero
-  // y la forma fue creada como contorno.
-  if(chain.length>2 && chain[0]!==chain[chain.length-1]){
-    const first=entry[1][0];
-    const last=entry[1][entry[1].length-1];
-    const dist=Math.hypot(first[0]-last[0],first[1]-last[1]);
-
-    // Solo cerramos automáticamente figuras simples.
-    if(index<6 && dist<260){
-      edges.push([chain[chain.length-1],chain[0]]);
+  // Si la figura quedó abierta, la cerramos uniendo el último punto con el primero.
+  // Así evitamos figuras "sin cerrar" como en Océano/Fantasía.
+  if(chain.length > 2){
+    const first = chain[0];
+    const last = chain[chain.length-1];
+    if(first !== last){
+      edges.push([last, first]);
     }
   }
 
