@@ -117,17 +117,13 @@ const WORLDS=[
 const raw=[
 
 
-['Una hoja',[[130,240],[240,120],[430,100],[420,270],[300,340],[190,320]]],
 
-['Una semilla',[[230,320],[170,240],[190,150],[300,100],[410,150],[430,240],[370,320],[300,350]]],
-
-['Una flor',[[300,210],[250,150],[260,80],[330,80],[350,150],[300,210],[380,180],[440,210],[420,270],[350,270],[300,210],[320,300],[300,370],[240,340],[250,270]]],
-
-['Una mariposa',[[300,170],[220,100],[120,130],[150,230],[300,250],[200,310],[160,370],[260,350],[300,250],[340,350],[440,370],[400,310],[300,250],[450,230],[480,130],[380,100],[300,170],[300,250]]],
-
-['Un árbol',[[300,70],[410,170],[370,170],[450,270],[330,270],[330,370],[270,370],[270,270],[150,270],[230,170],[190,170]]],
-
-['Un hongo',[[140,240],[165,150],[240,90],[340,90],[435,160],[460,240],[335,240],[350,355],[250,355],[265,240]]],
+['Una hoja',[[160,250],[210,160],[300,105],[405,130],[455,220],[410,310],[300,350],[205,320],[160,250]]],
+['Una semilla',[[300,90],[390,125],[445,205],[425,295],[355,355],[255,355],[180,300],[155,210],[205,130],[300,90]]],
+['Una flor',[[300,210],[250,155],[265,90],[330,90],[350,155],[300,210],[375,175],[435,215],[410,275],[350,270],[300,210],[325,305],[300,370],[245,340],[255,270],[300,210]]],
+['Una mariposa',[[300,225],[235,155],[155,125],[105,180],[135,250],[210,270],[155,330],[220,360],[300,295],[300,225],[380,155],[445,125],[495,180],[465,250],[390,270],[445,330],[380,360],[300,295]]],
+['Un árbol',[[300,70],[380,145],[355,145],[420,220],[385,220],[450,290],[335,290],[335,375],[265,375],[265,290],[150,290],[215,220],[180,220],[245,145],[220,145],[300,70]]],
+['Un hongo',[[145,235],[165,165],[225,110],[300,90],[375,110],[435,165],[455,235],[340,235],[350,355],[250,355],[260,235],[145,235]]],
 
 ['Un pez',[[160,220],[260,130],[400,150],[455,225],[390,300],[260,315],[160,220],[90,140],[90,305]]],
 
@@ -168,33 +164,49 @@ const raw=[
 ];
 
 function makeLevel(entry,index){
-  const points=[], edges=[], seen=new Set();
-  const id=p=>{let i=points.findIndex(q=>q[0]===p[0]&&q[1]===p[1]);if(i<0){i=points.length;points.push(p)}return i};
-  const chain=entry[1].map(id);
-  for(let j=0;j<chain.length;j++){
-    const a=chain[j],b=chain[(j+1)%chain.length],k=[a,b].sort((x,y)=>x-y).join('-');
-    if(a!==b&&!seen.has(k)){seen.add(k);edges.push([a,b])}
+  const points=[];
+  const edges=[];
+  const keyToId=new Map();
+
+  const getId=(p)=>{
+    const key=p[0]+','+p[1];
+    if(!keyToId.has(key)){
+      keyToId.set(key,points.length);
+      points.push([p[0],p[1]]);
+    }
+    return keyToId.get(key);
+  };
+
+  const chain=entry[1].map(getId);
+
+  // Se usan únicamente las conexiones dibujadas en la figura original.
+  // No se añaden puntos artificiales que deformen la silueta.
+  for(let i=0;i<chain.length-1;i++){
+    const a=chain[i];
+    const b=chain[i+1];
+    if(a!==b) edges.push([a,b]);
   }
-  // Ajuste de grados impares para que siempre exista un recorrido completo.
-  let degree=points.map((_,i)=>edges.filter(e=>e.includes(i)).length);
-  let odd=degree.map((d,i)=>d%2?i:-1).filter(i=>i>=0);
-  for(let j=0;j<odd.length;j+=2){
-    const a=odd[j],b=odd[j+1],p=points[a],q=points[b],c=points.length;
-    points.push([(p[0]+q[0])/2+18,(p[1]+q[1])/2+13]); edges.push([a,c],[c,b]);
+
+  // Cerramos la silueta solo si el último punto no coincide con el primero
+  // y la forma fue creada como contorno.
+  if(chain.length>2 && chain[0]!==chain[chain.length-1]){
+    const first=entry[1][0];
+    const last=entry[1][entry[1].length-1];
+    const dist=Math.hypot(first[0]-last[0],first[1]-last[1]);
+
+    // Solo cerramos automáticamente figuras simples.
+    if(index<6 && dist<260){
+      edges.push([chain[chain.length-1],chain[0]]);
+    }
   }
-  // Más detalle conforme avanzan los mundos.
-  const loops=Math.floor(index/6)+(index%6>3?1:0);
-  for(let j=0;j<loops;j++){
-    let a=chain[(2+j*3)%chain.length],p=points[a],c=points.length,dx=p[0]>300?-38:38,dy=p[1]>230?-36:36;
-    points.push([p[0]+dx,p[1]+dy],[p[0]+dx*1.6,p[1]+dy*.2]); edges.push([a,c],[c,c+1],[c+1,a]);
-  }
+
   return {name:entry[0],points,edges};
 }
 const LEVELS=raw.map(makeLevel);
 
 const canvas=document.getElementById('canvas'),ctx=canvas.getContext('2d'),arena=document.getElementById('arena');
 const $=id=>document.getElementById(id);
-let W=0,H=0,dpr=1,selected=0,current=null,nodes=[],edges=[],score=0,combo=1,lives=3,timeLeft=60,running=false,paused=false,timer=null;
+let W=0,H=0,dpr=1,selected=0,current=null,nodes=[],edges=[],score=0,combo=1,lives=3,timeLeft=60,running=false,paused=false,timer=null,errorLocked=false;
 let particles=[],floatTexts=[],soundEnabled=true,audioCtx=null,completed={};
 try{completed=JSON.parse(localStorage.getItem('connect-neon-progress')||'{}')||{}}catch{}
 
@@ -229,7 +241,7 @@ function createGeometry(){
 }
 function resetLevel(full=false){
  if(full){score=0;combo=1;lives=3}
- clearInterval(timer);paused=false;running=true;current=null;particles=[];floatTexts=[];
+ clearInterval(timer);paused=false;running=true;current=null;particles=[];floatTexts=[];errorLocked=false;
  timeLeft=Math.max(28,62-selected*1.25);
  createGeometry();hideOverlay();startTimer();updateHUD();
 }
@@ -255,13 +267,29 @@ function choose(i){
  const ei=edges.findIndex(e=>!e.used&&((e.a===current&&e.b===i)||(e.b===current&&e.a===i)));
  if(ei<0){
    const exists=edges.some(e=>e.used&&((e.a===current&&e.b===i)||(e.b===current&&e.a===i)));
-   penalty(nodes[i].x,nodes[i].y,exists?'LÍNEA REPETIDA':'NO CONECTADO');return;
+   dragging=false; penalty(nodes[i].x,nodes[i].y,exists?'LÍNEA REPETIDA':'NO CONECTADO'); return;
  }
  edges[ei].used=true;current=i;score+=100+combo*20;combo++;burst(nodes[i].x,nodes[i].y,edges[ei].color,15);addText(nodes[i].x,nodes[i].y-20,'+'+(100+(combo-1)*20),'#39ff88');tone(600+Math.min(combo,10)*28);updateHUD();
  if(edges.every(e=>e.used))finish();
 }
 function penalty(x,y,msg){
- lives--;combo=1;timeLeft=Math.max(0,timeLeft-2);burst(x,y,'#ff416c',16);addText(x,y-20,msg,'#ff416c');tone(140,.16,'sawtooth');updateHUD();
+ if(errorLocked || !running || paused)return;
+
+ errorLocked=true;
+
+ // Un error = una sola vida.
+ lives=Math.max(0,lives-1);
+ combo=1;
+ timeLeft=Math.max(0,timeLeft-2);
+
+ burst(x,y,'#ff416c',16);
+ addText(x,y-20,msg,'#ff416c');
+ tone(140,.16,'sawtooth');
+ updateHUD();
+
+ // Evita que el mismo arrastre dispare 2 o 3 errores seguidos.
+ setTimeout(()=>{errorLocked=false},450);
+
  if(lives<=0)gameOver('SIN VIDAS');
 }
 function finish(){
