@@ -113,10 +113,49 @@
         }
 
         /* ============================================================
-           MEJORAS DE UI (Peticiones específicas)
+           MEJORAS DE UI Y NUEVO ESTADO "PRÓXIMAMENTE"
            ============================================================ */
 
-        /* 1. Fix: Scroll Hint encapsulado en un bloque/píldora oscuro */
+        /* Overlay Próximamente para juegos Placeholder */
+        .placeholder-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(44, 62, 80, 0.85); /* Azul oscuro semi transparente */
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .placeholder-text {
+            color: #ffaa00;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 900;
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.5);
+            transform: rotate(-10deg);
+            border: 4px solid #ffaa00;
+            padding: 8px 15px;
+            border-radius: 12px;
+            background: rgba(0,0,0,0.4);
+        }
+
+        /* Tarjeta deshabilitada */
+        .game-card.disabled {
+            cursor: not-allowed;
+            opacity: 0.85;
+            filter: grayscale(40%);
+        }
+        
+        .game-card.disabled .game-card-link {
+            pointer-events: none; /* Desactiva el clic por completo */
+        }
+
+        /* Resto de UI */
         .scroll-hint {
             position: absolute;
             bottom: 30px !important;
@@ -127,8 +166,6 @@
             flex-direction: column;
             align-items: center;
             color: #fff;
-            
-            /* Nuevo fondo tipo cápsula para legibilidad */
             background-color: rgba(26, 37, 48, 0.85);
             padding: 12px 25px;
             border-radius: 25px;
@@ -147,26 +184,16 @@
             opacity: 0.95;
         }
 
-        .hero-actions {
-            margin-bottom: 60px; /* Da espacio extra abajo del botón de Arranque */
-        }
+        .hero-actions { margin-bottom: 60px; }
 
-        /* 2. Fix: Sección "Sobre Nosotros" más limpia, centrada y estructurada */
         .about-section {
             background: linear-gradient(180deg, #eef2f5 0%, #ffffff 100%);
             padding: 80px 20px;
             color: #2c3e50;
         }
 
-        .about-inner {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        .about-header {
-            text-align: center;
-            margin-bottom: 50px;
-        }
+        .about-inner { max-width: 1100px; margin: 0 auto; }
+        .about-header { text-align: center; margin-bottom: 50px; }
 
         .about-mission {
             display: flex;
@@ -179,11 +206,7 @@
             margin-bottom: 60px;
         }
 
-        .about-mission-text {
-            flex: 1;
-            font-size: 1.1rem;
-            line-height: 1.6;
-        }
+        .about-mission-text { flex: 1; font-size: 1.1rem; line-height: 1.6; }
 
         .about-mission-visual {
             flex: 0 0 320px;
@@ -194,29 +217,14 @@
             position: relative;
         }
 
-        .about-rayet-img-wrap {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-        }
+        .about-rayet-img-wrap { width: 100%; display: flex; justify-content: center; }
+        .about-rayet-img { max-width: 250px; height: auto; display: block; }
 
-        .about-rayet-img {
-            max-width: 250px;
-            height: auto;
-            display: block;
-        }
-
-        /* Ajuste para móviles en la misión */
         @media (max-width: 768px) {
-            .about-mission {
-                flex-direction: column;
-                text-align: center;
-                padding: 30px 20px;
-            }
+            .about-mission { flex-direction: column; text-align: center; padding: 30px 20px; }
             .about-mission-visual { flex: 0 0 auto; }
         }
 
-        /* 3. Fix: Cuadrícula de valores limpia y simétrica */
         .about-values-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -233,17 +241,9 @@
             transition: transform 0.2s;
         }
 
-        .about-value-card:hover {
-            transform: translateY(-5px);
-        }
+        .about-value-card:hover { transform: translateY(-5px); }
+        .about-values-title { text-align: center; font-size: 2rem; margin-bottom: 40px; }
 
-        .about-values-title {
-            text-align: center;
-            font-size: 2rem;
-            margin-bottom: 40px;
-        }
-
-        /* 4. Fix: Botón CTA final centrado */
         .about-cta {
             text-align: center;
             background: #1a2530;
@@ -253,11 +253,7 @@
             box-shadow: 0 15px 30px rgba(0,0,0,0.2);
         }
 
-        .about-cta-desc {
-            margin-bottom: 30px;
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
+        .about-cta-desc { margin-bottom: 30px; font-size: 1.1rem; opacity: 0.9; }
     </style>
 </head>
 <body class="world-portal portal-primaria">
@@ -266,7 +262,6 @@
      AUDIO DE FONDO INTEGRAD O
      ============================================================ -->
 <audio id="bgm" loop>
-    <!-- Ruta correcta hacia cancion2.mp3 -->
     <source src="assets/musicaFondo/cancion2.mp3" type="audio/mpeg">
 </audio>
 
@@ -335,8 +330,6 @@
 
     <!-- Fondo en capas -->
     <div class="portal-hero-bg" aria-hidden="true">
-
-        <!-- Capa 1: Cielo urbano -->
         <div class="layer layer-sky">
             <div class="sun sun-primaria"><span class="sun-rays"></span></div>
             <div class="cloud cloud-1"></div>
@@ -344,14 +337,10 @@
             <div class="cloud cloud-3"></div>
             <div class="speed-lines"></div>
         </div>
-
-        <!-- Capa 2: Skyline de ciudad -->
         <div class="layer layer-mountains">
             <div class="city-skyline-back"></div>
             <div class="city-skyline-front"></div>
         </div>
-
-        <!-- Capa 3: Señales viales y semáforos -->
         <div class="layer layer-trees">
             <div class="road-sign sign-1"></div>
             <div class="road-sign sign-2"></div>
@@ -363,8 +352,6 @@
             <div class="urban-tree ut-1"></div>
             <div class="urban-tree ut-2"></div>
         </div>
-
-        <!-- Capa 4: Decoraciones viales -->
         <div class="layer layer-deco">
             <div class="checkered-flag flag-1"></div>
             <div class="checkered-flag flag-2"></div>
@@ -372,8 +359,6 @@
             <div class="speed-particle sp-2">💨</div>
             <div class="speed-particle sp-3">⚡</div>
         </div>
-
-        <!-- Capa 5: Pista de carreras -->
         <div class="layer layer-ground">
             <div class="sidewalk"></div>
             <div class="road">
@@ -455,7 +440,7 @@
         </div>
     </div>
 
-    <!-- Indicador de scroll en su nuevo bloque para evitar chocar con la pista -->
+    <!-- Indicador de scroll -->
     <div class="scroll-hint" aria-hidden="true">
         <span class="scroll-txt">Desliza para acelerar</span>
         <div class="scroll-mouse"><span class="scroll-wheel"></span></div>
@@ -553,7 +538,7 @@
 
             <div class="games-grid" aria-live="polite">
 
-                <!-- 01 · Carrera de Sumas -->
+                <!-- 01 · Peña Embrujada (Activo) -->
                 <article class="game-card" data-category="resolucion" data-difficulty="facil">
                     <a href="Juegos/Pena_Embrujada.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Carrera de Sumas">
                         <div class="game-card-thumb thumb-matematicas has-image">
@@ -588,11 +573,13 @@
                     </a>
                 </article>
 
-                <!-- 02 · Multiplica Rápido -->
-                <article class="game-card game-card-new" data-category="resolucion" data-difficulty="medio">
-                    <a href="JuegosPrimaria/multiplicar.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Multiplica Rápido">
-                        <div class="game-card-thumb thumb-matematicas has-image">
-                            <iframe src="JuegosPrimaria/multiplicar.html" title="Multiplica Rápido" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                <!-- 02 · Multiplica Rápido (Placeholder) -->
+                <article class="game-card disabled game-card-new" data-category="resolucion" data-difficulty="medio">
+                    <a href="#" class="game-card-link" aria-label="Juego no disponible">
+                        <div class="game-card-thumb thumb-matematicas">
+                            <div class="placeholder-overlay">
+                                <span class="placeholder-text">Próximamente</span>
+                            </div>
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">02</span>
                             <span class="game-badge-new">NUEVO</span>
@@ -614,20 +601,18 @@
                                     <span class="star is-filled">★</span>
                                     <span class="star">★</span>
                                 </span>
-                                <span class="game-play">
-                                    <span class="game-play-ico">▶</span>
-                                    <span class="game-play-txt">Jugar</span>
-                                </span>
                             </div>
                         </div>
                     </a>
                 </article>
 
-                <!-- 03 · Fracciones en Pista -->
-                <article class="game-card game-card-new" data-category="resolucion" data-difficulty="medio">
-                    <a href="JuegosPrimaria/fracciones.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Fracciones en Pista">
-                        <div class="game-card-thumb thumb-matematicas has-image">
-                            <iframe src="JuegosPrimaria/fracciones.html" title="Fracciones en Pista" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                <!-- 03 · Fracciones en Pista (Placeholder) -->
+                <article class="game-card disabled game-card-new" data-category="resolucion" data-difficulty="medio">
+                    <a href="#" class="game-card-link" aria-label="Juego no disponible">
+                        <div class="game-card-thumb thumb-matematicas">
+                            <div class="placeholder-overlay">
+                                <span class="placeholder-text">Próximamente</span>
+                            </div>
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">03</span>
                             <span class="game-badge-new">NUEVO</span>
@@ -649,20 +634,18 @@
                                     <span class="star is-filled">★</span>
                                     <span class="star">★</span>
                                 </span>
-                                <span class="game-play">
-                                    <span class="game-play-ico">▶</span>
-                                    <span class="game-play-txt">Jugar</span>
-                                </span>
                             </div>
                         </div>
                     </a>
                 </article>
 
-                <!-- 04 · Problemas de Velocidad -->
-                <article class="game-card game-card-new" data-category="resolucion" data-difficulty="dificil">
-                    <a href="JuegosPrimaria/problemas.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Problemas de Velocidad">
-                        <div class="game-card-thumb thumb-matematicas has-image">
-                            <iframe src="JuegosPrimaria/problemas.html" title="Problemas de Velocidad" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                <!-- 04 · Problemas de Velocidad (Placeholder) -->
+                <article class="game-card disabled game-card-new" data-category="resolucion" data-difficulty="dificil">
+                    <a href="#" class="game-card-link" aria-label="Juego no disponible">
+                        <div class="game-card-thumb thumb-matematicas">
+                            <div class="placeholder-overlay">
+                                <span class="placeholder-text">Próximamente</span>
+                            </div>
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">04</span>
                             <span class="game-badge-new">NUEVO</span>
@@ -683,10 +666,6 @@
                                     <span class="star is-filled">★</span>
                                     <span class="star is-filled">★</span>
                                     <span class="star is-filled">★</span>
-                                </span>
-                                <span class="game-play">
-                                    <span class="game-play-ico">▶</span>
-                                    <span class="game-play-txt">Jugar</span>
                                 </span>
                             </div>
                         </div>
@@ -716,65 +695,45 @@
 
             <div class="games-grid" aria-live="polite">
 
-               
-<!-- 05 · El Semáforo Travieso -->
-<article class="game-card" data-category="secuencias" data-difficulty="facil">
-    <a href="Juegos/semaforo2/semaforo.html"
-       class="game-card-link"
-       target="_blank"
-       rel="noopener noreferrer"
-       aria-label="Abrir juego El Semáforo Travieso">
+                <!-- 05 · El Semáforo Travieso (Activo) -->
+                <article class="game-card" data-category="secuencias" data-difficulty="facil">
+                    <a href="Juegos/semaforo2/semaforo.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego El Semáforo Travieso">
+                        <div class="game-card-thumb thumb-educacion-vial has-image">
+                            <img src="Juegos/semaforo2/assetsInicio/fondo/fondo-personalizado.png" alt="Vista previa de El Semáforo Travieso" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;">
+                            <span class="game-thumb-bg"></span>
+                            <span class="game-number">05</span>
+                            <div class="game-difficulty difficulty-facil">
+                                <span class="diff-dot"></span>
+                                <span class="diff-txt">Educación vial</span>
+                            </div>
+                        </div>
+                        <div class="game-card-body">
+                            <div class="game-card-top">
+                                <span class="game-category-tag tag-educacion-vial">🔁 Secuencias y comprensión</span>
+                                <span class="game-age">6-10 años</span>
+                            </div>
+                            <h3 class="game-title">El Semáforo Travieso</h3>
+                            <p class="game-desc">Explora la ciudad, observa los semáforos y aprende a cruzar las calles de forma segura.</p>
+                            <div class="game-card-bottom">
+                                <span class="game-rating" aria-label="Dificultad 1 de 3">
+                                    <span class="star is-filled">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                </span>
+                                <span class="game-play">
+                                    <span class="game-play-ico">▶</span>
+                                    <span class="game-play-txt">Jugar</span>
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                </article>
 
-        <div class="game-card-thumb thumb-educacion-vial has-image">
-            <img src="Juegos/semaforo2/assetsInicio/fondo/fondo-personalizado.png"
-                 alt="Vista previa de El Semáforo Travieso"
-                 loading="lazy"
-                 style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;">
-
-            <span class="game-thumb-bg"></span>
-            <span class="game-number">05</span>
-
-            <div class="game-difficulty difficulty-facil">
-                <span class="diff-dot"></span>
-                <span class="diff-txt">Educación vial</span>
-            </div>
-        </div>
-
-        <div class="game-card-body">
-            <div class="game-card-top">
-                <span class="game-category-tag tag-educacion-vial">🔁 Secuencias y comprensión</span>
-                <span class="game-age">6-10 años</span>
-            </div>
-
-            <h3 class="game-title">El Semáforo Travieso</h3>
-
-            <p class="game-desc">
-                Explora la ciudad, observa los semáforos y
-                aprende a cruzar las calles de forma segura.
-            </p>
-
-            <div class="game-card-bottom">
-                <span class="game-rating" aria-label="Dificultad 1 de 3">
-                    <span class="star is-filled">★</span>
-                    <span class="star">★</span>
-                    <span class="star">★</span>
-                </span>
-
-                <span class="game-play">
-                    <span class="game-play-ico">▶</span>
-                    <span class="game-play-txt">Jugar</span>
-                </span>
-            </div>
-        </div>
-    </a>
-</article>
-
-
-                <!-- 06 · Sinónimos y Antónimos -->
-                <article class="game-card game-card-new" data-category="secuencias" data-difficulty="facil">
-                    <a href="JuegosPrimaria/sinonimos.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Sinónimos y Antónimos">
-                        <div class="game-card-thumb thumb-lenguaje has-image">
-                            <iframe src="JuegosPrimaria/sinonimos.html" title="Sinónimos y Antónimos" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                <!-- 06 · Sinónimos y Antónimos (Placeholder) -->
+                <article class="game-card disabled game-card-new" data-category="secuencias" data-difficulty="facil">
+                    <a href="#" class="game-card-link" aria-label="Juego no disponible">
+                        <div class="game-card-thumb thumb-lenguaje">
+                            <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">06</span>
                             <span class="game-badge-new">NUEVO</span>
@@ -796,20 +755,16 @@
                                     <span class="star">★</span>
                                     <span class="star">★</span>
                                 </span>
-                                <span class="game-play">
-                                    <span class="game-play-ico">▶</span>
-                                    <span class="game-play-txt">Jugar</span>
-                                </span>
                             </div>
                         </div>
                     </a>
                 </article>
 
-                <!-- 07 · Constructor de Oraciones -->
-                <article class="game-card game-card-new" data-category="secuencias" data-difficulty="medio">
-                    <a href="JuegosPrimaria/oraciones.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Constructor de Oraciones">
-                        <div class="game-card-thumb thumb-lenguaje has-image">
-                            <iframe src="JuegosPrimaria/oraciones.html" title="Constructor de Oraciones" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                <!-- 07 · Constructor de Oraciones (Placeholder) -->
+                <article class="game-card disabled game-card-new" data-category="secuencias" data-difficulty="medio">
+                    <a href="#" class="game-card-link" aria-label="Juego no disponible">
+                        <div class="game-card-thumb thumb-lenguaje">
+                            <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">07</span>
                             <span class="game-badge-new">NUEVO</span>
@@ -831,20 +786,16 @@
                                     <span class="star is-filled">★</span>
                                     <span class="star">★</span>
                                 </span>
-                                <span class="game-play">
-                                    <span class="game-play-ico">▶</span>
-                                    <span class="game-play-txt">Jugar</span>
-                                </span>
                             </div>
                         </div>
                     </a>
                 </article>
 
-                <!-- 08 · Comprensión Lectora -->
-                <article class="game-card game-card-new" data-category="secuencias" data-difficulty="dificil">
-                    <a href="JuegosPrimaria/comprension.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Comprensión Lectora">
-                        <div class="game-card-thumb thumb-lenguaje has-image">
-                            <iframe src="JuegosPrimaria/comprension.html" title="Comprensión Lectora" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                <!-- 08 · Comprensión Lectora (Placeholder) -->
+                <article class="game-card disabled game-card-new" data-category="secuencias" data-difficulty="dificil">
+                    <a href="#" class="game-card-link" aria-label="Juego no disponible">
+                        <div class="game-card-thumb thumb-lenguaje">
+                            <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">08</span>
                             <span class="game-badge-new">NUEVO</span>
@@ -865,10 +816,6 @@
                                     <span class="star is-filled">★</span>
                                     <span class="star is-filled">★</span>
                                     <span class="star is-filled">★</span>
-                                </span>
-                                <span class="game-play">
-                                    <span class="game-play-ico">▶</span>
-                                    <span class="game-play-txt">Jugar</span>
                                 </span>
                             </div>
                         </div>
@@ -898,7 +845,7 @@
 
             <div class="games-grid" aria-live="polite">
 
-                <!-- 09 · EcomoCamion -->
+                <!-- 09 · EcomoCamion (Activo - usa recolector_basura.html) -->
                 <article class="game-card" data-category="clasificacion" data-difficulty="facil">
                     <a href="Juegos/recolector_basura.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego EcoCamion">
                         <div class="game-card-thumb thumb-ciencias has-image">
@@ -932,7 +879,7 @@
                     </a>
                 </article>
 
-                <!-- 10 · Explorador de Animales -->
+                <!-- 10 · Explorador de Animales (Activo) -->
                 <article class="game-card game-card-new" data-category="clasificacion" data-difficulty="facil">
                     <a href="Juegos/explorador_animales.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Explorador de Animales">
                         <div class="game-card-thumb thumb-ciencias has-image">
@@ -967,7 +914,7 @@
                     </a>
                 </article>
 
-                <!-- 11 · Genetica -->
+                <!-- 11 · Genetica (Activo) -->
                 <article class="game-card game-card-new" data-category="clasificacion" data-difficulty="medio">
                     <a href="Juegos/genetica.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Ecosistemas">
                         <div class="game-card-thumb thumb-ciencias has-image">
@@ -1002,11 +949,11 @@
                     </a>
                 </article>
 
-                <!-- 12 · Estados del Agua -->
-                <article class="game-card game-card-new" data-category="clasificacion" data-difficulty="medio">
-                    <a href="Juegos/pes.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Estados del Agua">
-                        <div class="game-card-thumb thumb-ciencias has-image">
-                            <iframe src="Juegos/pes.html" title="Estados del Agua" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                <!-- 12 · Estados del Agua (Placeholder) -->
+                <article class="game-card disabled game-card-new" data-category="clasificacion" data-difficulty="medio">
+                    <a href="#" class="game-card-link" aria-label="Juego no disponible">
+                        <div class="game-card-thumb thumb-ciencias">
+                            <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">12</span>
                             <span class="game-badge-new">NUEVO</span>
@@ -1027,10 +974,6 @@
                                     <span class="star is-filled">★</span>
                                     <span class="star is-filled">★</span>
                                     <span class="star">★</span>
-                                </span>
-                                <span class="game-play">
-                                    <span class="game-play-ico">▶</span>
-                                    <span class="game-play-txt">Jugar</span>
                                 </span>
                             </div>
                         </div>
@@ -1060,11 +1003,11 @@
 
             <div class="games-grid" aria-live="polite">
 
-                <!-- 13 · Sudoku Junior -->
-                <article class="game-card" data-category="logica" data-difficulty="medio">
-                    <a href="JuegosPrimaria/sudoku.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Sudoku Junior">
-                        <div class="game-card-thumb thumb-logica has-image">
-                            <iframe src="JuegosPrimaria/sudoku.html" title="Sudoku Junior" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                <!-- 13 · Sudoku Junior (Placeholder) -->
+                <article class="game-card disabled" data-category="logica" data-difficulty="medio">
+                    <a href="#" class="game-card-link" aria-label="Juego no disponible">
+                        <div class="game-card-thumb thumb-logica">
+                            <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">13</span>
                             <div class="game-difficulty difficulty-medio">
@@ -1085,16 +1028,12 @@
                                     <span class="star is-filled">★</span>
                                     <span class="star">★</span>
                                 </span>
-                                <span class="game-play">
-                                    <span class="game-play-ico">▶</span>
-                                    <span class="game-play-txt">Jugar</span>
-                                </span>
                             </div>
                         </div>
                     </a>
                 </article>
 
-                <!-- 14 · Patrones -->
+                <!-- 14 · Patrones (Activo - usa p.secuencia.html) -->
                 <article class="game-card game-card-new" data-category="logica" data-difficulty="facil">
                     <a href="Juegos/p.secuencia.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Patrones">
                         <div class="game-card-thumb thumb-logica has-image">
@@ -1129,7 +1068,7 @@
                     </a>
                 </article>
 
-                <!-- 15 · Connect.Dots -->
+                <!-- 15 · Connect.Dots (Activo) -->
                 <article class="game-card game-card-new" data-category="logica" data-difficulty="medio">
                     <a href="Juegos/connect.dots.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Connect.Dots">
                         <div class="game-card-thumb thumb-logica has-image">
@@ -1165,11 +1104,11 @@
                     </a>
                 </article>
 
-                <!-- 16 · Código Secreto -->
-                <article class="game-card game-card-new" data-category="logica" data-difficulty="medio">
-                    <a href="JuegosPrimaria/codigo.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Código Secreto">
-                        <div class="game-card-thumb thumb-logica has-image">
-                            <iframe src="JuegosPrimaria/codigo.html" title="Código Secreto" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                <!-- 16 · Código Secreto (Placeholder) -->
+                <article class="game-card disabled game-card-new" data-category="logica" data-difficulty="medio">
+                    <a href="#" class="game-card-link" aria-label="Juego no disponible">
+                        <div class="game-card-thumb thumb-logica">
+                            <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">16</span>
                             <span class="game-badge-new">NUEVO</span>
@@ -1191,20 +1130,16 @@
                                     <span class="star is-filled">★</span>
                                     <span class="star">★</span>
                                 </span>
-                                <span class="game-play">
-                                    <span class="game-play-ico">▶</span>
-                                    <span class="game-play-txt">Jugar</span>
-                                </span>
                             </div>
                         </div>
                     </a>
                 </article>
 
-                <!-- 17 · Programación Básica -->
-                <article class="game-card game-card-new" data-category="logica" data-difficulty="dificil">
-                    <a href="JuegosPrimaria/programacion.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Programación Básica">
-                        <div class="game-card-thumb thumb-logica has-image">
-                            <iframe src="JuegosPrimaria/programacion.html" title="Programación Básica" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                <!-- 17 · Programación Básica (Placeholder) -->
+                <article class="game-card disabled game-card-new" data-category="logica" data-difficulty="dificil">
+                    <a href="#" class="game-card-link" aria-label="Juego no disponible">
+                        <div class="game-card-thumb thumb-logica">
+                            <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">17</span>
                             <span class="game-badge-new">NUEVO</span>
@@ -1225,10 +1160,6 @@
                                     <span class="star is-filled">★</span>
                                     <span class="star is-filled">★</span>
                                     <span class="star is-filled">★</span>
-                                </span>
-                                <span class="game-play">
-                                    <span class="game-play-ico">▶</span>
-                                    <span class="game-play-txt">Jugar</span>
                                 </span>
                             </div>
                         </div>
@@ -1258,7 +1189,7 @@
 
             <div class="games-grid" aria-live="polite">
 
-                <!-- 18 · Peña Embrujada -->
+                <!-- 18 · Peña Embrujada (Activo) -->
                 <article class="game-card" data-category="resolucion" data-difficulty="facil">
                     <a href="Juegos/Pena_Embrujada.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Carrera de Sumas">
                         <div class="game-card-thumb thumb-matematicas has-image">
@@ -1293,11 +1224,11 @@
                     </a>
                 </article>
 
-                <!-- 19 · Maratón del Saber -->
-                <article class="game-card game-card-new" data-category="retos" data-difficulty="dificil">
-                    <a href="JuegosPrimaria/maraton.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Maratón del Saber">
-                        <div class="game-card-thumb thumb-retos has-image">
-                            <iframe src="JuegosPrimaria/maraton.html" title="Maratón del Saber" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                <!-- 19 · Maratón del Saber (Placeholder) -->
+                <article class="game-card disabled game-card-new" data-category="retos" data-difficulty="dificil">
+                    <a href="#" class="game-card-link" aria-label="Juego no disponible">
+                        <div class="game-card-thumb thumb-retos">
+                            <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">19</span>
                             <span class="game-badge-new">NUEVO</span>
@@ -1319,20 +1250,16 @@
                                     <span class="star is-filled">★</span>
                                     <span class="star is-filled">★</span>
                                 </span>
-                                <span class="game-play">
-                                    <span class="game-play-ico">▶</span>
-                                    <span class="game-play-txt">Jugar</span>
-                                </span>
                             </div>
                         </div>
                     </a>
                 </article>
 
-                <!-- 20 · Campeonato Final (RETO FINAL) -->
-                <article class="game-card game-card-featured" data-category="retos" data-difficulty="dificil">
-                    <a href="JuegosPrimaria/campeonato.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Campeonato Final">
-                        <div class="game-card-thumb thumb-retos has-image">
-                            <img src="JuegosPrimaria/imagen20.png" alt="Campeonato Final" class="game-thumb-img" loading="lazy" onerror="this.src='JuegosPrimaria/imagen1.png'">
+                <!-- 20 · Campeonato Final (Placeholder) -->
+                <article class="game-card disabled game-card-featured" data-category="retos" data-difficulty="dificil">
+                    <a href="#" class="game-card-link" aria-label="Juego no disponible">
+                        <div class="game-card-thumb thumb-retos">
+                            <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">20</span>
                             <div class="game-badge-featured">👑 CAMPEONATO</div>
@@ -1353,10 +1280,6 @@
                                     <span class="star is-filled">★</span>
                                     <span class="star is-filled">★</span>
                                     <span class="star is-filled">★</span>
-                                </span>
-                                <span class="game-play">
-                                    <span class="game-play-ico">▶</span>
-                                    <span class="game-play-txt">Jugar</span>
                                 </span>
                             </div>
                         </div>
@@ -1389,7 +1312,6 @@
 <section id="ayuda" class="about-section">
     <div class="about-inner">
 
-        <!-- Encabezado con Rugged mini -->
         <header class="about-header reveal-child" data-reveal="1">
             <h2 class="about-values-title">
                 Aprender nunca fue tan <span style="color:#ffaa00;">veloz</span>
@@ -1400,7 +1322,6 @@
             </p>
         </header>
 
-        <!-- Misión principal + imagen Rugged -->
         <div class="about-mission reveal-child" data-reveal="2">
             <div class="about-mission-text">
                 <h3 style="color:#1a2530; font-size: 1.8rem; margin-top:0;">🎯 Nuestra misión</h3>
@@ -1427,7 +1348,6 @@
             </div>
         </div>
 
-        <!-- Valores / beneficios -->
         <h3 class="about-values-title reveal-child" data-reveal="1">
             ⭐ Lo que nos hace diferentes
         </h3>
@@ -1482,7 +1402,6 @@
             </div>
         </div>
 
-        <!-- CTA final -->
         <div class="about-cta reveal-child" data-reveal="1">
             <h3 style="font-size:2rem; margin:0 0 15px 0;">¿Listo para empezar la carrera?</h3>
             <p class="about-cta-desc">Elige tu primer desafío y demuestra que eres el campeón del aprendizaje.</p>
@@ -1581,10 +1500,9 @@
      SCRIPT PRINCIPAL Y MANEJO DE AUDIO DE FONDO
      ============================================================ -->
 <script>
-    // 1. Integración de la música de fondo
     const bgAudio = document.getElementById('bgm');
     const soundToggle = document.getElementById('soundToggle');
-    let isMuted = true; // Empieza muteado para evitar bloqueos del navegador
+    let isMuted = true; 
 
     soundToggle.addEventListener('click', () => {
         isMuted = !isMuted;
@@ -1592,15 +1510,20 @@
             bgAudio.pause();
             soundToggle.innerHTML = '<span class="sound-icon sound-off">🔇</span>';
         } else {
-            bgAudio.volume = 0.3; // Volumen moderado para no saturar
+            bgAudio.volume = 0.3; 
             bgAudio.play().catch(e => console.log('El navegador requiere interacción manual previa.'));
             soundToggle.innerHTML = '<span class="sound-icon sound-on">🔊</span>';
         }
     });
 
-    // 2. Lógica del visor Inmersivo
     document.querySelectorAll('.game-card-link').forEach(enlace => {
         enlace.addEventListener('click', function(e) {
+            // Previene abrir placeholders
+            if (this.closest('.disabled')) {
+                e.preventDefault();
+                return;
+            }
+
             e.preventDefault(); 
             const urlJuego = this.getAttribute('href');
             const visor = document.getElementById('visor-juego');

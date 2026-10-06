@@ -24,7 +24,6 @@
         .game-card-thumb {
             position: relative;
             overflow: hidden;
-            /* CORRECCIÓN: Elimina el margen inferior invisible de los iframes/imágenes */
             display: block;
             line-height: 0;
         }
@@ -34,11 +33,11 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 400%; /* Engaña al iframe haciéndole creer que tiene una pantalla 4 veces más grande */
+            width: 400%; 
             height: 400%;
-            transform: scale(0.25); /* Lo encoge para que quepa perfectamente en la tarjeta */
+            transform: scale(0.25); 
             transform-origin: top left;
-            pointer-events: none; /* BLOQUEA CLICS en el iframe para que puedas darle clic a la tarjeta entera */
+            pointer-events: none; 
             border: none;
             z-index: 1;
             background-color: transparent;
@@ -49,12 +48,51 @@
         .game-number, .game-difficulty, .game-badge-new, .game-badge-featured { z-index: 3; }
 
         /* ============================================================
+           NUEVO ESTADO "PRÓXIMAMENTE"
+           ============================================================ */
+        .placeholder-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(44, 62, 80, 0.85); /* Azul oscuro semi transparente */
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .placeholder-text {
+            color: #ffaa00;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 900;
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.5);
+            transform: rotate(-10deg);
+            border: 4px solid #ffaa00;
+            padding: 8px 15px;
+            border-radius: 12px;
+            background: rgba(0,0,0,0.4);
+        }
+
+        /* Tarjeta deshabilitada */
+        .game-card.disabled {
+            cursor: not-allowed;
+            opacity: 0.85;
+            filter: grayscale(40%);
+        }
+        
+        .game-card.disabled .game-card-link {
+            pointer-events: none; /* Desactiva el clic por completo */
+        }
+
+        /* ============================================================
            CORRECCIONES ESTRUCTURALES Y TEXTOS FLOTANTES
            ============================================================ */
-        /* Evitar scroll horizontal accidental */
         body, html { overflow-x: hidden; }
 
-        /* Control de textos flotantes para que no se desborden en móviles */
         .bubble, .bubble-secundaria {
             max-width: 95%;
             word-wrap: break-word;
@@ -62,17 +100,12 @@
             z-index: 10;
         }
 
-        /* Consistencia en los márgenes de los textos de las tarjetas */
         .game-title { margin: 12px 0 6px 0; line-height: 1.2; }
         .game-desc { margin: 0 0 12px 0; line-height: 1.4; }
 
-        /* ============================================================
-           CORRECCIONES DE CONTRASTE Y FORMATO (TEXTOS HERO)
-           ============================================================ */
-        /* Subtítulo: Lo convertimos en una píldora blanca para que resalte */
         .hero-text .portal-hero-subtitle {
             background-color: rgba(255, 255, 255, 0.95);
-            color: #0a0e27 !important; /* Azul oscuro cyber para contrastar */
+            color: #0a0e27 !important; 
             padding: 10px 25px;
             border-radius: 30px;
             display: inline-block;
@@ -151,8 +184,6 @@
 
     <!-- Fondo en capas -->
     <div class="portal-hero-bg" aria-hidden="true">
-
-        <!-- Capa 1: Nebulosas y estrellas -->
         <div class="layer layer-sky">
             <div class="cyber-nebula nebula-1"></div>
             <div class="cyber-nebula nebula-2"></div>
@@ -161,14 +192,10 @@
             <div class="data-stream stream-1"></div>
             <div class="data-stream stream-2"></div>
         </div>
-
-        <!-- Capa 2: Grid cyber -->
         <div class="layer layer-mountains">
             <div class="cyber-grid"></div>
             <div class="cyber-horizon"></div>
         </div>
-
-        <!-- Capa 3: Circuitos y hologramas -->
         <div class="layer layer-trees">
             <div class="circuit-lines"></div>
             <div class="holo holo-1"></div>
@@ -176,8 +203,6 @@
             <div class="holo holo-3"></div>
             <div class="holo holo-4"></div>
         </div>
-
-        <!-- Capa 4: Paneles digitales y partículas -->
         <div class="layer layer-deco">
             <div class="particles" id="cyberParticles"></div>
             <div class="data-panel panel-1">
@@ -197,8 +222,6 @@
             </div>
             <div class="binary-rain" id="binaryRain"></div>
         </div>
-
-        <!-- Capa 5: Piso cyber -->
         <div class="layer layer-ground">
             <div class="cyber-floor"></div>
         </div>
@@ -207,7 +230,7 @@
     <!-- Contenido hero -->
     <div class="portal-hero-content">
 
-        <!-- Ludio guía (lado izquierdo) — IMAGEN REAL -->
+        <!-- Ludio guía (lado izquierdo) -->
         <div class="hero-character reveal-child" data-reveal="1">
             <div class="character-platform platform-cyber"></div>
             <div class="robot-display has-image" data-robot="ludio">
@@ -230,7 +253,6 @@
                 <span class="portal-hero-title-line portal-hero-title-accent">LUDIO</span>
             </h2>
 
-            <!-- Burbuja de diálogo de Ludio -->
             <div class="bubble bubble-secundaria">
                 <span class="bubble-tail"></span>
                 <p class="bubble-text">
@@ -254,7 +276,6 @@
         </div>
     </div>
 
-    <!-- Indicador de scroll -->
     <div class="scroll-hint" aria-hidden="true">
         <span class="scroll-txt">Desliza para hackear</span>
         <div class="scroll-mouse"><span class="scroll-wheel"></span></div>
@@ -263,11 +284,10 @@
 
 
 <!-- ============================================================
-     ÁREA DE JUEGOS — 21 juegos organizados por categorías
+     ÁREA DE JUEGOS
      ============================================================ -->
 <main id="juegos" class="games-area">
 
-    <!-- Encabezado -->
     <div class="games-header reveal-child" data-reveal="1">
         <h2 class="section-title">
             <span class="section-title-ico">⚡</span>
@@ -278,9 +298,6 @@
         </p>
     </div>
 
-    <!-- ============================================
-         FILTROS POR CATEGORÍA
-         ============================================ -->
     <div class="filters filters-secundaria reveal-child" data-reveal="2" role="tablist" aria-label="Filtrar juegos por categoría">
         <button class="filter-btn is-active" data-filter="all" role="tab" aria-selected="true">
             <span class="filter-ico">🌐</span>
@@ -339,15 +356,11 @@
 
         <div class="games-grid" aria-live="polite">
 
-            <!-- 01 · Ecuaciones Cuadráticas -->
-            <article class="game-card" data-category="matematicas" data-difficulty="medio">
-                <a href="JuegosSecundaria/ecuaciones.html"
-                   class="game-card-link"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   aria-label="Abrir juego Ecuaciones Cuadráticas">
-                    <div class="game-card-thumb thumb-matematicas has-image">
-                        <iframe src="JuegosSecundaria/ecuaciones.html" title="Ecuaciones Cuadráticas" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+            <!-- 01 · Ecuaciones Cuadráticas (Placeholder) -->
+            <article class="game-card disabled" data-category="matematicas" data-difficulty="medio">
+                <a href="#" class="game-card-link" aria-label="Juego no disponible">
+                    <div class="game-card-thumb thumb-matematicas">
+                        <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">01</span>
                         <div class="game-difficulty difficulty-medio">
@@ -368,24 +381,16 @@
                                 <span class="star is-filled">★</span>
                                 <span class="star">★</span>
                             </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
                         </div>
                     </div>
                 </a>
             </article>
 
-            <!-- 02 · Geometría Analítica -->
-            <article class="game-card game-card-new" data-category="matematicas" data-difficulty="medio">
-                <a href="JuegosSecundaria/geometria.html"
-                   class="game-card-link"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   aria-label="Abrir juego Geometría Analítica">
-                    <div class="game-card-thumb thumb-matematicas has-image">
-                        <iframe src="JuegosSecundaria/geometria.html" title="Geometría Analítica" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+            <!-- 02 · Geometría Analítica (Placeholder) -->
+            <article class="game-card disabled game-card-new" data-category="matematicas" data-difficulty="medio">
+                <a href="#" class="game-card-link" aria-label="Juego no disponible">
+                    <div class="game-card-thumb thumb-matematicas">
+                        <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">02</span>
                         <span class="game-badge-new">NUEVO</span>
@@ -407,24 +412,16 @@
                                 <span class="star is-filled">★</span>
                                 <span class="star">★</span>
                             </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
                         </div>
                     </div>
                 </a>
             </article>
 
-            <!-- 03 · Estadística y Probabilidad -->
-            <article class="game-card game-card-new" data-category="matematicas" data-difficulty="dificil">
-                <a href="JuegosSecundaria/estadistica.html"
-                   class="game-card-link"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   aria-label="Abrir juego Estadística y Probabilidad">
-                    <div class="game-card-thumb thumb-matematicas has-image">
-                        <iframe src="JuegosSecundaria/estadistica.html" title="Estadística y Probabilidad" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+            <!-- 03 · Estadística y Probabilidad (Placeholder) -->
+            <article class="game-card disabled game-card-new" data-category="matematicas" data-difficulty="dificil">
+                <a href="#" class="game-card-link" aria-label="Juego no disponible">
+                    <div class="game-card-thumb thumb-matematicas">
+                        <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">03</span>
                         <span class="game-badge-new">NUEVO</span>
@@ -446,24 +443,16 @@
                                 <span class="star is-filled">★</span>
                                 <span class="star is-filled">★</span>
                             </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
                         </div>
                     </div>
                 </a>
             </article>
 
-            <!-- 04 · Funciones y Gráficas -->
-            <article class="game-card game-card-new" data-category="matematicas" data-difficulty="dificil">
-                <a href="JuegosSecundaria/funciones.html"
-                   class="game-card-link"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   aria-label="Abrir juego Funciones y Gráficas">
-                    <div class="game-card-thumb thumb-matematicas has-image">
-                        <iframe src="JuegosSecundaria/funciones.html" title="Funciones y Gráficas" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+            <!-- 04 · Funciones y Gráficas (Placeholder) -->
+            <article class="game-card disabled game-card-new" data-category="matematicas" data-difficulty="dificil">
+                <a href="#" class="game-card-link" aria-label="Juego no disponible">
+                    <div class="game-card-thumb thumb-matematicas">
+                        <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">04</span>
                         <span class="game-badge-new">NUEVO</span>
@@ -484,10 +473,6 @@
                                 <span class="star is-filled">★</span>
                                 <span class="star is-filled">★</span>
                                 <span class="star is-filled">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
                             </span>
                         </div>
                     </div>
@@ -517,15 +502,11 @@
 
         <div class="games-grid" aria-live="polite">
 
-            <!-- 05 · Algoritmos Básicos -->
-            <article class="game-card" data-category="programacion" data-difficulty="medio">
-                <a href="JuegosSecundaria/algoritmos.html"
-                   class="game-card-link"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   aria-label="Abrir juego Algoritmos Básicos">
-                    <div class="game-card-thumb thumb-programacion has-image">
-                        <iframe src="JuegosSecundaria/algoritmos.html" title="Algoritmos Básicos" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+            <!-- 05 · Algoritmos Básicos (Placeholder) -->
+            <article class="game-card disabled" data-category="programacion" data-difficulty="medio">
+                <a href="#" class="game-card-link" aria-label="Juego no disponible">
+                    <div class="game-card-thumb thumb-programacion">
+                        <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">05</span>
                         <div class="game-difficulty difficulty-medio">
@@ -546,24 +527,16 @@
                                 <span class="star is-filled">★</span>
                                 <span class="star">★</span>
                             </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
                         </div>
                     </div>
                 </a>
             </article>
 
-            <!-- 06 · Bucles y Condicionales -->
-            <article class="game-card game-card-new" data-category="programacion" data-difficulty="medio">
-                <a href="JuegosSecundaria/bucles.html"
-                   class="game-card-link"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   aria-label="Abrir juego Bucles y Condicionales">
-                    <div class="game-card-thumb thumb-programacion has-image">
-                        <iframe src="JuegosSecundaria/bucles.html" title="Bucles y Condicionales" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+            <!-- 06 · Bucles y Condicionales (Placeholder) -->
+            <article class="game-card disabled game-card-new" data-category="programacion" data-difficulty="medio">
+                <a href="#" class="game-card-link" aria-label="Juego no disponible">
+                    <div class="game-card-thumb thumb-programacion">
+                        <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">06</span>
                         <span class="game-badge-new">NUEVO</span>
@@ -585,24 +558,16 @@
                                 <span class="star is-filled">★</span>
                                 <span class="star">★</span>
                             </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
                         </div>
                     </div>
                 </a>
             </article>
 
-            <!-- 07 · Variables y Tipos de Datos -->
-            <article class="game-card game-card-new" data-category="programacion" data-difficulty="facil">
-                <a href="JuegosSecundaria/variables.html"
-                   class="game-card-link"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   aria-label="Abrir juego Variables y Tipos">
-                    <div class="game-card-thumb thumb-programacion has-image">
-                        <iframe src="JuegosSecundaria/variables.html" title="Variables y Tipos de Datos" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+            <!-- 07 · Variables y Tipos de Datos (Placeholder) -->
+            <article class="game-card disabled game-card-new" data-category="programacion" data-difficulty="facil">
+                <a href="#" class="game-card-link" aria-label="Juego no disponible">
+                    <div class="game-card-thumb thumb-programacion">
+                        <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">07</span>
                         <span class="game-badge-new">NUEVO</span>
@@ -624,24 +589,16 @@
                                 <span class="star">★</span>
                                 <span class="star">★</span>
                             </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
                         </div>
                     </div>
                 </a>
             </article>
 
-            <!-- 08 · Funciones y Parámetros -->
-            <article class="game-card game-card-new" data-category="programacion" data-difficulty="dificil">
-                <a href="JuegosSecundaria/funcionescodigo.html"
-                   class="game-card-link"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   aria-label="Abrir juego Funciones y Parámetros">
-                    <div class="game-card-thumb thumb-programacion has-image">
-                        <iframe src="JuegosSecundaria/funcionescodigo.html" title="Funciones y Parámetros" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+            <!-- 08 · Funciones y Parámetros (Placeholder) -->
+            <article class="game-card disabled game-card-new" data-category="programacion" data-difficulty="dificil">
+                <a href="#" class="game-card-link" aria-label="Juego no disponible">
+                    <div class="game-card-thumb thumb-programacion">
+                        <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">08</span>
                         <span class="game-badge-new">NUEVO</span>
@@ -663,24 +620,16 @@
                                 <span class="star is-filled">★</span>
                                 <span class="star is-filled">★</span>
                             </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
                         </div>
                     </div>
                 </a>
             </article>
 
-            <!-- 09 · Depuración de Código -->
-            <article class="game-card game-card-new" data-category="programacion" data-difficulty="dificil">
-                <a href="JuegosSecundaria/debug.html"
-                   class="game-card-link"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   aria-label="Abrir juego Depuración de Código">
-                    <div class="game-card-thumb thumb-programacion has-image">
-                        <iframe src="JuegosSecundaria/debug.html" title="Depuración de Código" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+            <!-- 09 · Depuración de Código (Placeholder) -->
+            <article class="game-card disabled game-card-new" data-category="programacion" data-difficulty="dificil">
+                <a href="#" class="game-card-link" aria-label="Juego no disponible">
+                    <div class="game-card-thumb thumb-programacion">
+                        <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">09</span>
                         <span class="game-badge-new">NUEVO</span>
@@ -701,10 +650,6 @@
                                 <span class="star is-filled">★</span>
                                 <span class="star is-filled">★</span>
                                 <span class="star is-filled">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
                             </span>
                         </div>
                     </div>
@@ -734,15 +679,11 @@
 
         <div class="games-grid" aria-live="polite">
 
-            <!-- 10 · Tabla Periódica -->
-            <article class="game-card" data-category="ciencias" data-difficulty="medio">
-                <a href="JuegosSecundaria/tablaperiodica.html"
-                   class="game-card-link"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   aria-label="Abrir juego Tabla Periódica">
-                    <div class="game-card-thumb thumb-ciencias has-image">
-                        <iframe src="JuegosSecundaria/tablaperiodica.html" title="Tabla Periódica" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+            <!-- 10 · Tabla Periódica (Placeholder) -->
+            <article class="game-card disabled" data-category="ciencias" data-difficulty="medio">
+                <a href="#" class="game-card-link" aria-label="Juego no disponible">
+                    <div class="game-card-thumb thumb-ciencias">
+                        <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">10</span>
                         <div class="game-difficulty difficulty-medio">
@@ -763,24 +704,16 @@
                                 <span class="star is-filled">★</span>
                                 <span class="star">★</span>
                             </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
                         </div>
                     </div>
                 </a>
             </article>
 
-            <!-- 11 · Física del Movimiento -->
-            <article class="game-card game-card-new" data-category="ciencias" data-difficulty="dificil">
-                <a href="JuegosSecundaria/fisica.html"
-                   class="game-card-link"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   aria-label="Abrir juego Física del Movimiento">
-                    <div class="game-card-thumb thumb-ciencias has-image">
-                        <iframe src="JuegosSecundaria/fisica.html" title="Física del Movimiento" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+            <!-- 11 · Física del Movimiento (Placeholder) -->
+            <article class="game-card disabled game-card-new" data-category="ciencias" data-difficulty="dificil">
+                <a href="#" class="game-card-link" aria-label="Juego no disponible">
+                    <div class="game-card-thumb thumb-ciencias">
+                        <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">11</span>
                         <span class="game-badge-new">NUEVO</span>
@@ -802,24 +735,16 @@
                                 <span class="star is-filled">★</span>
                                 <span class="star is-filled">★</span>
                             </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
                         </div>
                     </div>
                 </a>
             </article>
 
-            <!-- 12 · Genética y ADN -->
-            <article class="game-card game-card-new" data-category="ciencias" data-difficulty="medio">
-                <a href="JuegosSecundaria/genetica.html"
-                   class="game-card-link"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   aria-label="Abrir juego Genética y ADN">
-                    <div class="game-card-thumb thumb-ciencias has-image">
-                        <iframe src="JuegosSecundaria/genetica.html" title="Genética y ADN" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+            <!-- 12 · Genética y ADN (Placeholder) -->
+            <article class="game-card disabled game-card-new" data-category="ciencias" data-difficulty="medio">
+                <a href="#" class="game-card-link" aria-label="Juego no disponible">
+                    <div class="game-card-thumb thumb-ciencias">
+                        <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">12</span>
                         <span class="game-badge-new">NUEVO</span>
@@ -841,24 +766,16 @@
                                 <span class="star is-filled">★</span>
                                 <span class="star">★</span>
                             </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
                         </div>
                     </div>
                 </a>
             </article>
 
-            <!-- 13 · Sistema Solar Avanzado -->
-            <article class="game-card game-card-new" data-category="ciencias" data-difficulty="medio">
-                <a href="JuegosSecundaria/astronomia.html"
-                   class="game-card-link"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   aria-label="Abrir juego Astronomía">
-                    <div class="game-card-thumb thumb-ciencias has-image">
-                        <iframe src="JuegosSecundaria/astronomia.html" title="Astronomía" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+            <!-- 13 · Astronomía (Placeholder) -->
+            <article class="game-card disabled game-card-new" data-category="ciencias" data-difficulty="medio">
+                <a href="#" class="game-card-link" aria-label="Juego no disponible">
+                    <div class="game-card-thumb thumb-ciencias">
+                        <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">13</span>
                         <span class="game-badge-new">NUEVO</span>
@@ -880,22 +797,14 @@
                                 <span class="star is-filled">★</span>
                                 <span class="star">★</span>
                             </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
                         </div>
                     </div>
                 </a>
             </article>
 
-<!-- 21 · Lanzador Iónico -->
+            <!-- 21 · Lanzador Iónico (ACTIVO) -->
             <article class="game-card game-card-new" data-category="ciencias" data-difficulty="dificil">
-                <a href="Juegos/AngryChems.html"
-                   class="game-card-link"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   aria-label="Abrir juego Lanzador Iónico">
+                <a href="Juegos/AngryChems.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Lanzador Iónico">
                     <div class="game-card-thumb thumb-ciencias has-image">
                         <iframe src="Juegos/AngryChems.html" title="Lanzador Iónico" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
@@ -951,15 +860,11 @@
 
         <div class="games-grid" aria-live="polite">
 
-            <!-- 14 · Línea del Tiempo -->
-            <article class="game-card" data-category="historia" data-difficulty="medio">
-                <a href="JuegosSecundaria/timeline.html"
-                   class="game-card-link"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   aria-label="Abrir juego Línea del Tiempo">
-                    <div class="game-card-thumb thumb-historia has-image">
-                        <iframe src="JuegosSecundaria/timeline.html" title="Línea del Tiempo" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+            <!-- 14 · Línea del Tiempo (Placeholder) -->
+            <article class="game-card disabled" data-category="historia" data-difficulty="medio">
+                <a href="#" class="game-card-link" aria-label="Juego no disponible">
+                    <div class="game-card-thumb thumb-historia">
+                        <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">14</span>
                         <div class="game-difficulty difficulty-medio">
@@ -980,24 +885,16 @@
                                 <span class="star is-filled">★</span>
                                 <span class="star">★</span>
                             </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
                         </div>
                     </div>
                 </a>
             </article>
 
-            <!-- 15 · Geografía Mundial -->
-            <article class="game-card game-card-new" data-category="historia" data-difficulty="medio">
-                <a href="JuegosSecundaria/geografia.html"
-                   class="game-card-link"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   aria-label="Abrir juego Geografía Mundial">
-                    <div class="game-card-thumb thumb-historia has-image">
-                        <iframe src="JuegosSecundaria/geografia.html" title="Geografía Mundial" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+            <!-- 15 · Geografía Mundial (Placeholder) -->
+            <article class="game-card disabled game-card-new" data-category="historia" data-difficulty="medio">
+                <a href="#" class="game-card-link" aria-label="Juego no disponible">
+                    <div class="game-card-thumb thumb-historia">
+                        <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">15</span>
                         <span class="game-badge-new">NUEVO</span>
@@ -1019,24 +916,16 @@
                                 <span class="star is-filled">★</span>
                                 <span class="star">★</span>
                             </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
                         </div>
                     </div>
                 </a>
             </article>
 
-            <!-- 16 · Civilizaciones Antiguas -->
-            <article class="game-card game-card-new" data-category="historia" data-difficulty="facil">
-                <a href="JuegosSecundaria/civilizaciones.html"
-                   class="game-card-link"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   aria-label="Abrir juego Civilizaciones Antiguas">
-                    <div class="game-card-thumb thumb-historia has-image">
-                        <iframe src="JuegosSecundaria/civilizaciones.html" title="Civilizaciones Antiguas" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+            <!-- 16 · Civilizaciones Antiguas (Placeholder) -->
+            <article class="game-card disabled game-card-new" data-category="historia" data-difficulty="facil">
+                <a href="#" class="game-card-link" aria-label="Juego no disponible">
+                    <div class="game-card-thumb thumb-historia">
+                        <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">16</span>
                         <span class="game-badge-new">NUEVO</span>
@@ -1057,10 +946,6 @@
                                 <span class="star is-filled">★</span>
                                 <span class="star">★</span>
                                 <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
                             </span>
                         </div>
                     </div>
@@ -1090,15 +975,11 @@
 
         <div class="games-grid" aria-live="polite">
 
-            <!-- 17 · Hackathon Educativo -->
-            <article class="game-card" data-category="retos" data-difficulty="dificil">
-                <a href="JuegosSecundaria/hackathon.html"
-                   class="game-card-link"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   aria-label="Abrir juego Hackathon Educativo">
-                    <div class="game-card-thumb thumb-retos has-image">
-                        <iframe src="JuegosSecundaria/hackathon.html" title="Hackathon Educativo" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+            <!-- 17 · Hackathon Educativo (Placeholder) -->
+            <article class="game-card disabled" data-category="retos" data-difficulty="dificil">
+                <a href="#" class="game-card-link" aria-label="Juego no disponible">
+                    <div class="game-card-thumb thumb-retos">
+                        <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">17</span>
                         <div class="game-difficulty difficulty-dificil">
@@ -1119,24 +1000,16 @@
                                 <span class="star is-filled">★</span>
                                 <span class="star is-filled">★</span>
                             </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
                         </div>
                     </div>
                 </a>
             </article>
 
-            <!-- 18 · Olimpiada del Saber -->
-            <article class="game-card game-card-new" data-category="retos" data-difficulty="dificil">
-                <a href="JuegosSecundaria/olimpiada.html"
-                   class="game-card-link"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   aria-label="Abrir juego Olimpiada del Saber">
-                    <div class="game-card-thumb thumb-retos has-image">
-                        <iframe src="JuegosSecundaria/olimpiada.html" title="Olimpiada del Saber" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+            <!-- 18 · Olimpiada del Saber (Placeholder) -->
+            <article class="game-card disabled game-card-new" data-category="retos" data-difficulty="dificil">
+                <a href="#" class="game-card-link" aria-label="Juego no disponible">
+                    <div class="game-card-thumb thumb-retos">
+                        <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">18</span>
                         <span class="game-badge-new">NUEVO</span>
@@ -1158,24 +1031,16 @@
                                 <span class="star is-filled">★</span>
                                 <span class="star is-filled">★</span>
                             </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
                         </div>
                     </div>
                 </a>
             </article>
 
-            <!-- 19 · Laboratorio Virtual -->
-            <article class="game-card game-card-new" data-category="retos" data-difficulty="dificil">
-                <a href="JuegosSecundaria/laboratorio.html"
-                   class="game-card-link"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   aria-label="Abrir juego Laboratorio Virtual">
-                    <div class="game-card-thumb thumb-retos has-image">
-                        <iframe src="JuegosSecundaria/laboratorio.html" title="Laboratorio Virtual" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+            <!-- 19 · Laboratorio Virtual (Placeholder) -->
+            <article class="game-card disabled game-card-new" data-category="retos" data-difficulty="dificil">
+                <a href="#" class="game-card-link" aria-label="Juego no disponible">
+                    <div class="game-card-thumb thumb-retos">
+                        <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">19</span>
                         <span class="game-badge-new">NUEVO</span>
@@ -1197,25 +1062,16 @@
                                 <span class="star is-filled">★</span>
                                 <span class="star is-filled">★</span>
                             </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
                         </div>
                     </div>
                 </a>
             </article>
 
-            <!-- 20 · Torneo Final (RETO FINAL) -->
-            <article class="game-card game-card-featured" data-category="retos" data-difficulty="dificil">
-                <a href="JuegosSecundaria/torneofinal.html"
-                   class="game-card-link"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   aria-label="Abrir juego Torneo Final">
-                    <div class="game-card-thumb thumb-retos has-image">
-                        <!-- Mantenemos IMG para el Reto Final para evitar bucles de carga -->
-                        <img src="JuegosSecundaria/imagen20.png" alt="Torneo Final" class="game-thumb-img" loading="lazy" onerror="this.src='JuegosSecundaria/imagen1.png'">
+            <!-- 20 · Torneo Final (Placeholder) -->
+            <article class="game-card disabled game-card-featured" data-category="retos" data-difficulty="dificil">
+                <a href="#" class="game-card-link" aria-label="Juego no disponible">
+                    <div class="game-card-thumb thumb-retos">
+                        <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">20</span>
                         <div class="game-badge-featured">👑 TORNEO FINAL</div>
@@ -1236,10 +1092,6 @@
                                 <span class="star is-filled">★</span>
                                 <span class="star is-filled">★</span>
                                 <span class="star is-filled">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
                             </span>
                         </div>
                     </div>
@@ -1347,20 +1199,16 @@
 
 <!-- ============================================================
      SISTEMA DE PANTALLA COMPLETA CENTRALIZADO
-     (Intercepta los juegos y los abre en un Visor Inmersivo)
      ============================================================ -->
 <style>
-    /* Contenedor oscuro que ocupará toda la pantalla */
     #visor-juego {
         position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
         background: #000; z-index: 9999999; display: none; flex-direction: column;
     }
     #visor-juego.activo { display: flex; }
     
-    /* El juego se estirará a tamaño real */
     #frame-juego { width: 100%; height: 100%; border: none; background: #fff; display: block; }
     
-    /* ZONA INVISIBLE: Detecta el hover en la esquina superior derecha */
     .hover-zone-cerrar {
         position: absolute;
         top: max(15px, env(safe-area-inset-top)); 
@@ -1370,12 +1218,11 @@
         background: transparent;
     }
 
-    /* Botón flotante para salir (Oculto por defecto hacia la derecha) */
     .btn-cerrar-juego {
         position: absolute; 
         top: max(15px, env(safe-area-inset-top)); 
-        right: -250px; /* Escondido hacia la derecha */
-        z-index: 10000001; /* Debe estar por encima de la zona de hover */
+        right: -250px; 
+        z-index: 10000001; 
         background: #e74c3c; color: white; border: 3px solid #c0392b;
         padding: 10px 20px; border-radius: 15px; font-family: 'Fredoka', sans-serif;
         font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 5px 0 #c0392b;
@@ -1385,7 +1232,6 @@
     
     .btn-cerrar-juego:active { transform: translateY(4px); box-shadow: none; }
 
-    /* Al pasar el mouse por la zona invisible o el botón, se desliza desde la derecha */
     .hover-zone-cerrar:hover ~ .btn-cerrar-juego,
     .btn-cerrar-juego:hover {
         right: max(15px, env(safe-area-inset-right));
@@ -1400,42 +1246,37 @@
 </div>
 
 <script>
-    // 1. Buscamos todas las tarjetas de los juegos
     document.querySelectorAll('.game-card-link').forEach(enlace => {
         enlace.addEventListener('click', function(e) {
-            e.preventDefault(); // Bloqueamos que se abra una pestaña nueva
-            
-            // 2. Cargamos el juego en el visor oculto
+            // Evita que los juegos desactivados (próximamente) abran el visor
+            if (this.closest('.disabled')) {
+                e.preventDefault();
+                return;
+            }
+
+            e.preventDefault(); 
             const urlJuego = this.getAttribute('href');
             const visor = document.getElementById('visor-juego');
             document.getElementById('frame-juego').src = urlJuego;
             
-            // 3. Mostramos el visor
             visor.classList.add('activo');
             
-            // 4. Activamos la Pantalla Completa usando el clic que el niño acaba de hacer
             if (visor.requestFullscreen) { visor.requestFullscreen(); } 
-            else if (visor.webkitRequestFullscreen) { visor.webkitRequestFullscreen(); } // Safari
+            else if (visor.webkitRequestFullscreen) { visor.webkitRequestFullscreen(); }
         });
     });
 
-    // Función para salir
     function cerrarJuego() {
         const visor = document.getElementById('visor-juego');
-        // Salir de pantalla completa si sigue activa
         if (document.fullscreenElement || document.webkitFullscreenElement) { 
             if(document.exitFullscreen) document.exitFullscreen();
             else if(document.webkitExitFullscreen) document.webkitExitFullscreen();
         }
-        // Ocultar y apagar el juego
         visor.classList.remove('activo');
         document.getElementById('frame-juego').src = ""; 
     }
 </script>
 
-<!-- ============================================================
-     SCRIPT PRINCIPAL
-     ============================================================ -->
 <script src="js/ludio.js"></script>
 
 </body>

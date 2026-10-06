@@ -18,12 +18,14 @@
 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐝</text></svg>">
 
-    <!-- CSS PARA MINIATURAS DINÁMICAS (iFrames) -->
+    <!-- CSS PARA MINIATURAS DINÁMICAS Y ESTADO "PRÓXIMAMENTE" -->
     <style>
         /* Contenedor relativo para evitar desbordamientos */
         .game-card-thumb {
             position: relative;
             overflow: hidden;
+            display: block;
+            line-height: 0;
         }
 
         /* iFrame Escalado (Carga el juego como miniatura) */
@@ -31,11 +33,11 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 400%; /* Engaña al iframe haciéndole creer que tiene una pantalla 4 veces más grande */
+            width: 400%; 
             height: 400%;
-            transform: scale(0.25); /* Lo encoge para que quepa perfectamente en la tarjeta */
+            transform: scale(0.25); 
             transform-origin: top left;
-            pointer-events: none; /* BLOQUEA CLICS en el iframe para que puedas darle clic a la tarjeta entera */
+            pointer-events: none; 
             border: none;
             z-index: 1;
             background-color: transparent;
@@ -44,15 +46,62 @@
         /* Aseguramos que los adornos de UI queden flotando ENCIMA del iframe */
         .game-thumb-bg { z-index: 2; }
         .game-number, .game-difficulty, .game-badge-new, .game-badge-featured { z-index: 3; }
+
+        /* ============================================================
+           NUEVO ESTADO "PRÓXIMAMENTE"
+           ============================================================ */
+        .placeholder-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(44, 62, 80, 0.85); /* Azul oscuro semi transparente */
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .placeholder-text {
+            color: #ffaa00;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 900;
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.5);
+            transform: rotate(-10deg);
+            border: 4px solid #ffaa00;
+            padding: 8px 15px;
+            border-radius: 12px;
+            background: rgba(0,0,0,0.4);
+        }
+
+        /* Tarjeta deshabilitada */
+        .game-card.disabled {
+            cursor: not-allowed;
+            opacity: 0.85;
+            filter: grayscale(40%);
+        }
+        
+        .game-card.disabled .game-card-link {
+            pointer-events: none; /* Desactiva el clic por completo */
+        }
     </style>
 </head>
 <body class="world-portal portal-inicial">
 
 <!-- ============================================================
+     AUDIO DE FONDO INTEGRADO
+     ============================================================ -->
+<audio id="bgm" loop>
+    <source src="assets/musicaFondo/cancion1.mp3" type="audio/mpeg">
+</audio>
+
+<!-- ============================================================
      BOTÓN FLOTANTE: SONIDO
      ============================================================ -->
 <button id="soundToggle" class="sound-toggle" aria-label="Activar o desactivar sonido" title="Sonido">
-    <span class="sound-icon sound-on">🔊</span>
     <span class="sound-icon sound-off">🔇</span>
 </button>
 
@@ -647,7 +696,7 @@
                 </a>
             </article>
 
-            <!-- 10 · La Fábrica de Letras (NUEVO JUEGO INTEGRADO) -->
+            <!-- 10 · La Fábrica de Letras -->
             <article class="game-card game-card-new" data-category="letras" data-difficulty="facil">
                 <a href="Juegos/FabricaLetras.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego La Fábrica de Letras">
                     <div class="game-card-thumb thumb-letras has-image">
@@ -1467,14 +1516,40 @@
 </div>
 
 <script>
+    const bgAudio = document.getElementById('bgm');
+    const soundToggle = document.getElementById('soundToggle');
+    let isMuted = true; 
+
+    if (soundToggle && bgAudio) {
+        soundToggle.addEventListener('click', () => {
+            isMuted = !isMuted;
+            if(isMuted) {
+                bgAudio.pause();
+                soundToggle.innerHTML = '<span class="sound-icon sound-off">🔇</span>';
+            } else {
+                bgAudio.volume = 0.3; 
+                bgAudio.play().catch(e => console.log('El navegador requiere interacción manual previa.'));
+                soundToggle.innerHTML = '<span class="sound-icon sound-on">🔊</span>';
+            }
+        });
+    }
+
     // 1. Buscamos todas las tarjetas de los juegos
     document.querySelectorAll('.game-card-link').forEach(enlace => {
-        enlace.addEventListener('click", function(e) {
+        enlace.addEventListener('click', function(e) {
+            // Evita que los juegos desactivados (próximamente) abran el visor
+            if (this.closest('.disabled')) {
+                e.preventDefault();
+                return;
+            }
+
             e.preventDefault(); 
             const urlJuego = this.getAttribute('href');
             const visor = document.getElementById('visor-juego');
             document.getElementById('frame-juego').src = urlJuego;
+            
             visor.classList.add('activo');
+            
             if (visor.requestFullscreen) { visor.requestFullscreen(); } 
             else if (visor.webkitRequestFullscreen) { visor.webkitRequestFullscreen(); } 
         });
