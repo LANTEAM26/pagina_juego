@@ -94,7 +94,7 @@
         
         .btn-info { background: linear-gradient(180deg, #00d2ff, #0081d4); color: #fff; box-shadow: 0 6px 0 #00568c, 0 0 20px rgba(0, 210, 255, 0.4); border: 1px solid #75e2ff; text-shadow: 0 2px 4px rgba(0,0,0,0.3);}
 
-        /* MODAL */
+        /* MODAL (ALERTS Y VICTORIA) */
         .modal-overlay { position: fixed; inset: 0; background: rgba(5, 8, 15, 0.85); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 1000; visibility: hidden; opacity: 0; transition: all 0.3s; }
         .modal-overlay.active { visibility: visible; opacity: 1; }
         
@@ -527,26 +527,26 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             time += 0.05;
 
-            // OLA DE ÁCIDO DINÁMICA (Doble capa de senoides para efecto hirviendo)
+            // OLA DE ÁCIDO DINÁMICA
             let acidGrad = ctx.createLinearGradient(0, groundY, 0, canvas.height);
             acidGrad.addColorStop(0, "rgba(57, 255, 20, 0.4)");
             acidGrad.addColorStop(1, "rgba(18, 128, 0, 0.8)");
             ctx.fillStyle = acidGrad; ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
             
-            // Ola de atrás (más oscura y lenta)
+            // Ola trasera
             ctx.beginPath(); ctx.moveTo(0, groundY);
             for(let i=0; i<=canvas.width; i+=20) { ctx.lineTo(i, groundY + Math.cos(i*0.03 + time*1.5) * 6); }
             ctx.lineTo(canvas.width, canvas.height); ctx.lineTo(0, canvas.height);
             ctx.fillStyle = "rgba(18, 128, 0, 0.6)"; ctx.fill();
 
-            // Ola del frente (brillante y rápida)
+            // Ola delantera
             ctx.beginPath(); ctx.moveTo(0, groundY);
             for(let i=0; i<=canvas.width; i+=20) { ctx.lineTo(i, groundY + Math.sin(i*0.04 + time*2.5) * 8); }
             ctx.lineTo(canvas.width, canvas.height); ctx.lineTo(0, canvas.height);
             ctx.fillStyle = "rgba(57, 255, 20, 0.25)"; ctx.fill();
             ctx.strokeStyle = varColor('--lab-acid'); ctx.lineWidth = 3; ctx.stroke();
 
-            // BOBINA TESLA Y LÁSER
+            // BOBINA TESLA
             ctx.fillStyle = "rgba(255,255,255,0.05)"; ctx.fillRect(sling.x - 15, sling.y, 30, groundY - sling.y); 
             ctx.fillStyle = "rgba(255,255,255,0.15)"; ctx.fillRect(sling.x - 25, groundY - 20, 50, 20); 
             
@@ -554,27 +554,32 @@
             ctx.fillStyle = varColor('--lab-cyan'); ctx.fill();
             ctx.shadowBlur = 20; ctx.shadowColor = varColor('--lab-cyan');
             
+            // RAYO LÁSER (CORREGIDO EL BUG DEL LÁSER PERMANENTE)
             if (bird.active && !isFlying) {
-                // Rayo láser dinámico hacia el proyectil
-                ctx.beginPath(); ctx.moveTo(sling.x, sling.y); ctx.lineTo(bird.x, bird.y); 
-                ctx.strokeStyle = `rgba(0, 243, 255, ${0.5 + Math.sin(time*10)*0.3})`; ctx.lineWidth = 4; ctx.stroke();
-                
-                // Línea de trayectoria predictiva
-                if (isDragging) {
-                    ctx.shadowBlur = 0; 
-                    ctx.beginPath(); ctx.setLineDash([8, 12]); ctx.lineWidth = 2; ctx.strokeStyle = "rgba(0, 243, 255, 0.4)"; 
-                    let simX = bird.x; let simY = bird.y; let simVx = (sling.x - bird.x) * 0.2; let simVy = (sling.y - bird.y) * 0.2;
-                    ctx.moveTo(simX, simY);
-                    for (let i = 0; i < 35; i++) { simVy += gravity; simX += simVx; simY += simVy; ctx.lineTo(simX, simY); }
-                    ctx.stroke(); ctx.setLineDash([]); 
+                let dx = bird.x - sling.x;
+                let dy = bird.y - sling.y;
+                let distToSling = Math.sqrt(dx*dx + dy*dy);
+
+                // Dibuja la conexión solo si se arrastra o si está posado en la base (distancia mínima)
+                if (isDragging || distToSling < 20) {
+                    ctx.beginPath(); ctx.moveTo(sling.x, sling.y); ctx.lineTo(bird.x, bird.y); 
+                    ctx.strokeStyle = `rgba(0, 243, 255, ${0.5 + Math.sin(time*10)*0.3})`; ctx.lineWidth = 4; ctx.stroke();
+                    
+                    if (isDragging) {
+                        ctx.shadowBlur = 0; 
+                        ctx.beginPath(); ctx.setLineDash([8, 12]); ctx.lineWidth = 2; ctx.strokeStyle = "rgba(0, 243, 255, 0.4)"; 
+                        let simX = bird.x; let simY = bird.y; let simVx = (sling.x - bird.x) * 0.2; let simVy = (sling.y - bird.y) * 0.2;
+                        ctx.moveTo(simX, simY);
+                        for (let i = 0; i < 35; i++) { simVy += gravity; simX += simVx; simY += simVy; ctx.lineTo(simX, simY); }
+                        ctx.stroke(); ctx.setLineDash([]); 
+                    }
                 }
             }
             ctx.shadowBlur = 0; 
 
-            // OBSTÁCULOS
             bumpers.forEach(b => { b.draw(ctx); });
 
-            // DRONES (BLANCOS)
+            // DRONES BLANCO
             ctx.font = "bold 20px Nunito";
             targets.forEach(t => {
                 if (!t.hit) {
@@ -600,7 +605,7 @@
                 }
             });
 
-            // RASTRO (TRAIL) DEL PROYECTIL
+            // RASTRO
             if(trail.length > 0) {
                 for(let i=0; i<trail.length; i++) {
                     ctx.globalAlpha = trail[i].alpha * 0.5;
@@ -610,7 +615,7 @@
                 ctx.globalAlpha = 1.0;
             }
 
-            // PROYECTIL PRINCIPAL
+            // PROYECTIL
             if (bird.active) {
                 if (!isFlying && !isDragging) bird.y = sling.y + Math.sin(time * 4) * 6;
                 
@@ -631,7 +636,6 @@
                 ctx.font = "bold 18px Nunito"; drawChemicalText(ctx, bird.text, bird.x, bird.y); ctx.shadowBlur = 0;
             }
 
-            // EFECTOS (Partículas y Textos Flotantes)
             for(let i = particles.length - 1; i >= 0; i--) {
                 particles[i].update(); particles[i].draw(ctx);
                 if(particles[i].life <= 0) particles.splice(i, 1);
@@ -705,4 +709,10 @@
         document.body.addEventListener('pointerdown', function() {
             let elem = document.documentElement;
             if (!document.fullscreenElement) {
-                if (elem.requestFullscreen) { elem.requestFullscreen().catch(e=>{});
+                if (elem.requestFullscreen) { elem.requestFullscreen().catch(e=>{}); } 
+                else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); }
+            }
+        }, { once: true });
+    </script>
+</body>
+</html>
