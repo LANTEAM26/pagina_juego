@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>¡Carrera de Abejitas! 🐝</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --p1-main: #3498db; --p1-dark: #2980b9;
+            --p2-main: #2ecc71; --p2-dark: #27ae60;
+            --p3-main: #e67e22; --p3-dark: #d35400;
+            --p4-main: #9b59b6; --p4-dark: #8e44ad;
+            --grid-bg: #8d6e63;
+        }
+
+        body {
+            font-family: 'Fredoka', sans-serif;
+            display: flex; flex-direction: column; align-items: center;
+            margin: 0; padding: 10px; min-height: 100vh; height: 100vh;
+            touch-action: none; color: #333; background-color: transparent; 
+            overflow: hidden; /* Evita cualquier scroll no deseado */
+            box-sizing: border-box;
+        }
+
+        /* PAISAJE DE FONDO */
+        .decorations { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -1; pointer-events: none; overflow: hidden; background: linear-gradient(180deg, #74ebd5 0%, #ACB6E5 100%); }
+        .decorations::before { content: ''; position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg width='60' height='104' viewBox='0 0 60 104' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 52l15-26 15 26v52l-15 26-15-26zM0 0l15 26v52L0 104V0zm60 0v104L45 78V26z' fill='%23ffffff' fill-opacity='0.15' fill-rule='evenodd'/%3E%3C/svg%3E"); z-index: 1; }
+        .sun { position: absolute; top: 3%; right: 5%; font-size: 70px; z-index: 2; filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.8)); animation: pulse-sun 3s infinite alternate; }
+        @keyframes pulse-sun { 0% { transform: scale(1) rotate(0deg); } 100% { transform: scale(1.1) rotate(10deg); } }
+        .grass { position: absolute; bottom: -5vh; left: -10vw; width: 120vw; height: 25vh; background: #a9dfbf; border-radius: 50% 50% 0 0; z-index: 2; box-shadow: inset 0 15px 0 #82e0aa, 0 -30px 50px rgba(46,204,113,0.3); }
+
+        h1 { color: #2c3e50; margin: 5px 0; text-align: center; font-size: 28px; text-shadow: 2px 2px 0px #fff; position: relative; z-index: 10; transition: all 0.3s;}
+        
+        /* PANEL DE CONFIGURACIÓN SUPERIOR */
+        .settings-panel {
+            background: rgba(255, 255, 255, 0.95); padding: 10px 20px; border-radius: 20px;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1); border: 3px solid #ffb74d;
+            display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; z-index: 10;
+            width: 100%; max-width: 900px; align-items: center; box-sizing: border-box; transition: all 0.3s;
+        }
+
+        .setting-row { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; width: 100%; }
+        
+        .toggle-btn { background: #ecf0f1; border: 2px solid #bdc3c7; padding: 6px 15px; border-radius: 20px; font-size: 14px; font-weight: bold; color: #7f8c8d; cursor: pointer; transition: all 0.2s; font-family: 'Fredoka', sans-serif;}
+        .toggle-btn.active.mode { background: #9b59b6; border-color: #8e44ad; color: #fff; box-shadow: 0 4px 0 #8e44ad; transform: translateY(-2px); }
+        .toggle-btn.active.diff { background: #f1c40f; border-color: #f39c12; color: #d35400; box-shadow: 0 4px 0 #f39c12; transform: translateY(-2px); }
+
+        .time-input-group { display: flex; align-items: center; gap: 8px; background: #e8f4f8; padding: 5px 12px; border-radius: 15px; border: 2px solid #3498db;}
+        .time-input-group label { color: #2980b9; font-weight: bold; font-size: 14px; }
+        .time-input-group input { width: 55px; border: 2px solid #2980b9; border-radius: 8px; text-align: center; font-weight: bold; font-family: 'Fredoka', sans-serif; font-size: 14px; padding: 4px; outline: none;}
+        .apply-time-btn { background: #3498db; color: #fff; border: none; padding: 6px 12px; border-radius: 8px; font-weight: bold; font-family: 'Fredoka', sans-serif; cursor: pointer; box-shadow: 0 3px 0 #2980b9;}
+        .apply-time-btn:active { transform: translateY(2px); box-shadow: none; }
+
+        /* TEMPORIZADOR FLOTANTE */
+        .timer-container {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            background: #fff; border: 4px solid #3498db; color: #2980b9; padding: 5px 25px;
+            border-radius: 30px; font-size: 24px; font-weight: 900;
+            box-shadow: 0 6px 0 #2980b9, 0 10px 20px rgba(0,0,0,0.15); margin-bottom: 10px; z-index: 10;
+        }
+        .timer-container.warning {
+            border-color: #e74c3c; color: #c0392b; box-shadow: 0 6px 0 #e74c3c, 0 10px 20px rgba(231,76,60,0.3);
+            animation: pulseTimer 0.5s infinite alternate;
+        }
+        @keyframes pulseTimer { 0% { transform: scale(1); } 100% { transform: scale(1.08); } }
+        
+        .timer-btn {
+            background: #3498db; color: white; border: none; border-radius: 50%;
+            width: 35px; height: 35px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 0 #2980b9; transition: all 0.1s;
+        }
+        .timer-btn:active { transform: translateY(4px); box-shadow: none; }
+        .timer-container.warning .timer-btn { background: #e74c3c; box-shadow: 0 4px 0 #c0392b; }
+
+        /* CONTENEDOR PRINCIPAL FLUIDO */
+        #game-board-area {
+            flex: 1; width: 100%; min-height: 0; /* Clave para que Flexbox no estire más allá del vh */
+            display: flex; justify-content: center; align-items: center; z-index: 10;
+            overflow: hidden;
+        }
+        
+        /* === MODO 2 JUGADORES (Por Defecto) === */
+        .shared-wrapper { width: 100%; max-width: 600px; display: flex; flex-direction: column; align-items: center; gap: 15px; height: 100%; justify-content: center;}
+        .panels-shared { display: flex; width: 100%; gap: 15px; justify-content: space-between; }
+        .shared-wrapper .grid-wrapper { width: 100%; max-width: 450px; aspect-ratio: 1; }
+
+        /* === MODO 4 JUGADORES (Clase aplicada al body) === */
+        body.mode-4 { padding: 5px 10px; }
+        body.mode-4 h1 { font-size: 20px; margin: 2px 0; }
+        body.mode-4 .settings-panel { padding: 5px 15px; margin-bottom: 5px; flex-direction: row; gap: 15px; }
+        body.mode-4 .timer-container { font-size: 18px; padding: 4px 20px; margin-bottom: 5px; }
+        body.mode-4 .global-controls { margin-top: 5px; margin-bottom: 5px; }
+        body.mode-4 .global-btn { padding: 10px 20px; font-size: 16px; }
+
+        body.mode-4 .stations-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 8px;
+            width: 100%;
+            max-width: 1100px;
+            height: 100%; /* Toma todo el espacio sobrante del flex-parent */
+        }
+
+        body.mode-4 .station {
+            background: rgba(255,255,255,0.9);
+            border-radius: 15px;
+            border: 3px solid #fff;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: row; /* Cuadrícula a la izquierda, panel a la derecha */
+            padding: 6px;
+            gap: 8px;
+            align-items: stretch;
+        }
+
+        body.mode-4 .grid-wrapper {
+            height: 100%;
+            aspect-ratio: 1; /* Se mantiene perfectamente cuadrado */
+            margin: 0;
+            padding: 5px;
+            flex-shrink: 0;
+        }
+
+        body.mode-4 .panel {
+            flex: 1;
+            padding: 5px;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        body.mode-4 .panel h3 { font-size: 13px; margin-bottom: 3px; }
+        body.mode-4 .btn-group { margin-bottom: 2px; }
+        body.mode-4 .cmd-btn { font-size: 10px; padding: 4px 1px; }
+        body.mode-4 .seq-container { margin-top: 2px; min-height: 22px; padding: 4px; }
+        body.mode-4 .cmd-block { width: 16px; height: 16px; font-size: 9px; }
+        body.mode-4 .obstacle-cell::after { font-size: 15px; }
+        body.mode-4 .target-emoji { font-size: 16px; }
+
+        /* DISEÑO COMÚN DE CUADRÍCULA */
+        .grid-wrapper { background: #ffe0b2; padding: 8px; border-radius: 15px; box-shadow: 0 6px 0 #ffb74d; box-sizing: border-box; }
+        .game-grid { display: grid; width: 100%; height: 100%; gap: 4px; background-color: var(--grid-bg); border-radius: 10px; padding: 4px; box-sizing: border-box;}
+        
+        .cell { background-color: #fff9c4; border-radius: 6px; display: flex; justify-content: center; align-items: center; position: relative; user-select: none; box-shadow: inset 0 -4px 0 rgba(0,0,0,0.1); }
+        .obstacle-cell { background-color: #95a5a6 !important; box-shadow: inset 0 -4px 0 #7f8c8d !important; }
+        .obstacle-cell::after { content: '🪨'; font-size: 26px; position: absolute; }
+        
+        .target-emoji { font-size: 24px; animation: pulseTarget 1.5s infinite alternate; position: absolute;}
+        @keyframes pulseTarget { 0% { transform: scale(1); } 100% { transform: scale(0.85); } }
+
+        /* ABEJAS */
+        .bee-container { position: absolute; z-index: 5; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
+        .bee-orientation { transition: transform 0.2s ease; display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; }
+        .bee-sprite { display: flex; justify-content: center; align-items: center; width: 85%; height: 85%; animation: float 2s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-4px); } }
+
+        /* PANELES DE COMANDOS COMÚN */
+        .panel { box-sizing: border-box; background: #fff; padding: 12px; border-radius: 15px; width: 100%; display: flex; flex-direction: column; align-items: center; }
+        .panel h3 { margin: 0 0 8px 0; font-size: 15px; display: flex; justify-content: space-between; width: 100%; align-items: center; border-bottom: 2px dashed rgba(0,0,0,0.1); padding-bottom: 4px;}
+        .score-badge { background: #333; color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 13px;}
+
+        .btn-group { display: flex; gap: 4px; justify-content: space-between; width: 100%; margin-bottom: 5px; }
+        button { font-family: 'Fredoka', sans-serif; font-weight: 700; border: none; border-radius: 8px; cursor: pointer; transition: all 0.1s; user-select: none; }
+        button:active { transform: translateY(4px); box-shadow: 0 0px 0 transparent !important; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none !important;}
+        
+        .cmd-btn { padding: 6px 2px; font-size: 12px; color: white; flex: 1; white-space: nowrap; text-shadow: 0 1px 2px rgba(0,0,0,0.3);}
+        .undo-btn { background-color: #e74c3c !important; box-shadow: 0 4px 0 #c0392b !important; }
+
+        .seq-container { display: flex; flex-wrap: wrap; gap: 4px; min-height: 35px; background: rgba(0,0,0,0.03); padding: 6px; border-radius: 10px; width: 95%; border: 2px dashed rgba(0,0,0,0.1); margin-top: 5px;}
+        .cmd-block { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 6px; color: white; font-weight: bold; font-size: 12px; box-shadow: 0 3px 0 rgba(0,0,0,0.2); animation: popIn 0.2s ease-out; }
+        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+
+        /* CONTROLES GLOBALES */
+        .global-controls { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 10px; margin-bottom: 10px; position: relative; z-index: 10; width: 100%; max-width: 600px;}
+        button.global-btn { padding: 15px 30px; font-size: 18px; color: white; border-radius: 15px; letter-spacing: 1px;}
+        button#go-btn { background-color: #ff9800; box-shadow: 0 6px 0 #f57c00; flex: 2; }
+        button.reset-btn { background-color: #e74c3c; box-shadow: 0 6px 0 #c0392b; flex: 1;}
+
+        /* MODAL */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 1000; visibility: hidden; opacity: 0; transition: all 0.3s; backdrop-filter: blur(5px);}
+        .modal-overlay.active { visibility: visible; opacity: 1; }
+        .modal-box { background: white; padding: 30px; border-radius: 25px; text-align: center; max-width: 85%; width: 450px; transform: scale(0.7); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 15px 40px rgba(0,0,0,0.3); border: 6px solid #ff9800;}
+        .modal-overlay.active .modal-box { transform: scale(1); }
+        .modal-title { font-size: 28px; margin-top: 0; margin-bottom: 15px; color: #ff9800; }
+        .modal-msg { font-size: 18px; margin-bottom: 25px; color: #555; white-space: pre-line; line-height: 1.4; font-weight: 600;}
+        .modal-btn { background: #4CAF50; box-shadow: 0 6px 0 #388E3C; padding: 12px 30px; font-size: 18px; color: white; border-radius: 15px; text-transform: uppercase;}
+    </style>
+</head>
+<body>
+
+    <audio id="bgm" loop>
+        <!-- Ruta del audio extraída del historial -->
+        <source src="../assets/musicaFondo/cancion1.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="decorations">
+        <div class="sun">☀️</div>
+        <div class="grass"></div>
+    </div>
+
+    <h1>¡Carrera de Abejitas! 🐝</h1>
+    
+    <div class="settings-panel">
+        <div class="setting-row">
+            <button id="mode-2" class="toggle-btn mode active" onclick="setMode(2)">👫 2 Jugadores</button>
+            <button id="mode-4" class="toggle-btn mode" onclick="setMode(4)">🧑‍‍🤝‍🧑 4 Jugadores</button>
+        </div>
+        <div class="setting-row">
+            <button id="diff-1" class="toggle-btn diff active" onclick="setDifficulty(1)">⭐ Pequeño</button>
+            <button id="diff-2" class="toggle-btn diff" onclick="setDifficulty(2)">⭐⭐ Mediano</button>
+            <button id="diff-3" class="toggle-btn diff" onclick="setDifficulty(3)">⭐⭐⭐ Grande</button>
+        </div>
+        <div class="setting-row">
+            <div class="time-input-group">
+                <label>⏳ Tiempo (seg):</label>
+                <input type="number" id="custom-time" value="120" min="0" max="999">
+                <button class="apply-time-btn" onclick="applyCustomTime()">Fijar</button>
+            </div>
+            <span style="font-size:12px; color:#555; font-weight:bold;">(0 = Libre)</span>
+        </div>
+    </div>
+
+    <div id="timer-display" class="timer-container" style="display: none;">
+        <button id="timer-ctrl-btn" class="timer-btn" onclick="toggleTimer()">▶</button>
+        <span>⏳ <span id="time-left">00:00</span></span>
+    </div>
+
+    <!-- CONTENEDOR DINÁMICO DONDE SE INYECTAN LOS TABLEROS Y PANELES -->
+    <div id="game-board-area"></div>
+    
+    <div class="global-controls">
+        <button class="global-btn" onclick="executeCommands(false)" id="go-btn">🚀 ¡VOLAR Y COMER!</button>
+        <button class="global-btn reset-btn" onclick="resetGame()">🔄 Resetear</button>
+    </div>
+
+    <div class="modal-overlay" id="modal">
+        <div class="modal-box">
+            <h2 class="modal-title" id="m-title">Título</h2>
+            <p class="modal-msg" id="m-msg">Mensaje</p>
+            <button class="modal-btn" onclick="closeModal()">¡Genial!</button>
+        </div>
+    </div>
+
+    <script>
+        // MOTOR DE SONIDO
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx; let audioInitialized = false;
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            if (!audioInitialized) {
+                const bgm = document.getElementById('bgm');
+                bgm.volume = 0.25; bgm.play().catch(e => console.log("Autoplay bloqueado"));
+                audioInitialized = true;
+            }
+        }
+
+        function playTone(freq, type, duration, vol = 0.1) {
+            if (!audioCtx) return; const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + duration);
+        }
+
+        function sfxClick() { playTone(600, 'sine', 0.08, 0.1); }
+        function sfxMove() { playTone(350, 'triangle', 0.1, 0.1); }
+        function sfxEat() { playTone(880, 'sine', 0.15, 0.15); setTimeout(() => playTone(1174.66, 'sine', 0.2, 0.15), 80); }
+        function sfxVictory() { let notes = [523.25, 659.25, 783.99, 1046.50]; notes.forEach((freq, i) => { setTimeout(() => playTone(freq, 'square', 0.3, 0.1), i * 150); }); }
+
+        // ESTADO DEL JUEGO
+        let gameMode = 2; // 2 o 4
+        let currentDifficulty = 1;
+        let gridSize = 4; 
+        let isExecuting = false;
+        
+        let initialTimeLimit = 120; 
+        let timerInterval = null;
+        let timeLeft = 0; 
+        let isTimerRunning = false;
+
+        let totalItemsTarget = 0; 
+        let logicalMap = { obstacles: new Set(), targets: {} };
+        let players = {};
+
+        const playerConfigs = [
+            { id: 1, name: 'Azul', color: '#3498db', dark: '#2980b9', emoji: '💧', beeFilter: '' },
+            { id: 2, name: 'Verde', color: '#2ecc71', dark: '#27ae60', emoji: '🍃', beeFilter: 'filter: hue-rotate(120deg) brightness(1.1);' },
+            { id: 3, name: 'Naranja', color: '#e67e22', dark: '#d35400', emoji: '🍯', beeFilter: 'filter: hue-rotate(50deg) saturate(2);' },
+            { id: 4, name: 'Morado', color: '#9b59b6', dark: '#8e44ad', emoji: '🍇', beeFilter: 'filter: hue-rotate(250deg) brightness(1.2);' }
+        ];
+
+        // FUNCIONES DE UI Y CONFIGURACIÓN
+        function setMode(mode) {
+            initAudio(); sfxClick();
+            if (isExecuting) return;
+            gameMode = mode;
+            
+            // Switch responsive layout
+            if (mode === 4) document.body.classList.add('mode-4');
+            else document.body.classList.remove('mode-4');
+            
+            document.querySelectorAll('.mode').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('mode-' + mode).classList.add('active');
+            resetGame();
+        }
+
+        function setDifficulty(level) {
+            initAudio(); sfxClick();
+            if (isExecuting) return;
+            currentDifficulty = level;
+            gridSize = level === 1 ? 4 : (level === 2 ? 5 : 6);
+            document.querySelectorAll('.diff').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('diff-' + level).classList.add('active');
+            resetGame();
+        }
+
+        function applyCustomTime() {
+            initAudio(); sfxClick();
+            if (isExecuting) return;
+            let val = parseInt(document.getElementById('custom-time').value);
+            if(isNaN(val) || val < 0) val = 0;
+            initialTimeLimit = val;
+            resetGame();
+        }
+
+        // CONTROL DEL TEMPORIZADOR
+        function formatTime(seconds) {
+            let m = Math.floor(seconds / 60); let s = seconds % 60;
+            return (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s);
+        }
+
+        function toggleTimer() {
+            initAudio(); sfxClick();
+            if (initialTimeLimit === 0 || isExecuting) return;
+            isTimerRunning = !isTimerRunning;
+            document.getElementById('timer-ctrl-btn').innerText = isTimerRunning ? "⏸" : "▶";
+        }
+
+        function setupTimer() {
+            clearInterval(timerInterval);
+            isTimerRunning = false; 
+            
+            let display = document.getElementById('timer-display');
+            let timeSpan = document.getElementById('time-left');
+            let btn = document.getElementById('timer-ctrl-btn');
+
+            display.classList.remove('warning');
+            
+            if (initialTimeLimit > 0) {
+                timeLeft = initialTimeLimit;
+                display.style.display = 'flex';
+                timeSpan.innerText = formatTime(timeLeft);
+                btn.innerText = "▶";
+                
+                timerInterval = setInterval(() => {
+                    if (!isTimerRunning || isExecuting || document.getElementById('modal').classList.contains('active')) return;
+                    
+                    timeLeft--;
+                    timeSpan.innerText = formatTime(timeLeft);
+                    
+                    if (timeLeft === 10) { display.classList.add('warning'); playTone(300, 'sawtooth', 0.2, 0.15); }
+                    
+                    // LÓGICA DE TIEMPO AGOTADO -> FUERZA EJECUCIÓN AUTOMÁTICA
+                    if (timeLeft <= 0) {
+                        isTimerRunning = false;
+                        clearInterval(timerInterval);
+                        playTone(150, 'sawtooth', 0.4, 0.3);
+                        document.getElementById('go-btn').disabled = true;
+                        
+                        if (!isExecuting) {
+                            executeCommands(true); // Se fuerza ejecución final
+                        }
+                    }
+                }, 1000);
+            } else {
+                display.style.display = 'none';
+            }
+        }
+
+        // GENERACIÓN DEL DOM Y MAPAS (FLUIDOS 1FR)
+        function buildDOM() {
+            const container = document.getElementById('game-board-area');
+            container.innerHTML = '';
+
+            let styleGrid = `grid-template-columns: repeat(${gridSize}, 1fr); grid-template-rows: repeat(${gridSize}, 1fr);`;
+
+            if (gameMode === 2) {
+                let html = `
+                    <div class="shared-wrapper">
+                        <div class="grid-wrapper">
+                            <div id="grid-shared" class="game-grid" style="${styleGrid}"></div>
+                        </div>
+                        <div class="panels-shared">
+                            ${buildPanelHTML(1)}
+                            ${buildPanelHTML(2)}
+                        </div>
+                    </div>
+                `;
+                container.innerHTML = html;
+                buildGridCells('grid-shared');
+            } else {
+                let html = `<div class="stations-container">`;
+                for (let i = 1; i <= 4; i++) {
+                    html += `
+                        <div class="station">
+                            <div class="grid-wrapper">
+                                <div id="grid-p${i}" class="game-grid" style="${styleGrid}"></div>
+                            </div>
+                            ${buildPanelHTML(i)}
+                        </div>
+                    `;
+                }
+                html += `</div>`;
+                container.innerHTML = html;
+                for (let i = 1; i <= 4; i++) buildGridCells(`grid-p${i}`, i);
+            }
+        }
+
+        function buildGridCells(containerId, pId = null) {
+            const gridEl = document.getElementById(containerId);
+            for (let y = 0; y < gridSize; y++) {
+                for (let x = 0; x < gridSize; x++) {
+                    const cell = document.createElement('div'); 
+                    cell.className = 'cell'; 
+                    cell.id = gameMode === 2 ? `cell-shared-${x}-${y}` : `cell-p${pId}-${x}-${y}`;
+                    gridEl.appendChild(cell);
+                }
+            }
+        }
+
+        function buildPanelHTML(id) {
+            let conf = playerConfigs[id-1];
+            return `
+                <div class="panel" style="border: 4px solid ${conf.color}; box-shadow: 0 5px 0 ${conf.dark}">
+                    <h3 style="color: ${conf.dark}">🐝 Equipo ${conf.name} <span class="score-badge" id="score-${id}">0 / ${totalItemsTarget}</span></h3>
+                    <div class="btn-group">
+                        <button class="cmd-btn" style="background:${conf.color}; box-shadow: 0 4px 0 ${conf.dark}" onclick="addCommand(${id}, 'F')">⬆ Avanza</button>
+                        <button class="cmd-btn" style="background:${conf.color}; box-shadow: 0 4px 0 ${conf.dark}" onclick="addCommand(${id}, 'B')">⬇ Atrás</button>
+                    </div>
+                    <div class="btn-group">
+                        <button class="cmd-btn" style="background:${conf.color}; box-shadow: 0 4px 0 ${conf.dark}" onclick="addCommand(${id}, 'L')">↺ Izq</button>
+                        <button class="cmd-btn" style="background:${conf.color}; box-shadow: 0 4px 0 ${conf.dark}" onclick="addCommand(${id}, 'R')">↻ Der</button>
+                        <button class="cmd-btn undo-btn" onclick="undoCommand(${id})">❌ Borrar</button>
+                    </div>
+                    <div class="seq-container" id="seq${id}"></div>
+                </div>
+            `;
+        }
+
+        function checkReachable(startX, startY, targetsArray, obsSet) {
+            let visited = new Set(); let queue = [{x: startX, y: startY}];
+            visited.add(`${startX},${startY}`); let foundTargets = 0;
+            while(queue.length > 0) {
+                let curr = queue.shift();
+                let dirs = [[0,1], [1,0], [0,-1], [-1,0]];
+                for(let d of dirs) {
+                    let nx = curr.x + d[0], ny = curr.y + d[1];
+                    if(nx >= 0 && nx < gridSize && ny >= 0 && ny < gridSize) {
+                        let key = `${nx},${ny}`;
+                        if(!visited.has(key) && !obsSet.has(key)) {
+                            visited.add(key); queue.push({x: nx, y: ny});
+                            if(targetsArray.some(t => t.x === nx && t.y === ny)) foundTargets++;
+                        }
+                    }
+                }
+            }
+            return foundTargets === targetsArray.length;
+        }
+
+        function generateMapLogic() {
+            let valid = false; let attempts = 0;
+            let targetCount = currentDifficulty === 1 ? 3 : (currentDifficulty === 2 ? 4 : 5);
+            totalItemsTarget = targetCount;
+            let obsCountPerSide = currentDifficulty === 1 ? 0 : (currentDifficulty === 2 ? 2 : 4);
+
+            while (!valid && attempts < 200) {
+                attempts++;
+                logicalMap.obstacles.clear(); logicalMap.targets = {};
+                
+                let obsPlaced = 0; let obsAttempts = 0;
+                while(obsPlaced < obsCountPerSide * 2 && obsAttempts < 100) {
+                    obsAttempts++;
+                    let rx = Math.floor(Math.random() * gridSize); let ry = Math.floor(Math.random() * gridSize);
+                    let key = `${rx},${ry}`;
+                    if ((rx === 0 && ry === 0) || (rx === gridSize-1 && ry === gridSize-1)) continue;
+                    if (!logicalMap.obstacles.has(key)) { logicalMap.obstacles.add(key); obsPlaced++; }
+                }
+
+                if (gameMode === 2) {
+                    logicalMap.targets[1] = spawnTargetsArray(targetCount, logicalMap.obstacles, []);
+                    logicalMap.targets[2] = spawnTargetsArray(targetCount, logicalMap.obstacles, [logicalMap.targets[1]]);
+                    let r1 = checkReachable(0, 0, logicalMap.targets[1], logicalMap.obstacles);
+                    let r2 = checkReachable(gridSize-1, gridSize-1, logicalMap.targets[2], logicalMap.obstacles);
+                    if(r1 && r2) valid = true;
+                } else {
+                    let sharedT = spawnTargetsArray(targetCount, logicalMap.obstacles, []);
+                    let r1 = checkReachable(0, 0, sharedT, logicalMap.obstacles);
+                    if(r1) {
+                        for(let i=1; i<=4; i++) logicalMap.targets[i] = sharedT.map(t => ({...t}));
+                        valid = true;
+                    }
+                }
+            }
+        }
+
+        function spawnTargetsArray(count, obsSet, avoidArrays) {
+            let tgs = []; let attempts = 0;
+            while (tgs.length < count && attempts < 100) {
+                attempts++;
+                let rx = Math.floor(Math.random() * gridSize); let ry = Math.floor(Math.random() * gridSize);
+                let key = `${rx},${ry}`;
+                if ((rx === 0 && ry === 0) || (rx === gridSize-1 && ry === gridSize-1)) continue;
+                if (obsSet.has(key)) continue;
+
+                let overlap = false;
+                for (let arr of avoidArrays) { if (arr.some(t => t.x === rx && t.y === ry)) overlap = true; }
+                if (tgs.some(t => t.x === rx && t.y === ry)) overlap = true;
+
+                if (!overlap) tgs.push({x: rx, y: ry, collected: false});
+            }
+            return tgs;
+        }
+
+        function populateDOM() {
+            for(let i=1; i<=(gameMode===2?2:4); i++) {
+                document.getElementById(`score-${i}`).innerText = `0 / ${totalItemsTarget}`;
+            }
+
+            logicalMap.obstacles.forEach(key => {
+                let [x,y] = key.split(',');
+                if (gameMode === 2) {
+                    document.getElementById(`cell-shared-${x}-${y}`).classList.add('obstacle-cell');
+                } else {
+                    for(let i=1; i<=4; i++) document.getElementById(`cell-p${i}-${x}-${y}`).classList.add('obstacle-cell');
+                }
+            });
+
+            for (let i = 1; i <= (gameMode === 2 ? 2 : 4); i++) {
+                let emoji = gameMode === 2 ? playerConfigs[i-1].emoji : '🍯'; 
+                let color = gameMode === 2 ? playerConfigs[i-1].color : '#f1c40f';
+                
+                logicalMap.targets[i].forEach(t => {
+                    let cellId = gameMode === 2 ? `cell-shared-${t.x}-${t.y}` : `cell-p${i}-${t.x}-${t.y}`;
+                    let c = document.getElementById(cellId);
+                    if(c) {
+                        c.classList.add(`target-p${i}`);
+                        c.style.boxShadow = `inset 0 0 15px ${color}`;
+                        let span = document.createElement('span');
+                        span.className = 'target-emoji';
+                        span.innerText = emoji;
+                        c.appendChild(span);
+                    }
+                });
+            }
+        }
+
+        // LÓGICA DE MOVIMIENTO Y EJECUCIÓN
+        function getTransform(dir) { 
+            if (dir === 0) return 'rotate(90deg)';   
+            if (dir === 1) return 'rotate(180deg)';  
+            if (dir === 2) return 'rotate(-90deg)';  
+            if (dir === 3) return 'rotate(0deg)';    
+        }
+
+        function drawBees() {
+            document.querySelectorAll('.bee-container').forEach(b => b.remove());
+            
+            let activeIds = gameMode === 2 ? [1,2] : [1,2,3,4];
+            activeIds.forEach(id => {
+                let p = players[id];
+                let cellId = gameMode === 2 ? `cell-shared-${p.pos.x}-${p.pos.y}` : `cell-p${id}-${p.pos.x}-${p.pos.y}`;
+                let cell = document.getElementById(cellId);
+                
+                const container = document.createElement('div'); container.className = `bee-container bee${id}`;
+                const orientation = document.createElement('div'); orientation.className = 'bee-orientation'; orientation.style.transform = getTransform(p.dir);
+                const sprite = document.createElement('div'); sprite.className = 'bee-sprite';
+                
+                sprite.innerHTML = `<img src="../assets/robots/BeebotEmoji.png" alt="Bee" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; ${playerConfigs[id-1].beeFilter}">`;
+                
+                orientation.appendChild(sprite); container.appendChild(orientation); 
+                
+                if (gameMode === 2 && id === 2 && players[1].pos.x === players[2].pos.x && players[1].pos.y === players[2].pos.y) {
+                    container.style.marginTop = '15px'; container.style.marginLeft = '15px';
+                    let prevBee = cell.querySelector('.bee1');
+                    if(prevBee) { prevBee.style.marginTop = '-15px'; prevBee.style.marginLeft = '-15px'; }
+                }
+                
+                cell.appendChild(container);
+            });
+        }
+
+        function undoCommand(id) {
+            initAudio(); sfxClick();
+            if (isExecuting || (initialTimeLimit > 0 && timeLeft <= 0)) return;
+            if (players[id].commands.length === 0) return;
+            players[id].commands.pop();
+            updateSequenceUI(id);
+        }
+
+        function addCommand(id, cmd) { 
+            initAudio(); sfxClick();
+            if(isExecuting || (initialTimeLimit > 0 && timeLeft <= 0)) return; 
+            players[id].commands.push(cmd); 
+            updateSequenceUI(id); 
+        }
+
+        function updateSequenceUI(id) {
+            const symbols = { 'F': '⬆️', 'B': '⬇', 'R': '↻', 'L': '↺' }; 
+            const container = document.getElementById(`seq${id}`); container.innerHTML = ''; 
+            let conf = playerConfigs[id-1];
+            players[id].commands.forEach(cmd => { 
+                const span = document.createElement('span'); 
+                span.className = 'cmd-block'; 
+                span.innerText = symbols[cmd]; 
+                span.style.background = conf.color;
+                container.appendChild(span); 
+            });
+        }
+
+        function processMove(id, cmd) {
+            let p = players[id];
+            if (cmd === 'F' || cmd === 'B') {
+                let newX = p.pos.x, newY = p.pos.y;
+                let step = (cmd === 'F') ? 1 : -1;
+                
+                if (p.dir === 0) newX += step;       
+                else if (p.dir === 1) newY += step;  
+                else if (p.dir === 2) newX -= step;  
+                else if (p.dir === 3) newY -= step;  
+                
+                if (newX >= 0 && newX < gridSize && newY >= 0 && newY < gridSize) { 
+                    if (!logicalMap.obstacles.has(`${newX},${newY}`)) {
+                        p.pos.x = newX; p.pos.y = newY; 
+                    }
+                }
+            } else if (cmd === 'R') { p.dir = (p.dir + 1) % 4; } 
+              else if (cmd === 'L') { p.dir = (p.dir + 3) % 4; }
+
+            // Verifica si ha recolectado algo
+            let targetIndex = logicalMap.targets[id].findIndex(t => t.x === p.pos.x && t.y === p.pos.y && !t.collected);
+            if (targetIndex !== -1) {
+                logicalMap.targets[id][targetIndex].collected = true;
+                p.score++;
+                document.getElementById(`score-${id}`).innerText = `${p.score} / ${totalItemsTarget}`;
+                sfxEat();
+                
+                let cellId = gameMode === 2 ? `cell-shared-${p.pos.x}-${p.pos.y}` : `cell-p${id}-${p.pos.x}-${p.pos.y}`;
+                let c = document.getElementById(cellId);
+                c.classList.remove(`target-p${id}`);
+                c.style.boxShadow = 'inset 0 -4px 0 rgba(0,0,0,0.1)';
+                let span = c.querySelector('.target-emoji');
+                if(span) span.remove();
+            }
+        }
+
+        function executeCommands(isTimeout = false) {
+            initAudio(); sfxClick();
+            if (isExecuting) return; 
+            
+            let activeIds = gameMode === 2 ? [1,2] : [1,2,3,4];
+            let maxSteps = 0;
+            activeIds.forEach(id => { if (players[id].commands.length > maxSteps) maxSteps = players[id].commands.length; });
+
+            isExecuting = true; 
+            document.getElementById('go-btn').style.opacity = "0.5";
+            document.getElementById('go-btn').disabled = true;
+            
+            // Si el tiempo forzó la ejecución pero nadie puso comandos
+            if (maxSteps === 0) {
+                if (isTimeout) evaluateWin(true);
+                else { isExecuting = false; document.getElementById('go-btn').style.opacity = "1"; document.getElementById('go-btn').disabled = false;}
+                return;
+            }
+
+            let step = 0; 
+            const interval = setInterval(() => {
+                if (step >= maxSteps) { 
+                    clearInterval(interval); 
+                    evaluateWin(isTimeout || (initialTimeLimit > 0 && timeLeft <= 0)); 
+                    return; 
+                }
+                sfxMove();
+                activeIds.forEach(id => {
+                    if (step < players[id].commands.length) processMove(id, players[id].commands[step]);
+                });
+                drawBees(); step++;
+            }, 600); 
+        }
+
+        function evaluateWin(timeOutFlag) {
+            setTimeout(() => {
+                sfxVictory();
+                let activeIds = gameMode === 2 ? [1,2] : [1,2,3,4];
+                
+                let maxScore = -1;
+                activeIds.forEach(id => { if (players[id].score > maxScore) maxScore = players[id].score; });
+                let winners = activeIds.filter(id => players[id].score === maxScore);
+
+                if (maxScore === totalItemsTarget) {
+                    if (winners.length > 1) {
+                        let names = winners.map(id=>playerConfigs[id-1].name).join(' y ');
+                        showModal("¡Empate Perfecto! 🎉", `¡Los equipos ${names} recolectaron todo!`);
+                    } else {
+                        showModal(`¡Equipo ${playerConfigs[winners[0]-1].name} Gana! 🏆`, `¡Recolectó todo primero!`);
+                    }
+                } else if (timeOutFlag) {
+                    if (maxScore === 0) {
+                        showModal("¡Tiempo Acabado! ⏰", "¡Nadie recolectó nada! ¡Sigan practicando!");
+                    } else if (winners.length > 1) {
+                        let names = winners.map(id=>playerConfigs[id-1].name).join(' y ');
+                        showModal("¡Tiempo Acabado! ⏰\n¡Empate! 🤝", `Los equipos ${names} empatan con ${maxScore} elementos.`);
+                    } else {
+                        showModal(`¡Tiempo Acabado! ⏰\n¡Equipo ${playerConfigs[winners[0]-1].name} Gana! 🏆`, `Logró recolectar ${maxScore} elementos.`);
+                    }
+                } else {
+                    let msg = "¡Revisen sus comandos y sigan intentando!\n\n";
+                    activeIds.forEach(id => { msg += `🔹 ${playerConfigs[id-1].name}: ${players[id].score} / ${totalItemsTarget}\n`; });
+                    showModal("¡Aún no terminan! 💪", msg);
+                }
+                
+                document.getElementById('go-btn').style.opacity = "1"; 
+                document.getElementById('go-btn').disabled = false;
+                isExecuting = false;
+            }, 400);
+        }
+
+        let modalCallback = null;
+        function showModal(title, msg, callback = null) { 
+            document.getElementById('m-title').innerText = title; 
+            document.getElementById('m-msg').innerText = msg; 
+            document.getElementById('modal').classList.add('active'); 
+            modalCallback = callback;
+        }
+        
+        function closeModal() { 
+            initAudio(); sfxClick();
+            document.getElementById('modal').classList.remove('active'); 
+            if(modalCallback) { modalCallback(); modalCallback = null; }
+        }
+
+        function resetGame() {
+            initAudio(); sfxClick();
+            
+            let activeIds = gameMode === 2 ? [1,2] : [1,2,3,4];
+            
+            for(let i=1; i<=4; i++) {
+                players[i] = {
+                    score: 0,
+                    pos: (gameMode === 2 && i === 2) ? {x: gridSize-1, y: gridSize-1} : {x:0, y:0},
+                    dir: (gameMode === 2 && i === 2) ? 2 : 0, 
+                    commands: []
+                };
+            }
+
+            isExecuting = false;
+            document.getElementById('go-btn').style.opacity = "1";
+            document.getElementById('go-btn').disabled = false;
+            
+            buildDOM(); 
+            generateMapLogic(); 
+            populateDOM();
+            drawBees();
+            
+            activeIds.forEach(id => updateSequenceUI(id));
+            setupTimer();
+        }
+
+        resetGame();
+    </script>
+</body>
+</html>
