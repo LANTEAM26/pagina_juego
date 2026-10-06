@@ -18,43 +18,36 @@
 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏎️</text></svg>">
 
-    <!-- CSS PARA MINIATURAS DINÁMICAS Y TODAS LAS CORRECCIONES VISUALES -->
+    <!-- CSS PARA MINIATURAS DINÁMICAS Y CORRECCIONES VISUALES -->
     <style>
-        /* Contenedor relativo para evitar desbordamientos */
+        /* ============================================================
+           CORRECCIONES ESTRUCTURALES Y TEXTOS FLOTANTES
+           ============================================================ */
+        body, html { overflow-x: hidden; }
+
         .game-card-thumb {
             position: relative;
             overflow: hidden;
-            /* CORRECCIÓN: Elimina el margen inferior invisible de los iframes/imágenes */
             display: block;
             line-height: 0;
         }
 
-        /* iFrame Escalado (Carga el juego como miniatura) */
         .dynamic-thumb {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 400%; /* Engaña al iframe haciéndole creer que tiene una pantalla 4 veces más grande */
+            top: 0; left: 0;
+            width: 400%; 
             height: 400%;
-            transform: scale(0.25); /* Lo encoge para que quepa perfectamente en la tarjeta */
+            transform: scale(0.25); 
             transform-origin: top left;
-            pointer-events: none; /* BLOQUEA CLICS en el iframe para que puedas darle clic a la tarjeta entera */
+            pointer-events: none; 
             border: none;
             z-index: 1;
             background-color: transparent;
         }
 
-        /* Aseguramos que los adornos de UI queden flotando ENCIMA del iframe */
         .game-thumb-bg { z-index: 2; }
         .game-number, .game-difficulty, .game-badge-new, .game-badge-featured { z-index: 3; }
 
-        /* ============================================================
-           CORRECCIONES ESTRUCTURALES Y TEXTOS FLOTANTES
-           ============================================================ */
-        /* Evitar scroll horizontal accidental */
-        body, html { overflow-x: hidden; }
-
-        /* Control de textos flotantes para que no se desborden en móviles */
         .bubble, .about-rayet-bubble {
             max-width: 95%;
             word-wrap: break-word;
@@ -62,14 +55,9 @@
             z-index: 10;
         }
 
-        /* Consistencia en los márgenes de los textos de las tarjetas */
         .game-title { margin: 12px 0 6px 0; line-height: 1.2; }
         .game-desc { margin: 0 0 12px 0; line-height: 1.4; }
 
-        /* ============================================================
-           CORRECCIONES DE CONTRASTE Y FORMATO (TEXTOS HERO)
-           ============================================================ */
-        /* Subtítulo: Lo convertimos en una píldora blanca para que resalte */
         .hero-text .portal-hero-subtitle {
             background-color: rgba(255, 255, 255, 0.95);
             color: #1a2530 !important;
@@ -82,7 +70,6 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         }
 
-        /* Estadísticas: Agrupadas en una tarjeta oscura con efecto cristal (blur) */
         .hero-stats {
             background-color: rgba(26, 37, 48, 0.85);
             padding: 15px 30px;
@@ -98,7 +85,6 @@
             box-shadow: 0 8px 20px rgba(0,0,0,0.25);
         }
 
-        /* Formato individual de cada estadística */
         .hero-stat {
             color: #ffffff !important;
             text-align: center;
@@ -111,7 +97,7 @@
             display: block;
             font-size: 1.8rem;
             font-weight: 900;
-            color: #ffaa00; /* Naranja/amarillo para resaltar el número */
+            color: #ffaa00; 
             line-height: 1;
             margin-bottom: 6px;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
@@ -125,15 +111,169 @@
             letter-spacing: 0.5px;
             opacity: 0.9;
         }
+
+        /* ============================================================
+           MEJORAS DE UI (Peticiones específicas)
+           ============================================================ */
+
+        /* 1. Fix: Scroll Hint encapsulado en un bloque/píldora oscuro */
+        .scroll-hint {
+            position: absolute;
+            bottom: 30px !important;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #fff;
+            
+            /* Nuevo fondo tipo cápsula para legibilidad */
+            background-color: rgba(26, 37, 48, 0.85);
+            padding: 12px 25px;
+            border-radius: 25px;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+
+        .scroll-txt {
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            opacity: 0.95;
+        }
+
+        .hero-actions {
+            margin-bottom: 60px; /* Da espacio extra abajo del botón de Arranque */
+        }
+
+        /* 2. Fix: Sección "Sobre Nosotros" más limpia, centrada y estructurada */
+        .about-section {
+            background: linear-gradient(180deg, #eef2f5 0%, #ffffff 100%);
+            padding: 80px 20px;
+            color: #2c3e50;
+        }
+
+        .about-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .about-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .about-mission {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            background: #fff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+            margin-bottom: 60px;
+        }
+
+        .about-mission-text {
+            flex: 1;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .about-mission-visual {
+            flex: 0 0 320px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            position: relative;
+        }
+
+        .about-rayet-img-wrap {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .about-rayet-img {
+            max-width: 250px;
+            height: auto;
+            display: block;
+        }
+
+        /* Ajuste para móviles en la misión */
+        @media (max-width: 768px) {
+            .about-mission {
+                flex-direction: column;
+                text-align: center;
+                padding: 30px 20px;
+            }
+            .about-mission-visual { flex: 0 0 auto; }
+        }
+
+        /* 3. Fix: Cuadrícula de valores limpia y simétrica */
+        .about-values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 60px;
+        }
+
+        .about-value-card {
+            background: #fff;
+            padding: 30px 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+            border-top: 5px solid #ffaa00;
+            transition: transform 0.2s;
+        }
+
+        .about-value-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .about-values-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 40px;
+        }
+
+        /* 4. Fix: Botón CTA final centrado */
+        .about-cta {
+            text-align: center;
+            background: #1a2530;
+            color: #fff;
+            padding: 50px 20px;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+
+        .about-cta-desc {
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
     </style>
 </head>
 <body class="world-portal portal-primaria">
 
 <!-- ============================================================
+     AUDIO DE FONDO INTEGRAD O
+     ============================================================ -->
+<audio id="bgm" loop>
+    <!-- Ruta correcta hacia cancion2.mp3 -->
+    <source src="assets/musicaFondo/cancion2.mp3" type="audio/mpeg">
+</audio>
+
+<!-- ============================================================
      BOTÓN FLOTANTE: SONIDO
      ============================================================ -->
 <button id="soundToggle" class="sound-toggle" aria-label="Activar o desactivar sonido" title="Sonido">
-    <span class="sound-icon sound-on">🔊</span>
     <span class="sound-icon sound-off">🔇</span>
 </button>
 
@@ -246,38 +386,22 @@
     <!-- Contenido hero -->
     <div class="portal-hero-content">
 
-        <!-- Rugged guía (lado izquierdo) — con escenario animado propio -->
+        <!-- Rugged guía (lado izquierdo) -->
         <div class="hero-character reveal-child" data-reveal="1">
             <div class="rayet-stage" data-robot="rayet">
-
-                <!-- Sombra dinámica que respira con el robot -->
                 <div class="rayet-shadow" aria-hidden="true"></div>
-
-                <!-- Aura naranja pulsante -->
                 <div class="rayet-aura" aria-hidden="true"></div>
-
-                <!-- Anillo decorativo girando -->
                 <div class="rayet-ring" aria-hidden="true"></div>
-
-                <!-- Rugged real (imagen) -->
-                <img src="assets/robots/rayet.png"
-                     alt="Robot Rugged, guía del nivel Primaria"
-                     class="robot-img">
-
-                <!-- Rastro de velocidad (líneas laterales) -->
+                <img src="assets/robots/rayet.png" alt="Robot Rugged, guía del nivel Primaria" class="robot-img">
                 <div class="rayet-speed-lines" aria-hidden="true">
                     <span></span><span></span><span></span>
                 </div>
-
-                <!-- Chispas flotantes alrededor -->
                 <div class="rayet-sparkles" aria-hidden="true">
                     <span class="spark spark-1">✨</span>
                     <span class="spark spark-2">⚡</span>
                     <span class="spark spark-3">✨</span>
                 </div>
             </div>
-
-            <!-- Plataforma de asfalto bajo Rugged -->
             <div class="character-platform platform-road" aria-hidden="true"></div>
         </div>
 
@@ -294,7 +418,6 @@
                 <span class="portal-hero-title-line portal-hero-title-accent">RUGGED</span>
             </h2>
 
-            <!-- Burbuja de diálogo de Rugged -->
             <div class="bubble bubble-primaria">
                 <span class="bubble-tail"></span>
                 <p class="bubble-text">
@@ -306,7 +429,6 @@
                 ¡Elige un juego y acelera tu aprendizaje!
             </p>
 
-            <!-- Mini estadísticas rápidas -->
             <div class="hero-stats" aria-label="Resumen del portal">
                 <div class="hero-stat">
                     <span class="hero-stat-num">20</span>
@@ -333,7 +455,7 @@
         </div>
     </div>
 
-    <!-- Indicador de scroll -->
+    <!-- Indicador de scroll en su nuevo bloque para evitar chocar con la pista -->
     <div class="scroll-hint" aria-hidden="true">
         <span class="scroll-txt">Desliza para acelerar</span>
         <div class="scroll-mouse"><span class="scroll-wheel"></span></div>
@@ -346,7 +468,6 @@
      ============================================================ -->
 <main id="juegos" class="games-area">
 
-    <!-- Fondo temático: ciudad + carretera en perspectiva + patrón -->
     <div class="games-bg" aria-hidden="true">
         <div class="games-bg-sky"></div>
         <div class="games-bg-skyline"></div>
@@ -360,7 +481,6 @@
         <div class="games-bg-flag games-bg-flag-2">🏁</div>
     </div>
 
-    <!-- Contenido de la sección de juegos -->
     <div class="games-area-inner">
 
         <!-- Encabezado -->
@@ -374,9 +494,7 @@
             </p>
         </div>
 
-        <!-- ============================================
-             FILTROS POR CATEGORÍA
-             ============================================ -->
+        <!-- Filtros -->
         <div class="filters filters-primaria reveal-child" data-reveal="2" role="tablist" aria-label="Filtrar juegos por categoría">
             <button class="filter-btn is-active" data-filter="all" role="tab" aria-selected="true">
                 <span class="filter-ico">🏁</span>
@@ -1214,7 +1332,6 @@
                 <article class="game-card game-card-featured" data-category="retos" data-difficulty="dificil">
                     <a href="JuegosPrimaria/campeonato.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Campeonato Final">
                         <div class="game-card-thumb thumb-retos has-image">
-                            <!-- Si este juego no está creado aún, puedes usar iframe o imagen de placeholder -->
                             <img src="JuegosPrimaria/imagen20.png" alt="Campeonato Final" class="game-thumb-img" loading="lazy" onerror="this.src='JuegosPrimaria/imagen1.png'">
                             <span class="game-thumb-bg"></span>
                             <span class="game-number">20</span>
@@ -1269,20 +1386,15 @@
 <!-- ============================================================
      SOBRE NOSOTROS / INFO PARA DOCENTES Y FAMILIAS
      ============================================================ -->
-<section id="ayuda" class="about-section about-primaria">
+<section id="ayuda" class="about-section">
     <div class="about-inner">
 
         <!-- Encabezado con Rugged mini -->
         <header class="about-header reveal-child" data-reveal="1">
-            <div class="about-header-badge">
-                <span class="about-badge-dot"></span>
-                <span>SOBRE NOSOTROS</span>
-                <span class="about-badge-dot"></span>
-            </div>
-            <h2 class="about-title">
-                Aprender nunca fue tan <span class="about-title-accent">veloz</span>
+            <h2 class="about-values-title">
+                Aprender nunca fue tan <span style="color:#ffaa00;">veloz</span>
             </h2>
-            <p class="about-subtitle">
+            <p style="font-size:1.2rem; opacity:0.8;">
                 Aventuras de Rugged es un portal educativo gratuito que combina juego,
                 velocidad y aprendizaje para estudiantes de primaria.
             </p>
@@ -1291,7 +1403,7 @@
         <!-- Misión principal + imagen Rugged -->
         <div class="about-mission reveal-child" data-reveal="2">
             <div class="about-mission-text">
-                <h3 class="about-mission-title">🎯 Nuestra misión</h3>
+                <h3 style="color:#1a2530; font-size: 1.8rem; margin-top:0;">🎯 Nuestra misión</h3>
                 <p>
                     Convertir el aprendizaje en una <strong>pista de carreras emocionante</strong>
                     donde cada niño y niña pueda desarrollar sus habilidades a su propio ritmo,
@@ -1302,12 +1414,6 @@
                     ser tan divertido como ganar un Gran Premio. Cada juego está diseñado
                     por educadores y probado con estudiantes reales.
                 </p>
-                <div class="about-mission-tags">
-                    <span class="about-tag about-tag-orange">🎮 Aprender jugando</span>
-                    <span class="about-tag about-tag-blue">📚 Currículo escolar</span>
-                    <span class="about-tag about-tag-green">♿ Accesible</span>
-                    <span class="about-tag about-tag-purple">🆓 100% gratis</span>
-                </div>
             </div>
 
             <div class="about-mission-visual">
@@ -1321,100 +1427,66 @@
             </div>
         </div>
 
-        <!-- Estadísticas destacadas -->
-        <div class="about-stats reveal-child" data-reveal="3">
-            <div class="about-stat">
-                <div class="about-stat-ico">🎮</div>
-                <div class="about-stat-num" data-count="20">0</div>
-                <div class="about-stat-lbl">Minijuegos educativos</div>
-            </div>
-            <div class="about-stat">
-                <div class="about-stat-ico">📚</div>
-                <div class="about-stat-num" data-count="5">0</div>
-                <div class="about-stat-lbl">Áreas de aprendizaje</div>
-            </div>
-            <div class="about-stat">
-                <div class="about-stat-ico">🎓</div>
-                <div class="about-stat-num" data-count="3">0</div>
-                <div class="about-stat-lbl">Niveles: Inicial, Primaria y Secundaria</div>
-            </div>
-            <div class="about-stat">
-                <div class="about-stat-ico">💯</div>
-                <div class="about-stat-num" data-count="100">0</div>
-                <div class="about-stat-lbl">% gratuito y sin registro</div>
-            </div>
-        </div>
-
         <!-- Valores / beneficios -->
-        <div class="about-values">
-            <h3 class="about-values-title reveal-child" data-reveal="1">
-                <span class="about-values-ico">⭐</span>
-                Lo que nos hace diferentes
-            </h3>
+        <h3 class="about-values-title reveal-child" data-reveal="1">
+            ⭐ Lo que nos hace diferentes
+        </h3>
 
-            <div class="about-values-grid">
-                <div class="about-value-card reveal-child" data-reveal="2">
-                    <div class="about-value-ico about-value-ico-orange">🏁</div>
-                    <h4 class="about-value-title">Aprendizaje progresivo</h4>
-                    <p class="about-value-desc">
-                        Cada juego tiene tres niveles de dificultad: <strong>fácil</strong>,
-                        <strong>medio</strong> y <strong>difícil</strong>. Los niños avanzan a su ritmo.
-                    </p>
-                </div>
+        <div class="about-values-grid">
+            <div class="about-value-card reveal-child" data-reveal="2">
+                <h4 style="color:#2c3e50; font-size:1.3rem; margin-top:0;">🏁 Aprendizaje progresivo</h4>
+                <p style="color:#555; line-height:1.5;">
+                    Cada juego tiene tres niveles de dificultad: <strong>fácil</strong>,
+                    <strong>medio</strong> y <strong>difícil</strong>. Los niños avanzan a su ritmo.
+                </p>
+            </div>
 
-                <div class="about-value-card reveal-child" data-reveal="3">
-                    <div class="about-value-ico about-value-ico-blue">🧠</div>
-                    <h4 class="about-value-title">Basado en currículo</h4>
-                    <p class="about-value-desc">
-                        Actividades que fortalecen <strong>secuencias, clasificación, lógica, patrones
-                        y resolución de problemas</strong> mediante retos interactivos.
-                    </p>
-                </div>
+            <div class="about-value-card reveal-child" data-reveal="3">
+                <h4 style="color:#2c3e50; font-size:1.3rem; margin-top:0;">🧠 Basado en currículo</h4>
+                <p style="color:#555; line-height:1.5;">
+                    Actividades que fortalecen <strong>secuencias, clasificación, lógica, patrones
+                    y resolución de problemas</strong>.
+                </p>
+            </div>
 
-                <div class="about-value-card reveal-child" data-reveal="4">
-                    <div class="about-value-ico about-value-ico-green">💡</div>
-                    <h4 class="about-value-title">Sin distracciones</h4>
-                    <p class="about-value-desc">
-                        Sin anuncios, sin registro obligatorio, sin compras.
-                        Solo tú, Rugged y las ganas de aprender.
-                    </p>
-                </div>
+            <div class="about-value-card reveal-child" data-reveal="4">
+                <h4 style="color:#2c3e50; font-size:1.3rem; margin-top:0;">💡 Sin distracciones</h4>
+                <p style="color:#555; line-height:1.5;">
+                    Sin anuncios, sin registro obligatorio, sin compras.
+                    Solo tú, Rugged y las ganas de aprender.
+                </p>
+            </div>
 
-                <div class="about-value-card reveal-child" data-reveal="5">
-                    <div class="about-value-ico about-value-ico-purple">📱</div>
-                    <h4 class="about-value-title">Multiplataforma</h4>
-                    <p class="about-value-desc">
-                        Funciona en <strong>tablet, computadora y celular</strong>.
-                        Perfecto para el aula, la casa o el camino.
-                    </p>
-                </div>
+            <div class="about-value-card reveal-child" data-reveal="5">
+                <h4 style="color:#2c3e50; font-size:1.3rem; margin-top:0;">📱 Multiplataforma</h4>
+                <p style="color:#555; line-height:1.5;">
+                    Funciona en <strong>tablet, computadora y celular</strong>.
+                    Perfecto para el aula, la casa o el camino.
+                </p>
+            </div>
 
-                <div class="about-value-card reveal-child" data-reveal="6">
-                    <div class="about-value-ico about-value-ico-yellow">🔊</div>
-                    <h4 class="about-value-title">Sonido y voz</h4>
-                    <p class="about-value-desc">
-                        Efectos sonoros temáticos de carreras, retroalimentación
-                        auditiva y botón de silencio para el aula.
-                    </p>
-                </div>
+            <div class="about-value-card reveal-child" data-reveal="6">
+                <h4 style="color:#2c3e50; font-size:1.3rem; margin-top:0;">🔊 Sonido y voz</h4>
+                <p style="color:#555; line-height:1.5;">
+                    Efectos sonoros temáticos de carreras, retroalimentación
+                    auditiva y música dinámica interactiva.
+                </p>
+            </div>
 
-                <div class="about-value-card reveal-child" data-reveal="7">
-                    <div class="about-value-ico about-value-ico-red">❤️</div>
-                    <h4 class="about-value-title">Hecho con cariño</h4>
-                    <p class="about-value-desc">
-                        Diseñado por educadores y desarrolladores pensando
-                        siempre en <strong>los más pequeños</strong>.
-                    </p>
-                </div>
+            <div class="about-value-card reveal-child" data-reveal="7">
+                <h4 style="color:#2c3e50; font-size:1.3rem; margin-top:0;">❤️ Hecho con cariño</h4>
+                <p style="color:#555; line-height:1.5;">
+                    Diseñado por educadores y desarrolladores pensando
+                    siempre en <strong>los más pequeños</strong>.
+                </p>
             </div>
         </div>
 
         <!-- CTA final -->
         <div class="about-cta reveal-child" data-reveal="1">
-            <div class="about-cta-icon">🏎️</div>
-            <h3 class="about-cta-title">¿Listo para empezar la carrera?</h3>
+            <h3 style="font-size:2rem; margin:0 0 15px 0;">¿Listo para empezar la carrera?</h3>
             <p class="about-cta-desc">Elige tu primer desafío y demuestra que eres el campeón del aprendizaje.</p>
-            <a href="#juegos" class="btn btn-hero-primaria" data-scroll="#juegos">
+            <a href="#juegos" class="btn btn-hero-primaria" data-scroll="#juegos" style="display:inline-flex;">
                 <span class="btn-glow"></span>
                 <span class="btn-icon">🏁</span>
                 <span class="btn-label">VER LOS 20 JUEGOS</span>
@@ -1459,20 +1531,16 @@
 
 <!-- ============================================================
      SISTEMA DE PANTALLA COMPLETA CENTRALIZADO
-     (Intercepta los juegos y los abre en un Visor Inmersivo)
      ============================================================ -->
 <style>
-    /* Contenedor oscuro que ocupará toda la pantalla */
     #visor-juego {
         position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
         background: #000; z-index: 9999999; display: none; flex-direction: column;
     }
     #visor-juego.activo { display: flex; }
     
-    /* El juego se estirará a tamaño real */
     #frame-juego { width: 100%; height: 100%; border: none; background: #fff; display: block; }
     
-    /* ZONA INVISIBLE: Detecta el hover en la esquina superior derecha */
     .hover-zone-cerrar {
         position: absolute;
         top: max(15px, env(safe-area-inset-top)); 
@@ -1482,12 +1550,11 @@
         background: transparent;
     }
 
-    /* Botón flotante para salir (Oculto por defecto hacia la derecha) */
     .btn-cerrar-juego {
         position: absolute; 
         top: max(15px, env(safe-area-inset-top)); 
-        right: -250px; /* Escondido hacia la derecha */
-        z-index: 10000001; /* Debe estar por encima de la zona de hover */
+        right: -250px; 
+        z-index: 10000001; 
         background: #e74c3c; color: white; border: 3px solid #c0392b;
         padding: 10px 20px; border-radius: 15px; font-family: 'Fredoka', sans-serif;
         font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 5px 0 #c0392b;
@@ -1497,7 +1564,6 @@
     
     .btn-cerrar-juego:active { transform: translateY(4px); box-shadow: none; }
 
-    /* Al pasar el mouse por la zona invisible o el botón, se desliza desde la derecha */
     .hover-zone-cerrar:hover ~ .btn-cerrar-juego,
     .btn-cerrar-juego:hover {
         right: max(15px, env(safe-area-inset-right));
@@ -1511,8 +1577,28 @@
     <iframe id="frame-juego" src="" allowfullscreen></iframe>
 </div>
 
+<!-- ============================================================
+     SCRIPT PRINCIPAL Y MANEJO DE AUDIO DE FONDO
+     ============================================================ -->
 <script>
-    // 1. Buscamos todas las tarjetas de los juegos
+    // 1. Integración de la música de fondo
+    const bgAudio = document.getElementById('bgm');
+    const soundToggle = document.getElementById('soundToggle');
+    let isMuted = true; // Empieza muteado para evitar bloqueos del navegador
+
+    soundToggle.addEventListener('click', () => {
+        isMuted = !isMuted;
+        if(isMuted) {
+            bgAudio.pause();
+            soundToggle.innerHTML = '<span class="sound-icon sound-off">🔇</span>';
+        } else {
+            bgAudio.volume = 0.3; // Volumen moderado para no saturar
+            bgAudio.play().catch(e => console.log('El navegador requiere interacción manual previa.'));
+            soundToggle.innerHTML = '<span class="sound-icon sound-on">🔊</span>';
+        }
+    });
+
+    // 2. Lógica del visor Inmersivo
     document.querySelectorAll('.game-card-link').forEach(enlace => {
         enlace.addEventListener('click', function(e) {
             e.preventDefault(); 
@@ -1536,9 +1622,6 @@
     }
 </script>
 
-<!-- ============================================================
-     SCRIPT PRINCIPAL
-     ============================================================ -->
 <script src="js/rayet.js"></script>
 
 </body>
