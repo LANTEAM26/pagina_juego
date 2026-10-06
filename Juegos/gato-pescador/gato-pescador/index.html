@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#58c9f3">
+  <title>¡Atrapa los Peces!</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+  <main id="app">
+    <section id="gameWorld" aria-label="Juego Atrapa los Peces">
+      <div class="sky">
+        <div class="sun"></div>
+        <div class="cloud cloud-a"></div>
+        <div class="cloud cloud-b"></div>
+        <div class="cloud cloud-c"></div>
+      </div>
+
+      <div class="sea">
+        <div class="wave wave-1"></div>
+        <div class="wave wave-2"></div>
+      </div>
+
+      <div class="island island-left">🌴</div>
+      <div class="island island-right">⛵</div>
+
+      <header id="hud" class="hud hidden" aria-live="polite">
+        <div class="hud-card"><span>⭐</span><div><small>PUNTOS</small><strong id="score">0</strong></div></div>
+        <div class="hud-card"><span>❤️</span><div><small>VIDAS</small><strong id="lives">3</strong></div></div>
+        <div class="hud-card"><span>🐟</span><div><small>PECES</small><strong id="fishCount">0</strong></div></div>
+        <div class="hud-card"><span>⏱️</span><div><small>TIEMPO</small><strong id="time">00:00</strong></div></div>
+      </header>
+
+      <button id="soundBtn" class="sound-btn" aria-label="Activar o desactivar sonido">🔊</button>
+
+      <div id="playArea">
+        <div id="cat" class="cat hidden" aria-label="Gatito jugador">
+          <div class="cat-tail"></div>
+          <div class="cat-body">
+            <div class="cat-head">
+              <i class="ear left"></i><i class="ear right"></i>
+              <i class="eye left"></i><i class="eye right"></i>
+              <i class="nose"></i>
+              <i class="mouth"></i>
+              <i class="whisker w1"></i><i class="whisker w2"></i>
+              <i class="whisker w3"></i><i class="whisker w4"></i>
+            </div>
+            <div class="cat-belly"></div>
+          </div>
+          <div class="basket">🧺</div>
+        </div>
+      </div>
+
+      <div id="feedback" aria-live="polite"></div>
+
+      <nav id="mobileControls" class="mobile-controls hidden" aria-label="Controles táctiles">
+        <button id="leftBtn" aria-label="Mover a la izquierda">◀</button>
+        <button id="rightBtn" aria-label="Mover a la derecha">▶</button>
+      </nav>
+
+      <section id="startScreen" class="overlay">
+        <div class="panel start-panel">
+          <div class="logo-fish">🐟</div>
+          <p class="eyebrow">AVENTURA EN EL MUELLE</p>
+          <h1>¡Atrapa los<br><span>Peces!</span></h1>
+          <p class="intro">Ayuda al gatito a conseguir todos los peces que pueda. ¡Atrapa los peces dorados y evita las gotas de agua!</p>
+
+          <div class="preview-row">
+            <div><span>🐟</span><b>+1</b><small>Normal</small></div>
+            <div><span>🐠</span><b>+2</b><small>Especial</small></div>
+            <div class="gold-preview"><span>🐟</span><b>+5</b><small>Dorado</small></div>
+            <div><span>💧</span><b>-1 ❤️</b><small>¡Evítala!</small></div>
+          </div>
+
+          <button id="playBtn" class="primary-btn">▶ JUGAR</button>
+          <button id="howBtn" class="secondary-btn">❔ CÓMO JUGAR</button>
+          <p class="keyboard-tip">⌨️ Usa ← → o A / D para moverte</p>
+        </div>
+      </section>
+
+      <section id="howScreen" class="overlay hidden">
+        <div class="panel info-panel">
+          <button id="closeHowBtn" class="close-btn" aria-label="Cerrar">×</button>
+          <p class="eyebrow">GUÍA RÁPIDA</p>
+          <h2>¿Cómo jugar?</h2>
+          <div class="instructions">
+            <div><span>🐱</span><p><b>Mueve al gatito</b><br>Usa ← →, A/D o los botones táctiles.</p></div>
+            <div><span>🐟</span><p><b>Atrapa peces</b><br>Normal +1, especial +2 y dorado +5.</p></div>
+            <div><span>💧</span><p><b>Evita el agua</b><br>Cada gota que toque al gato quita una vida.</p></div>
+            <div><span>⚡</span><p><b>¡Cada vez más rápido!</b><br>La dificultad aumenta poco a poco.</p></div>
+          </div>
+          <button id="playFromHowBtn" class="primary-btn">¡ENTENDIDO, JUGAR!</button>
+        </div>
+      </section>
+
+      <section id="gameOverScreen" class="overlay hidden">
+        <div class="panel end-panel">
+          <div class="end-icon">🐱</div>
+          <p class="eyebrow">FIN DE LA PARTIDA</p>
+          <h2>¡Buen intento!</h2>
+          <div class="final-score"><small>PUNTUACIÓN</small><strong id="finalScore">0</strong></div>
+          <div class="stats">
+            <div><span>🐟</span><strong id="finalFish">0</strong><small>Peces</small></div>
+            <div><span>✨</span><strong id="finalGold">0</strong><small>Dorados</small></div>
+            <div><span>⏱️</span><strong id="finalTime">00:00</strong><small>Tiempo</small></div>
+          </div>
+          <button id="restartBtn" class="primary-btn">↻ JUGAR DE NUEVO</button>
+          <button id="homeBtn" class="secondary-btn">⌂ VOLVER AL INICIO</button>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script src="js/audio.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>

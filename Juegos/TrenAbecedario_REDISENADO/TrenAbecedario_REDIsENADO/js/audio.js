@@ -1,7 +1,0 @@
-let ctx,musicTimer;let musicOn=true,sfxOn=true;function ac(){try{return ctx||(ctx=new(window.AudioContext||window.webkitAudioContext)())}catch{return null}}
-function tone(freq,duration=.13,type='sine',gain=.035,delay=0){const c=ac();if(!c)return;const o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.value=freq;g.gain.setValueAtTime(.001,c.currentTime+delay);g.gain.exponentialRampToValueAtTime(gain,c.currentTime+delay+.02);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+delay+duration);o.connect(g).connect(c.destination);o.start(c.currentTime+delay);o.stop(c.currentTime+delay+duration+.02)}
-export function sound(kind){if(!sfxOn)return;if(kind==='ok'){tone(523,.13);tone(659,.14,'sine',.035,.13);tone(784,.2,'sine',.03,.26)}else if(kind==='bad'){tone(260,.15,'triangle');tone(210,.22,'triangle',.03,.15)}else if(kind==='win'){[523,659,784,1047].forEach((n,i)=>tone(n,.24,'sine',.04,i*.16))}else if(kind==='click')tone(450,.07)}
-export function configure(s){musicOn=s.music;sfxOn=s.sfx;if(!musicOn)stopMusic();else startMusic()}
-export function startMusic(){if(musicTimer||!musicOn)return;let n=0;const notes=[262,330,392,330,349,440,392,330,294,349,440,392,330,294,262,0];musicTimer=setInterval(()=>{if(notes[n%notes.length])tone(notes[n%notes.length],.27,'sine',.009);n++},400)}
-export function stopMusic(){clearInterval(musicTimer);musicTimer=null}
-export function unlockAudio(){ac()?.resume()}

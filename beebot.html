@@ -16,86 +16,15 @@
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/beebot.css">
 
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐝</text></svg>">
-
-    <!-- CSS PARA MINIATURAS DINÁMICAS Y ESTADO "PRÓXIMAMENTE" -->
-    <style>
-        /* Contenedor relativo para evitar desbordamientos */
-        .game-card-thumb {
-            position: relative;
-            overflow: hidden;
-            display: block;
-            line-height: 0;
-        }
-
-        /* iFrame Escalado (Carga el juego como miniatura) */
-        .dynamic-thumb {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 400%; 
-            height: 400%;
-            transform: scale(0.25); 
-            transform-origin: top left;
-            pointer-events: none; 
-            border: none;
-            z-index: 1;
-            background-color: transparent;
-        }
-
-        /* Aseguramos que los adornos de UI queden flotando ENCIMA del iframe */
-        .game-thumb-bg { z-index: 2; }
-        .game-number, .game-difficulty, .game-badge-new, .game-badge-featured { z-index: 3; }
-
-        /* ============================================================
-           NUEVO ESTADO "PRÓXIMAMENTE"
-           ============================================================ */
-        .placeholder-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(44, 62, 80, 0.85); /* Azul oscuro semi transparente */
-            z-index: 5;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-        }
-
-        .placeholder-text {
-            color: #ffaa00;
-            font-family: 'Fredoka', sans-serif;
-            font-weight: 900;
-            font-size: 1.5rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            text-shadow: 2px 2px 0px rgba(0,0,0,0.5);
-            transform: rotate(-10deg);
-            border: 4px solid #ffaa00;
-            padding: 8px 15px;
-            border-radius: 12px;
-            background: rgba(0,0,0,0.4);
-        }
-
-        /* Tarjeta deshabilitada */
-        .game-card.disabled {
-            cursor: not-allowed;
-            opacity: 0.85;
-            filter: grayscale(40%);
-        }
-        
-        .game-card.disabled .game-card-link {
-            pointer-events: none; /* Desactiva el clic por completo */
-        }
-    </style>
+    <link rel="icon" href="assets/robots/beebot.png">
 </head>
 <body class="world-portal portal-inicial">
 
 <!-- ============================================================
-     AUDIO DE FONDO INTEGRADO
+     AUDIO DE FONDO — canción 19
      ============================================================ -->
-<audio id="bgm" loop>
-    <source src="assets/musicaFondo/cancion1.mp3" type="audio/mpeg">
+<audio id="bgm" loop preload="auto">
+    <source src="assets/musicaFondo/cancion19.mp3" type="audio/mpeg">
 </audio>
 
 <!-- ============================================================
@@ -107,7 +36,7 @@
 
 
 <!-- ============================================================
-     ENCABEZADO PRIMAVERAL — Glass blanco-verdoso
+     ENCABEZADO PRIMAVERAL
      ============================================================ -->
 <header class="site-header header--spring" id="siteHeader">
     <div class="header-inner">
@@ -115,7 +44,7 @@
         <a href="index.html" class="brand brand-inicial" aria-label="Volver a la plataforma principal">
             <div class="brand-logo brand-logo-inicial" aria-hidden="true">
                 <span class="brand-logo-glow"></span>
-                <span class="brand-logo-emoji">🐝</span>
+                <img src="assets/robots/beebot.png" alt="" class="brand-logo-img">
             </div>
             <div class="brand-text">
                 <h1 class="brand-name">AVENTURAS DE BEEBOT</h1>
@@ -138,12 +67,12 @@
                 <span class="nav-btn-ico">💡</span>
                 <span class="nav-btn-txt">Ayuda</span>
             </a>
-            <a href="primaria.html" class="nav-btn nav-primaria" data-nav="primaria">
-                <span class="nav-btn-ico">🏎️</span>
+            <a href="rayet.html" class="nav-btn nav-primaria" data-nav="primaria">
+                <img src="assets/robots/rayet.png" alt="" class="nav-robot-img">
                 <span class="nav-btn-txt">Primaria</span>
             </a>
-            <a href="secundaria.html" class="nav-btn nav-secundaria" data-nav="secundaria">
-                <span class="nav-btn-ico">🤖</span>
+            <a href="ludio.html" class="nav-btn nav-secundaria" data-nav="secundaria">
+                <img src="assets/robots/ludio.png" alt="" class="nav-robot-img">
                 <span class="nav-btn-txt">Secundaria</span>
             </a>
         </nav>
@@ -161,7 +90,6 @@
      ============================================================ -->
 <section id="hero" class="portal-hero hero-inicial">
 
-    <!-- Fondo en capas -->
     <div class="portal-hero-bg" aria-hidden="true">
         <div class="layer layer-sky">
             <div class="sun sun-inicial"><span class="sun-rays"></span></div>
@@ -204,10 +132,8 @@
         </div>
     </div>
 
-    <!-- Contenido hero -->
     <div class="portal-hero-content">
 
-        <!-- BeeBot VOLANDO -->
         <div class="hero-character reveal-child" data-reveal="1">
             <div class="character-platform platform-garden"></div>
 
@@ -224,7 +150,6 @@
             </div>
         </div>
 
-        <!-- Texto -->
         <div class="hero-text reveal-child" data-reveal="2">
             <div class="hero-badge hero-badge-inicial">
                 <span class="badge-dot"></span>
@@ -267,11 +192,15 @@
 
 
 <!-- ============================================================
-     ÁREA DE JUEGOS — 27 juegos organizados por categorías
+     ÁREA DE JUEGOS
+     ------------------------------------------------------------
+     ▸ Cada tarjeta usa el HTML REAL del juego como portada dinámica.
+       El iframe de vista previa no ejecuta scripts y permanece silenciado.
+     ▸ Los juegos que existen abren en el visor a pantalla completa.
+     ▸ Los juegos sin página se marcan con .is-coming-soon.
      ============================================================ -->
 <main id="juegos" class="games-area">
 
-    <!-- Encabezado -->
     <div class="games-header reveal-child" data-reveal="1">
         <h2 class="section-title">
             <span class="section-title-ico">🎮</span>
@@ -282,40 +211,33 @@
         </p>
     </div>
 
-    <!-- ============================================
-         FILTROS POR CATEGORÍA
-         ============================================ -->
+    <!-- FILTROS -->
     <div class="filters filters-inicial reveal-child" data-reveal="2" role="tablist" aria-label="Filtrar juegos por categoría">
         <button class="filter-btn is-active" data-filter="all" role="tab" aria-selected="true">
             <span class="filter-ico">🌈</span>
             <span class="filter-txt">Todos</span>
             <span class="filter-count" data-count="all">27</span>
         </button>
-
         <button class="filter-btn" data-filter="numeros" role="tab" aria-selected="false">
             <span class="filter-ico">🔢</span>
             <span class="filter-txt">Números</span>
             <span class="filter-count" data-count="numeros">4</span>
         </button>
-
         <button class="filter-btn" data-filter="colores" role="tab" aria-selected="false">
             <span class="filter-ico">🎨</span>
             <span class="filter-txt">Colores</span>
             <span class="filter-count" data-count="colores">4</span>
         </button>
-
         <button class="filter-btn" data-filter="letras" role="tab" aria-selected="false">
             <span class="filter-ico">🔤</span>
             <span class="filter-txt">Letras</span>
             <span class="filter-count" data-count="letras">5</span>
         </button>
-
         <button class="filter-btn" data-filter="logica" role="tab" aria-selected="false">
             <span class="filter-ico">🧩</span>
             <span class="filter-txt">Lógica</span>
             <span class="filter-count" data-count="logica">9</span>
         </button>
-
         <button class="filter-btn" data-filter="naturaleza" role="tab" aria-selected="false">
             <span class="filter-ico">🌱</span>
             <span class="filter-txt">Naturaleza</span>
@@ -328,7 +250,6 @@
          SECCIÓN 1 · NÚMEROS (4 juegos)
          ══════════════════════════════════════════════════════════════ -->
     <section class="games-section games-section-numeros" data-section="numeros" aria-labelledby="sec-numeros-title">
-
         <header class="games-section-head">
             <div class="games-section-ico games-section-ico-numeros">🔢</div>
             <div class="games-section-info">
@@ -341,19 +262,16 @@
             </span>
         </header>
 
-        <div class="games-grid" aria-live="polite">
+        <div class="games-grid">
 
             <!-- 01 · Cuenta Números -->
             <article class="game-card" data-category="numeros" data-difficulty="facil">
-                <a href="Juegos/numeros.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Cuenta Números">
+                <a href="Juegos/numeros.html" class="game-card-link" data-game-title="Cuenta Números">
                     <div class="game-card-thumb thumb-numeros has-image">
-                        <iframe src="Juegos/numeros.html" title="Cuenta Números" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                        <iframe src="Juegos/numeros.html" title="Vista previa: Cuenta Números" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts" allow="autoplay 'none'"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">01</span>
-                        <div class="game-difficulty difficulty-facil">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Fácil</span>
-                        </div>
+                        <div class="game-difficulty difficulty-facil"><span class="diff-dot"></span><span class="diff-txt">Fácil</span></div>
                     </div>
                     <div class="game-card-body">
                         <div class="game-card-top">
@@ -363,15 +281,8 @@
                         <h3 class="game-title">Cuenta Números</h3>
                         <p class="game-desc">Aprende a contar y reconocer los números del 1 al 10 en el jardín.</p>
                         <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 1 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
+                            <span class="game-rating"><span class="star is-filled">★</span><span class="star">★</span><span class="star">★</span></span>
+                            <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
                         </div>
                     </div>
                 </a>
@@ -379,15 +290,12 @@
 
             <!-- 02 · Control Bee -->
             <article class="game-card" data-category="numeros" data-difficulty="facil">
-                <a href="Juegos/controlBee.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Control Bee">
+                <a href="Juegos/controlBee.html" class="game-card-link" data-game-title="Control Bee">
                     <div class="game-card-thumb thumb-numeros has-image">
-                        <iframe src="Juegos/controlBee.html" title="Control Bee" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                        <iframe src="Juegos/controlBee.html" title="Vista previa: Control Bee" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts" allow="autoplay 'none'"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">02</span>
-                        <div class="game-difficulty difficulty-facil">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Fácil</span>
-                        </div>
+                        <div class="game-difficulty difficulty-facil"><span class="diff-dot"></span><span class="diff-txt">Fácil</span></div>
                     </div>
                     <div class="game-card-body">
                         <div class="game-card-top">
@@ -397,15 +305,8 @@
                         <h3 class="game-title">Control Bee</h3>
                         <p class="game-desc">Controla a BeeBot y cuenta cada paso que da por el jardín.</p>
                         <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 1 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
+                            <span class="game-rating"><span class="star is-filled">★</span><span class="star">★</span><span class="star">★</span></span>
+                            <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
                         </div>
                     </div>
                 </a>
@@ -413,15 +314,12 @@
 
             <!-- 03 · Dance Bee -->
             <article class="game-card" data-category="numeros" data-difficulty="facil">
-                <a href="Juegos/danceBee.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Dance Bee">
+                <a href="Juegos/danceBee.html" class="game-card-link" data-game-title="Dance Bee">
                     <div class="game-card-thumb thumb-numeros has-image">
-                        <iframe src="Juegos/danceBee.html" title="Dance Bee" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                        <iframe src="Juegos/danceBee.html" title="Vista previa: Dance Bee" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts" allow="autoplay 'none'"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">03</span>
-                        <div class="game-difficulty difficulty-facil">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Fácil</span>
-                        </div>
+                        <div class="game-difficulty difficulty-facil"><span class="diff-dot"></span><span class="diff-txt">Fácil</span></div>
                     </div>
                     <div class="game-card-body">
                         <div class="game-card-top">
@@ -431,15 +329,8 @@
                         <h3 class="game-title">Dance Bee</h3>
                         <p class="game-desc">Sigue el ritmo y cuenta los movimientos que BeeBot debe hacer.</p>
                         <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 1 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
+                            <span class="game-rating"><span class="star is-filled">★</span><span class="star">★</span><span class="star">★</span></span>
+                            <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
                         </div>
                     </div>
                 </a>
@@ -447,15 +338,12 @@
 
             <!-- 04 · Secuencia Mágica -->
             <article class="game-card" data-category="numeros" data-difficulty="medio">
-                <a href="Juegos/Secuencia/secuencia.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Secuencia Mágica">
+                <a href="Juegos/Secuencia/secuencia.html" class="game-card-link" data-game-title="Secuencia Mágica">
                     <div class="game-card-thumb thumb-numeros has-image">
-                        <iframe src="Juegos/Secuencia/secuencia.html" title="Secuencia Mágica" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                        <iframe src="Juegos/Secuencia/secuencia.html" title="Vista previa: Secuencia Mágica" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts" allow="autoplay 'none'"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">04</span>
-                        <div class="game-difficulty difficulty-medio">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Medio</span>
-                        </div>
+                        <div class="game-difficulty difficulty-medio"><span class="diff-dot"></span><span class="diff-txt">Medio</span></div>
                     </div>
                     <div class="game-card-body">
                         <div class="game-card-top">
@@ -465,15 +353,8 @@
                         <h3 class="game-title">Secuencia Mágica</h3>
                         <p class="game-desc">Completa la secuencia numérica siguiendo el orden correcto.</p>
                         <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 2 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
+                            <span class="game-rating"><span class="star is-filled">★</span><span class="star is-filled">★</span><span class="star">★</span></span>
+                            <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
                         </div>
                     </div>
                 </a>
@@ -487,7 +368,6 @@
          SECCIÓN 2 · COLORES (4 juegos)
          ══════════════════════════════════════════════════════════════ -->
     <section class="games-section games-section-colores" data-section="colores" aria-labelledby="sec-colores-title">
-
         <header class="games-section-head">
             <div class="games-section-ico games-section-ico-colores">🎨</div>
             <div class="games-section-info">
@@ -500,19 +380,16 @@
             </span>
         </header>
 
-        <div class="games-grid" aria-live="polite">
+        <div class="games-grid">
 
             <!-- 05 · Misión Reciclaje -->
             <article class="game-card" data-category="colores" data-difficulty="medio">
-                <a href="Juegos/reciclaje.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Misión Reciclaje">
+                <a href="Juegos/reciclaje.html" class="game-card-link" data-game-title="Misión Reciclaje">
                     <div class="game-card-thumb thumb-colores has-image">
-                        <iframe src="Juegos/reciclaje.html" title="Misión Reciclaje" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                        <iframe src="Juegos/reciclaje.html" title="Vista previa: Misión Reciclaje" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts" allow="autoplay 'none'"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">05</span>
-                        <div class="game-difficulty difficulty-medio">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Medio</span>
-                        </div>
+                        <div class="game-difficulty difficulty-medio"><span class="diff-dot"></span><span class="diff-txt">Medio</span></div>
                     </div>
                     <div class="game-card-body">
                         <div class="game-card-top">
@@ -522,15 +399,8 @@
                         <h3 class="game-title">Misión Reciclaje</h3>
                         <p class="game-desc">Lleva la basura y objetos al tacho del color que le corresponde.</p>
                         <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 2 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
+                            <span class="game-rating"><span class="star is-filled">★</span><span class="star is-filled">★</span><span class="star">★</span></span>
+                            <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
                         </div>
                     </div>
                 </a>
@@ -538,15 +408,12 @@
 
             <!-- 06 · Abeja Recolectora -->
             <article class="game-card" data-category="colores" data-difficulty="medio">
-                <a href="Juegos/AbejaRecolectora.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Abeja Recolectora">
+                <a href="Juegos/AbejaRecolectora.html" class="game-card-link" data-game-title="Abeja Recolectora">
                     <div class="game-card-thumb thumb-colores has-image">
-                        <iframe src="Juegos/AbejaRecolectora.html" title="Abeja Recolectora" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                        <iframe src="Juegos/AbejaRecolectora.html" title="Vista previa: Abeja Recolectora" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts" allow="autoplay 'none'"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">06</span>
-                        <div class="game-difficulty difficulty-medio">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Medio</span>
-                        </div>
+                        <div class="game-difficulty difficulty-medio"><span class="diff-dot"></span><span class="diff-txt">Medio</span></div>
                     </div>
                     <div class="game-card-body">
                         <div class="game-card-top">
@@ -556,15 +423,8 @@
                         <h3 class="game-title">Abeja Recolectora</h3>
                         <p class="game-desc">Clasifica las flores y lleva su néctar a la colmena del color correspondiente.</p>
                         <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 2 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
+                            <span class="game-rating"><span class="star is-filled">★</span><span class="star is-filled">★</span><span class="star">★</span></span>
+                            <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
                         </div>
                     </div>
                 </a>
@@ -572,15 +432,12 @@
 
             <!-- 07 · Lluvia de Pétalos -->
             <article class="game-card" data-category="colores" data-difficulty="facil">
-                <a href="Juegos/LluviaDePetalos/LluviaPetalo.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Lluvia de Pétalos">
+                <a href="Juegos/LluviaDePetalos/LluviaPetalo.html" class="game-card-link" data-game-title="Lluvia de Pétalos">
                     <div class="game-card-thumb thumb-colores has-image">
-                        <iframe src="Juegos/LluviaDePetalos/LluviaPetalo.html" title="Lluvia de Pétalos" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                        <iframe src="Juegos/LluviaDePetalos/LluviaPetalo.html" title="Vista previa: Lluvia de Pétalos" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts" allow="autoplay 'none'"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">07</span>
-                        <div class="game-difficulty difficulty-facil">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Fácil</span>
-                        </div>
+                        <div class="game-difficulty difficulty-facil"><span class="diff-dot"></span><span class="diff-txt">Fácil</span></div>
                     </div>
                     <div class="game-card-body">
                         <div class="game-card-top">
@@ -590,15 +447,8 @@
                         <h3 class="game-title">Lluvia de Pétalos</h3>
                         <p class="game-desc">Atrapa los pétalos de colores que caen del cielo primaveral.</p>
                         <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 1 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
+                            <span class="game-rating"><span class="star is-filled">★</span><span class="star">★</span><span class="star">★</span></span>
+                            <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
                         </div>
                     </div>
                 </a>
@@ -606,15 +456,12 @@
 
             <!-- 08 · Pixel Art -->
             <article class="game-card" data-category="colores" data-difficulty="medio">
-                <a href="Juegos/dibujar.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Pixel Art">
+                <a href="Juegos/dibujar.html" class="game-card-link" data-game-title="Pixel Art">
                     <div class="game-card-thumb thumb-colores has-image">
-                        <iframe src="Juegos/dibujar.html" title="Pixel Art" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                        <iframe src="Juegos/dibujar.html" title="Vista previa: Pixel Art" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts" allow="autoplay 'none'"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">08</span>
-                        <div class="game-difficulty difficulty-medio">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Medio</span>
-                        </div>
+                        <div class="game-difficulty difficulty-medio"><span class="diff-dot"></span><span class="diff-txt">Medio</span></div>
                     </div>
                     <div class="game-card-body">
                         <div class="game-card-top">
@@ -624,15 +471,8 @@
                         <h3 class="game-title">Pixel Art</h3>
                         <p class="game-desc">Utiliza el botón de pintar para replicar los dibujos del tablero con colores.</p>
                         <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 2 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
+                            <span class="game-rating"><span class="star is-filled">★</span><span class="star is-filled">★</span><span class="star">★</span></span>
+                            <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
                         </div>
                     </div>
                 </a>
@@ -646,7 +486,6 @@
          SECCIÓN 3 · LETRAS (5 juegos)
          ══════════════════════════════════════════════════════════════ -->
     <section class="games-section games-section-letras" data-section="letras" aria-labelledby="sec-letras-title">
-
         <header class="games-section-head">
             <div class="games-section-ico games-section-ico-letras">🔤</div>
             <div class="games-section-info">
@@ -659,20 +498,16 @@
             </span>
         </header>
 
-        <div class="games-grid" aria-live="polite">
+        <div class="games-grid">
 
             <!-- 09 · El Cartero ABC -->
-            <article class="game-card game-card-new" data-category="letras" data-difficulty="facil">
-                <a href="Juegos/CarteroABC.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego El Cartero ABC">
+            <article class="game-card" data-category="letras" data-difficulty="facil">
+                <a href="Juegos/CarteroABC.html" class="game-card-link" data-game-title="El Cartero ABC">
                     <div class="game-card-thumb thumb-letras has-image">
-                        <iframe src="Juegos/CarteroABC.html" title="El Cartero ABC" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                        <iframe src="Juegos/CarteroABC.html" title="Vista previa: El Cartero ABC" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts" allow="autoplay 'none'"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">09</span>
-                        <span class="game-badge-new">NUEVO</span>
-                        <div class="game-difficulty difficulty-facil">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Fácil</span>
-                        </div>
+                        <div class="game-difficulty difficulty-facil"><span class="diff-dot"></span><span class="diff-txt">Fácil</span></div>
                     </div>
                     <div class="game-card-body">
                         <div class="game-card-top">
@@ -682,32 +517,21 @@
                         <h3 class="game-title">El Cartero ABC</h3>
                         <p class="game-desc">Ayuda al oso cartero a entregar las letras a las casas correctas de la ciudad.</p>
                         <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 1 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
+                            <span class="game-rating"><span class="star is-filled">★</span><span class="star">★</span><span class="star">★</span></span>
+                            <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
                         </div>
                     </div>
                 </a>
             </article>
 
             <!-- 10 · La Fábrica de Letras -->
-            <article class="game-card game-card-new" data-category="letras" data-difficulty="facil">
-                <a href="Juegos/FabricaLetras.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego La Fábrica de Letras">
+            <article class="game-card" data-category="letras" data-difficulty="facil">
+                <a href="Juegos/FabricaLetras.html" class="game-card-link" data-game-title="La Fábrica de Letras">
                     <div class="game-card-thumb thumb-letras has-image">
-                        <iframe src="Juegos/FabricaLetras.html" title="La Fábrica de Letras" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                        <iframe src="Juegos/FabricaLetras.html" title="Vista previa: La Fábrica de Letras" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts" allow="autoplay 'none'"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">10</span>
-                        <span class="game-badge-new">NUEVO</span>
-                        <div class="game-difficulty difficulty-facil">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Fácil</span>
-                        </div>
+                        <div class="game-difficulty difficulty-facil"><span class="diff-dot"></span><span class="diff-txt">Fácil</span></div>
                     </div>
                     <div class="game-card-body">
                         <div class="game-card-top">
@@ -717,50 +541,32 @@
                         <h3 class="game-title">La Fábrica de Letras</h3>
                         <p class="game-desc">Clasifica las galletas en mayúsculas, minúsculas o desecha las figuras en el tacho.</p>
                         <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 1 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
+                            <span class="game-rating"><span class="star is-filled">★</span><span class="star">★</span><span class="star">★</span></span>
+                            <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
                         </div>
                     </div>
                 </a>
             </article>
 
-            <!-- 11 · Memoria Tradicional de Letras -->
-            <article class="game-card game-card-new" data-category="letras" data-difficulty="medio">
-                <a href="Juegos/memoriaLetras.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Memoria Tradicional de Letras">
+            <!-- 11 · Memoria de Letras -->
+            <article class="game-card" data-category="letras" data-difficulty="medio">
+                <a href="Juegos/memorialetras.html" class="game-card-link" data-game-title="Memoria de Letras">
                     <div class="game-card-thumb thumb-letras has-image">
-                        <iframe src="Juegos/memoriaLetras.html" title="Memoria Tradicional de Letras" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                        <iframe src="Juegos/memorialetras.html" title="Vista previa: Memoria de Letras" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts" allow="autoplay 'none'"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">11</span>
-                        <span class="game-badge-new">NUEVO</span>
-                        <div class="game-difficulty difficulty-medio">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Medio</span>
-                        </div>
+                        <div class="game-difficulty difficulty-medio"><span class="diff-dot"></span><span class="diff-txt">Medio</span></div>
                     </div>
                     <div class="game-card-body">
                         <div class="game-card-top">
                             <span class="game-category-tag tag-letras">🔤 Letras</span>
                             <span class="game-age">4-6 años</span>
                         </div>
-                        <h3 class="game-title">Memoria de Letras (6x6)</h3>
+                        <h3 class="game-title">Memoria de Letras (6×6)</h3>
                         <p class="game-desc">Voltea las fichas por parejas y encuentra todas las letras iguales.</p>
                         <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 2 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
+                            <span class="game-rating"><span class="star is-filled">★</span><span class="star is-filled">★</span><span class="star">★</span></span>
+                            <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
                         </div>
                     </div>
                 </a>
@@ -768,15 +574,12 @@
 
             <!-- 12 · Escribe tu Nombre -->
             <article class="game-card" data-category="letras" data-difficulty="facil">
-                <a href="Juegos/nombres.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Escribe tu Nombre">
+                <a href="Juegos/nombres.html" class="game-card-link" data-game-title="Escribe tu Nombre">
                     <div class="game-card-thumb thumb-letras has-image">
-                        <iframe src="Juegos/nombres.html" title="Escribe tu Nombre" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                        <iframe src="Juegos/nombres.html" title="Vista previa: Escribe tu Nombre" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts" allow="autoplay 'none'"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">12</span>
-                        <div class="game-difficulty difficulty-facil">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Fácil</span>
-                        </div>
+                        <div class="game-difficulty difficulty-facil"><span class="diff-dot"></span><span class="diff-txt">Fácil</span></div>
                     </div>
                     <div class="game-card-body">
                         <div class="game-card-top">
@@ -786,15 +589,8 @@
                         <h3 class="game-title">Escribe tu Nombre</h3>
                         <p class="game-desc">Navega por un teclado gigante y recolecta las letras de tu nombre.</p>
                         <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 1 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
+                            <span class="game-rating"><span class="star is-filled">★</span><span class="star">★</span><span class="star">★</span></span>
+                            <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
                         </div>
                     </div>
                 </a>
@@ -802,15 +598,12 @@
 
             <!-- 13 · Palabras Mágicas -->
             <article class="game-card" data-category="letras" data-difficulty="medio">
-                <a href="Juegos/Beebotpalabras.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Palabras Mágicas">
+                <a href="Juegos/Beebotpalabras.html" class="game-card-link" data-game-title="Palabras Mágicas">
                     <div class="game-card-thumb thumb-letras has-image">
-                        <iframe src="Juegos/Beebotpalabras.html" title="Palabras Mágicas" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                        <iframe src="Juegos/Beebotpalabras.html" title="Vista previa: Palabras Mágicas" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts" allow="autoplay 'none'"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">13</span>
-                        <div class="game-difficulty difficulty-medio">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Medio</span>
-                        </div>
+                        <div class="game-difficulty difficulty-medio"><span class="diff-dot"></span><span class="diff-txt">Medio</span></div>
                     </div>
                     <div class="game-card-body">
                         <div class="game-card-top">
@@ -820,15 +613,8 @@
                         <h3 class="game-title">Palabras Mágicas</h3>
                         <p class="game-desc">Relaciona las iniciales correctas con las imágenes del tablero.</p>
                         <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 2 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
+                            <span class="game-rating"><span class="star is-filled">★</span><span class="star is-filled">★</span><span class="star">★</span></span>
+                            <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
                         </div>
                     </div>
                 </a>
@@ -842,7 +628,6 @@
          SECCIÓN 4 · LÓGICA (9 juegos)
          ══════════════════════════════════════════════════════════════ -->
     <section class="games-section games-section-logica" data-section="logica" aria-labelledby="sec-logica-title">
-
         <header class="games-section-head">
             <div class="games-section-ico games-section-ico-logica">🧩</div>
             <div class="games-section-info">
@@ -855,19 +640,16 @@
             </span>
         </header>
 
-        <div class="games-grid" aria-live="polite">
+        <div class="games-grid">
 
             <!-- 14 · Pasos Límite -->
             <article class="game-card" data-category="logica" data-difficulty="facil">
-                <a href="Juegos/PasosLimite.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Pasos Límite">
+                <a href="Juegos/PasosLimite.html" class="game-card-link" data-game-title="Pasos Límite">
                     <div class="game-card-thumb thumb-logica has-image">
-                        <iframe src="Juegos/PasosLimite.html" title="Pasos Límite" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                        <iframe src="Juegos/PasosLimite.html" title="Vista previa: Pasos Límite" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts" allow="autoplay 'none'"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">14</span>
-                        <div class="game-difficulty difficulty-facil">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Fácil</span>
-                        </div>
+                        <div class="game-difficulty difficulty-facil"><span class="diff-dot"></span><span class="diff-txt">Fácil</span></div>
                     </div>
                     <div class="game-card-body">
                         <div class="game-card-top">
@@ -877,15 +659,8 @@
                         <h3 class="game-title">Pasos Límite</h3>
                         <p class="game-desc">Optimiza tu ruta y llega a la flor usando la menor cantidad de pasos.</p>
                         <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 1 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
+                            <span class="game-rating"><span class="star is-filled">★</span><span class="star">★</span><span class="star">★</span></span>
+                            <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
                         </div>
                     </div>
                 </a>
@@ -893,15 +668,12 @@
 
             <!-- 15 · Esquiva las Rocas -->
             <article class="game-card" data-category="logica" data-difficulty="medio">
-                <a href="Juegos/obstaculos.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Esquiva las Rocas">
+                <a href="Juegos/obstaculos.html" class="game-card-link" data-game-title="Esquiva las Rocas">
                     <div class="game-card-thumb thumb-logica has-image">
-                        <iframe src="Juegos/obstaculos.html" title="Esquiva las Rocas" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                        <iframe src="Juegos/obstaculos.html" title="Vista previa: Esquiva las Rocas" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts" allow="autoplay 'none'"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">15</span>
-                        <div class="game-difficulty difficulty-medio">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Medio</span>
-                        </div>
+                        <div class="game-difficulty difficulty-medio"><span class="diff-dot"></span><span class="diff-txt">Medio</span></div>
                     </div>
                     <div class="game-card-body">
                         <div class="game-card-top">
@@ -911,15 +683,8 @@
                         <h3 class="game-title">Esquiva las Rocas</h3>
                         <p class="game-desc">Encuentra un camino seguro para la abeja esquivando todos los obstáculos.</p>
                         <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 2 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
+                            <span class="game-rating"><span class="star is-filled">★</span><span class="star is-filled">★</span><span class="star">★</span></span>
+                            <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
                         </div>
                     </div>
                 </a>
@@ -927,15 +692,12 @@
 
             <!-- 16 · Memoria Física -->
             <article class="game-card" data-category="logica" data-difficulty="medio">
-                <a href="Juegos/memoria.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Memoria Física">
+                <a href="Juegos/memoria.html" class="game-card-link" data-game-title="Memoria Física">
                     <div class="game-card-thumb thumb-logica has-image">
-                        <iframe src="Juegos/memoria.html" title="Memoria Física" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                        <iframe src="Juegos/memoria.html" title="Vista previa: Memoria Física" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts" allow="autoplay 'none'"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">16</span>
-                        <div class="game-difficulty difficulty-medio">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Medio</span>
-                        </div>
+                        <div class="game-difficulty difficulty-medio"><span class="diff-dot"></span><span class="diff-txt">Medio</span></div>
                     </div>
                     <div class="game-card-body">
                         <div class="game-card-top">
@@ -945,15 +707,8 @@
                         <h3 class="game-title">Memoria Física</h3>
                         <p class="game-desc">Arrastra y suelta las fichas en su posición correcta para ganar.</p>
                         <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 2 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
+                            <span class="game-rating"><span class="star is-filled">★</span><span class="star is-filled">★</span><span class="star">★</span></span>
+                            <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
                         </div>
                     </div>
                 </a>
@@ -961,15 +716,12 @@
 
             <!-- 17 · Portales Mágicos -->
             <article class="game-card" data-category="logica" data-difficulty="dificil">
-                <a href="Juegos/portales.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Portales Mágicos">
+                <a href="Juegos/portales.html" class="game-card-link" data-game-title="Portales Mágicos">
                     <div class="game-card-thumb thumb-logica has-image">
-                        <iframe src="Juegos/portales.html" title="Portales Mágicos" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                        <iframe src="Juegos/portales.html" title="Vista previa: Portales Mágicos" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts" allow="autoplay 'none'"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">17</span>
-                        <div class="game-difficulty difficulty-dificil">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Difícil</span>
-                        </div>
+                        <div class="game-difficulty difficulty-dificil"><span class="diff-dot"></span><span class="diff-txt">Difícil</span></div>
                     </div>
                     <div class="game-card-body">
                         <div class="game-card-top">
@@ -979,15 +731,8 @@
                         <h3 class="game-title">Portales Mágicos</h3>
                         <p class="game-desc">Cruza por los portales dimensionales para traspasar los muros irrompibles.</p>
                         <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 3 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
+                            <span class="game-rating"><span class="star is-filled">★</span><span class="star is-filled">★</span><span class="star is-filled">★</span></span>
+                            <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
                         </div>
                     </div>
                 </a>
@@ -995,15 +740,12 @@
 
             <!-- 18 · Día de Supermercado -->
             <article class="game-card" data-category="logica" data-difficulty="dificil">
-                <a href="Juegos/CarritoSúperMercado.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Día de Supermercado">
+                <a href="Juegos/CarritoSuperMercado.html" class="game-card-link" data-game-title="Día de Supermercado">
                     <div class="game-card-thumb thumb-logica has-image">
-                        <iframe src="Juegos/CarritoSúperMercado.html" title="Día de Supermercado" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                        <iframe src="Juegos/CarritoSuperMercado.html" title="Vista previa: Día de Supermercado" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts" allow="autoplay 'none'"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">18</span>
-                        <div class="game-difficulty difficulty-dificil">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Difícil</span>
-                        </div>
+                        <div class="game-difficulty difficulty-dificil"><span class="diff-dot"></span><span class="diff-txt">Difícil</span></div>
                     </div>
                     <div class="game-card-body">
                         <div class="game-card-top">
@@ -1013,15 +755,8 @@
                         <h3 class="game-title">Día de Supermercado</h3>
                         <p class="game-desc">Maneja el carrito para ordenar cada producto en el pasillo correcto.</p>
                         <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 3 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
+                            <span class="game-rating"><span class="star is-filled">★</span><span class="star is-filled">★</span><span class="star is-filled">★</span></span>
+                            <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
                         </div>
                     </div>
                 </a>
@@ -1029,15 +764,12 @@
 
             <!-- 19 · Carrera de Abejitas -->
             <article class="game-card" data-category="logica" data-difficulty="medio">
-                <a href="Juegos/carreraDeAbejitas.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Carrera de Abejitas">
+                <a href="Juegos/carreraDeAbejitas.html" class="game-card-link" data-game-title="Carrera de Abejitas">
                     <div class="game-card-thumb thumb-logica has-image">
-                        <iframe src="Juegos/carreraDeAbejitas.html" title="Carrera de Abejitas" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                        <iframe src="Juegos/carreraDeAbejitas.html" title="Vista previa: Carrera de Abejitas" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts" allow="autoplay 'none'"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">19</span>
-                        <div class="game-difficulty difficulty-medio">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Medio</span>
-                        </div>
+                        <div class="game-difficulty difficulty-medio"><span class="diff-dot"></span><span class="diff-txt">Medio</span></div>
                     </div>
                     <div class="game-card-body">
                         <div class="game-card-top">
@@ -1047,32 +779,22 @@
                         <h3 class="game-title">Carrera de Abejitas</h3>
                         <p class="game-desc">Compite contra otras abejas y llega primero a la meta esquivando obstáculos.</p>
                         <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 2 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
+                            <span class="game-rating"><span class="star is-filled">★</span><span class="star is-filled">★</span><span class="star">★</span></span>
+                            <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
                         </div>
                     </div>
                 </a>
             </article>
 
-            <!-- 20 · Reto BeeBot (RETO FINAL) -->
-            <article class="game-card game-card-featured" data-category="logica" data-difficulty="dificil">
-                <a href="Juegos/beebot.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Reto BeeBot">
-                    <div class="game-card-thumb thumb-logica has-image">
-                        <img src="Juegos/imagen17.png" alt="Reto BeeBot" class="game-thumb-img" loading="lazy">
+            <!-- 20 · Reto BeeBot — PRÓXIMAMENTE -->
+            <article class="game-card is-coming-soon game-card-featured" data-category="logica" data-difficulty="dificil">
+                <div class="game-card-link" aria-label="Reto BeeBot — Próximamente">
+                    <div class="game-card-thumb thumb-logica">
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">20</span>
+                        <div class="game-coming-soon-badge"><span>PRÓXIMAMENTE</span></div>
                         <div class="game-badge-featured">✨ RETO FINAL</div>
-                        <div class="game-difficulty difficulty-dificil">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Difícil</span>
-                        </div>
+                        <div class="game-difficulty difficulty-dificil"><span class="diff-dot"></span><span class="diff-txt">Difícil</span></div>
                     </div>
                     <div class="game-card-body">
                         <div class="game-card-top">
@@ -1082,31 +804,21 @@
                         <h3 class="game-title">Reto BeeBot</h3>
                         <p class="game-desc">Mezcla de todas las habilidades. ¡Demuestra todo lo que has aprendido!</p>
                         <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 3 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
+                            <span class="game-rating"><span class="star is-filled">★</span><span class="star is-filled">★</span><span class="star is-filled">★</span></span>
+                            <span class="game-play"><span class="game-play-ico">⏳</span><span class="game-play-txt">Pronto</span></span>
                         </div>
                     </div>
-                </a>
+                </div>
             </article>
 
             <!-- 21 · Abeja Programadora -->
             <article class="game-card" data-category="logica" data-difficulty="medio">
-                <a href="Juegos/abejaProgramadora/abejaProgramadora.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Abeja Programadora">
+                <a href="Juegos/abejaProgramadora/abejaProgramadora.html" class="game-card-link" data-game-title="Abeja Programadora">
                     <div class="game-card-thumb thumb-logica has-image">
-                        <iframe src="Juegos/abejaProgramadora.html" title="Abeja Programadora" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                        <iframe src="Juegos/abejaProgramadora/abejaProgramadora.html" title="Vista previa: Abeja Programadora" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts" allow="autoplay 'none'"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">21</span>
-                        <div class="game-difficulty difficulty-medio">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Medio</span>
-                        </div>
+                        <div class="game-difficulty difficulty-medio"><span class="diff-dot"></span><span class="diff-txt">Medio</span></div>
                     </div>
                     <div class="game-card-body">
                         <div class="game-card-top">
@@ -1116,15 +828,8 @@
                         <h3 class="game-title">Abeja Programadora</h3>
                         <p class="game-desc">Programa los movimientos de la abeja con bloques para llegar a su meta.</p>
                         <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 2 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
+                            <span class="game-rating"><span class="star is-filled">★</span><span class="star is-filled">★</span><span class="star">★</span></span>
+                            <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
                         </div>
                     </div>
                 </a>
@@ -1132,15 +837,12 @@
 
             <!-- 22 · Arrastra la Dirección -->
             <article class="game-card" data-category="logica" data-difficulty="facil">
-                <a href="Juegos/ArrastraLaDireccionCorrecta.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Arrastra la Dirección">
+                <a href="Juegos/ArrastraLaDireccionCorrecta.html" class="game-card-link" data-game-title="Arrastra la Dirección">
                     <div class="game-card-thumb thumb-logica has-image">
-                        <iframe src="Juegos/ArrastraLaDireccionCorrecta.html" title="Arrastra la Dirección" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                        <iframe src="Juegos/ArrastraLaDireccionCorrecta.html" title="Vista previa: Arrastra la Dirección" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts" allow="autoplay 'none'"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">22</span>
-                        <div class="game-difficulty difficulty-facil">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Fácil</span>
-                        </div>
+                        <div class="game-difficulty difficulty-facil"><span class="diff-dot"></span><span class="diff-txt">Fácil</span></div>
                     </div>
                     <div class="game-card-body">
                         <div class="game-card-top">
@@ -1150,15 +852,8 @@
                         <h3 class="game-title">Arrastra la Dirección</h3>
                         <p class="game-desc">Arrastra las flechas correctas para guiar a BeeBot hacia su destino.</p>
                         <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 1 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
+                            <span class="game-rating"><span class="star is-filled">★</span><span class="star">★</span><span class="star">★</span></span>
+                            <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
                         </div>
                     </div>
                 </a>
@@ -1172,7 +867,6 @@
          SECCIÓN 5 · NATURALEZA (5 juegos)
          ══════════════════════════════════════════════════════════════ -->
     <section class="games-section games-section-naturaleza" data-section="naturaleza" aria-labelledby="sec-naturaleza-title">
-
         <header class="games-section-head">
             <div class="games-section-ico games-section-ico-naturaleza">🌱</div>
             <div class="games-section-info">
@@ -1185,19 +879,16 @@
             </span>
         </header>
 
-        <div class="games-grid" aria-live="polite">
+        <div class="games-grid">
 
             <!-- 23 · Abejita Chef -->
             <article class="game-card" data-category="naturaleza" data-difficulty="facil">
-                <a href="Juegos/abejachef.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Abejita Chef">
+                <a href="Juegos/abejachef.html" class="game-card-link" data-game-title="Abejita Chef">
                     <div class="game-card-thumb thumb-naturaleza has-image">
-                        <iframe src="Juegos/abejachef.html" title="Abejita Chef" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                        <iframe src="Juegos/abejachef.html" title="Vista previa: Abejita Chef" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts" allow="autoplay 'none'"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">23</span>
-                        <div class="game-difficulty difficulty-facil">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Fácil</span>
-                        </div>
+                        <div class="game-difficulty difficulty-facil"><span class="diff-dot"></span><span class="diff-txt">Fácil</span></div>
                     </div>
                     <div class="game-card-body">
                         <div class="game-card-top">
@@ -1207,15 +898,8 @@
                         <h3 class="game-title">Abejita Chef</h3>
                         <p class="game-desc">Busca únicamente los ingredientes correctos de la receta.</p>
                         <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 1 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
+                            <span class="game-rating"><span class="star is-filled">★</span><span class="star">★</span><span class="star">★</span></span>
+                            <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
                         </div>
                     </div>
                 </a>
@@ -1223,15 +907,12 @@
 
             <!-- 24 · Explorador de Animales -->
             <article class="game-card" data-category="naturaleza" data-difficulty="facil">
-                <a href="Juegos/explorador_animales.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Explorador de Animales">
+                <a href="Juegos/explorador_animales.html" class="game-card-link" data-game-title="Explorador de Animales">
                     <div class="game-card-thumb thumb-naturaleza has-image">
-                        <iframe src="Juegos/explorador_animales.html" title="Explorador de Animales" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                        <iframe src="Juegos/explorador_animales.html" title="Vista previa: Explorador de Animales" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts" allow="autoplay 'none'"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">24</span>
-                        <div class="game-difficulty difficulty-facil">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Fácil</span>
-                        </div>
+                        <div class="game-difficulty difficulty-facil"><span class="diff-dot"></span><span class="diff-txt">Fácil</span></div>
                     </div>
                     <div class="game-card-body">
                         <div class="game-card-top">
@@ -1241,15 +922,8 @@
                         <h3 class="game-title">Explorador de Animales</h3>
                         <p class="game-desc">Descubre y conoce los animales que viven en el jardín y la selva.</p>
                         <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 1 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
+                            <span class="game-rating"><span class="star is-filled">★</span><span class="star">★</span><span class="star">★</span></span>
+                            <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
                         </div>
                     </div>
                 </a>
@@ -1257,15 +931,12 @@
 
             <!-- 25 · Picnic Mágico -->
             <article class="game-card" data-category="naturaleza" data-difficulty="medio">
-                <a href="Juegos/picnic.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Picnic Mágico">
+                <a href="Juegos/picnic.html" class="game-card-link" data-game-title="Picnic Mágico">
                     <div class="game-card-thumb thumb-naturaleza has-image">
-                        <iframe src="Juegos/picnic.html" title="Picnic Mágico" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                        <iframe src="Juegos/picnic.html" title="Vista previa: Picnic Mágico" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts" allow="autoplay 'none'"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">25</span>
-                        <div class="game-difficulty difficulty-medio">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Medio</span>
-                        </div>
+                        <div class="game-difficulty difficulty-medio"><span class="diff-dot"></span><span class="diff-txt">Medio</span></div>
                     </div>
                     <div class="game-card-body">
                         <div class="game-card-top">
@@ -1275,15 +946,8 @@
                         <h3 class="game-title">Picnic Mágico</h3>
                         <p class="game-desc">Prepara el picnic con BeeBot: elige los alimentos correctos y llega al parque.</p>
                         <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 2 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
+                            <span class="game-rating"><span class="star is-filled">★</span><span class="star is-filled">★</span><span class="star">★</span></span>
+                            <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
                         </div>
                     </div>
                 </a>
@@ -1291,15 +955,12 @@
 
             <!-- 26 · Recolector de Basura -->
             <article class="game-card" data-category="naturaleza" data-difficulty="medio">
-                <a href="Juegos/recolector_basura.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Recolector de Basura">
+                <a href="Juegos/recolector_basura.html" class="game-card-link" data-game-title="Recolector de Basura">
                     <div class="game-card-thumb thumb-naturaleza has-image">
-                        <iframe src="Juegos/recolector_basura.html" title="Recolector de Basura" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                        <iframe src="Juegos/recolector_basura.html" title="Vista previa: Recolector de Basura" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts" allow="autoplay 'none'"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">26</span>
-                        <div class="game-difficulty difficulty-medio">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Medio</span>
-                        </div>
+                        <div class="game-difficulty difficulty-medio"><span class="diff-dot"></span><span class="diff-txt">Medio</span></div>
                     </div>
                     <div class="game-card-body">
                         <div class="game-card-top">
@@ -1309,15 +970,8 @@
                         <h3 class="game-title">Recolector de Basura</h3>
                         <p class="game-desc">Ayuda a limpiar el jardín recogiendo los residuos con BeeBot.</p>
                         <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 2 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
+                            <span class="game-rating"><span class="star is-filled">★</span><span class="star is-filled">★</span><span class="star">★</span></span>
+                            <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
                         </div>
                     </div>
                 </a>
@@ -1325,15 +979,12 @@
 
             <!-- 27 · Flor al Panal -->
             <article class="game-card" data-category="naturaleza" data-difficulty="medio">
-                <a href="Juegos/BeeBot/index.html" class="game-card-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir juego Flor al Panal">
+                <a href="Juegos/BeeBot/index.html" class="game-card-link" data-game-title="Flor al Panal">
                     <div class="game-card-thumb thumb-naturaleza has-image">
-                        <iframe src="Juegos/BeeBot/index.html" title="Flor al Panal" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                        <iframe src="Juegos/BeeBot/index.html" title="Vista previa: Flor al Panal" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts" allow="autoplay 'none'"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">27</span>
-                        <div class="game-difficulty difficulty-medio">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Medio</span>
-                        </div>
+                        <div class="game-difficulty difficulty-medio"><span class="diff-dot"></span><span class="diff-txt">Medio</span></div>
                     </div>
                     <div class="game-card-body">
                         <div class="game-card-top">
@@ -1343,15 +994,8 @@
                         <h3 class="game-title">Flor al Panal</h3>
                         <p class="game-desc">Guía a la abeja por el campo para recoger flores y llevarlas al panal.</p>
                         <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 2 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                            </span>
-                            <span class="game-play">
-                                <span class="game-play-ico">▶</span>
-                                <span class="game-play-txt">Jugar</span>
-                            </span>
+                            <span class="game-rating"><span class="star is-filled">★</span><span class="star is-filled">★</span><span class="star">★</span></span>
+                            <span class="game-play"><span class="game-play-ico">▶</span><span class="game-play-txt">Jugar</span></span>
                         </div>
                     </div>
                 </a>
@@ -1361,9 +1005,7 @@
     </section>
 
 
-    <!-- ============================================
-         MENSAJE CUANDO NO HAY RESULTADOS
-         ============================================ -->
+    <!-- ESTADO VACÍO -->
     <div class="games-empty" id="gamesEmpty" hidden>
         <span class="games-empty-ico">🔍</span>
         <p class="games-empty-txt">No hay juegos en esta categoría todavía.</p>
@@ -1377,7 +1019,7 @@
 
 
 <!-- ============================================================
-     SECCIÓN DE AYUDA / INFO PARA DOCENTES
+     SECCIÓN DE AYUDA
      ============================================================ -->
 <section id="ayuda" class="help-section help-inicial">
     <div class="help-inner">
@@ -1393,10 +1035,9 @@
                 <div class="help-card-ico">👆</div>
                 <h3 class="help-card-title">Toca un juego</h3>
                 <p class="help-card-desc">
-                    Cada tarjeta abre el juego en una nueva pestaña, así no pierdes el portal de aventuras.
+                    Cada tarjeta abre el juego en <strong>pantalla completa</strong> dentro de esta misma página.
                 </p>
             </div>
-
             <div class="help-card reveal-child" data-reveal="3">
                 <div class="help-card-ico">🧠</div>
                 <h3 class="help-card-title">Áreas educativas</h3>
@@ -1404,7 +1045,6 @@
                     Usa los filtros para elegir juegos de números, colores, letras, lógica o naturaleza.
                 </p>
             </div>
-
             <div class="help-card reveal-child" data-reveal="4">
                 <div class="help-card-ico">⭐</div>
                 <h3 class="help-card-title">Dificultad progresiva</h3>
@@ -1412,12 +1052,11 @@
                     Empieza por los juegos <strong>fáciles</strong> y avanza hacia los <strong>difíciles</strong>.
                 </p>
             </div>
-
             <div class="help-card reveal-child" data-reveal="5">
                 <div class="help-card-ico">🔊</div>
                 <h3 class="help-card-title">Activa el sonido</h3>
                 <p class="help-card-desc">
-                    Usa el botón de la esquina superior para activar los sonidos educativos.
+                    Usa el botón superior para activar la música de fondo del portal.
                 </p>
             </div>
         </div>
@@ -1445,9 +1084,9 @@
             <span class="footer-dot">•</span>
             <a href="#ayuda" class="footer-nav-link">💡 Ayuda</a>
             <span class="footer-dot">•</span>
-            <a href="primaria.html" class="footer-nav-link">🏎️ Primaria</a>
+            <a href="rayet.html" class="footer-nav-link">🏎️ Primaria</a>
             <span class="footer-dot">•</span>
-            <a href="secundaria.html" class="footer-nav-link">🤖 Secundaria</a>
+            <a href="ludio.html" class="footer-nav-link">🤖 Secundaria</a>
         </nav>
 
         <p class="footer-copy">
@@ -1458,114 +1097,29 @@
 
 
 <!-- ============================================================
-     SCRIPT
+     VISOR DE JUEGO EN PANTALLA COMPLETA
+     ------------------------------------------------------------
+     El botón "Salir del juego" aparece al pasar el mouse por la
+     parte superior (igual que el botón nativo del navegador).
+     Toda la lógica está en js/beebot.js → módulo 15.
      ============================================================ -->
-<script src="js/beebot.js"></script>
-
-<!-- ============================================================
-     SISTEMA DE PANTALLA COMPLETA CENTRALIZADO
-     (Intercepta los juegos y los abre en un Visor Inmersivo)
-     ============================================================ -->
-<style>
-    /* Contenedor oscuro que ocupará toda la pantalla */
-    #visor-juego {
-        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-        background: #000; z-index: 9999999; display: none; flex-direction: column;
-    }
-    #visor-juego.activo { display: flex; }
-    
-    /* El juego se estirará a tamaño real */
-    #frame-juego { width: 100%; height: 100%; border: none; background: #fff; display: block;}
-    
-    /* ZONA INVISIBLE: Detecta el hover en la esquina superior derecha */
-    .hover-zone-cerrar {
-        position: absolute;
-        top: 0; right: 0;
-        width: 150px; height: 100px;
-        z-index: 10000000;
-        background: transparent;
-    }
-
-    /* Botón flotante para salir (Escondido a la derecha) */
-    .btn-cerrar-juego {
-        position: absolute; 
-        top: max(15px, env(safe-area-inset-top)); 
-        right: -250px; /* Escondido hacia la derecha */
-        z-index: 10000001; /* Debe estar por encima de la zona de hover */
-        background: #e74c3c; color: white; border: 3px solid #c0392b;
-        padding: 10px 20px; border-radius: 15px; font-family: 'Fredoka', sans-serif;
-        font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 5px 0 #c0392b;
-        opacity: 0;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    
-    .btn-cerrar-juego:active { transform: translateY(4px); box-shadow: none; }
-
-    /* Al pasar el mouse por la zona invisible o el botón, aparece desde la derecha */
-    .hover-zone-cerrar:hover ~ .btn-cerrar-juego,
-    .btn-cerrar-juego:hover {
-        right: max(15px, env(safe-area-inset-right));
-        opacity: 1;
-    }
-</style>
-
 <div id="visor-juego">
-    <div class="hover-zone-cerrar"></div>
-    <button class="btn-cerrar-juego" onclick="cerrarJuego()">❌ Volver al Portal</button>
+    <div class="hover-zone-top" aria-hidden="true"></div>
+    <button class="btn-cerrar-juego" onclick="cerrarJuego()" aria-label="Salir del juego">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+        <span>Salir del juego</span>
+    </button>
     <iframe id="frame-juego" src="" allowfullscreen></iframe>
 </div>
 
-<script>
-    const bgAudio = document.getElementById('bgm');
-    const soundToggle = document.getElementById('soundToggle');
-    let isMuted = true; 
 
-    if (soundToggle && bgAudio) {
-        soundToggle.addEventListener('click', () => {
-            isMuted = !isMuted;
-            if(isMuted) {
-                bgAudio.pause();
-                soundToggle.innerHTML = '<span class="sound-icon sound-off">🔇</span>';
-            } else {
-                bgAudio.volume = 0.3; 
-                bgAudio.play().catch(e => console.log('El navegador requiere interacción manual previa.'));
-                soundToggle.innerHTML = '<span class="sound-icon sound-on">🔊</span>';
-            }
-        });
-    }
-
-    // 1. Buscamos todas las tarjetas de los juegos
-    document.querySelectorAll('.game-card-link').forEach(enlace => {
-        enlace.addEventListener('click', function(e) {
-            // Evita que los juegos desactivados (próximamente) abran el visor
-            if (this.closest('.disabled')) {
-                e.preventDefault();
-                return;
-            }
-
-            e.preventDefault(); 
-            const urlJuego = this.getAttribute('href');
-            const visor = document.getElementById('visor-juego');
-            document.getElementById('frame-juego').src = urlJuego;
-            
-            visor.classList.add('activo');
-            
-            if (visor.requestFullscreen) { visor.requestFullscreen(); } 
-            else if (visor.webkitRequestFullscreen) { visor.webkitRequestFullscreen(); } 
-        });
-    });
-
-    function cerrarJuego() {
-        const visor = document.getElementById('visor-juego');
-        if (document.fullscreenElement || document.webkitFullscreenElement) { 
-            if(document.exitFullscreen) document.exitFullscreen();
-            else if(document.webkitExitFullscreen) document.webkitExitFullscreen();
-        }
-        visor.classList.remove('activo');
-        document.getElementById('frame-juego').src = ""; 
-    }
-</script>
-<!-- ============================================================ -->
+<!-- ============================================================
+     SCRIPT ÚNICO
+     ============================================================ -->
+<script src="js/beebot.js"></script>
 
 </body>
 </html>

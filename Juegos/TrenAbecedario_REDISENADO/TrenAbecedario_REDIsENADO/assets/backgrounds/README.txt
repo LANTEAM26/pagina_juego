@@ -1,1 +1,0 @@
-Carpeta para recursos personalizados.
