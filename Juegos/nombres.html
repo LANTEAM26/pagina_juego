@@ -5,160 +5,728 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>¡Escribe tu Nombre! 🐝</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        :root { --p1-main: #3498db; --p1-dark: #2980b9; --p1-light: #d6eaf8; --grid-bg: #8d6e63; }
-        body { font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; align-items: center; margin: 0; padding: 10px; min-height: 100vh; touch-action: none; color: #333; background-color: transparent; }
+        :root { 
+            --p1-main: #3498db; --p1-dark: #2980b9; 
+            --p2-main: #2ecc71; --p2-dark: #27ae60;
+            --grid-bg: #8d6e63; 
+        }
+
+        body, html { 
+            font-family: 'Fredoka', sans-serif; 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            margin: 0; padding: 0; width: 100vw; height: 100vh; 
+            touch-action: manipulation; color: #333; background-color: transparent; 
+            overflow: hidden; box-sizing: border-box;
+        }
+
+        /* PAISAJE DE FONDO */
         .decorations { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -1; pointer-events: none; overflow: hidden; background: linear-gradient(180deg, #74ebd5 0%, #ACB6E5 100%); }
         .decorations::before { content: ''; position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg width='60' height='104' viewBox='0 0 60 104' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 52l15-26 15 26v52l-15 26-15-26zM0 0l15 26v52L0 104V0zm60 0v104L45 78V26z' fill='%23ffffff' fill-opacity='0.15' fill-rule='evenodd'/%3E%3C/svg%3E"); z-index: 1; }
-        .sun { position: absolute; top: 3%; right: 5%; font-size: 70px; z-index: 2; filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.8)); animation: pulse-sun 3s infinite alternate; }
+        .sun { position: absolute; top: 2%; right: 4%; font-size: clamp(40px, 8vh, 80px); z-index: 2; filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.8)); animation: pulse-sun 3s infinite alternate; }
         @keyframes pulse-sun { 0% { transform: scale(1) rotate(0deg); } 100% { transform: scale(1.1) rotate(10deg); } }
         .grass { position: absolute; bottom: -5vh; left: -10vw; width: 120vw; height: 25vh; background: #a9dfbf; border-radius: 50% 50% 0 0; z-index: 2; box-shadow: inset 0 15px 0 #82e0aa, 0 -30px 50px rgba(46,204,113,0.3); }
         
-        h1 { color: #2c3e50; margin: 0px 0 5px 0; text-align: center; font-size: 26px; text-shadow: 2px 2px 0px #fff; position: relative; }
-        .prompt-box { text-align: center; background: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 15px; font-size: 16px; font-weight: 600; max-width: 550px; width: 90%; margin-bottom: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; border: 3px solid #ffb74d; }
-        .word-display-container { margin-top: 10px; background: #fff3e0; padding: 12px; border-radius: 15px; min-height: 65px; border: 3px dashed #ffb74d; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; box-shadow: inset 0 4px 8px rgba(0,0,0,0.05); }
-        .word-display-container:empty::before { content: '¡Tu nombre aparecerá aquí!'; color: #d35400; opacity: 0.5; font-size: 18px; }
-        .letter-tile { color: #000000; font-size: 40px; font-weight: 900; width: 55px; height: 60px; display: flex; justify-content: center; align-items: center; border-radius: 12px; border: 3px solid #000000; box-shadow: 0 5px 0 #000000; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        /* BOTÓN DE SONIDO FLOTANTE */
+        .sound-toggle { position: absolute; top: 15px; left: 15px; background: rgba(255, 255, 255, 0.9); border: 3px solid #3498db; border-radius: 50%; width: 45px; height: 45px; font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 1000; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: all 0.2s;}
+        .sound-toggle:active { transform: translateY(4px); box-shadow: none; }
 
-        .grid-wrapper { position: relative; margin-bottom: 15px; padding: 10px; background: #ffe0b2; border-radius: 15px; box-shadow: 0 8px 0 #ffb74d, 0 15px 25px rgba(0,0,0,0.25); }
-        #grid { display: grid; grid-template-columns: repeat(5, 55px); grid-template-rows: repeat(6, 55px); gap: 5px; background-color: var(--grid-bg); border-radius: 10px; padding: 6px; }
-        #drawing-canvas { position: absolute; top: 10px; left: 10px; z-index: 10; cursor: crosshair; border-radius: 10px; }
-        .cell { background-color: #fff9c4; border-radius: 8px; display: flex; justify-content: center; align-items: center; position: relative; user-select: none; box-shadow: inset 0 -4px 0 rgba(0,0,0,0.1); font-size: 26px; font-weight: 700; color: #5d4037; transition: all 0.2s; }
+        /* ============================================================
+           PANTALLA DE CONFIGURACIÓN PREVIA (LOBBY)
+           ============================================================ */
+        #setup-screen {
+            position: absolute; inset: 0; z-index: 500;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+        }
+
+        .setup-card {
+            background: white; padding: 30px; border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4); border: 8px solid #ffb74d;
+            text-align: center; max-width: 90%; width: 550px;
+            display: flex; flex-direction: column; gap: 15px;
+        }
+
+        .setup-card h1 { font-size: 32px; color: #ff9800; margin: 0; text-shadow: none;}
+        
+        .setup-section {
+            background: #fff9c4; padding: 12px; border-radius: 15px; border: 2px dashed #f1c40f;
+            display: flex; flex-direction: column; gap: 10px; align-items: center;
+        }
+        .setup-section h3 { margin: 0; color: #d35400; font-size: 16px; text-transform: uppercase;}
+        
+        .setup-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; width: 100%;}
+        
+        .setup-btn { background: #fff; border: 3px solid #bdc3c7; padding: 8px 15px; border-radius: 15px; font-size: 15px; font-weight: bold; color: #7f8c8d; cursor: pointer; transition: all 0.2s; font-family: 'Fredoka', sans-serif;}
+        .setup-btn.active.mode { background: #9b59b6; border-color: #8e44ad; color: #fff; box-shadow: 0 4px 0 #8e44ad; transform: translateY(-2px); }
+
+        .time-input-group { display: flex; align-items: center; gap: 10px; background: #fff; padding: 6px 15px; border-radius: 15px; border: 3px solid #3498db;}
+        .time-input-group label { color: #2980b9; font-weight: bold; font-size: 16px; }
+        .time-input-group input { width: 60px; border: 2px solid #2980b9; border-radius: 8px; text-align: center; font-weight: bold; font-family: 'Fredoka', sans-serif; font-size: 16px; padding: 4px; outline: none;}
+        
+        .start-btn {
+            background: #4CAF50; border: none; box-shadow: 0 6px 0 #388E3C; padding: 12px 30px; font-size: 22px; color: white; border-radius: 15px; text-transform: uppercase; font-weight: bold; font-family: 'Fredoka', sans-serif; cursor:pointer; margin-top: 5px; transition: all 0.1s;
+        }
+        .start-btn:active { transform: translateY(6px); box-shadow: 0 0 0 #388E3C; }
+
+        /* ============================================================
+           PANTALLA DE JUEGO
+           ============================================================ */
+        #game-screen {
+            display: none; flex-direction: column; align-items: center; justify-content: flex-start;
+            width: 100vw; height: 100vh; padding: 1vh 1vw; box-sizing: border-box; overflow: hidden;
+        }
+
+        .game-header {
+            flex: 0 0 auto; display: flex; justify-content: space-between; align-items: center; 
+            width: 100%; max-width: 1200px; margin-bottom: 1vh; z-index: 10;
+        }
+        .game-header h1 { font-size: clamp(18px, 3vh, 26px); margin: 0; color: #2c3e50; text-shadow: 2px 2px 0px #fff;}
+        
+        .back-menu-btn { background: #ecf0f1; border: 2px solid #bdc3c7; padding: 6px 12px; border-radius: 12px; font-size: clamp(11px, 1.5vh, 14px); font-weight: bold; color: #2c3e50; cursor: pointer; transition: all 0.2s; font-family: 'Fredoka', sans-serif; box-shadow: 0 4px 0 #bdc3c7;}
+        .back-menu-btn:active { transform: translateY(4px); box-shadow: none; }
+
+        /* TEMPORIZADOR */
+        .timer-container {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            background: #fff; border: 3px solid #3498db; color: #2980b9; padding: 4px 15px;
+            border-radius: 20px; font-size: clamp(16px, 2.5vh, 22px); font-weight: 900; box-shadow: 0 4px 0 #2980b9;
+        }
+        .timer-container.warning { border-color: #e74c3c; color: #c0392b; box-shadow: 0 4px 0 #e74c3c; animation: pulseTimer 0.5s infinite alternate; }
+        @keyframes pulseTimer { 0% { transform: scale(1); } 100% { transform: scale(1.05); } }
+        .timer-btn { background: #3498db; color: white; border: none; border-radius: 50%; width: 28px; height: 28px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 0 #2980b9; }
+        .timer-btn:active { transform: translateY(3px); box-shadow: none; }
+        .timer-container.warning .timer-btn { background: #e74c3c; box-shadow: 0 3px 0 #c0392b; }
+
+        /* OBJETIVO (MODO PALABRA/VERSUS) */
+        .target-box {
+            display: none; background: #fff3e0; padding: 6px 15px; border-radius: 15px; 
+            border: 3px dashed #ff9800; font-size: clamp(14px, 2.2vh, 18px); font-weight: bold; color: #d35400;
+        }
+        .target-box span { font-size: clamp(18px, 3vh, 24px); color: #e74c3c; letter-spacing: 2px;}
+
+        /* CAJA DE MENSAJE (MODO LIBRE) */
+        .prompt-box { 
+            text-align: center; background: rgba(255, 255, 255, 0.95); padding: 6px 15px; 
+            border-radius: 15px; font-size: clamp(13px, 2vh, 16px); font-weight: 600; 
+            width: 100%; max-width: 600px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+            border: 3px solid #ffb74d; box-sizing: border-box; line-height: 1.2; margin-bottom: 1vh;
+        }
+        
+        /* CONTENEDOR PRINCIPAL FLUIDO */
+        #game-board-area {
+            flex: 1 1 auto; width: 100%; max-width: 1200px; display: flex; justify-content: center; align-items: stretch; 
+            z-index: 10; min-height: 0; box-sizing: border-box; margin-bottom: 1vh; gap: 2vw;
+        }
+
+        /* ESTACIÓN INDIVIDUAL */
+        .station {
+            background: rgba(255,255,255,0.95); border-radius: 15px; border: 3px solid #fff;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15); display: flex; flex-direction: column; 
+            padding: 1.2vh 1vw; gap: 1.2vh; align-items: center; justify-content: flex-start;
+            flex: 1 1 0; min-width: 0; box-sizing: border-box; height: 100%; max-width: 500px;
+        }
+        
+        .station-header { width: 100%; display: flex; justify-content: center; margin-bottom: 0.5vh;}
+        
+        /* PANTALLA DONDE APARECEN LAS LETRAS ESCRITAS */
+        .word-display-container { 
+            width: 100%; background: #fff3e0; padding: 4px; border-radius: 10px; min-height: 5vh; 
+            border: 3px dashed #ffb74d; display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; align-items: center; box-shadow: inset 0 4px 8px rgba(0,0,0,0.05); box-sizing: border-box;
+        }
+        .word-display-container:empty::before { content: '¡Tu palabra aparecerá aquí!'; color: #d35400; opacity: 0.5; font-size: clamp(12px, 1.8vh, 15px); }
+        .letter-tile { color: #000; font-size: clamp(20px, 3vh, 32px); font-weight: 900; width: clamp(25px, 4vh, 45px); height: clamp(25px, 4vh, 45px); display: flex; justify-content: center; align-items: center; border-radius: 8px; border: 2px solid #000; box-shadow: 0 3px 0 #000; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+        /* GRID DEL TECLADO */
+        .grid-wrapper {
+            width: 100%; max-width: min(100%, 48vh); aspect-ratio: 5/6; flex-shrink: 0; margin: 0 auto; position: relative;
+            background: #ffe0b2; padding: 6px; border-radius: 12px; box-shadow: 0 4px 0 #ffb74d; box-sizing: border-box;
+        }
+        .drawing-canvas { 
+            position: absolute; top: 6px; left: 6px; right: 6px; bottom: 6px; 
+            z-index: 10; cursor: crosshair; border-radius: 8px; width: calc(100% - 12px); height: calc(100% - 12px); pointer-events: auto;
+        }
+        .game-grid { display: grid; grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(6, 1fr); width: 100%; height: 100%; gap: 3px; background-color: var(--grid-bg); border-radius: 8px; padding: 4px; box-sizing: border-box;}
+        
+        .cell { background-color: #fff9c4; border-radius: 6px; display: flex; justify-content: center; align-items: center; position: relative; user-select: none; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.1); font-size: clamp(18px, 3.5vh, 26px); font-weight: 700; color: #5d4037; transition: all 0.2s; }
         .writing-pulse { background-color: #f1c40f !important; color: white; box-shadow: inset 0 0 15px #f39c12 !important; transform: scale(0.9); }
 
-        .bee-container { position: absolute; z-index: 15; width: 45px; height: 45px; display: flex; justify-content: center; align-items: center; }
-        .bee-orientation { transition: transform 0.2s ease; display: flex; justify-content: center; align-items: center; }
-        .bee-sprite { display: flex; justify-content: center; align-items: center; animation: float 2s ease-in-out infinite; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
-        
-        .panels-container { display: flex; justify-content: center; width: 100%; max-width: 450px; margin-bottom: 20px; position: relative; }
-        .panel { box-sizing: border-box; background: rgba(255, 255, 255, 0.95); padding: 12px; border-radius: 18px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); width: 95%; display: flex; flex-direction: column; align-items: center; border: 4px solid var(--p1-main); }
-        .panel h3 { margin: 0 0 8px 0; font-size: 16px; color: var(--p1-dark); }
-        .btn-group { display: flex; gap: 6px; justify-content: space-between; width: 100%; margin-bottom: 8px; }
-        button { font-family: 'Fredoka', sans-serif; font-weight: 700; border: none; border-radius: 10px; cursor: pointer; transition: all 0.1s; user-select: none; }
-        button:active { transform: translateY(4px); box-shadow: 0 0px 0 transparent !important; }
-        .cmd-btn { padding: 10px 2px; font-size: 13px; color: white; flex: 1; background-color: var(--p1-main); box-shadow: 0 5px 0 var(--p1-dark); white-space: nowrap; }
-        .write-btn { background-color: #9b59b6; box-shadow: 0 5px 0 #8e44ad; flex: 1.5; }
-        .undo-btn { background-color: #e74c3c; box-shadow: 0 5px 0 #c0392b; flex: 0.8; }
-        .seq-container { display: flex; flex-wrap: wrap; gap: 5px; min-height: 45px; background: rgba(255,255,255,0.7); padding: 8px; border-radius: 10px; width: 95%; border: 2px dashed rgba(0,0,0,0.1); }
-        .cmd-block { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 6px; color: white; font-weight: bold; font-size: 16px; box-shadow: 0 3px 0 rgba(0,0,0,0.2); animation: popIn 0.2s ease-out; background: var(--p1-main); }
-        .cmd-block.write-block { background: #9b59b6; }
-        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+        /* ABEJAS */
+        .bee-container { position: absolute; z-index: 15; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
+        .bee-orientation { transition: transform 0.2s ease; display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;}
+        .bee-sprite { display: flex; justify-content: center; align-items: center; animation: float 2s ease-in-out infinite; width: 85%; height: 85%; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.3));}
 
-        .global-controls { display: flex; gap: 15px; margin-bottom: 20px; position: relative; }
-        .global-btn { padding: 12px 20px; font-size: 18px; color: white; border-radius: 15px; }
-        #go-btn { background-color: #ff9800; box-shadow: 0 5px 0 #f57c00; }
-        .reset-btn { background-color: #e74c3c; box-shadow: 0 5px 0 #c0392b; }
+        /* PANEL DE CONTROLES */
+        .panel { 
+            width: 100%; flex: 1 1 auto; padding: 5px; min-height: 0; display: flex; flex-direction: column; justify-content: flex-start;
+            background: transparent; box-shadow: none; border: none; gap: 1vh; box-sizing: border-box;
+        }
+        
+        .controls-row { display: flex; width: 100%; gap: 4px; margin-bottom: 0; justify-content: center; flex-wrap: nowrap;}
+        button.cmd-btn { 
+            flex: 1; padding: 1vh 2px; font-size: clamp(12px, 2vh, 18px); font-weight: bold; color: white; border: none; border-radius: 8px; 
+            cursor: pointer; text-shadow: 0 1px 2px rgba(0,0,0,0.3); transition: all 0.1s; font-family: 'Fredoka', sans-serif;
+            display: flex; justify-content: center; align-items: center; gap: 4px;
+        }
+        button.cmd-btn:active { transform: translateY(3px); box-shadow: none !important; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none !important;}
+        
+        .write-btn { background-color: #9b59b6 !important; box-shadow: 0 3px 0 #8e44ad !important; flex: 1.5 !important;}
+        .undo-btn { background-color: #e74c3c !important; box-shadow: 0 3px 0 #c0392b !important; }
+
+        .seq-container { display: flex; flex-wrap: wrap; gap: 3px; flex: 1 1 auto; min-height: 4vh; background: rgba(0,0,0,0.03); padding: 4px; border-radius: 8px; width: 100%; box-sizing: border-box; border: 2px dashed rgba(0,0,0,0.1); margin-top: auto; align-content: flex-start;}
+        .cmd-block { display: inline-flex; align-items: center; justify-content: center; width: clamp(16px, 2.5vh, 24px); height: clamp(16px, 2.5vh, 24px); border-radius: 4px; color: white; font-weight: bold; font-size: clamp(10px, 1.5vh, 14px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); animation: popIn 0.2s ease-out; }
+
+        body.mode-vs .btn-text { display: none; } /* En Versus oculta textos para ahorrar espacio */
+
+        /* CONTROLES GLOBALES DE EJECUCIÓN */
+        .global-controls { flex: 0 0 auto; display: flex; justify-content: center; gap: 15px; margin-top: 5px; margin-bottom: 5px; position: relative; z-index: 10; width: 100%; max-width: 600px;}
+        button.global-btn { padding: 1.2vh 20px; font-size: clamp(16px, 2.5vh, 20px); color: white; border-radius: 12px; letter-spacing: 1px; font-weight: bold; font-family: 'Fredoka', sans-serif; border:none; cursor:pointer;}
+        button#go-btn { background-color: #ff9800; box-shadow: 0 5px 0 #f57c00; flex: 2; transition: all 0.1s;}
+        button.reset-btn { background-color: #e74c3c; box-shadow: 0 5px 0 #c0392b; flex: 1; transition: all 0.1s;}
+        button.global-btn:active { transform: translateY(4px); box-shadow: none !important; }
+
+        /* MODAL */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 1000; visibility: hidden; opacity: 0; transition: all 0.3s; backdrop-filter: blur(5px);}
+        .modal-overlay.active { visibility: visible; opacity: 1; }
+        .modal-box { background: white; padding: 30px; border-radius: 25px; text-align: center; max-width: 85%; width: 400px; transform: scale(0.7); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 15px 40px rgba(0,0,0,0.3); border: 6px solid #ff9800;}
+        .modal-overlay.active .modal-box { transform: scale(1); }
+        .modal-title { font-size: 28px; margin-top: 0; margin-bottom: 15px; color: #ff9800; }
+        .modal-msg { font-size: 18px; margin-bottom: 25px; color: #555; white-space: pre-line; line-height: 1.4; font-weight: 600;}
+        .modal-btn { background: #4CAF50; border: none; box-shadow: 0 6px 0 #388E3C; padding: 12px 30px; font-size: 18px; color: white; border-radius: 12px; text-transform: uppercase; font-weight: bold; font-family: 'Fredoka', sans-serif; cursor:pointer;}
+        .modal-btn:active { transform: translateY(4px); box-shadow: none; }
     </style>
 </head>
 <body>
-    <div class="decorations"><div class="sun">☀️</div><div class="grass"></div></div>
-    <h1>¡Escribe tu Nombre! 🐝</h1>
-    <div class="prompt-box">
-        ¡Navega por el teclado y presiona las letras!
-        <div class="word-display-container" id="word-display"></div>
-        <div style="font-size: 12px; font-weight: normal; margin-top: 5px; color:#555;">(Viaja a una letra, usa el botón ✏️ y presiona VOLAR)</div>
+
+    <audio id="bgm" loop>
+        <source src="../assets/musicaFondo/cancion1.mp3" type="audio/mpeg">
+    </audio>
+
+    <button id="soundToggle" class="sound-toggle" aria-label="Activar sonido">🔇</button>
+
+    <div class="decorations">
+        <div class="sun">☀️</div>
+        <div class="grass"></div>
     </div>
-    <div class="grid-wrapper">
-        <div id="grid"></div><canvas id="drawing-canvas"></canvas>
-    </div>
-    <div class="panels-container">
-        <div class="panel">
-            <h3>🐝 Programar Abeja</h3>
-            <div class="btn-group">
-                <button class="cmd-btn" onclick="addCommand('L')">↺ Giro Izq</button>
-                <button class="cmd-btn" onclick="addCommand('F')">⬆️ Avanza</button>
-                <button class="cmd-btn" onclick="addCommand('R')">↻ Giro Der</button>
+
+    <!-- ============================================================
+         LOBBY
+         ============================================================ -->
+    <div id="setup-screen">
+        <div class="setup-card">
+            <h1>Configuración ⚙️</h1>
+            
+            <div class="setup-section">
+                <h3>Modo de Juego</h3>
+                <div class="setup-row">
+                    <button id="setup-mode-libre" class="setup-btn mode active" onclick="selectMode('libre')">🧍 Libre</button>
+                    <button id="setup-mode-objetivo" class="setup-btn mode" onclick="selectMode('objetivo')">🎯 Objetivo</button>
+                    <button id="setup-mode-vs" class="setup-btn mode" onclick="selectMode('vs')">⚔️ Versus (1v1)</button>
+                </div>
             </div>
-            <div class="btn-group">
-                <button class="cmd-btn write-btn" onclick="addCommand('W')">✏️ Escribir Letra</button>
-                <button class="cmd-btn undo-btn" onclick="undoCommand()">🔙 Borrar</button>
+
+            <div class="setup-section">
+                <h3>Límite de Tiempo</h3>
+                <div class="time-input-group">
+                    <label>⏳ Segundos:</label>
+                    <input type="number" id="setup-time" value="0" min="0" max="999">
+                </div>
+                <span style="font-size:12px; color:#7f8c8d; font-weight:bold;">(0 = Sin límite)</span>
             </div>
-            <div class="seq-container" id="seq"></div>
+
+            <button class="start-btn" onclick="startGame()">¡A Escribir!</button>
         </div>
     </div>
-    <div class="global-controls">
-        <button class="global-btn" onclick="executeCommands()" id="go-btn">🚀 ¡VOLAR!</button>
-        <button class="global-btn reset-btn" onclick="resetGame()">🔄 Limpiar Todo</button>
+
+    <!-- ============================================================
+         PANTALLA DE JUEGO
+         ============================================================ -->
+    <div id="game-screen">
+        
+        <div class="game-header">
+            <button class="back-menu-btn" onclick="backToMenu()">⚙️ Volver</button>
+            <h1>¡Escribe tu Nombre! 🐝</h1>
+            <div id="timer-display" class="timer-container" style="display: none;">
+                <button id="timer-ctrl-btn" class="timer-btn" onclick="toggleTimer()">▶</button>
+                <span><span id="time-left">00:00</span></span>
+            </div>
+            <!-- Objetivo de palabra -->
+            <div id="target-display" class="target-box">
+                Objetivo: <span id="target-word"></span>
+            </div>
+        </div>
+
+        <div id="prompt-display" class="prompt-box">
+            ¡Navega por el teclado y presiona las letras!
+            <div style="font-size: clamp(10px, 1.5vh, 12px); font-weight: normal; margin-top: 4px; color:#555;">(Viaja a una letra, usa el botón ✏️ y presiona VOLAR)</div>
+        </div>
+
+        <!-- CONTENEDOR DINÁMICO DE ESTACIONES -->
+        <div id="game-board-area"></div>
+        
+        <div class="global-controls">
+            <button class="global-btn" onclick="executeCommands(false)" id="go-btn">🚀 ¡VOLAR Y ESCRIBIR!</button>
+            <button class="global-btn reset-btn" onclick="clearBoards()">🔄 Limpiar Pizarras</button>
+        </div>
+    </div>
+
+    <!-- MODAL -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal-box">
+            <h2 class="modal-title" id="m-title">Título</h2>
+            <p class="modal-msg" id="m-msg">Mensaje</p>
+            <button class="modal-btn" onclick="closeModal()">¡Entendido!</button>
+        </div>
     </div>
 
     <script>
-        const gridSizeX = 5; const gridSizeY = 6; let isExecuting = false;
-        let bee = { pos: {x: 0, y: 0}, dir: 0, commands: [] }; let formedWord = "";
-        const alphabetGrid = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','Ñ','O','P','Q','R','S','T','U','V','W','X','Y','Z','A','E','O'];
-        const gridEl = document.getElementById('grid'); const canvas = document.getElementById('drawing-canvas'); const ctx = canvas.getContext('2d');
-        let isDrawing = false; let startX, startY;
+        // MOTOR DE SONIDO (WEB AUDIO API + BGM)
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx; let isMuted = true;
+        
+        const bgAudio = document.getElementById('bgm');
+        const soundToggle = document.getElementById('soundToggle');
 
-        function initGrid() {
-            gridEl.innerHTML = ''; let index = 0;
+        soundToggle.addEventListener('click', () => {
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            isMuted = !isMuted;
+            if(isMuted) {
+                bgAudio.pause();
+                soundToggle.innerText = '🔇';
+            } else {
+                bgAudio.volume = 0.25; 
+                bgAudio.play().catch(e => console.log('Interacción requerida'));
+                soundToggle.innerText = '🔊';
+            }
+        });
+
+        function playTone(freq, type, duration, vol = 0.1) {
+            if (!audioCtx || isMuted) return;
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + duration);
+        }
+
+        function sfxClick() { playTone(600, 'sine', 0.08, 0.1); }
+        function sfxMove() { playTone(350, 'triangle', 0.1, 0.1); }
+        function sfxWrite() { playTone(880, 'sine', 0.15, 0.15); setTimeout(() => playTone(1174.66, 'sine', 0.2, 0.15), 80); }
+        function sfxWrong() { playTone(200, 'sawtooth', 0.2, 0.15); setTimeout(() => playTone(150, 'sawtooth', 0.3, 0.2), 150); }
+        function sfxVictory() { let notes = [523.25, 659.25, 783.99, 1046.50]; notes.forEach((freq, i) => { setTimeout(() => playTone(freq, 'square', 0.3, 0.1), i * 150); }); }
+
+        // ESTADO DE CONFIGURACIÓN Y JUEGO
+        let gameMode = 'libre'; // libre, objetivo, vs
+        let isExecuting = false;
+        
+        let initialTimeLimit = 0; 
+        let timerInterval = null;
+        let timeLeft = 0; 
+        let isTimerRunning = false;
+
+        const gridSizeX = 5; const gridSizeY = 6;
+        const alphabetGrid = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','Ñ','O','P','Q','R','S','T','U','V','W','X','Y','Z','A','E','O'];
+        const magicWords = ['LEON','GATO','PATO','ROJO','AZUL','BEE','SOL','LUNA','CASA','TREN'];
+        let currentTargetWord = "";
+
+        let players = {};
+        const playerConfigs = [
+            { id: 1, name: 'Azul', color: '#3498db', dark: '#2980b9', beeFilter: 'filter: hue-rotate(160deg) saturate(1.5);' },
+            { id: 2, name: 'Verde', color: '#2ecc71', dark: '#27ae60', beeFilter: 'filter: hue-rotate(70deg) saturate(1.5);' }
+        ];
+
+        // LOBBY
+        function selectMode(mode) {
+            sfxClick(); gameMode = mode;
+            document.querySelectorAll('.setup-btn.mode').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('setup-mode-' + mode).classList.add('active');
+        }
+
+        function startGame() {
+            if (!audioCtx && !isMuted) {
+                audioCtx = new AudioContext();
+                bgAudio.play().catch(e => console.log('El navegador requiere interacción.'));
+            }
+            sfxClick();
+            
+            let val = parseInt(document.getElementById('setup-time').value);
+            initialTimeLimit = (isNaN(val) || val < 0) ? 0 : val;
+
+            if (gameMode === 'vs') document.body.classList.add('mode-vs');
+            else document.body.classList.remove('mode-vs');
+
+            document.getElementById('setup-screen').style.display = 'none';
+            document.getElementById('game-screen').style.display = 'flex';
+            
+            resetGame();
+        }
+
+        function backToMenu() {
+            sfxClick(); clearInterval(timerInterval);
+            document.getElementById('game-screen').style.display = 'none';
+            document.getElementById('setup-screen').style.display = 'flex';
+        }
+
+        // TIMER
+        function formatTime(seconds) {
+            let m = Math.floor(seconds / 60); let s = seconds % 60;
+            return (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s);
+        }
+
+        function toggleTimer() {
+            sfxClick();
+            if (initialTimeLimit === 0 || isExecuting) return;
+            isTimerRunning = !isTimerRunning;
+            document.getElementById('timer-ctrl-btn').innerText = isTimerRunning ? "⏸" : "▶";
+        }
+
+        function setupTimer() {
+            clearInterval(timerInterval); isTimerRunning = false; 
+            let display = document.getElementById('timer-display');
+            let timeSpan = document.getElementById('time-left');
+            let btn = document.getElementById('timer-ctrl-btn');
+            display.classList.remove('warning');
+            
+            if (initialTimeLimit > 0) {
+                timeLeft = initialTimeLimit;
+                display.style.display = 'flex';
+                timeSpan.innerText = formatTime(timeLeft);
+                btn.innerText = "▶";
+                
+                timerInterval = setInterval(() => {
+                    if (!isTimerRunning || isExecuting || document.getElementById('modal').classList.contains('active')) return;
+                    timeLeft--;
+                    timeSpan.innerText = formatTime(timeLeft);
+                    
+                    if (timeLeft === 10) { display.classList.add('warning'); playTone(300, 'sawtooth', 0.2, 0.15); }
+                    if (timeLeft <= 0) {
+                        isTimerRunning = false; clearInterval(timerInterval);
+                        playTone(150, 'sawtooth', 0.4, 0.3);
+                        document.getElementById('go-btn').disabled = true;
+                        
+                        if (!isExecuting) executeCommands(true); 
+                    }
+                }, 1000);
+            } else {
+                display.style.display = 'none';
+            }
+        }
+
+        // DOM SETUP
+        function buildDOM() {
+            const container = document.getElementById('game-board-area');
+            container.innerHTML = '';
+            
+            let loopCount = gameMode === 'vs' ? 2 : 1;
+            
+            for (let i = 1; i <= loopCount; i++) {
+                let conf = playerConfigs[i-1];
+                let html = `
+                    <div class="station">
+                        <div class="station-header" id="word-display-${i}">
+                            <div class="word-display-container"></div>
+                        </div>
+                        <div class="grid-wrapper">
+                            <div id="grid-p${i}" class="game-grid"></div>
+                            <canvas id="canvas-p${i}" class="drawing-canvas"></canvas>
+                        </div>
+                        <div class="panel">
+                            <div class="controls-row">
+                                <button class="cmd-btn" style="background:${conf.color}; box-shadow: 0 3px 0 ${conf.dark}" onclick="addCommand(${i}, 'F')">⬆️<span class="btn-text"> Avanza</span></button>
+                                <button class="cmd-btn" style="background:${conf.color}; box-shadow: 0 3px 0 ${conf.dark}" onclick="addCommand(${i}, 'L')">↺<span class="btn-text"> Izq</span></button>
+                                <button class="cmd-btn" style="background:${conf.color}; box-shadow: 0 3px 0 ${conf.dark}" onclick="addCommand(${i}, 'R')">↻<span class="btn-text"> Der</span></button>
+                            </div>
+                            <div class="controls-row">
+                                <button class="cmd-btn write-btn" onclick="addCommand(${i}, 'W')">✏️<span class="btn-text"> Escribir</span></button>
+                                <button class="cmd-btn undo-btn" onclick="undoCommand(${i})">❌<span class="btn-text"> Borrar</span></button>
+                            </div>
+                            <div class="seq-container" id="seq${i}"></div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += html;
+            }
+
+            for (let i = 1; i <= loopCount; i++) {
+                buildGridCells(`grid-p${i}`);
+                attachCanvasEvents(i);
+            }
+        }
+
+        function buildGridCells(containerId) {
+            const gridEl = document.getElementById(containerId);
+            let index = 0;
             for (let y = 0; y < gridSizeY; y++) {
                 for (let x = 0; x < gridSizeX; x++) {
-                    const cell = document.createElement('div'); cell.className = 'cell'; cell.id = `cell-${x}-${y}`; cell.innerText = alphabetGrid[index];
+                    const cell = document.createElement('div'); cell.className = 'cell'; cell.id = `${containerId}-cell-${x}-${y}`;
+                    cell.innerText = alphabetGrid[index];
                     gridEl.appendChild(cell); index++;
                 }
             }
-            setTimeout(() => { canvas.width = gridEl.offsetWidth; canvas.height = gridEl.offsetHeight; ctx.lineWidth = 8; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.setLineDash([12, 15]); ctx.strokeStyle = 'rgba(255, 152, 0, 0.8)'; }, 50);
         }
 
-        function getCursorPos(cX, cY) { const r = canvas.getBoundingClientRect(); return { x: cX - r.left, y: cY - r.top }; }
-        function startDraw(e) { if (isExecuting) return; isDrawing = true; let cX = e.touches?e.touches[0].clientX:e.clientX; let cY = e.touches?e.touches[0].clientY:e.clientY; const p = getCursorPos(cX, cY); ctx.beginPath(); ctx.moveTo(p.x, p.y); if(e.cancelable) e.preventDefault(); }
-        function draw(e) { if (!isDrawing || isExecuting) return; let cX = e.touches?e.touches[0].clientX:e.clientX; let cY = e.touches?e.touches[0].clientY:e.clientY; const p = getCursorPos(cX, cY); ctx.lineTo(p.x, p.y); ctx.stroke(); if(e.cancelable) e.preventDefault(); }
-        canvas.addEventListener('mousedown', startDraw); canvas.addEventListener('mousemove', draw); window.addEventListener('mouseup', ()=>isDrawing=false);
-        canvas.addEventListener('touchstart', startDraw, {passive:false}); canvas.addEventListener('touchmove', draw, {passive:false}); window.addEventListener('touchend', ()=>isDrawing=false);
+        // PINTADO DE PIZARRA INDIVIDUAL
+        let drawingState = { 1: false, 2: false };
+        function resizeCanvases() {
+            let loopCount = gameMode === 'vs' ? 2 : 1;
+            for(let i=1; i<=loopCount; i++) {
+                const gridEl = document.getElementById(`grid-p${i}`);
+                const canvas = document.getElementById(`canvas-p${i}`);
+                if(gridEl && canvas) {
+                    canvas.width = gridEl.offsetWidth; canvas.height = gridEl.offsetHeight; 
+                    let ctx = canvas.getContext('2d');
+                    ctx.lineWidth = 6; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; 
+                    ctx.setLineDash([8, 12]); ctx.strokeStyle = 'rgba(255, 152, 0, 0.8)';
+                }
+            }
+        }
+        window.addEventListener('resize', resizeCanvases);
 
-        // NUEVA ORIENTACIÓN HACIA ARRIBA
+        function attachCanvasEvents(id) {
+            const canvas = document.getElementById(`canvas-p${id}`);
+            let ctx = canvas.getContext('2d');
+            function getPos(cX, cY) { const r = canvas.getBoundingClientRect(); return { x: cX - r.left, y: cY - r.top }; }
+            
+            canvas.addEventListener('mousedown', (e) => {
+                if(isExecuting) return; drawingState[id] = true;
+                const p = getPos(e.clientX, e.clientY); ctx.beginPath(); ctx.moveTo(p.x, p.y);
+            });
+            canvas.addEventListener('mousemove', (e) => {
+                if(!drawingState[id] || isExecuting) return;
+                const p = getPos(e.clientX, e.clientY); ctx.lineTo(p.x, p.y); ctx.stroke();
+            });
+            window.addEventListener('mouseup', () => drawingState[id] = false);
+            
+            canvas.addEventListener('touchstart', (e) => {
+                if(isExecuting) return; drawingState[id] = true;
+                const p = getPos(e.touches[0].clientX, e.touches[0].clientY); ctx.beginPath(); ctx.moveTo(p.x, p.y);
+            }, {passive:true});
+            canvas.addEventListener('touchmove', (e) => {
+                if(!drawingState[id] || isExecuting) return;
+                const p = getPos(e.touches[0].clientX, e.touches[0].clientY); ctx.lineTo(p.x, p.y); ctx.stroke();
+                if(e.cancelable) e.preventDefault();
+            }, {passive:false});
+            window.addEventListener('touchend', () => drawingState[id] = false);
+        }
+
+        // LÓGICA DE ABEJAS
         function getTransform(dir) { 
-            if (dir === 0) return 'rotate(90deg)';
-            if (dir === 1) return 'rotate(180deg)';
-            if (dir === 2) return 'rotate(-90deg)';
-            if (dir === 3) return 'rotate(0deg)';
+            if (dir === 0) return 'rotate(90deg)';  // Der
+            if (dir === 1) return 'rotate(180deg)'; // Abajo
+            if (dir === 2) return 'rotate(-90deg)'; // Izq
+            if (dir === 3) return 'rotate(0deg)';   // Arriba
         }
 
-        function drawBee() {
+        function drawBees() {
             document.querySelectorAll('.bee-container').forEach(b => b.remove());
-            const cell = document.getElementById(`cell-${bee.pos.x}-${bee.pos.y}`);
-            const container = document.createElement('div'); container.className = `bee-container`;
-            const orient = document.createElement('div'); orient.className = 'bee-orientation'; orient.style.transform = getTransform(bee.dir);
-            const sprite = document.createElement('div'); sprite.className = 'bee-sprite'; 
-            sprite.innerHTML = '<img src="../assets/robots/BeebotEmoji.png" alt="BeeBot" style="width: 48px; height: 48px; object-fit: contain; pointer-events: none;">';
-            orient.appendChild(sprite); container.appendChild(orient); cell.appendChild(container);
+            let loopCount = gameMode === 'vs' ? 2 : 1;
+            for(let i=1; i<=loopCount; i++) {
+                let p = players[i]; let conf = playerConfigs[i-1];
+                let cell = document.getElementById(`grid-p${i}-cell-${p.pos.x}-${p.pos.y}`);
+                if(!cell) continue;
+                
+                const container = document.createElement('div'); container.className = `bee-container`;
+                const orient = document.createElement('div'); orient.className = 'bee-orientation'; orient.style.transform = getTransform(p.dir);
+                const sprite = document.createElement('div'); sprite.className = 'bee-sprite'; 
+                sprite.innerHTML = `<img src="../assets/robots/BeebotEmoji.png" alt="Bee" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; ${conf.beeFilter}">`;
+                
+                orient.appendChild(sprite); container.appendChild(orient); cell.appendChild(container);
+            }
         }
 
-        function addCommand(cmd) { if(isExecuting) return; bee.commands.push(cmd); updateSequenceUI(); }
-        function undoCommand() { if(isExecuting || bee.commands.length === 0) return; bee.commands.pop(); updateSequenceUI(); }
-        function updateSequenceUI() {
-            const sym = { 'F': '⬆️', 'R': '↻', 'L': '↺', 'W': '✏️' }; const container = document.getElementById(`seq`); container.innerHTML = ''; 
-            bee.commands.forEach(cmd => { const span = document.createElement('span'); span.className = 'cmd-block' + (cmd === 'W' ? ' write-block' : ''); span.innerText = sym[cmd]; container.appendChild(span); });
+        function addCommand(id, cmd) { sfxClick(); if(isExecuting || (initialTimeLimit > 0 && timeLeft <= 0)) return; players[id].commands.push(cmd); updateSequenceUI(id); }
+        function undoCommand(id) { sfxClick(); if(isExecuting || players[id].commands.length === 0 || (initialTimeLimit > 0 && timeLeft <= 0)) return; players[id].commands.pop(); updateSequenceUI(id); }
+        
+        function updateSequenceUI(id) {
+            const sym = { 'F': '⬆️', 'R': '↻', 'L': '↺', 'W': '✏️' }; 
+            const container = document.getElementById(`seq${id}`); container.innerHTML = ''; 
+            players[id].commands.forEach(cmd => { 
+                const span = document.createElement('span'); span.className = 'cmd-block' + (cmd==='W'?' write-block':''); 
+                span.innerText = sym[cmd]; 
+                if(cmd !== 'W') span.style.background = playerConfigs[id-1].color;
+                container.appendChild(span); 
+            });
         }
 
-        function writeLetter() {
-            const cell = document.getElementById(`cell-${bee.pos.x}-${bee.pos.y}`); const letter = cell.innerText;
+        function writeLetter(id) {
+            let p = players[id];
+            const cell = document.getElementById(`grid-p${id}-cell-${p.pos.x}-${p.pos.y}`); 
+            const letter = cell.innerText;
+            
             cell.classList.add('writing-pulse'); setTimeout(() => cell.classList.remove('writing-pulse'), 300);
-            const display = document.getElementById('word-display'); const tile = document.createElement('div'); tile.className = 'letter-tile'; tile.innerText = letter;
+            
+            const display = document.querySelector(`#word-display-${id} .word-display-container`); 
+            const tile = document.createElement('div'); tile.className = 'letter-tile'; tile.innerText = letter;
             const colors = ['#FF5722', '#4CAF50', '#03A9F4', '#FFC107', '#9C27B0', '#E91E63', '#00BCD4'];
             tile.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            display.appendChild(tile); formedWord += letter;
+            
+            display.appendChild(tile); p.formedWord += letter;
+            sfxWrite();
         }
 
-        function executeCommands() {
-            if (bee.commands.length === 0 || isExecuting) return; isExecuting = true; document.getElementById('go-btn').style.opacity = "0.5";
+        function executeCommands(isTimeout = false) {
+            sfxClick();
+            if (isExecuting) return; 
+            
+            let loopCount = gameMode === 'vs' ? 2 : 1;
+            let maxSteps = 0;
+            for(let i=1; i<=loopCount; i++) { if(players[i].commands.length > maxSteps) maxSteps = players[i].commands.length; }
+
+            isExecuting = true; 
+            document.getElementById('go-btn').style.opacity = "0.5"; document.getElementById('go-btn').disabled = true;
+
+            if (maxSteps === 0) {
+                if (isTimeout) evaluateWin(true);
+                else { isExecuting = false; document.getElementById('go-btn').style.opacity = "1"; document.getElementById('go-btn').disabled = false;}
+                return;
+            }
+            
             let step = 0;
             const interval = setInterval(() => {
-                if (step >= bee.commands.length) {
-                    clearInterval(interval); document.getElementById('go-btn').style.opacity = "1"; isExecuting = false;
-                    bee.commands = []; updateSequenceUI(); ctx.clearRect(0, 0, canvas.width, canvas.height); return;
+                if (step >= maxSteps) { clearInterval(interval); evaluateWin(isTimeout || (initialTimeLimit > 0 && timeLeft <= 0)); return; }
+                
+                let moved = false;
+                for(let i=1; i<=loopCount; i++) {
+                    let p = players[i];
+                    if(step < p.commands.length) {
+                        const cmd = p.commands[step];
+                        if (cmd === 'F') {
+                            let nx = p.pos.x, ny = p.pos.y;
+                            if (p.dir === 0) nx++; else if (p.dir === 1) ny++; else if (p.dir === 2) nx--; else if (p.dir === 3) ny--; 
+                            if (nx >= 0 && nx < gridSizeX && ny >= 0 && ny < gridSizeY) { p.pos.x = nx; p.pos.y = ny; moved=true;}
+                        } 
+                        else if (cmd === 'R') {p.dir = (p.dir + 1) % 4; moved=true;}
+                        else if (cmd === 'L') {p.dir = (p.dir + 3) % 4; moved=true;}
+                        else if (cmd === 'W') writeLetter(i);
+                    }
                 }
-                const cmd = bee.commands[step];
-                if (cmd === 'F') {
-                    let nx = bee.pos.x, ny = bee.pos.y;
-                    if (bee.dir === 0) nx++; else if (bee.dir === 1) ny++; else if (bee.dir === 2) nx--; else if (bee.dir === 3) ny--; 
-                    if (nx >= 0 && nx < gridSizeX && ny >= 0 && ny < gridSizeY) { bee.pos.x = nx; bee.pos.y = ny; }
-                } else if (cmd === 'R') bee.dir = (bee.dir + 1) % 4; else if (cmd === 'L') bee.dir = (bee.dir + 3) % 4; else if (cmd === 'W') writeLetter();
-                drawBee(); step++;
+                if(moved) sfxMove();
+                drawBees(); step++;
             }, 600); 
         }
 
-        function resetGame() { bee = { pos: {x: 0, y: 0}, dir: 0, commands: [] }; formedWord = ""; document.getElementById('word-display').innerHTML = ""; isExecuting = false; updateSequenceUI(); document.getElementById('go-btn').style.opacity = "1"; ctx.clearRect(0, 0, canvas.width, canvas.height); initGrid(); drawBee(); }
-        resetGame();
+        // EVALUACIÓN DE VICTORIA SEGÚN EL MODO
+        let modalCallback = null;
+        function showModal(title, msg, callback = null) { 
+            document.getElementById('m-title').innerText = title; 
+            document.getElementById('m-msg').innerText = msg; 
+            document.getElementById('modal').classList.add('active'); 
+            modalCallback = callback;
+        }
+        function closeModal() { 
+            sfxClick(); document.getElementById('modal').classList.remove('active'); 
+            if(modalCallback) { modalCallback(); modalCallback = null; }
+        }
+
+        function clearBoards() {
+            sfxClick();
+            let loopCount = gameMode === 'vs' ? 2 : 1;
+            for(let i=1; i<=loopCount; i++) {
+                players[i].commands = [];
+                players[i].formedWord = "";
+                document.querySelector(`#word-display-${i} .word-display-container`).innerHTML = '';
+                updateSequenceUI(i);
+            }
+        }
+
+        function evaluateWin(timeOutFlag) {
+            setTimeout(() => {
+                if (gameMode === 'libre') {
+                    if (timeOutFlag) showModal("¡Tiempo Acabado! ⏰", `Escribiste la palabra:\n"${players[1].formedWord}"`);
+                    else {
+                        sfxVictory();
+                        showModal("¡Buen Trabajo! ✨", `Has escrito la palabra:\n"${players[1].formedWord}"`);
+                    }
+                    clearBoards();
+                } else if (gameMode === 'objetivo') {
+                    let w1 = players[1].formedWord;
+                    if (w1 === currentTargetWord) {
+                        sfxVictory();
+                        showModal("¡Objetivo Cumplido! 🎉", `Escribiste "${currentTargetWord}" correctamente.`);
+                        setNewTarget();
+                    } else if (timeOutFlag) {
+                        showModal("¡Tiempo Acabado! ⏰", `Objetivo: "${currentTargetWord}"\nTú escribiste: "${w1}"\n\n¡Sigue practicando!`);
+                        setNewTarget();
+                    } else {
+                        sfxWrong();
+                        showModal("¡Oops! 😅", `Escribiste "${w1}" pero el objetivo era "${currentTargetWord}".\n¡Limpiaremos tu pizarra para que intentes de nuevo!`);
+                    }
+                    clearBoards();
+                } else if (gameMode === 'vs') {
+                    let w1 = players[1].formedWord;
+                    let w2 = players[2].formedWord;
+                    
+                    let p1Win = (w1 === currentTargetWord);
+                    let p2Win = (w2 === currentTargetWord);
+
+                    if (p1Win && p2Win) {
+                        sfxVictory(); showModal("¡Empate! 🤝", `¡Ambos escribieron "${currentTargetWord}" correctamente al mismo tiempo!`);
+                        setNewTarget(); clearBoards();
+                    } else if (p1Win) {
+                        sfxVictory(); showModal("¡Gana Azul! 💙", `¡Escribió "${currentTargetWord}" primero!`);
+                        setNewTarget(); clearBoards();
+                    } else if (p2Win) {
+                        sfxVictory(); showModal("¡Gana Verde! 💚", `¡Escribió "${currentTargetWord}" primero!`);
+                        setNewTarget(); clearBoards();
+                    } else if (timeOutFlag) {
+                        showModal("¡Tiempo Acabado! ⏰", `Ninguno logró escribir "${currentTargetWord}".\nAzul: "${w1}"\nVerde: "${w2}"`);
+                        setNewTarget(); clearBoards();
+                    } else {
+                        // Si ambos ejecutaron pero ninguno acertó, solo advertir
+                        sfxWrong();
+                        showModal("¡Nadie acertó aún! 🤔", `El objetivo es "${currentTargetWord}".\n\nLimpiaremos sus pizarras para que intenten de nuevo.`);
+                        clearBoards();
+                    }
+                }
+                
+                document.getElementById('go-btn').style.opacity = "1"; 
+                document.getElementById('go-btn').disabled = false;
+                isExecuting = false;
+            }, 400);
+        }
+
+        function setNewTarget() {
+            currentTargetWord = magicWords[Math.floor(Math.random() * magicWords.length)];
+            document.getElementById('target-word').innerText = currentTargetWord;
+            resetGame(false); // Restart time and bees without changing word again
+        }
+
+        function resetGame(newWord = true) { 
+            sfxClick();
+            
+            let loopCount = gameMode === 'vs' ? 2 : 1;
+            for(let i=1; i<=loopCount; i++) {
+                players[i] = { pos: {x: 0, y: 0}, dir: 0, commands: [], formedWord: "" };
+            }
+            
+            isExecuting = false; 
+            document.getElementById('go-btn').style.opacity = "1"; 
+            document.getElementById('go-btn').disabled = false;
+            
+            buildDOM();
+            
+            if (gameMode === 'libre') {
+                document.getElementById('target-display').style.display = 'none';
+                document.getElementById('prompt-display').style.display = 'block';
+            } else {
+                document.getElementById('target-display').style.display = 'block';
+                document.getElementById('prompt-display').style.display = 'none';
+                if(newWord) {
+                    currentTargetWord = magicWords[Math.floor(Math.random() * magicWords.length)];
+                    document.getElementById('target-word').innerText = currentTargetWord;
+                }
+            }
+            
+            for(let i=1; i<=loopCount; i++) updateSequenceUI(i);
+            setTimeout(resizeCanvases, 100); 
+            drawBees(); 
+            setupTimer();
+        }
+
+        // INIT SE MANEJA DESDE EL LOBBY
     </script>
 </body>
 </html>

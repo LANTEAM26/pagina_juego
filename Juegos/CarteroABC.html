@@ -3,709 +3,447 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🚲 El Cartero ABC 📬</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+    <title>¡Palabras Desordenadas! 🐝</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        :root {
-            --sky-top: #60c9ff;
-            --sky-bottom: #d4f1ff;
-            --grass: #82e0aa;
-            --grass-dark: #58d68d;
-            --font-main: 'Fredoka', sans-serif;
-            --path-color: #f1d3a1;
-            --path-border: #dfbb80;
+        :root { 
+            --p1-main: #3498db; --p1-dark: #2980b9; 
+            --p2-main: #2ecc71; --p2-dark: #27ae60;
         }
 
-        body {
-            font-family: var(--font-main);
-            background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bottom) 100%);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            touch-action: none;
-            overflow: hidden;
-            user-select: none;
+        body, html { 
+            font-family: 'Fredoka', sans-serif; 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            margin: 0; padding: 0; width: 100vw; height: 100vh; 
+            touch-action: manipulation; color: #333; background-color: transparent; 
+            overflow: hidden; box-sizing: border-box;
         }
 
-        /* PAISAJE DE CUENTO */
-        .decorations { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;}
-        .sun { position: absolute; top: 5%; left: 5%; font-size: 90px; filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.6)); animation: spinSun 20s linear infinite; }
-        @keyframes spinSun { 100% { transform: rotate(360deg); } }
+        /* PAISAJE DE FONDO */
+        .decorations { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -1; pointer-events: none; overflow: hidden; background: linear-gradient(180deg, #74ebd5 0%, #ACB6E5 100%); }
+        .decorations::before { content: ''; position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg width='60' height='104' viewBox='0 0 60 104' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 52l15-26 15 26v52l-15 26-15-26zM0 0l15 26v52L0 104V0zm60 0v104L45 78V26z' fill='%23ffffff' fill-opacity='0.15' fill-rule='evenodd'/%3E%3C/svg%3E"); z-index: 1; }
+        .sun { position: absolute; top: 2%; right: 4%; font-size: clamp(40px, 8vh, 80px); z-index: 2; filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.8)); animation: pulse-sun 3s infinite alternate; }
+        @keyframes pulse-sun { 0% { transform: scale(1) rotate(0deg); } 100% { transform: scale(1.1) rotate(10deg); } }
+        .grass { position: absolute; bottom: -5vh; left: -10vw; width: 120vw; height: 25vh; background: #a9dfbf; border-radius: 50% 50% 0 0; z-index: 2; box-shadow: inset 0 15px 0 #82e0aa, 0 -30px 50px rgba(46,204,113,0.3); }
+
+        /* BOTÓN DE SONIDO FLOTANTE */
+        .sound-toggle { position: absolute; top: 15px; left: 15px; background: rgba(255, 255, 255, 0.9); border: 3px solid #3498db; border-radius: 50%; width: 45px; height: 45px; font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 1000; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: all 0.2s;}
+        .sound-toggle:active { transform: translateY(4px); box-shadow: none; }
+
+        /* ============================================================
+           PANTALLA DE CONFIGURACIÓN PREVIA (LOBBY)
+           ============================================================ */
+        #setup-screen {
+            position: absolute; inset: 0; z-index: 500;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+        }
+
+        .setup-card {
+            background: white; padding: 40px; border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4); border: 8px solid #ffb74d;
+            text-align: center; max-width: 90%; width: 550px;
+            display: flex; flex-direction: column; gap: 20px;
+        }
+
+        .setup-card h1 { font-size: 34px; color: #ff9800; margin: 0; text-shadow: none;}
         
-        .cloud { position: absolute; font-size: 60px; filter: drop-shadow(3px 3px 0 rgba(255,255,255,0.8)); animation: floatCloud linear infinite; opacity: 0.9; }
-        .c1 { top: 10%; animation-duration: 40s; font-size: 80px; }
-        .c2 { top: 25%; animation-duration: 35s; animation-delay: -15s; font-size: 50px; }
-        .c3 { top: 8%; animation-duration: 50s; animation-delay: -25s; font-size: 70px; }
-        @keyframes floatCloud { 0% { left: -20%; } 100% { left: 120%; } }
+        .setup-section {
+            background: #fff9c4; padding: 15px; border-radius: 20px; border: 3px dashed #f1c40f;
+            display: flex; flex-direction: column; gap: 12px; align-items: center;
+        }
+        .setup-section h3 { margin: 0; color: #d35400; font-size: 18px; text-transform: uppercase;}
+        
+        .setup-row { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; width: 100%;}
+        
+        .setup-btn { background: #fff; border: 3px solid #bdc3c7; padding: 10px 20px; border-radius: 15px; font-size: 16px; font-weight: bold; color: #7f8c8d; cursor: pointer; transition: all 0.2s; font-family: 'Fredoka', sans-serif;}
+        .setup-btn.active.theme { background: #9b59b6; border-color: #8e44ad; color: #fff; box-shadow: 0 4px 0 #8e44ad; transform: translateY(-2px); }
 
-        .hills { position: absolute; bottom: -5vh; left: -10vw; width: 120vw; height: 45vh; background: var(--grass); border-radius: 50% 50% 0 0; box-shadow: inset 0 20px 0 var(--grass-dark), 0 -30px 50px rgba(0,0,0,0.1); }
-        .hills-back { position: absolute; bottom: 15vh; left: -20vw; width: 140vw; height: 40vh; background: #abebc6; border-radius: 50% 50% 0 0; z-index: -1; }
+        .time-input-group { display: flex; align-items: center; gap: 10px; background: #fff; padding: 8px 15px; border-radius: 15px; border: 3px solid #3498db;}
+        .time-input-group label { color: #2980b9; font-weight: bold; font-size: 18px; }
+        .time-input-group input { width: 70px; border: 2px solid #2980b9; border-radius: 10px; text-align: center; font-weight: bold; font-family: 'Fredoka', sans-serif; font-size: 18px; padding: 5px; outline: none;}
+        
+        .start-btn {
+            background: #4CAF50; border: none; box-shadow: 0 8px 0 #388E3C; padding: 15px 40px; font-size: 24px; color: white; border-radius: 20px; text-transform: uppercase; font-weight: bold; font-family: 'Fredoka', sans-serif; cursor:pointer; margin-top: 10px; transition: all 0.1s;
+        }
+        .start-btn:active { transform: translateY(6px); box-shadow: 0 2px 0 #388E3C; }
 
-        /* CABECERA Y UI INFANTIL */
-        h1 {
-            color: #fff;
-            margin: 15px 0 5px 0;
-            font-size: 40px;
-            text-shadow: 3px 3px 0px #ff9800, 0 5px 15px rgba(0,0,0,0.2);
-            text-align: center;
-            letter-spacing: 2px;
-            z-index: 10;
+        /* ============================================================
+           PANTALLA DE JUEGO (GAME SCREEN)
+           ============================================================ */
+        #game-screen {
+            display: none; flex-direction: column; align-items: center; justify-content: flex-start;
+            width: 100vw; height: 100vh; padding: 1.5vh 2vw; box-sizing: border-box; overflow: hidden;
         }
 
-        .status-bar {
-            display: flex;
-            gap: 20px;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 10px 25px;
-            border-radius: 30px;
-            font-size: 22px;
-            color: #d35400;
-            box-shadow: 0 8px 0 #f39c12;
-            margin-bottom: 10px;
-            z-index: 10;
-            border: 4px solid #f39c12;
+        .game-header {
+            flex: 0 0 auto; display: flex; justify-content: space-between; align-items: center; 
+            width: 100%; max-width: 1000px; margin-bottom: 2vh; z-index: 10;
+        }
+        
+        .back-menu-btn { background: #ecf0f1; border: 3px solid #bdc3c7; padding: 8px 16px; border-radius: 15px; font-size: clamp(12px, 2vh, 16px); font-weight: bold; color: #2c3e50; cursor: pointer; transition: all 0.2s; font-family: 'Fredoka', sans-serif; box-shadow: 0 5px 0 #bdc3c7;}
+        .back-menu-btn:active { transform: translateY(4px); box-shadow: none; }
+
+        h1 { color: #2c3e50; margin: 0 0 1vh 0; text-align: center; font-size: clamp(22px, 4vh, 36px); text-shadow: 2px 2px 0px #fff; z-index: 10; }
+        
+        .hud-group { display: flex; gap: 15px; align-items: center; }
+
+        .score-box {
+            background: white; padding: 6px 20px; border-radius: 20px;
+            border: 4px solid #ff80ab; box-shadow: 0 4px 0 #c2185b;
+            font-weight: bold; color: #5d4037; font-size: clamp(16px, 2.5vh, 22px); display: flex; align-items: center; gap: 5px;
         }
 
-        .status-item { display: flex; align-items: center; gap: 8px; font-weight: 700; }
+        .timer-container {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            background: #fff; border: 4px solid #3498db; color: #2980b9; padding: 6px 20px;
+            border-radius: 25px; font-size: clamp(16px, 2.5vh, 22px); font-weight: 900; box-shadow: 0 4px 0 #2980b9;
+        }
+        .timer-container.warning { border-color: #e74c3c; color: #c0392b; box-shadow: 0 4px 0 #e74c3c; animation: pulseTimer 0.5s infinite alternate; }
+        @keyframes pulseTimer { 0% { transform: scale(1); } 100% { transform: scale(1.05); } }
+        
+        /* CAJA DE INSTRUCCIONES */
+        .prompt-box { 
+            text-align: center; background: rgba(255, 255, 255, 0.95); padding: 8px 15px; 
+            border-radius: 15px; font-size: clamp(14px, 2.2vh, 18px); font-weight: 600; 
+            width: 100%; max-width: 600px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+            border: 3px solid #ffb74d; box-sizing: border-box; line-height: 1.3; margin-bottom: 2vh; z-index: 10;
+        }
 
-        /* BOTÓN DE SONIDO */
-        .sound-btn {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            width: 60px;
-            height: 60px;
-            background: #fff;
-            border: 4px solid #f39c12;
-            border-radius: 50%;
-            font-size: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 6px 0 #f39c12;
-            z-index: 50;
+        /* ============================================================
+           ZONA DE ARMAR PALABRAS (DRAG & DROP)
+           ============================================================ */
+        .game-area {
+            flex: 1 1 auto; width: 100%; max-width: 900px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4vh; z-index: 10;
+        }
+
+        .drop-zone {
+            display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;
+            background: rgba(255, 255, 255, 0.6); padding: 20px; border-radius: 20px; border: 4px dashed #bdc3c7;
+            min-height: 100px; min-width: 300px;
+        }
+
+        .drop-slot {
+            width: clamp(50px, 8vh, 80px); height: clamp(50px, 8vh, 80px);
+            background: rgba(255, 255, 255, 0.9); border: 4px dashed #95a5a6; border-radius: 15px;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .letters-tray {
+            display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;
+            background: #ffe0b2; padding: 20px; border-radius: 20px; border: 4px solid #ffb74d;
+            box-shadow: 0 10px 0 #ffb74d; min-height: 100px; width: 100%;
+        }
+
+        .letter-tile {
+            width: clamp(50px, 8vh, 80px); height: clamp(50px, 8vh, 80px);
+            background: #3498db; border: 4px solid #2980b9; border-radius: 15px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: clamp(24px, 4vh, 45px); font-weight: 900; color: white;
+            cursor: grab; box-shadow: 0 6px 0 #2980b9;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+            font-family: 'Fredoka', sans-serif;
             transition: transform 0.1s;
         }
-        .sound-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #f39c12; }
 
-        /* ZONA DE JUEGO PRINCIPAL */
-        .game-area {
-            position: relative;
-            width: 100%;
-            max-width: 950px; 
-            height: 520px;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            z-index: 10;
+        .letter-tile.dragging {
+            opacity: 0.8; transform: scale(1.1); box-shadow: 0 10px 20px rgba(0,0,0,0.3); z-index: 1000;
         }
 
-        /* CUADRA ISOMÉTRICA (PERFECTAMENTE SIMÉTRICA) */
-        .city-block {
-            position: relative;
-            width: 100%;
-            height: 350px; 
-            margin-bottom: 20px;
-        }
+        .shake-error { animation: shakeError 0.4s; border-color: #e74c3c !important; }
+        @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25%, 75% { transform: translateX(-5px); } 50% { transform: translateX(5px); } }
 
-        /* Calle Principal Curvada */
-        .main-street {
-            position: absolute;
-            top: 180px; 
-            left: -10vw;
-            width: 120vw;
-            height: 90px;
-            background: var(--path-color);
-            border-top: 6px solid var(--path-border);
-            border-bottom: 6px solid var(--path-border);
-            border-radius: 50%; 
-            z-index: 10; 
-        }
+        /* CONTROLES GLOBALES */
+        .global-controls { flex: 0 0 auto; display: flex; justify-content: center; gap: 15px; margin-top: 2vh; margin-bottom: 2vh; position: relative; z-index: 10; width: 100%; max-width: 600px;}
+        button.global-btn { padding: 1.2vh 25px; font-size: clamp(16px, 2.5vh, 20px); color: white; border-radius: 15px; font-weight: bold; font-family: 'Fredoka', sans-serif; border:none; cursor:pointer;}
+        button.reset-btn { background-color: #e74c3c; box-shadow: 0 6px 0 #c0392b; transition: all 0.1s;}
+        button.global-btn:active { transform: translateY(4px); box-shadow: none !important; }
 
-        .house {
-            position: absolute;
-            width: 200px;
-            height: 230px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-end;
-            background-size: contain;
-            background-position: bottom center;
-            background-repeat: no-repeat;
-            transform: scale(var(--base-scale, 1));
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer;
-        }
-
-        .house.h1 { background-image: url('../assets/Casa1.png'); }
-        .house.h2 { background-image: url('../assets/Casa2.png'); }
-        .house.h3 { background-image: url('../assets/Casa3.png'); }
-        .house.h4 { background-image: url('../assets/Casa4.png'); }
-
-        /* BUZÓN LATERAL */
-        .mailbox {
-            position: absolute;
-            bottom: 20px; 
-            right: -25px; 
-            background: #fff;
-            border: 4px solid #333;
-            width: 55px;
-            height: 55px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 35px;
-            font-weight: 900;
-            color: #2c3e50;
-            box-shadow: 0 6px 0 #333;
-            z-index: 2;
-            font-family: 'Nunito', sans-serif;
-        }
-
-        /* Poste del buzón clavado en el piso */
-        .mailbox::before {
-            content: '';
-            position: absolute;
-            bottom: -30px; 
-            left: 50%;
-            transform: translateX(-50%);
-            width: 12px;
-            height: 35px;
-            background: #8d6e63;
-            border: 3px solid #4e342e;
-            border-top: none;
-            z-index: -1;
-            border-radius: 0 0 5px 5px;
-        }
-
-        .house.happy {
-            transform: translateY(-20px) scale(calc(var(--base-scale, 1) * 1.05));
-            filter: drop-shadow(0 15px 15px rgba(255,255,255,0.6));
-        }
-
-        /* ANIMACIÓN DINÁMICA DEL CARTERO Y SU BICICLETA FIJA */
-        #mailman-container {
-            position: absolute;
-            width: 100px;
-            height: 120px;
-            z-index: 50; 
-            filter: drop-shadow(0 15px 10px rgba(0,0,0,0.3));
-            transition: left 1.5s ease-in-out, top 1.5s ease-in-out, transform 0.3s ease;
-        }
-
-        .mailman-bounce {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            animation: bounceRide 0.4s infinite alternate;
-        }
-
-        /* El osito anclado firmemente al asiento */
-        .mailman-rider {
-            position: absolute;
-            font-size: 60px;
-            bottom: 40px; 
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 2;
-        }
-
-        /* La bicicleta */
-        .mailman-bike {
-            position: absolute;
-            font-size: 80px;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1;
-        }
-
-        @keyframes bounceRide {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-8px); }
-        }
-
-        /* BOLSA DEL CARTERO (SOBRES CENTRADOS) */
-        .postal-zone {
-            height: 140px;
-            background: rgba(255, 255, 255, 0.85);
-            border-radius: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 5px dashed #4dabf7;
-            position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            backdrop-filter: blur(5px);
-            margin: 0 10px 10px 10px;
-            z-index: 100; 
-        }
-
-        .postal-zone-title {
-            position: absolute;
-            top: -20px;
-            background: #4dabf7;
-            color: white;
-            padding: 5px 20px;
-            border-radius: 20px;
-            font-size: 18px;
-            font-weight: bold;
-            border: 3px solid #fff;
-            box-shadow: 0 4px 0 #1864ab;
-        }
-
-        .envelope {
-            width: 90px;
-            height: 70px;
-            background: #fff3bf;
-            border: 4px solid #f08c00;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 45px;
-            font-weight: 900;
-            color: #d9480f;
-            cursor: grab;
-            box-shadow: 0 8px 0 #e67700, 0 15px 20px rgba(0,0,0,0.2);
-            position: absolute;
-            z-index: 100;
-            font-family: 'Nunito', sans-serif;
-            animation: gentleBounce 2s infinite alternate;
-        }
-
-        .envelope::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; height: 50%;
-            border-bottom: 3px solid rgba(240, 140, 0, 0.3);
-            border-radius: 5px 5px 50% 50%;
-            pointer-events: none;
-        }
-
-        @keyframes gentleBounce {
-            0% { transform: translateY(0) rotate(-3deg); }
-            100% { transform: translateY(-8px) rotate(3deg); }
-        }
-
-        .envelope.dragging {
-            animation: none;
-            cursor: grabbing;
-            transform: scale(1.1) rotate(0deg) !important;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
-            z-index: 9999 !important; 
-        }
-
-        /* Estilo para cuando se selecciona un sobre haciendo clic/tap */
-        .envelope.selected {
-            border-color: #51cf66 !important;
-            box-shadow: 0 0 20px #51cf66, 0 8px 0 #2b8a3e !important;
-            transform: scale(1.15) translateY(-5px);
-            animation: none;
-        }
-
-        /* MODAL DE VICTORIA INFANTIL */
-        .modal-overlay {
-            position: fixed; inset: 0; background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center;
-            z-index: 1000; visibility: hidden; opacity: 0; transition: all 0.3s;
-        }
+        /* MODAL */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 1000; visibility: hidden; opacity: 0; transition: all 0.3s; backdrop-filter: blur(5px);}
         .modal-overlay.active { visibility: visible; opacity: 1; }
-        .modal-box {
-            background: #fff; padding: 40px; border-radius: 40px; text-align: center;
-            max-width: 90%; transform: scale(0.5) rotate(-10deg); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.2); border: 8px solid #ff9800;
-        }
-        .modal-overlay.active .modal-box { transform: scale(1) rotate(0deg); }
-        .modal-title { font-size: 40px; margin-bottom: 10px; color: #f57c00; text-shadow: 2px 2px 0 #fff; }
-        
-        .modal-btn {
-            background: #51cf66; border: 4px solid #fff; padding: 15px 40px;
-            font-size: 24px; color: white; border-radius: 30px; font-weight: 900;
-            cursor: pointer; box-shadow: 0 8px 0 #2b8a3e; margin-top: 20px;
-            font-family: var(--font-main);
-        }
-        .modal-btn:active { transform: translateY(8px); box-shadow: none; }
-
-        /* PARTICULAS (Estrellitas) */
-        .sparkle {
-            position: absolute; font-size: 40px; pointer-events: none; z-index: 100;
-            animation: popOut 0.8s ease-out forwards;
-        }
-        @keyframes popOut {
-            0% { transform: scale(0) translate(0, 0) rotate(0deg); opacity: 1; }
-            100% { transform: scale(1.5) translate(var(--tx), var(--ty)) rotate(180deg); opacity: 0; }
-        }
+        .modal-box { background: white; padding: 40px; border-radius: 25px; text-align: center; max-width: 85%; width: 450px; transform: scale(0.7); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 15px 40px rgba(0,0,0,0.3); border: 8px solid #ff9800;}
+        .modal-overlay.active .modal-box { transform: scale(1); }
+        .modal-title { font-size: 32px; margin-top: 0; margin-bottom: 15px; color: #ff9800; }
+        .modal-msg { font-size: 20px; margin-bottom: 25px; color: #555; white-space: pre-line; line-height: 1.4; font-weight: 600;}
+        .modal-btn { background: #4CAF50; border: none; box-shadow: 0 6px 0 #388E3C; padding: 15px 35px; font-size: 20px; color: white; border-radius: 15px; text-transform: uppercase; font-weight: bold; font-family: 'Fredoka', sans-serif; cursor:pointer;}
+        .modal-btn:active { transform: translateY(4px); box-shadow: none; }
     </style>
 </head>
 <body>
 
-    <!-- REPRODUCTOR DE MÚSICA DE FONDO -->
     <audio id="bgm" loop>
-        <source src="../assets/musica/Aeropickles.mp3" type="audio/mpeg">
+        <source src="../assets/musicaFondo/cancion1.mp3" type="audio/mpeg">
     </audio>
+
+    <button id="soundToggle" class="sound-toggle" aria-label="Activar o desactivar sonido" title="Sonido">🔇</button>
 
     <div class="decorations">
         <div class="sun">☀️</div>
-        <div class="cloud c1">☁️</div>
-        <div class="cloud c2">☁️</div>
-        <div class="cloud c3">☁️</div>
-        <div class="hills-back"></div>
-        <div class="hills"></div>
+        <div class="grass"></div>
     </div>
 
-    <!-- BOTÓN DE SONIDO -->
-    <div class="sound-btn" id="soundBtn" onclick="toggleSound()">🔇</div>
-
-    <h1>🚲 El Cartero ABC 📬</h1>
-    
-    <div class="status-bar">
-        <div class="status-item">Ronda: <span id="street-num">⭐</span></div>
-        <div class="status-item">Cartas: <span id="letters-left-icons">✉️✉️✉️✉️</span></div>
-    </div>
-
-    <div class="game-area">
-        
-        <!-- Cuadra Isométrica Simétrica -->
-        <div class="city-block" id="city-block">
-            <div class="main-street"></div>
+    <!-- ============================================================
+         PANTALLA DE CONFIGURACIÓN (LOBBY)
+         ============================================================ -->
+    <div id="setup-screen">
+        <div class="setup-card">
+            <h1>Configuración ⚙</h1>
             
-            <div id="mailman-container">
-                <div class="mailman-bounce">
-                    <span class="mailman-rider">🐻</span>
-                    <span class="mailman-bike">🚲</span>
+            <div class="setup-section">
+                <h3>Temática de Palabras</h3>
+                <div class="setup-row">
+                    <button id="setup-theme-animales" class="setup-btn theme active" onclick="selectTheme('animales')">🐶 Animales</button>
+                    <button id="setup-theme-cosas" class="setup-btn theme" onclick="selectTheme('cosas')">🛋️ Cosas</button>
+                    <button id="setup-theme-colores" class="setup-btn theme" onclick="selectTheme('colores')">🎨 Colores</button>
                 </div>
             </div>
-            <!-- Casas inyectadas por JS -->
+
+            <div class="setup-section">
+                <h3>Límite de Tiempo</h3>
+                <div class="time-input-group">
+                    <label>⏳ Segundos:</label>
+                    <input type="number" id="setup-time" value="0" min="0" max="999">
+                </div>
+                <span style="font-size:13px; color:#7f8c8d; font-weight:bold;">(Escribe 0 para jugar sin límite de tiempo)</span>
+            </div>
+
+            <button class="start-btn" onclick="startGame()">¡A Ordenar!</button>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         PANTALLA DEL JUEGO
+         ============================================================ -->
+    <div id="game-screen">
+        
+        <div class="game-header">
+            <button class="back-menu-btn" onclick="backToMenu()">⚙️ Volver</button>
+            <div class="hud-group">
+                <div id="timer-display" class="timer-container" style="display: none;">
+                    <span>⏳ <span id="time-left">00:00</span></span>
+                </div>
+                <div class="score-box">Palabras: <span id="score-display">0</span></div>
+            </div>
         </div>
 
-        <div class="postal-zone" id="postal-zone">
-            <div class="postal-zone-title">🎒 Bolsa del cartero</div>
-            <!-- Los sobres se generan aquí -->
+        <h1>¡Palabras Desordenadas! 🐝</h1>
+        
+        <div class="prompt-box">
+            Arrastra las letras y ponlas en el orden correcto para formar la palabra.
+        </div>
+
+        <div class="game-area">
+            <!-- Zona Destino -->
+            <div class="drop-zone" id="drop-zone"></div>
+            <!-- Zona Letras Revueltas -->
+            <div class="letters-tray" id="letters-tray"></div>
+        </div>
+        
+        <div class="global-controls">
+            <button class="global-btn reset-btn" onclick="clearSlots()">🔄 Limpiar Letras</button>
         </div>
     </div>
 
     <div class="modal-overlay" id="modal">
         <div class="modal-box">
-            <div style="font-size: 80px; margin-bottom: -20px;">🎉🐻</div>
-            <h2 class="modal-title" id="m-title">¡Súper Bien!</h2>
-            <p style="font-size: 22px; color: #555; font-weight: bold; margin-bottom: 25px;">Repartiste todas las cartas de esta cuadra.</p>
-            <button class="modal-btn" onclick="nextStreet()">Siguiente Cuadra ➔</button>
+            <h2 class="modal-title" id="m-title">Título</h2>
+            <p class="modal-msg" id="m-msg">Mensaje</p>
+            <button class="modal-btn" onclick="closeModal()">¡Entendido!</button>
         </div>
     </div>
 
     <script>
-        // ==========================================
-        // MOTOR DE SONIDO (WEB AUDIO API)
-        // ==========================================
+        // MOTOR DE SONIDO (WEB AUDIO API + BGM)
         const AudioContext = window.AudioContext || window.webkitAudioContext;
-        let audioCtx;
-        let soundEnabled = false;
+        let audioCtx; let isMuted = true;
+        
+        const bgAudio = document.getElementById('bgm');
+        const soundToggle = document.getElementById('soundToggle');
 
-        function initAudio() {
+        soundToggle.addEventListener('click', () => {
             if (!audioCtx) audioCtx = new AudioContext();
             if (audioCtx.state === 'suspended') audioCtx.resume();
-        }
+            
+            isMuted = !isMuted;
+            if(isMuted) {
+                bgAudio.pause();
+                soundToggle.innerText = '🔇';
+            } else {
+                bgAudio.volume = 0.25; 
+                bgAudio.play().catch(e => console.log('El navegador requiere interacción manual previa.'));
+                soundToggle.innerText = '🔊';
+            }
+        });
 
         function playTone(freq, type, duration, vol = 0.1) {
-            if (!soundEnabled || !audioCtx) return;
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = type;
-            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-            
-            gain.gain.setValueAtTime(vol, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
-            
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + duration);
+            if (!audioCtx || isMuted) return;
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + duration);
         }
 
-        function sfxPickup() {
-            if (!soundEnabled || !audioCtx) return;
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(300, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.1);
-            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+        function sfxClick() { playTone(600, 'sine', 0.08, 0.1); }
+        function sfxDrop() { playTone(400, 'triangle', 0.1, 0.1); }
+        function sfxWrong() { playTone(200, 'sawtooth', 0.2, 0.15); setTimeout(()=>playTone(150, 'sawtooth', 0.25, 0.15), 100); }
+        function sfxVictory() { let notes = [523.25, 659.25, 783.99, 1046.50]; notes.forEach((freq, i) => { setTimeout(() => playTone(freq, 'square', 0.3, 0.1), i * 150); }); }
+
+        // ESTADO DEL JUEGO Y DICCIONARIO
+        let currentTheme = 'animales';
+        let initialTimeLimit = 0; 
+        let timerInterval = null;
+        let timeLeft = 0; 
+        let isGameActive = false;
+        let currentWord = "";
+        let score = 0;
+
+        const dictionaries = {
+            'animales': ['GATO', 'PERRO', 'VACA', 'PATO', 'RANA', 'MONO', 'LEON', 'TIGRE', 'OSO', 'LOBO', 'PEZ'],
+            'cosas': ['MESA', 'SILLA', 'CAMA', 'CASA', 'TAZA', 'VASO', 'RELOJ', 'LAPIZ', 'LIBRO', 'AUTO', 'TREN'],
+            'colores': ['ROJO', 'AZUL', 'VERDE', 'ROSA', 'GRIS', 'NEGRO', 'LILA', 'OCRE', 'CIAN']
+        };
+
+        const tileColors = ['#e74c3c', '#2ecc71', '#9b59b6', '#f1c40f', '#e67e22', '#1abc9c', '#3498db'];
+
+        const dropZone = document.getElementById('drop-zone');
+        const lettersTray = document.getElementById('letters-tray');
+
+        // LOBBY Y CONFIGURACIÓN
+        function selectTheme(theme) {
+            sfxClick(); currentTheme = theme;
+            document.querySelectorAll('.setup-btn.theme').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('setup-theme-' + theme).classList.add('active');
         }
 
-        function sfxCorrect() {
-            playTone(523.25, 'triangle', 0.2, 0.15); 
-            setTimeout(() => playTone(659.25, 'triangle', 0.3, 0.15), 100); 
+        function formatTime(seconds) {
+            let m = Math.floor(seconds / 60); let s = seconds % 60;
+            return (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s);
         }
 
-        function sfxWrong() {
-            if (!soundEnabled || !audioCtx) return;
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(300, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.3);
-            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-            gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.3);
-        }
-
-        function sfxBicycleBell() {
-            if (!soundEnabled || !audioCtx) return;
-            playTone(1046.50, 'sine', 0.1, 0.1); 
-            setTimeout(() => playTone(1318.51, 'sine', 0.15, 0.1), 150); 
-        }
-
-        function sfxVictory() {
-            let notes = [523.25, 659.25, 783.99, 1046.50]; 
-            notes.forEach((freq, i) => {
-                setTimeout(() => playTone(freq, 'square', 0.3, 0.05), i * 150);
-            });
-        }
-
-        function toggleSound() {
-            initAudio();
-            const bgm = document.getElementById('bgm');
-            soundEnabled = !soundEnabled;
-            
-            if (soundEnabled) {
-                document.getElementById('soundBtn').innerText = '🔊';
-                bgm.volume = 0.2; 
-                bgm.play().catch(e => console.log("Bloqueo autoplay"));
-            } else {
-                document.getElementById('soundBtn').innerText = '🔇';
-                bgm.pause();
+        function startGame() {
+            if (!audioCtx && !isMuted) {
+                audioCtx = new AudioContext();
+                bgAudio.play().catch(e => console.log('El navegador requiere interacción.'));
             }
+            sfxClick();
+            
+            let val = parseInt(document.getElementById('setup-time').value);
+            initialTimeLimit = (isNaN(val) || val < 0) ? 0 : val;
+
+            document.getElementById('setup-screen').style.display = 'none';
+            document.getElementById('game-screen').style.display = 'flex';
+            
+            score = 0;
+            document.getElementById('score-display').innerText = score;
+            
+            setupTimer();
+            loadNewWord();
         }
 
-        // ==========================================
-        // LÓGICA DEL JUEGO
-        // ==========================================
-        const levelsData = [
-            { pairs: [{upper: 'A', lower: 'a'}, {upper: 'E', lower: 'e'}, {upper: 'I', lower: 'i'}, {upper: 'O', lower: 'o'}] }, 
-            { pairs: [{upper: 'B', lower: 'b'}, {upper: 'D', lower: 'd'}, {upper: 'P', lower: 'p'}, {upper: 'Q', lower: 'q'}] }, 
-            { pairs: [{upper: 'M', lower: 'm'}, {upper: 'N', lower: 'n'}, {upper: 'U', lower: 'u'}, {upper: 'V', lower: 'v'}] }, 
-            { pairs: [{upper: 'C', lower: 'c'}, {upper: 'S', lower: 's'}, {upper: 'Z', lower: 'z'}, {upper: 'X', lower: 'x'}] }, 
-            { pairs: [{upper: 'F', lower: 'f'}, {upper: 'G', lower: 'g'}, {upper: 'R', lower: 'r'}, {upper: 'J', lower: 'j'}] }
-        ];
+        function backToMenu() {
+            sfxClick(); clearInterval(timerInterval); isGameActive = false;
+            document.getElementById('game-screen').style.display = 'none';
+            document.getElementById('setup-screen').style.display = 'flex';
+        }
 
-        const isometricLayout = [
-            { left: '25%', top: '0%', z: 15, scale: 0.85 },   
-            { left: '54%', top: '0%', z: 15, scale: 0.85 },   
-            { left: '10%', top: '32%', z: 30, scale: 1.1 },   
-            { left: '69%', top: '32%', z: 30, scale: 1.1 }    
-        ];
-
-        let currentStreet = 0;
-        let activePairs = [];
-        let remainingLetters = 0;
-        let selectedEnvelope = null; // Almacena el sobre seleccionado por toque/clic
-
-        const cityBlock = document.getElementById('city-block');
-        const postalZone = document.getElementById('postal-zone');
-        const mailman = document.getElementById('mailman-container');
-
-        function initStreet() {
-            Array.from(cityBlock.children).forEach(c => {
-                if(c.id !== 'mailman-container' && !c.classList.contains('main-street')) c.remove();
-            });
-
-            Array.from(postalZone.children).forEach(c => {
-                if(!c.classList.contains('postal-zone-title')) c.remove();
-            });
-
-            document.getElementById('street-num').innerText = '⭐'.repeat((currentStreet % 5) + 1);
+        function setupTimer() {
+            clearInterval(timerInterval); isGameActive = true; 
             
-            let levelInfo = levelsData[currentStreet % levelsData.length];
-            activePairs = [...levelInfo.pairs];
-            remainingLetters = activePairs.length;
-            selectedEnvelope = null;
+            let display = document.getElementById('timer-display');
+            let timeSpan = document.getElementById('time-left');
+
+            display.classList.remove('warning');
             
-            updateLetterIcons();
-
-            // Reposicionar al cartero
-            mailman.style.transition = 'none';
-            mailman.style.left = '-150px';
-            mailman.style.top = '140px';
-            mailman.style.transform = 'scaleX(1) scaleY(1)';
-            setTimeout(() => mailman.style.transition = 'left 1.5s ease-in-out, top 1.5s ease-in-out, transform 0.3s ease', 50);
-
-            // Generar 4 Casas
-            let shuffledHouses = [...activePairs].sort(() => Math.random() - 0.5);
-            shuffledHouses.forEach((pair, index) => {
-                let house = document.createElement('div');
-                house.className = `house h${index + 1}`;
-                house.dataset.letter = pair.upper;
+            if (initialTimeLimit > 0) {
+                timeLeft = initialTimeLimit;
+                display.style.display = 'flex';
+                timeSpan.innerText = formatTime(timeLeft);
                 
-                let pos = isometricLayout[index];
-                house.style.setProperty('--base-scale', pos.scale);
-                house.style.left = pos.left;
-                house.style.top = pos.top;
-                house.style.zIndex = pos.z;
-
-                // Evento al tocar o hacer clic en una casa (Modo Selección)
-                house.addEventListener('click', () => {
-                    if (!selectedEnvelope) return;
-
-                    if (house.dataset.letter === selectedEnvelope.dataset.match) {
-                        let elm = selectedEnvelope;
-                        selectedEnvelope = null;
-                        executeDelivery(elm, house, index);
-                    } else {
-                        sfxWrong();
-                        selectedEnvelope.classList.remove('selected');
-                        selectedEnvelope = null;
-                    }
-                });
-
-                let mailbox = document.createElement('div');
-                mailbox.className = 'mailbox';
-                mailbox.innerText = pair.upper;
-
-                house.appendChild(mailbox);
-                cityBlock.appendChild(house);
-            });
-
-            // Generar Sobres
-            let shuffledEnvelopes = [...activePairs].sort(() => Math.random() - 0.5);
-            shuffledEnvelopes.forEach((pair, index) => {
-                let env = document.createElement('div');
-                env.className = 'envelope';
-                env.innerText = pair.lower;
-                env.dataset.letter = pair.lower;
-                env.dataset.match = pair.upper;
-
-                let spacing = 110;
-                let startX = (postalZone.offsetWidth / 2) - ((shuffledEnvelopes.length * spacing) / 2) + (index * spacing);
-                env.style.left = Math.max(10, startX) + 'px';
-                env.style.top = '40px';
-
-                // Evento para seleccionar la carta con clic o toque
-                env.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    initAudio();
-                    sfxPickup();
-                    document.querySelectorAll('.envelope').forEach(en => en.classList.remove('selected'));
-                    selectedEnvelope = env;
-                    env.classList.add('selected');
-                });
-
-                makeDraggable(env);
-                postalZone.appendChild(env);
-            });
-        }
-
-        function updateLetterIcons() {
-            document.getElementById('letters-left-icons').innerText = '✉️'.repeat(remainingLetters) || '✅';
-        }
-
-        function createSparkles(x, y) {
-            const emojis = ['✨', '⭐', '🎊', '🎈'];
-            for(let i=0; i<8; i++) {
-                let spark = document.createElement('div');
-                spark.className = 'sparkle';
-                spark.innerText = emojis[Math.floor(Math.random() * emojis.length)];
-                spark.style.left = x + 'px';
-                spark.style.top = y + 'px';
-                
-                let tx = (Math.random() - 0.5) * 200 + 'px';
-                let ty = (Math.random() - 0.5) * 200 + 'px';
-                spark.style.setProperty('--tx', tx);
-                spark.style.setProperty('--ty', ty);
-                
-                document.body.appendChild(spark);
-                setTimeout(() => spark.remove(), 800);
-            }
-        }
-
-        // FUNCIÓN CENTRALIZADA DE ENTREGA (Usada tanto por Drag & Drop como por Selección)
-        function executeDelivery(elm, house, index) {
-            sfxCorrect(); 
-            elm.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-            
-            elm.style.left = (house.offsetLeft + house.offsetWidth - 20) + 'px'; 
-            elm.style.top = (house.offsetTop + house.offsetHeight - 50) + 'px';
-            elm.style.transform = 'scale(0.2)';
-            elm.style.opacity = '0';
-            
-            let houseRect = house.getBoundingClientRect();
-            house.classList.add('happy');
-            createSparkles(houseRect.right - 10, houseRect.bottom - 40);
-
-            // Mover el cartero
-            let currentMailmanX = parseInt(mailman.style.left || -150);
-            let targetMailmanX = house.offsetLeft - 30; 
-            let targetMailmanY = house.offsetTop + 110; 
-            
-            let posScale = isometricLayout[index].scale;
-            let direction = targetMailmanX < currentMailmanX ? -1 : 1;
-            
-            mailman.style.transform = `scaleX(${direction * posScale}) scaleY(${posScale})`;
-            mailman.style.left = targetMailmanX + 'px';
-            mailman.style.top = targetMailmanY + 'px';
-            
-            let zModifier = index >= 2 ? 5 : 5;
-            mailman.style.zIndex = parseInt(house.style.zIndex) + zModifier; 
-
-            setTimeout(() => sfxBicycleBell(), 600); 
-
-            setTimeout(() => {
-                elm.remove();
-                house.classList.remove('happy');
-            }, 400);
-
-            remainingLetters--;
-            updateLetterIcons();
-
-            if (remainingLetters === 0) {
-                setTimeout(() => {
-                    // Cartero sale de la pantalla
-                    mailman.style.transform = `scaleX(1) scaleY(1)`;
-                    mailman.style.left = '120%';
+                timerInterval = setInterval(() => {
+                    if (!isGameActive) return;
                     
-                    setTimeout(() => {
-                        sfxVictory();
-                        document.getElementById('modal').classList.add('active');
-                    }, 1500);
-
-                }, 1500); 
+                    timeLeft--;
+                    timeSpan.innerText = formatTime(timeLeft);
+                    
+                    if (timeLeft === 10) { display.classList.add('warning'); playTone(300, 'sawtooth', 0.2, 0.15); }
+                    
+                    if (timeLeft <= 0) {
+                        isGameActive = false; clearInterval(timerInterval);
+                        playTone(150, 'sawtooth', 0.4, 0.3);
+                        
+                        showModal("⏰ ¡Tiempo Acabado! ⏰", `Se acabó el tiempo.\nLograste ordenar ${score} palabras correctamente.`, backToMenu);
+                    }
+                }, 1000);
+            } else {
+                display.style.display = 'none';
             }
         }
 
-        // ARRASTRE Y SOLTAR (DRAG & DROP) TÁCTIL Y MOUSE
-        function makeDraggable(elm) {
-            let posX = 0, posY = 0, startLeft = 0, startTop = 0;
-            let hasMoved = false;
+        // MOTOR DEL JUEGO
+        function loadNewWord() {
+            if (!isGameActive) return;
+            dropZone.innerHTML = ''; lettersTray.innerHTML = '';
+            
+            let words = dictionaries[currentTheme];
+            currentWord = words[Math.floor(Math.random() * words.length)];
+            
+            let lettersArray = currentWord.split('');
+            // Crear Slots vacíos
+            for(let i=0; i<lettersArray.length; i++) {
+                let slot = document.createElement('div');
+                slot.className = 'drop-slot';
+                slot.dataset.index = i;
+                dropZone.appendChild(slot);
+            }
 
+            // Crear y Desordenar Fichas
+            let shuffled = [...lettersArray].sort(() => Math.random() - 0.5);
+            shuffled.forEach((letter, index) => {
+                let tile = document.createElement('div');
+                tile.className = 'letter-tile';
+                tile.innerText = letter;
+                
+                let color = tileColors[Math.floor(Math.random() * tileColors.length)];
+                tile.style.backgroundColor = color;
+                
+                makeDraggable(tile);
+                lettersTray.appendChild(tile);
+            });
+        }
+
+        // DRAG & DROP
+        let draggedElement = null;
+        let placeholder = null;
+
+        function makeDraggable(elm) {
             elm.addEventListener('mousedown', dragStart, { passive: false });
             elm.addEventListener('touchstart', dragStart, { passive: false });
 
             function dragStart(e) {
                 if (e.cancelable) e.preventDefault();
-                initAudio(); 
-                sfxPickup(); 
+                sfxClick();
+                draggedElement = elm;
                 
-                hasMoved = false;
+                placeholder = document.createElement('div');
+                placeholder.style.width = elm.offsetWidth + 'px';
+                placeholder.style.height = elm.offsetHeight + 'px';
+                
+                elm.parentNode.insertBefore(placeholder, elm);
+                elm.classList.add('dragging');
+                
+                // Mover al body para que flote sobre todo
+                let rect = elm.getBoundingClientRect();
+                document.body.appendChild(elm);
+                elm.style.position = 'absolute';
+                
                 let isTouch = e.type.includes('touch');
                 let clientX = isTouch ? e.touches[0].clientX : e.clientX;
                 let clientY = isTouch ? e.touches[0].clientY : e.clientY;
-
-                startLeft = elm.offsetLeft;
-                startTop = elm.offsetTop;
-                posX = clientX;
-                posY = clientY;
-
-                elm.classList.add('dragging');
+                
+                elm.style.left = (clientX - rect.width / 2) + 'px';
+                elm.style.top = (clientY - rect.height / 2) + 'px';
 
                 document.addEventListener('mousemove', dragMove, { passive: false });
                 document.addEventListener('touchmove', dragMove, { passive: false });
@@ -714,17 +452,15 @@
             }
 
             function dragMove(e) {
+                if (!draggedElement) return;
                 if (e.cancelable) e.preventDefault();
-                hasMoved = true;
+                
                 let isTouch = e.type.includes('touch');
                 let clientX = isTouch ? e.touches[0].clientX : e.clientX;
                 let clientY = isTouch ? e.touches[0].clientY : e.clientY;
 
-                let deltaX = clientX - posX;
-                let deltaY = clientY - posY;
-
-                elm.style.left = (startLeft + deltaX) + 'px';
-                elm.style.top = (startTop + deltaY) + 'px';
+                draggedElement.style.left = (clientX - draggedElement.offsetWidth / 2) + 'px';
+                draggedElement.style.top = (clientY - draggedElement.offsetHeight / 2) + 'px';
             }
 
             function dragEnd(e) {
@@ -733,46 +469,131 @@
                 document.removeEventListener('mouseup', dragEnd);
                 document.removeEventListener('touchend', dragEnd);
 
-                elm.classList.remove('dragging');
+                if(!draggedElement) return;
 
-                let envRect = elm.getBoundingClientRect();
-                let matched = false;
-                let tolerance = 30;
+                let elmRect = draggedElement.getBoundingClientRect();
+                let dropped = false;
 
-                document.querySelectorAll('.house').forEach((house, index) => {
-                    let houseRect = house.getBoundingClientRect();
+                // Revisar Slots Vacíos
+                const slots = document.querySelectorAll('.drop-slot');
+                for (let slot of slots) {
+                    if (slot.children.length > 0) continue; // Slot ocupado
 
+                    let sRect = slot.getBoundingClientRect();
+                    // Checar intersección simple
                     if (
-                        envRect.left < houseRect.right + tolerance &&
-                        envRect.right > houseRect.left - tolerance &&
-                        envRect.top < houseRect.bottom + tolerance &&
-                        envRect.bottom > houseRect.top - tolerance
+                        elmRect.left < sRect.right && elmRect.right > sRect.left &&
+                        elmRect.top < sRect.bottom && elmRect.bottom > sRect.top
                     ) {
-                        if (house.dataset.letter === elm.dataset.match) {
-                            matched = true;
-                            if(selectedEnvelope === elm) selectedEnvelope = null;
-                            executeDelivery(elm, house, index);
-                        }
+                        sfxDrop();
+                        draggedElement.style.position = 'static';
+                        draggedElement.classList.remove('dragging');
+                        slot.appendChild(draggedElement);
+                        if(placeholder && placeholder.parentNode) placeholder.parentNode.removeChild(placeholder);
+                        dropped = true;
+                        break;
                     }
-                });
+                }
 
-                if (!matched) {
-                    sfxWrong(); 
-                    elm.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-                    elm.style.left = startLeft + 'px';
-                    elm.style.top = startTop + 'px';
-                    setTimeout(() => elm.style.transition = 'none', 400);
+                // Revisar Bandeja de Retorno
+                if (!dropped) {
+                    let trayRect = lettersTray.getBoundingClientRect();
+                    if (
+                        elmRect.left < trayRect.right && elmRect.right > trayRect.left &&
+                        elmRect.top < trayRect.bottom && elmRect.bottom > trayRect.top
+                    ) {
+                        sfxDrop();
+                        draggedElement.style.position = 'static';
+                        draggedElement.classList.remove('dragging');
+                        lettersTray.appendChild(draggedElement);
+                        if(placeholder && placeholder.parentNode) placeholder.parentNode.removeChild(placeholder);
+                        dropped = true;
+                    }
+                }
+
+                // Si no se soltó en un lugar válido, vuelve al placeholder original
+                if (!dropped) {
+                    sfxDrop();
+                    draggedElement.style.position = 'static';
+                    draggedElement.classList.remove('dragging');
+                    if(placeholder && placeholder.parentNode) {
+                        placeholder.parentNode.insertBefore(draggedElement, placeholder);
+                        placeholder.parentNode.removeChild(placeholder);
+                    } else {
+                        lettersTray.appendChild(draggedElement);
+                    }
+                }
+
+                draggedElement = null;
+                placeholder = null;
+                
+                checkWord();
+            }
+        }
+
+        function clearSlots() {
+            sfxClick();
+            const slots = document.querySelectorAll('.drop-slot');
+            slots.forEach(slot => {
+                if(slot.children.length > 0) {
+                    let tile = slot.children[0];
+                    lettersTray.appendChild(tile);
+                }
+            });
+        }
+
+        function checkWord() {
+            const slots = document.querySelectorAll('.drop-slot');
+            let formed = "";
+            let allFilled = true;
+
+            slots.forEach(slot => {
+                if(slot.children.length === 0) { allFilled = false; return; }
+                formed += slot.children[0].innerText;
+            });
+
+            if (allFilled) {
+                if (formed === currentWord) {
+                    // Correcto
+                    isGameActive = false; // Pausa el timer interno un momentito
+                    score++;
+                    document.getElementById('score-display').innerText = score;
+                    sfxVictory();
+                    
+                    // Efecto de pulso en las fichas correctas
+                    slots.forEach(s => {
+                        s.children[0].style.transform = 'scale(1.2)';
+                        s.children[0].style.boxShadow = '0 0 20px #2ecc71';
+                    });
+
+                    setTimeout(() => {
+                        isGameActive = true;
+                        loadNewWord();
+                    }, 1500);
+
+                } else {
+                    // Incorrecto
+                    sfxWrong();
+                    slots.forEach(s => {
+                        s.classList.add('shake-error');
+                        setTimeout(() => s.classList.remove('shake-error'), 400);
+                    });
                 }
             }
         }
 
-        function nextStreet() {
-            document.getElementById('modal').classList.remove('active');
-            currentStreet++;
-            setTimeout(initStreet, 300);
+        let modalCallback = null;
+        function showModal(title, msg, callback = null) { 
+            document.getElementById('m-title').innerText = title; 
+            document.getElementById('m-msg').innerText = msg; 
+            document.getElementById('modal').classList.add('active'); 
+            modalCallback = callback;
+        }
+        function closeModal() { 
+            sfxClick(); document.getElementById('modal').classList.remove('active'); 
+            if(modalCallback) { modalCallback(); modalCallback = null; }
         }
 
-        initStreet();
     </script>
 </body>
 </html>

@@ -5,219 +5,701 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>¡Cuenta en Orden! 🐝</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        :root { --p1-main: #3498db; --p1-dark: #2980b9; --p1-light: #d6eaf8; --grid-bg: #8d6e63; }
-        body { font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; align-items: center; margin: 0; padding: 10px; min-height: 100vh; touch-action: none; color: #333; background-color: transparent; }
+        :root { 
+            --p1-main: #3498db; --p1-dark: #2980b9; 
+            --p2-main: #2ecc71; --p2-dark: #27ae60;
+            --grid-bg: #8d6e63; 
+        }
+
+        body, html { 
+            font-family: 'Fredoka', sans-serif; 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            margin: 0; padding: 0; width: 100vw; height: 100vh; 
+            touch-action: manipulation; color: #333; background-color: transparent; 
+            overflow: hidden; box-sizing: border-box;
+        }
+
+        /* PAISAJE DE FONDO */
         .decorations { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -1; pointer-events: none; overflow: hidden; background: linear-gradient(180deg, #74ebd5 0%, #ACB6E5 100%); }
         .decorations::before { content: ''; position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg width='60' height='104' viewBox='0 0 60 104' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 52l15-26 15 26v52l-15 26-15-26zM0 0l15 26v52L0 104V0zm60 0v104L45 78V26z' fill='%23ffffff' fill-opacity='0.15' fill-rule='evenodd'/%3E%3C/svg%3E"); z-index: 1; }
-        .sun { position: absolute; top: 3%; right: 5%; font-size: 70px; z-index: 2; filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.8)); animation: pulse-sun 3s infinite alternate; }
+        .sun { position: absolute; top: 2%; right: 4%; font-size: clamp(40px, 8vh, 80px); z-index: 2; filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.8)); animation: pulse-sun 3s infinite alternate; }
         @keyframes pulse-sun { 0% { transform: scale(1) rotate(0deg); } 100% { transform: scale(1.1) rotate(10deg); } }
         .grass { position: absolute; bottom: -5vh; left: -10vw; width: 120vw; height: 25vh; background: #a9dfbf; border-radius: 50% 50% 0 0; z-index: 2; box-shadow: inset 0 15px 0 #82e0aa, 0 -30px 50px rgba(46,204,113,0.3); }
         
-        h1 { color: #2c3e50; margin: 0px 0 5px 0; text-align: center; font-size: 26px; text-shadow: 2px 2px 0px #fff; position: relative; }
-        .prompt-box { text-align: center; background: rgba(255, 255, 255, 0.95); padding: 10px 20px; border-radius: 15px; font-size: 15px; font-weight: 600; max-width: 550px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; border: 3px solid #ffb74d; }
-        .highlight-text { color: #e74c3c; font-size: 18px; text-decoration: underline; }
+        /* ============================================================
+           PANTALLA DE CONFIGURACIÓN PREVIA (LOBBY)
+           ============================================================ */
+        #setup-screen {
+            position: absolute; inset: 0; z-index: 500;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
+        }
 
-        .grid-wrapper { position: relative; margin-bottom: 15px; padding: 10px; background: #ffe0b2; border-radius: 15px; box-shadow: 0 8px 0 #ffb74d, 0 15px 25px rgba(0,0,0,0.25); }
-        #grid { display: grid; grid-template-columns: repeat(4, 75px); grid-template-rows: repeat(4, 75px); gap: 6px; background-color: var(--grid-bg); border-radius: 10px; padding: 6px; }
-        #drawing-canvas { position: absolute; top: 10px; left: 10px; z-index: 10; cursor: crosshair; border-radius: 10px; }
-        .cell { background-color: #fff9c4; border-radius: 8px; display: flex; justify-content: center; align-items: center; position: relative; user-select: none; box-shadow: inset 0 -4px 0 rgba(0,0,0,0.1); font-family: 'Fredoka', sans-serif; transition: all 0.2s; }
-        .cell[data-start="true"] { background-color: #e2f1f8; box-shadow: inset 0 -4px 0 rgba(0,0,0,0.05); }
+        .setup-card {
+            background: white; padding: 40px; border-radius: 25px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4); border: 6px solid #ffb74d;
+            text-align: center; max-width: 90%; width: 550px;
+            display: flex; flex-direction: column; gap: 15px;
+        }
 
-        .nectar-cell { background-color: #aed6f1 !important; color: #2980b9; font-size: 32px; font-weight: 700; box-shadow: inset 0 0 15px #3498db !important; }
-        .nectar-cell::after { content: '💧'; position: absolute; font-size: 16px; top: 4px; right: 4px; }
-        .target-cell { background-color: #fcf3cf !important; color: #d35400; font-size: 36px; font-weight: 700; box-shadow: inset 0 0 15px #f1c40f !important; }
-        .target-cell::after { content: '🌺'; font-size: 25px; position: absolute; top: -10px; right: -10px; animation: pulse-flower 1.5s infinite alternate; }
+        .setup-card h1 { font-size: 32px; color: #ff9800; margin: 0; text-shadow: none;}
+        
+        .setup-section {
+            background: #fff9c4; padding: 12px; border-radius: 15px; border: 2px dashed #f1c40f;
+            display: flex; flex-direction: column; gap: 10px; align-items: center;
+        }
+        .setup-section h3 { margin: 0; color: #d35400; font-size: 16px; text-transform: uppercase;}
+        
+        .setup-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; width: 100%;}
+        
+        .setup-btn { background: #fff; border: 3px solid #bdc3c7; padding: 8px 16px; border-radius: 15px; font-size: 15px; font-weight: bold; color: #7f8c8d; cursor: pointer; transition: all 0.2s; font-family: 'Fredoka', sans-serif;}
+        .setup-btn.active.mode { background: #9b59b6; border-color: #8e44ad; color: #fff; box-shadow: 0 4px 0 #8e44ad; transform: translateY(-2px); }
+        .setup-btn.active.diff { background: #f1c40f; border-color: #f39c12; color: #d35400; box-shadow: 0 4px 0 #f39c12; transform: translateY(-2px); }
+
+        .time-input-group { display: flex; align-items: center; gap: 10px; background: #fff; padding: 6px 15px; border-radius: 15px; border: 3px solid #3498db;}
+        .time-input-group label { color: #2980b9; font-weight: bold; font-size: 16px; }
+        .time-input-group input { width: 60px; border: 2px solid #2980b9; border-radius: 8px; text-align: center; font-weight: bold; font-family: 'Fredoka', sans-serif; font-size: 16px; padding: 4px; outline: none;}
+        
+        .start-btn {
+            background: #4CAF50; border: none; box-shadow: 0 6px 0 #388E3C; padding: 12px 30px; font-size: 22px; color: white; border-radius: 15px; text-transform: uppercase; font-weight: bold; font-family: 'Fredoka', sans-serif; cursor:pointer; margin-top: 5px; transition: all 0.1s;
+        }
+        .start-btn:active { transform: translateY(6px); box-shadow: 0 0 0 #388E3C; }
+
+        /* ============================================================
+           PANTALLA DE JUEGO
+           ============================================================ */
+        #game-screen {
+            display: none; flex-direction: column; align-items: center; justify-content: flex-start;
+            width: 100vw; height: 100vh; padding: 1vh 1vw; box-sizing: border-box; overflow: hidden;
+        }
+
+        .game-header {
+            flex: 0 0 auto; display: flex; justify-content: space-between; align-items: center; 
+            width: 100%; max-width: 1400px; margin-bottom: 1vh; z-index: 10;
+        }
+        .game-header h1 { font-size: clamp(20px, 3vh, 32px); margin: 0; color: #2c3e50; text-shadow: 2px 2px 0px #fff;}
+        
+        .back-menu-btn { background: #ecf0f1; border: 2px solid #bdc3c7; padding: 6px 12px; border-radius: 12px; font-size: clamp(11px, 1.5vh, 16px); font-weight: bold; color: #2c3e50; cursor: pointer; transition: all 0.2s; font-family: 'Fredoka', sans-serif; box-shadow: 0 4px 0 #bdc3c7;}
+        .back-menu-btn:active { transform: translateY(4px); box-shadow: none; }
+
+        /* TEMPORIZADOR */
+        .timer-container {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            background: #fff; border: 3px solid #3498db; color: #2980b9; padding: 4px 15px;
+            border-radius: 20px; font-size: clamp(18px, 2.5vh, 24px); font-weight: 900; box-shadow: 0 4px 0 #2980b9;
+        }
+        .timer-container.warning { border-color: #e74c3c; color: #c0392b; box-shadow: 0 4px 0 #e74c3c; animation: pulseTimer 0.5s infinite alternate; }
+        @keyframes pulseTimer { 0% { transform: scale(1); } 100% { transform: scale(1.05); } }
+        .timer-btn { background: #3498db; color: white; border: none; border-radius: 50%; width: 28px; height: 28px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 0 #2980b9; }
+        .timer-btn:active { transform: translateY(3px); box-shadow: none; }
+        .timer-container.warning .timer-btn { background: #e74c3c; box-shadow: 0 3px 0 #c0392b; }
+
+        /* CAJA DE INSTRUCCIONES */
+        .prompt-box { 
+            text-align: center; background: rgba(255, 255, 255, 0.95); padding: 8px 15px; 
+            border-radius: 15px; font-size: clamp(13px, 2.2vh, 18px); font-weight: 600; 
+            width: 100%; max-width: 800px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+            border: 3px solid #ffb74d; box-sizing: border-box; line-height: 1.3; margin-bottom: 1vh;
+        }
+        .highlight-text { color: #e74c3c; font-weight: bold; text-decoration: underline; }
+
+        /* CONTENEDOR PRINCIPAL FLUIDO Y CONSTREÑIDO */
+        #game-board-area {
+            flex: 1 1 auto; width: 100%; max-width: 1400px; display: flex; justify-content: center; align-items: stretch; 
+            z-index: 10; min-height: 0; box-sizing: border-box; margin-bottom: 1vh; gap: 2vw;
+        }
+        
+        .station {
+            background: rgba(255,255,255,0.95); border-radius: 15px; border: 3px solid #fff;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15); display: flex; flex-direction: column; 
+            padding: 1.2vh 1vw; gap: 1.2vh; align-items: center; justify-content: flex-start;
+            flex: 1 1 0; min-width: 0; box-sizing: border-box; height: 100%; max-width: 500px;
+        }
+        .grid-wrapper {
+            width: 100%; max-width: min(100%, 48vh); aspect-ratio: 1/1; flex-shrink: 0; margin: 0 auto; position: relative;
+            background: #ffe0b2; padding: 6px; border-radius: 12px; box-shadow: 0 4px 0 #ffb74d; box-sizing: border-box;
+        }
+        .drawing-canvas { 
+            position: absolute; top: 6px; left: 6px; right: 6px; bottom: 6px; 
+            z-index: 10; cursor: crosshair; border-radius: 8px; width: calc(100% - 12px); height: calc(100% - 12px); pointer-events: auto;
+        }
+
+        .game-grid { display: grid; width: 100%; height: 100%; gap: 4px; background-color: var(--grid-bg); border-radius: 8px; padding: 4px; box-sizing: border-box;}
+        
+        .cell { background-color: #fff9c4; border-radius: 6px; display: flex; justify-content: center; align-items: center; position: relative; user-select: none; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.1); transition: all 0.2s; }
+        .cell[data-start="true"] { background-color: #e2f1f8; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.05); }
+
+        .nectar-cell { background-color: #aed6f1 !important; color: #2980b9; font-size: clamp(20px, 4vh, 32px); font-weight: 700; box-shadow: inset 0 0 15px #3498db !important; }
+        .nectar-cell::after { content: '💧'; position: absolute; font-size: clamp(12px, 2vh, 16px); top: 2px; right: 2px; }
+        
+        .target-cell { background-color: #fcf3cf !important; color: #d35400; font-size: clamp(22px, 4.5vh, 36px); font-weight: 700; box-shadow: inset 0 0 15px #f1c40f !important; }
+        .target-cell::after { content: '🌺'; font-size: clamp(18px, 3vh, 25px); position: absolute; top: -5px; right: -5px; animation: pulse-flower 1.5s infinite alternate; }
         @keyframes pulse-flower { 0% { transform: scale(1); } 100% { transform: scale(1.15); } }
 
+        /* ESTADOS DE RECOLECCIÓN */
         .visited-correct { background-color: #a9dfbf !important; color: #1e8449 !important; box-shadow: inset 0 0 15px #2ecc71 !important; transform: scale(0.95); }
-        .visited-correct::before { content: '✔️'; position: absolute; font-size: 20px; top: -5px; left: -5px; animation: popIn 0.3s ease-out; z-index: 20; }
-        .visited-wrong { background-color: #f5b7b1 !important; color: #c0392b !important; box-shadow: inset 0 0 15px #e74c3c !important; animation: shake 0.4s; }
-        .visited-wrong::before { content: '❌'; position: absolute; font-size: 16px; top: -5px; right: -5px; z-index: 20; }
-        @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-4px); } 50% { transform: translateX(4px); } 75% { transform: translateX(-4px); } 100% { transform: translateX(0); } }
-
-        .bee-container { position: absolute; z-index: 15; width: 55px; height: 55px; display: flex; justify-content: center; align-items: center; }
-        .bee-orientation { transition: transform 0.2s ease; display: flex; justify-content: center; align-items: center; }
-        .bee-sprite { display: flex; justify-content: center; align-items: center; animation: float 2s ease-in-out infinite; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
+        .visited-correct::before { content: '✔️'; position: absolute; font-size: clamp(14px, 2.5vh, 20px); top: -5px; left: -5px; animation: popIn 0.3s ease-out; z-index: 20; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);}
         
-        .panels-container { display: flex; justify-content: center; width: 100%; max-width: 450px; margin-bottom: 20px; position: relative; }
-        .panel { box-sizing: border-box; background: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 18px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); width: 95%; display: flex; flex-direction: column; align-items: center; border: 4px solid var(--p1-main); }
-        .panel h3 { margin: 0 0 10px 0; font-size: 18px; color: var(--p1-dark); }
-        .btn-group { display: flex; gap: 6px; justify-content: space-between; width: 100%; margin-bottom: 15px; }
-        button { font-family: 'Fredoka', sans-serif; font-weight: 700; border: none; border-radius: 10px; cursor: pointer; transition: all 0.1s; user-select: none; }
-        button:active { transform: translateY(4px); box-shadow: 0 0px 0 transparent !important; }
-        .cmd-btn { padding: 10px 2px; font-size: 13px; color: white; flex: 1; background-color: var(--p1-main); box-shadow: 0 5px 0 var(--p1-dark); white-space: nowrap; }
-        .undo-btn { background-color: #e74c3c; box-shadow: 0 5px 0 #c0392b; flex: 0.8; }
-        .seq-container { display: flex; flex-wrap: wrap; gap: 5px; min-height: 45px; background: rgba(255,255,255,0.7); padding: 8px; border-radius: 10px; width: 95%; border: 2px dashed rgba(0,0,0,0.1); }
-        .cmd-block { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; color: white; font-weight: bold; font-size: 18px; box-shadow: 0 3px 0 rgba(0,0,0,0.2); animation: popIn 0.2s ease-out; background: var(--p1-main); }
+        .visited-wrong { background-color: #f5b7b1 !important; color: #c0392b !important; box-shadow: inset 0 0 15px #e74c3c !important; animation: shakeError 0.4s; }
+        .visited-wrong::before { content: '❌'; position: absolute; font-size: clamp(14px, 2.5vh, 20px); top: -5px; right: -5px; z-index: 20; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);}
+        @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25%, 75% { transform: translateX(-5px); } 50% { transform: translateX(5px); } }
+
+        /* ABEJAS */
+        .bee-container { position: absolute; z-index: 15; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
+        .bee-orientation { transition: transform 0.2s ease; display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;}
+        .bee-sprite { display: flex; justify-content: center; align-items: center; animation: float 2s ease-in-out infinite; width: 85%; height: 85%; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.3));}
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-4px); } }
+
+        /* PANELES DE COMANDOS */
+        .panel { 
+            width: 100%; flex: 1 1 auto; padding: 5px; min-height: 0; display: flex; flex-direction: column; justify-content: flex-start;
+            background: transparent; box-shadow: none; border: none; gap: 1vh; box-sizing: border-box;
+        }
+        .panel h3 { margin: 0 0 2px 0; font-size: clamp(14px, 2.5vh, 18px); display: flex; justify-content: space-between; width: 100%; align-items: center; border-bottom: 2px dashed rgba(0,0,0,0.2); padding-bottom: 2px;}
+        
+        .controls-row { display: flex; width: 100%; gap: 6px; margin-bottom: 0; justify-content: center; flex-wrap: nowrap;}
+        button.cmd-btn { 
+            flex: 1; padding: 1vh 2px; font-size: clamp(16px, 3vh, 26px); font-weight: bold; color: white; border: none; border-radius: 8px; 
+            cursor: pointer; text-shadow: 0 1px 2px rgba(0,0,0,0.3); transition: all 0.1s; font-family: 'Fredoka', sans-serif;
+            display: flex; justify-content: center; align-items: center; gap: 4px;
+        }
+        button.cmd-btn:active { transform: translateY(3px); box-shadow: none !important; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none !important;}
+        .undo-btn { background-color: #e74c3c !important; box-shadow: 0 3px 0 #c0392b !important; }
+
+        .seq-container { display: flex; flex-wrap: wrap; gap: 4px; flex: 1 1 auto; min-height: 4vh; background: rgba(0,0,0,0.05); padding: 6px; border-radius: 10px; width: 100%; box-sizing: border-box; border: 3px dashed rgba(0,0,0,0.1); align-content: flex-start;}
+        .cmd-block { display: inline-flex; align-items: center; justify-content: center; width: clamp(18px, 3vh, 28px); height: clamp(18px, 3vh, 28px); border-radius: 6px; color: white; font-weight: bold; font-size: clamp(10px, 1.8vh, 15px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); animation: popIn 0.2s ease-out; }
         @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
 
-        .global-controls { display: flex; gap: 15px; margin-bottom: 20px; position: relative; }
-        .global-btn { padding: 12px 20px; font-size: 18px; color: white; border-radius: 15px; }
-        #go-btn { background-color: #ff9800; box-shadow: 0 5px 0 #f57c00; }
-        .reset-btn { background-color: #95a5a6; box-shadow: 0 5px 0 #7f8c8d; }
+        /* CONTROLES GLOBALES DE EJECUCIÓN */
+        .global-controls { flex: 0 0 auto; display: flex; justify-content: center; gap: 15px; margin-bottom: 2vh; position: relative; z-index: 10; width: 100%; max-width: 600px;}
+        button.global-btn { padding: 1.5vh 25px; font-size: clamp(18px, 3vh, 24px); color: white; border-radius: 15px; letter-spacing: 1px; font-weight: bold; font-family: 'Fredoka', sans-serif; border:none; cursor:pointer;}
+        button#go-btn { background-color: #ff9800; box-shadow: 0 6px 0 #f57c00; flex: 2; transition: all 0.1s;}
+        button.reset-btn { background-color: #95a5a6; box-shadow: 0 6px 0 #7f8c8d; flex: 1; transition: all 0.1s;}
+        button.global-btn:active { transform: translateY(4px); box-shadow: none !important; }
 
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 100; visibility: hidden; opacity: 0; transition: all 0.3s; }
+        /* MODAL */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 1000; visibility: hidden; opacity: 0; transition: all 0.3s; backdrop-filter: blur(5px);}
         .modal-overlay.active { visibility: visible; opacity: 1; }
-        .modal-box { background: white; padding: 25px; border-radius: 20px; text-align: center; max-width: 80%; transform: scale(0.7); transition: 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .modal-box { background: white; padding: 30px; border-radius: 25px; text-align: center; max-width: 85%; width: 450px; transform: scale(0.7); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 15px 40px rgba(0,0,0,0.3); border: 8px solid #ff9800;}
         .modal-overlay.active .modal-box { transform: scale(1); }
-        .modal-title { font-size: 24px; margin-bottom: 10px; color: #ff9800; }
-        .modal-msg { font-size: 16px; margin-bottom: 20px; color: #555; white-space: pre-line;}
-        .modal-btn { background: #4CAF50; box-shadow: 0 5px 0 #388E3C; padding: 10px 20px; font-size: 16px; color: white; }
+        .modal-title { font-size: 28px; margin-top: 0; margin-bottom: 15px; color: #ff9800; }
+        .modal-msg { font-size: 18px; margin-bottom: 25px; color: #555; white-space: pre-line; line-height: 1.4; font-weight: 600;}
+        .modal-btn { background: #4CAF50; border: none; box-shadow: 0 6px 0 #388E3C; padding: 12px 35px; font-size: 18px; color: white; border-radius: 12px; text-transform: uppercase; font-weight: bold; font-family: 'Fredoka', sans-serif; cursor:pointer;}
+        .modal-btn:active { transform: translateY(4px); box-shadow: none; }
     </style>
 </head>
 <body>
-    <div class="decorations"><div class="sun">☀️</div><div class="grass"></div></div>
-    <h1>¡Cuenta en Orden! 🐝</h1>
-    <div class="prompt-box">
-        Recolecta los números en <span class="highlight-text">ORDEN ESTRICTO</span> (1, 2, 3, 4, 5). <br>¡Asegúrate de que tu último paso sea en el <span class="highlight-text">número 6</span>!
-        <div style="font-size: 12px; font-weight: normal; margin-top: 5px;">(Dibuja tu ruta en el mapa para planear)</div>
+
+    <audio id="bgm" loop>
+        <source src="../assets/musicaFondo/cancion1.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="decorations">
+        <div class="sun">☀️</div>
+        <div class="grass"></div>
     </div>
 
-    <div class="grid-wrapper">
-        <div id="grid"></div><canvas id="drawing-canvas"></canvas>
-    </div>
-
-    <div class="panels-container">
-        <div class="panel">
-            <h3>🐝 Programar Abeja</h3>
-            <div class="btn-group">
-                <button class="cmd-btn" onclick="addCommand('L')">↺ Giro Izq</button>
-                <button class="cmd-btn" onclick="addCommand('F')">⬆️ Avanza</button>
-                <button class="cmd-btn" onclick="addCommand('R')">↻ Giro Der</button>
-                <button class="cmd-btn undo-btn" onclick="undoCommand()">🔙 Borrar</button>
+    <!-- ============================================================
+         PANTALLA DE CONFIGURACIÓN (LOBBY)
+         ============================================================ -->
+    <div id="setup-screen">
+        <div class="setup-card">
+            <h1>Configuración ⚙️</h1>
+            
+            <div class="setup-section">
+                <h3>Modo de Juego</h3>
+                <div class="setup-row">
+                    <button id="setup-mode-1" class="setup-btn mode active" onclick="selectMode(1)">🧍 1 Jugador</button>
+                    <button id="setup-mode-2" class="setup-btn mode" onclick="selectMode(2)">👫 2 Jugadores (Competitivo)</button>
+                </div>
             </div>
-            <div class="seq-container" id="seq"></div>
+
+            <div class="setup-section">
+                <h3>Dificultad (Tamaño y Ruta)</h3>
+                <div class="setup-row">
+                    <button id="setup-diff-1" class="setup-btn diff active" onclick="selectDiff(1)">⭐ Pequeño (hasta 6)</button>
+                    <button id="setup-diff-2" class="setup-btn diff" onclick="selectDiff(2)">⭐⭐ Mediano (hasta 9)</button>
+                    <button id="setup-diff-3" class="setup-btn diff" onclick="selectDiff(3)">⭐⭐⭐ Grande (hasta 12)</button>
+                </div>
+            </div>
+
+            <div class="setup-section">
+                <h3>Límite de Tiempo</h3>
+                <div class="time-input-group">
+                    <label>⏳ Segundos:</label>
+                    <input type="number" id="setup-time" value="120" min="0" max="999">
+                </div>
+                <span style="font-size:12px; color:#7f8c8d; font-weight:bold;">(Escribe 0 para jugar sin límite de tiempo)</span>
+            </div>
+
+            <button class="start-btn" onclick="startGame()">¡Comenzar Nivel!</button>
         </div>
     </div>
-    
-    <div class="global-controls">
-        <button class="global-btn" onclick="executeCommands()" id="go-btn">🚀 ¡VOLAR!</button>
-        <button class="global-btn reset-btn" onclick="resetGame()">🔄 Otro Nivel</button>
+
+    <!-- ============================================================
+         PANTALLA DEL JUEGO
+         ============================================================ -->
+    <div id="game-screen">
+        
+        <div class="game-header">
+            <button class="back-menu-btn" onclick="backToMenu()">⚙️ Volver al Menú</button>
+            <h1>¡Cuenta en Orden! 🐝</h1>
+            <div id="timer-display" class="timer-container" style="display: none;">
+                <button id="timer-ctrl-btn" class="timer-btn" onclick="toggleTimer()">▶</button>
+                <span><span id="time-left">00:00</span></span>
+            </div>
+        </div>
+
+        <div class="prompt-box">
+            Recolecta en <span class="highlight-text">ORDEN ESTRICTO</span> de menor a mayor. <br>
+            ¡Tu último paso debe ser en el número <span class="highlight-text" id="target-prompt-num">6</span>!
+            <div style="font-size: clamp(10px, 1.5vh, 13px); font-weight: normal; margin-top: 4px; color:#555;">(Puedes dibujar tu ruta sobre el mapa para guiarte)</div>
+        </div>
+
+        <!-- CONTENEDOR DINÁMICO DE ESTACIONES -->
+        <div id="game-board-area"></div>
+        
+        <div class="global-controls">
+            <button class="global-btn" onclick="executeCommands(false)" id="go-btn">🚀 ¡VOLAR Y CONTAR!</button>
+            <button class="global-btn reset-btn" onclick="resetGame()">🔄 Otro Mapa</button>
+        </div>
     </div>
 
+    <!-- MODAL -->
     <div class="modal-overlay" id="modal">
         <div class="modal-box">
-            <h2 class="modal-title" id="m-title">Título</h2><p class="modal-msg" id="m-msg">Mensaje</p>
+            <h2 class="modal-title" id="m-title">Título</h2>
+            <p class="modal-msg" id="m-msg">Mensaje</p>
             <button class="modal-btn" onclick="closeModal()">¡Entendido!</button>
         </div>
     </div>
 
     <script>
-        const gridSize = 4; let isExecuting = false;
-        let bee = { pos: {x: 0, y: 0}, dir: 0, commands: [] }; 
-        let gridAssignments = {}; let targetPos = {x: 0, y: 0};
-        let nextNumberExpected = 1; let failedOrder = false;
+        // MOTOR DE SONIDO
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx; let audioInitialized = false;
 
-        const gridEl = document.getElementById('grid'); const canvas = document.getElementById('drawing-canvas'); const ctx = canvas.getContext('2d');
-        let isDrawing = false; let startX, startY;
+        function initAudio() {
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            if (!audioInitialized) {
+                const bgm = document.getElementById('bgm');
+                bgm.volume = 0.25; bgm.play().catch(e => console.log("Autoplay bloqueado"));
+                audioInitialized = true;
+            }
+        }
 
+        function playTone(freq, type, duration, vol = 0.1) {
+            if (!audioCtx) return; const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + duration);
+        }
+
+        function sfxClick() { playTone(600, 'sine', 0.08, 0.1); }
+        function sfxMove() { playTone(350, 'triangle', 0.1, 0.1); }
+        function sfxEat() { playTone(880, 'sine', 0.15, 0.15); setTimeout(() => playTone(1174.66, 'sine', 0.2, 0.15), 80); }
+        function sfxWrong() { playTone(200, 'sawtooth', 0.2, 0.15); setTimeout(() => playTone(150, 'sawtooth', 0.3, 0.2), 150); }
+        function sfxVictory() { let notes = [523.25, 659.25, 783.99, 1046.50]; notes.forEach((freq, i) => { setTimeout(() => playTone(freq, 'square', 0.3, 0.1), i * 150); }); }
+
+        // ESTADO DE CONFIGURACIÓN Y JUEGO
+        let gameMode = 1; // 1 o 2
+        let currentDifficulty = 1;
+        let gridSize = 4; 
+        let targetNumber = 6;
+        let isExecuting = false;
+        
+        let initialTimeLimit = 120; 
+        let timerInterval = null;
+        let timeLeft = 0; 
+        let isTimerRunning = false;
+
+        let logicalMap = {}; // Compartido por todos para asegurar mapas idénticos
+        let targetPos = {x: 0, y: 0};
+        let players = {};
+        
+        const playerConfigs = [
+            { id: 1, name: 'Abeja Azul', color: '#3498db', dark: '#2980b9', beeFilter: 'filter: hue-rotate(160deg) saturate(1.5);' },
+            { id: 2, name: 'Abeja Verde', color: '#2ecc71', dark: '#27ae60', beeFilter: 'filter: hue-rotate(70deg) saturate(1.5);' }
+        ];
+
+        // LOBBY
+        function selectMode(mode) {
+            sfxClick(); gameMode = mode;
+            document.querySelectorAll('.setup-btn.mode').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('setup-mode-' + mode).classList.add('active');
+        }
+
+        function selectDiff(level) {
+            sfxClick(); currentDifficulty = level;
+            document.querySelectorAll('.setup-btn.diff').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('setup-diff-' + level).classList.add('active');
+        }
+
+        function startGame() {
+            initAudio(); sfxClick();
+            let val = parseInt(document.getElementById('setup-time').value);
+            initialTimeLimit = (isNaN(val) || val < 0) ? 0 : val;
+
+            gridSize = currentDifficulty === 1 ? 4 : (currentDifficulty === 2 ? 5 : 6);
+            targetNumber = currentDifficulty === 1 ? 6 : (currentDifficulty === 2 ? 9 : 12);
+            
+            document.getElementById('target-prompt-num').innerText = targetNumber;
+
+            document.getElementById('setup-screen').style.display = 'none';
+            document.getElementById('game-screen').style.display = 'flex';
+            
+            generateLevel();
+            resetGame(false); // Reset sin regenerar nivel
+        }
+
+        function backToMenu() {
+            initAudio(); sfxClick(); clearInterval(timerInterval);
+            document.getElementById('game-screen').style.display = 'none';
+            document.getElementById('setup-screen').style.display = 'flex';
+        }
+
+        // TIMER
+        function formatTime(seconds) {
+            let m = Math.floor(seconds / 60); let s = seconds % 60;
+            return (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s);
+        }
+
+        function toggleTimer() {
+            initAudio(); sfxClick();
+            if (initialTimeLimit === 0 || isExecuting) return;
+            isTimerRunning = !isTimerRunning;
+            document.getElementById('timer-ctrl-btn').innerText = isTimerRunning ? "⏸" : "▶";
+        }
+
+        function setupTimer() {
+            clearInterval(timerInterval); isTimerRunning = false; 
+            let display = document.getElementById('timer-display');
+            let timeSpan = document.getElementById('time-left');
+            let btn = document.getElementById('timer-ctrl-btn');
+            display.classList.remove('warning');
+            
+            if (initialTimeLimit > 0) {
+                timeLeft = initialTimeLimit;
+                display.style.display = 'flex';
+                timeSpan.innerText = formatTime(timeLeft);
+                btn.innerText = "▶";
+                
+                timerInterval = setInterval(() => {
+                    if (!isTimerRunning || isExecuting || document.getElementById('modal').classList.contains('active')) return;
+                    timeLeft--;
+                    timeSpan.innerText = formatTime(timeLeft);
+                    
+                    if (timeLeft === 10) { display.classList.add('warning'); playTone(300, 'sawtooth', 0.2, 0.15); }
+                    if (timeLeft <= 0) {
+                        isTimerRunning = false; clearInterval(timerInterval);
+                        playTone(150, 'sawtooth', 0.4, 0.3);
+                        document.getElementById('go-btn').disabled = true;
+                        if (!isExecuting) executeCommands(true); 
+                    }
+                }, 1000);
+            } else {
+                display.style.display = 'none';
+            }
+        }
+
+        // DOM Y MAPA
+        function buildDOM() {
+            const container = document.getElementById('game-board-area');
+            container.innerHTML = '';
+            let styleGrid = `grid-template-columns: repeat(${gridSize}, 1fr); grid-template-rows: repeat(${gridSize}, 1fr);`;
+
+            let loopCount = gameMode === 1 ? 1 : 2;
+            for (let i = 1; i <= loopCount; i++) {
+                let conf = playerConfigs[i-1];
+                let html = `
+                    <div class="station">
+                        <div class="grid-wrapper">
+                            <div id="grid-p${i}" class="game-grid" style="${styleGrid}"></div>
+                            <canvas id="canvas-p${i}" class="drawing-canvas"></canvas>
+                        </div>
+                        <div class="panel" style="border: 3px solid ${conf.color}; box-shadow: 0 4px 0 ${conf.dark}">
+                            <h3 style="color: ${conf.dark}">🐝 ${conf.name}</h3>
+                            <div class="controls-row">
+                                <button class="cmd-btn" style="background:${conf.color}; box-shadow: 0 3px 0 ${conf.dark}" onclick="addCommand(${i}, 'F')">⬆️</button>
+                                <button class="cmd-btn" style="background:${conf.color}; box-shadow: 0 3px 0 ${conf.dark}" onclick="addCommand(${i}, 'L')">↺</button>
+                                <button class="cmd-btn" style="background:${conf.color}; box-shadow: 0 3px 0 ${conf.dark}" onclick="addCommand(${i}, 'R')">↻</button>
+                                <button class="cmd-btn undo-btn" onclick="undoCommand(${i})">❌</button>
+                            </div>
+                            <div class="seq-container" id="seq${i}"></div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += html;
+            }
+
+            for (let i = 1; i <= loopCount; i++) {
+                buildGridCells(`grid-p${i}`, i);
+                attachCanvasEvents(i);
+            }
+        }
+
+        function buildGridCells(containerId, pId) {
+            const gridEl = document.getElementById(containerId);
+            for (let y = 0; y < gridSize; y++) {
+                for (let x = 0; x < gridSize; x++) {
+                    const cell = document.createElement('div'); cell.className = 'cell'; 
+                    cell.id = `cell-p${pId}-${x}-${y}`;
+                    if (x === 0 && y === 0) cell.dataset.start = "true";
+                    
+                    let num = logicalMap[`${x},${y}`];
+                    if (num) { 
+                        cell.dataset.number = num; cell.innerText = num;
+                        if (num === targetNumber) cell.classList.add('target-cell'); 
+                        else cell.classList.add('nectar-cell');
+                    }
+                    gridEl.appendChild(cell);
+                }
+            }
+        }
+
+        // GENERACIÓN DEL CAMINO
         function generateLevel() {
             let success = false;
             while (!success) {
-                gridAssignments = {}; let path = [{x: 0, y: 0}]; let visited = new Set(['0,0']);
-                for (let i = 1; i <= 6; i++) {
+                logicalMap = {}; let path = [{x: 0, y: 0}]; let visited = new Set(['0,0']);
+                for (let i = 1; i <= targetNumber; i++) {
                     let curr = path[path.length - 1];
                     let neighbors = [ {x: curr.x, y: curr.y - 1}, {x: curr.x, y: curr.y + 1}, {x: curr.x - 1, y: curr.y}, {x: curr.x + 1, y: curr.y} ];
                     let validNeighbors = neighbors.filter(n => n.x >= 0 && n.x < gridSize && n.y >= 0 && n.y < gridSize && !visited.has(`${n.x},${n.y}`));
                     if (validNeighbors.length === 0) break; 
                     let next = validNeighbors[Math.floor(Math.random() * validNeighbors.length)];
                     path.push(next); visited.add(`${next.x},${next.y}`);
-                    gridAssignments[`${next.x},${next.y}`] = i;
-                    if (i === 6) targetPos = {x: next.x, y: next.y};
+                    logicalMap[`${next.x},${next.y}`] = i;
+                    if (i === targetNumber) targetPos = {x: next.x, y: next.y};
                 }
-                if (path.length === 7) success = true;
+                if (path.length === targetNumber + 1) success = true;
             }
         }
 
-        function initGrid() {
-            gridEl.innerHTML = '';
-            for (let y = 0; y < gridSize; y++) {
-                for (let x = 0; x < gridSize; x++) {
-                    const cell = document.createElement('div'); cell.className = 'cell'; cell.id = `cell-${x}-${y}`;
-                    if (x === 0 && y === 0) cell.dataset.start = "true";
-                    let num = gridAssignments[`${x},${y}`];
-                    if (num) { cell.dataset.number = num; cell.innerText = num;
-                        if (num === 6) cell.classList.add('target-cell'); else cell.classList.add('nectar-cell');
-                    }
-                    gridEl.appendChild(cell);
+        // DIBUJO EN CANVAS MÚLTIPLES
+        let isDrawingGlobal = false;
+        function resizeCanvases() {
+            let loopCount = gameMode === 1 ? 1 : 2;
+            for(let i=1; i<=loopCount; i++) {
+                const gridEl = document.getElementById(`grid-p${i}`);
+                const canvas = document.getElementById(`canvas-p${i}`);
+                if(gridEl && canvas) {
+                    canvas.width = gridEl.offsetWidth; canvas.height = gridEl.offsetHeight; 
+                    let ctx = canvas.getContext('2d');
+                    ctx.lineWidth = 6; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; 
+                    ctx.setLineDash([8, 12]); ctx.strokeStyle = 'rgba(255, 152, 0, 0.8)';
                 }
             }
-            setTimeout(() => { canvas.width = gridEl.offsetWidth; canvas.height = gridEl.offsetHeight; ctx.lineWidth = 8; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.setLineDash([12, 15]); ctx.strokeStyle = 'rgba(255, 152, 0, 0.8)'; }, 50);
+        }
+        window.addEventListener('resize', resizeCanvases);
+
+        function attachCanvasEvents(id) {
+            const canvas = document.getElementById(`canvas-p${id}`);
+            let ctx = canvas.getContext('2d');
+            function getPos(cX, cY) { const r = canvas.getBoundingClientRect(); return { x: cX - r.left, y: cY - r.top }; }
+            
+            canvas.addEventListener('mousedown', (e) => {
+                if(isExecuting) return; isDrawingGlobal = true;
+                const p = getPos(e.clientX, e.clientY); ctx.beginPath(); ctx.moveTo(p.x, p.y);
+            });
+            canvas.addEventListener('mousemove', (e) => {
+                if(!isDrawingGlobal || isExecuting) return;
+                const p = getPos(e.clientX, e.clientY); ctx.lineTo(p.x, p.y); ctx.stroke();
+            });
+            window.addEventListener('mouseup', () => isDrawingGlobal = false);
+            
+            canvas.addEventListener('touchstart', (e) => {
+                if(isExecuting) return; isDrawingGlobal = true;
+                const p = getPos(e.touches[0].clientX, e.touches[0].clientY); ctx.beginPath(); ctx.moveTo(p.x, p.y);
+            }, {passive:true});
+            canvas.addEventListener('touchmove', (e) => {
+                if(!isDrawingGlobal || isExecuting) return;
+                const p = getPos(e.touches[0].clientX, e.touches[0].clientY); ctx.lineTo(p.x, p.y); ctx.stroke();
+                if(e.cancelable) e.preventDefault();
+            }, {passive:false});
+            window.addEventListener('touchend', () => isDrawingGlobal = false);
         }
 
-        function getCursorPos(cX, cY) { const r = canvas.getBoundingClientRect(); return { x: cX - r.left, y: cY - r.top }; }
-        function startDraw(e) { if (isExecuting) return; isDrawing = true; let cX = e.touches?e.touches[0].clientX:e.clientX; let cY = e.touches?e.touches[0].clientY:e.clientY; const p = getCursorPos(cX, cY); ctx.beginPath(); ctx.moveTo(p.x, p.y); if(e.cancelable) e.preventDefault(); }
-        function draw(e) { if (!isDrawing || isExecuting) return; let cX = e.touches?e.touches[0].clientX:e.clientX; let cY = e.touches?e.touches[0].clientY:e.clientY; const p = getCursorPos(cX, cY); ctx.lineTo(p.x, p.y); ctx.stroke(); if(e.cancelable) e.preventDefault(); }
-        canvas.addEventListener('mousedown', startDraw); canvas.addEventListener('mousemove', draw); window.addEventListener('mouseup', ()=>isDrawing=false);
-        canvas.addEventListener('touchstart', startDraw, {passive:false}); canvas.addEventListener('touchmove', draw, {passive:false}); window.addEventListener('touchend', ()=>isDrawing=false);
-
-        // NUEVA ORIENTACIÓN HACIA ARRIBA
+        // LÓGICA DE ABEJAS
         function getTransform(dir) { 
-            if (dir === 0) return 'rotate(90deg)';
-            if (dir === 1) return 'rotate(180deg)';
-            if (dir === 2) return 'rotate(-90deg)';
-            if (dir === 3) return 'rotate(0deg)';
+            if (dir === 0) return 'rotate(90deg)';  // Der
+            if (dir === 1) return 'rotate(180deg)'; // Abajo
+            if (dir === 2) return 'rotate(-90deg)'; // Izq
+            if (dir === 3) return 'rotate(0deg)';   // Arriba
         }
 
-        function drawBee() {
+        function drawBees() {
             document.querySelectorAll('.bee-container').forEach(b => b.remove());
-            const cell = document.getElementById(`cell-${bee.pos.x}-${bee.pos.y}`);
-            const container = document.createElement('div'); container.className = `bee-container`;
-            const orient = document.createElement('div'); orient.className = 'bee-orientation'; orient.style.transform = getTransform(bee.dir);
-            const sprite = document.createElement('div'); sprite.className = 'bee-sprite'; 
-            sprite.innerHTML = '<img src="../assets/robots/BeebotEmoji.png" alt="BeeBot" style="width: 48px; height: 48px; object-fit: contain; pointer-events: none;">';
-            orient.appendChild(sprite); container.appendChild(orient); cell.appendChild(container);
-        }
-
-        function addCommand(cmd) { if(isExecuting) return; bee.commands.push(cmd); updateSequenceUI(); }
-        function undoCommand() { if(isExecuting || bee.commands.length === 0) return; bee.commands.pop(); updateSequenceUI(); }
-        function updateSequenceUI() {
-            const sym = { 'F': '⬆️', 'R': '↻', 'L': '↺' }; const container = document.getElementById(`seq`); container.innerHTML = ''; 
-            bee.commands.forEach(cmd => { const span = document.createElement('span'); span.className = 'cmd-block'; span.innerText = symbols[cmd]; container.appendChild(span); });
-        }
-
-        function visitCell(x, y) {
-            const cell = document.getElementById(`cell-${x}-${y}`); let num = cell.dataset.number;
-            if (num && !failedOrder) {
-                num = parseInt(num);
-                if (num === nextNumberExpected) { cell.classList.add('visited-correct'); nextNumberExpected++; } 
-                else if (num > nextNumberExpected) { cell.classList.add('visited-wrong'); failedOrder = true; }
+            let loopCount = gameMode === 1 ? 1 : 2;
+            for(let i=1; i<=loopCount; i++) {
+                let p = players[i]; let conf = playerConfigs[i-1];
+                let cell = document.getElementById(`cell-p${i}-${p.pos.x}-${p.pos.y}`);
+                if(!cell) continue;
+                
+                const container = document.createElement('div'); container.className = `bee-container`;
+                const orient = document.createElement('div'); orient.className = 'bee-orientation'; orient.style.transform = getTransform(p.dir);
+                const sprite = document.createElement('div'); sprite.className = 'bee-sprite'; 
+                sprite.innerHTML = `<img src="../assets/robots/BeebotEmoji.png" alt="Bee" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; ${conf.beeFilter}">`;
+                
+                orient.appendChild(sprite); container.appendChild(orient); cell.appendChild(container);
             }
         }
 
-        function executeCommands() {
-            if (bee.commands.length === 0 || isExecuting) return; isExecuting = true; document.getElementById('go-btn').style.opacity = "0.5";
-            nextNumberExpected = 1; failedOrder = false; document.querySelectorAll('.cell').forEach(c => c.classList.remove('visited-correct', 'visited-wrong'));
-            visitCell(bee.pos.x, bee.pos.y);
+        function addCommand(id, cmd) { sfxClick(); if(isExecuting || (initialTimeLimit > 0 && timeLeft <= 0)) return; players[id].commands.push(cmd); updateSequenceUI(id); }
+        function undoCommand(id) { sfxClick(); if(isExecuting || players[id].commands.length === 0 || (initialTimeLimit > 0 && timeLeft <= 0)) return; players[id].commands.pop(); updateSequenceUI(id); }
+        
+        function updateSequenceUI(id) {
+            const sym = { 'F': '⬆️', 'R': '↻', 'L': '↺' }; 
+            const container = document.getElementById(`seq${id}`); container.innerHTML = ''; 
+            players[id].commands.forEach(cmd => { 
+                const span = document.createElement('span'); span.className = 'cmd-block'; 
+                span.innerText = sym[cmd]; span.style.background = playerConfigs[id-1].color;
+                container.appendChild(span); 
+            });
+        }
+
+        function visitCell(id) {
+            let p = players[id];
+            const cell = document.getElementById(`cell-p${id}-${p.pos.x}-${p.pos.y}`); 
+            let num = cell.dataset.number;
+            
+            if (num && !p.failedOrder) {
+                num = parseInt(num);
+                if (num === p.nextExpected) { 
+                    cell.classList.add('visited-correct'); p.nextExpected++; sfxEat();
+                } 
+                else if (num > p.nextExpected) { 
+                    cell.classList.add('visited-wrong'); p.failedOrder = true; sfxWrong();
+                }
+            }
+        }
+
+        function executeCommands(isTimeout = false) {
+            sfxClick();
+            if (isExecuting) return; 
+            
+            let loopCount = gameMode === 1 ? 1 : 2;
+            let maxSteps = 0;
+            for(let i=1; i<=loopCount; i++) { if(players[i].commands.length > maxSteps) maxSteps = players[i].commands.length; }
+
+            isExecuting = true; 
+            document.getElementById('go-btn').style.opacity = "0.5"; document.getElementById('go-btn').disabled = true;
+
+            if (maxSteps === 0) {
+                if (isTimeout) evaluateWin(true);
+                else { isExecuting = false; document.getElementById('go-btn').style.opacity = "1"; document.getElementById('go-btn').disabled = false;}
+                return;
+            }
+            
+            for(let i=1; i<=loopCount; i++) {
+                players[i].nextExpected = 1; players[i].failedOrder = false;
+            }
+            document.querySelectorAll('.cell').forEach(c => c.classList.remove('visited-correct', 'visited-wrong'));
+            
+            for(let i=1; i<=loopCount; i++) visitCell(i);
+            
             let step = 0;
             const interval = setInterval(() => {
-                if (step >= bee.commands.length || failedOrder) { clearInterval(interval); checkWin(); return; }
-                const cmd = bee.commands[step];
-                if (cmd === 'F') {
-                    let nx = bee.pos.x, ny = bee.pos.y;
-                    if (bee.dir === 0) nx++; else if (bee.dir === 1) ny++; else if (bee.dir === 2) nx--; else if (bee.dir === 3) ny--; 
-                    if (nx >= 0 && nx < gridSize && ny >= 0 && ny < gridSize) { bee.pos.x = nx; bee.pos.y = ny; visitCell(bee.pos.x, bee.pos.y); }
-                } else if (cmd === 'R') bee.dir = (bee.dir + 1) % 4; else if (cmd === 'L') bee.dir = (bee.dir + 3) % 4; 
-                drawBee(); step++;
+                if (step >= maxSteps) { clearInterval(interval); evaluateWin(isTimeout || (initialTimeLimit > 0 && timeLeft <= 0)); return; }
+                
+                sfxMove();
+                for(let i=1; i<=loopCount; i++) {
+                    let p = players[i];
+                    if(step < p.commands.length && !p.failedOrder) {
+                        const cmd = p.commands[step];
+                        if (cmd === 'F') {
+                            let nx = p.pos.x, ny = p.pos.y;
+                            if (p.dir === 0) nx++; else if (p.dir === 1) ny++; else if (p.dir === 2) nx--; else if (p.dir === 3) ny--; 
+                            if (nx >= 0 && nx < gridSize && ny >= 0 && ny < gridSize) { 
+                                p.pos.x = nx; p.pos.y = ny; visitCell(i); 
+                            }
+                        } 
+                        else if (cmd === 'R') p.dir = (p.dir + 1) % 4; 
+                        else if (cmd === 'L') p.dir = (p.dir + 3) % 4; 
+                    }
+                }
+                drawBees(); step++;
             }, 600); 
         }
 
-        function showModal(t, m) { document.getElementById('m-title').innerText = t; document.getElementById('m-msg').innerText = m; document.getElementById('modal').classList.add('active'); }
-        function closeModal() { document.getElementById('modal').classList.remove('active'); }
-        function checkWin() {
+        let modalCallback = null;
+        function showModal(title, msg, callback = null) { 
+            document.getElementById('m-title').innerText = title; 
+            document.getElementById('m-msg').innerText = msg; 
+            document.getElementById('modal').classList.add('active'); 
+            modalCallback = callback;
+        }
+        function closeModal() { 
+            sfxClick(); document.getElementById('modal').classList.remove('active'); 
+            if(modalCallback) { modalCallback(); modalCallback = null; }
+        }
+
+        function evaluateWin(timeOutFlag) {
             setTimeout(() => {
-                let isOnTarget = (bee.pos.x === targetPos.x && bee.pos.y === targetPos.y);
-                if (failedOrder) showModal("¡Te saltaste números! 😟", "Recuerda que debes recolectar los números en estricto orden: 1, 2, 3, 4, 5 y al final el 6.");
-                else if (isOnTarget && nextNumberExpected === 7) showModal("¡Misión Cumplida! 🎉", "¡Recolectaste todos los números en el orden perfecto y llegaste a la flor!");
-                else if (nextNumberExpected === 7 && !isOnTarget) showModal("¡Falta el destino final! 🌺", "Recogiste todo bien, pero recuerda que el último paso debe ser detenerse en el 6.");
-                else showModal("¡Sigue intentando! 🤔", `Te quedaste en el camino. Tu siguiente número a buscar era el ${nextNumberExpected}.`);
-                document.getElementById('go-btn').style.opacity = "1"; isExecuting = false;
+                if (gameMode === 1) {
+                    let p = players[1];
+                    let isOnTarget = (p.pos.x === targetPos.x && p.pos.y === targetPos.y);
+                    
+                    if (p.failedOrder) showModal("¡Te saltaste números! 😟", `Recuerda recolectar en orden: 1, 2, 3... hasta llegar al ${targetNumber}.`);
+                    else if (isOnTarget && p.nextExpected === targetNumber + 1) { sfxVictory(); showModal("¡Misión Cumplida! 🎉", "¡Recolectaste todos en orden perfecto y llegaste a la flor!");}
+                    else if (p.nextExpected === targetNumber + 1 && !isOnTarget) showModal("¡Falta el destino final! 🌺", `Recogiste todo bien, pero el ÚLTIMO paso debe caer exactamente sobre la casilla del ${targetNumber}.`);
+                    else if (timeOutFlag) showModal("¡Tiempo Acabado! ⏰", `Se acabó el tiempo y llegaste hasta el número ${p.nextExpected - 1}.`);
+                    else showModal("¡Sigue intentando! 🤔", `Te quedaste a medio camino. El siguiente número a buscar era el ${p.nextExpected}.`);
+                } else {
+                    // Modo 2 Jugadores Competitivo
+                    let score1 = players[1].failedOrder ? -1 : players[1].nextExpected - 1;
+                    let score2 = players[2].failedOrder ? -1 : players[2].nextExpected - 1;
+                    
+                    // Si completaron todo y estan en el target
+                    let p1Win = (!players[1].failedOrder && players[1].nextExpected === targetNumber + 1 && players[1].pos.x === targetPos.x && players[1].pos.y === targetPos.y);
+                    let p2Win = (!players[2].failedOrder && players[2].nextExpected === targetNumber + 1 && players[2].pos.x === targetPos.x && players[2].pos.y === targetPos.y);
+
+                    if(p1Win && p2Win) { sfxVictory(); showModal("¡Empate Épico! 🎉", "¡Ambas abejas llegaron a la flor en el orden perfecto!"); }
+                    else if(p1Win) { sfxVictory(); showModal("¡Gana Azul! 💙", "¡Completó el recorrido perfectamente!"); }
+                    else if(p2Win) { sfxVictory(); showModal("¡Gana Verde! 💚", "¡Completó el recorrido perfectamente!"); }
+                    else if(timeOutFlag) {
+                        if(score1 > score2) showModal("¡Tiempo Acabado! ⏰\n¡Gana Azul! 💙", `Azul llegó hasta el ${score1}\nVerde llegó hasta el ${score2 === -1 ? 'Error' : score2}`);
+                        else if(score2 > score1) showModal("¡Tiempo Acabado! ⏰\n¡Gana Verde! 💚", `Verde llegó hasta el ${score2}\nAzul llegó hasta el ${score1 === -1 ? 'Error' : score1}`);
+                        else showModal("¡Tiempo Acabado! ⏰\n¡Empate! 🤝", "Ambos cometieron errores o llegaron al mismo número.");
+                    } else {
+                        showModal("¡Ninguno terminó! 😱", "Revisen sus comandos, borren y corrijan su programación.");
+                    }
+                }
+                
+                document.getElementById('go-btn').style.opacity = "1"; 
+                document.getElementById('go-btn').disabled = false;
+                isExecuting = false;
             }, 400);
         }
 
-        function resetGame() { bee = { pos: {x: 0, y: 0}, dir: 0, commands: [] }; nextNumberExpected = 1; failedOrder = false; isExecuting = false; generateLevel(); updateSequenceUI(); document.getElementById('go-btn').style.opacity = "1"; ctx.clearRect(0, 0, canvas.width, canvas.height); initGrid(); drawBee(); }
-        resetGame();
+        function resetGame(regenMap = true) { 
+            sfxClick();
+            if(regenMap) generateLevel();
+            
+            let loopCount = gameMode === 1 ? 1 : 2;
+            for(let i=1; i<=loopCount; i++) {
+                players[i] = { pos: {x: 0, y: 0}, dir: 0, commands: [], nextExpected: 1, failedOrder: false };
+            }
+            
+            isExecuting = false; 
+            document.getElementById('go-btn').style.opacity = "1"; 
+            document.getElementById('go-btn').disabled = false;
+            
+            buildDOM();
+            
+            for(let i=1; i<=loopCount; i++) updateSequenceUI(i);
+            
+            setTimeout(resizeCanvases, 100); // Dar tiempo a que el DOM se asiente
+            drawBees(); 
+            setupTimer();
+        }
+
+        // INIT
+        resetGame(true);
     </script>
 </body>
 </html>
