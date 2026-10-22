@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Síntesis Covalente: Reactor Químico 🧪</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { 
+            --bg-color: #030712;
+            --panel-bg: rgba(15, 23, 42, 0.9);
+            --border-color: #0ea5e9;
+            --highlight: #38bdf8;
+            --success: #10b981;
+            --danger: #f43f5e;
+            --warning: #f59e0b;
+            
+            /* Colores de Átomos (CPK Coloring) */
+            --atom-H: #f8fafc;  
+            --atom-C: #334155;  
+            --atom-O: #ef4444;  
+            --atom-N: #3b82f6;  
+            --atom-Cl: #22c55e; 
+        }
+
+        body, html { 
+            font-family: 'Rajdhani', sans-serif; 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            margin: 0; padding: 0; width: 100vw; height: 100vh; 
+            color: #fff; background-color: var(--bg-color); 
+            overflow: hidden; box-sizing: border-box; user-select: none;
+        }
+
+        /* FONDO DEL REACTOR */
+        .decorations { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; background: radial-gradient(circle at center, #0f172a 0%, #030712 100%); }
+        .grid-bg { position: absolute; inset: -50%; background-image: linear-gradient(rgba(14, 165, 233, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(14, 165, 233, 0.05) 1px, transparent 1px); background-size: 40px 40px; transform: perspective(800px) rotateX(60deg) translateY(-100px); animation: gridScroll 15s linear infinite; }
+        @keyframes gridScroll { from { transform: perspective(800px) rotateX(60deg) translateY(0); } to { transform: perspective(800px) rotateX(60deg) translateY(40px); } }
+
+        .sound-toggle { position: absolute; top: 15px; right: 15px; background: rgba(15,23,42,0.8); border: 2px solid var(--highlight); border-radius: 8px; width: 45px; height: 45px; font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 1000; box-shadow: 0 0 15px rgba(56,189,248,0.3); transition: all 0.2s; color: var(--highlight);}
+        .sound-toggle:active { transform: scale(0.9); }
+
+        /* PANTALLA DE INSTRUCCIONES */
+        #instructions-screen { position: absolute; inset: 0; z-index: 600; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(3,7,18,0.95); backdrop-filter: blur(8px); }
+        .instructions-card { background: var(--panel-bg); padding: 40px; border-radius: 12px; border: 2px solid var(--highlight); max-width: 90%; width: 750px; display: flex; flex-direction: column; gap: 20px; box-shadow: 0 0 50px rgba(56,189,248,0.3); }
+        .instructions-card h1 { font-family: 'Share Tech Mono', monospace; font-size: 36px; color: var(--highlight); margin: 0; text-align: center; text-shadow: 0 0 15px rgba(56,189,248,0.5);}
+        .instruction-step { display: flex; gap: 15px; align-items: flex-start; font-size: 18px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border: 1px solid rgba(56,189,248,0.3);}
+        .instruction-icon { font-size: 28px; flex-shrink: 0; }
+        .instruction-text b { color: var(--highlight); }
+        .instruction-text .warn { color: var(--danger); font-weight: bold; }
+        
+        .start-btn { background: var(--highlight); border: none; padding: 15px 40px; font-size: 22px; color: #000; border-radius: 6px; text-transform: uppercase; font-weight: bold; font-family: 'Share Tech Mono', monospace; cursor:pointer; transition: all 0.2s; align-self: center; box-shadow: 0 5px 0 #0284c7, 0 10px 20px rgba(56,189,248,0.4); letter-spacing: 2px;}
+        .start-btn:active { transform: translateY(5px); box-shadow: 0 0 0 #0284c7; }
+
+        /* HEADER DEL JUEGO */
+        .game-header { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1200px; padding: 15px 2vw; z-index: 10; box-sizing: border-box;}
+        .title-display { font-family: 'Share Tech Mono', monospace; font-size: 24px; color: var(--highlight); text-shadow: 0 0 10px var(--highlight); letter-spacing: 1px;}
+        .hud-box { background: var(--panel-bg); padding: 8px 20px; border-radius: 6px; border: 1px solid var(--success); font-size: 20px; color: #fff; box-shadow: 0 0 15px rgba(16,185,129,0.3); font-family: 'Share Tech Mono', monospace;}
+        .hud-box span { color: var(--success); font-weight: bold; font-size: 24px;}
+
+        /* LAYOUT PRINCIPAL */
+        .main-layout { display: flex; gap: 20px; width: 100%; max-width: 1200px; flex: 1; padding: 0 2vw 2vh 2vw; box-sizing: border-box;}
+        @media (max-width: 900px) { .main-layout { flex-direction: column-reverse; } }
+
+        /* =========================================================
+           PANEL DE INFORMACIÓN (IZQUIERDA)
+           ========================================================= */
+        .info-panel { flex: 0.42; background: var(--panel-bg); border: 2px solid #1e293b; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 15px; box-shadow: inset 0 0 30px rgba(0,0,0,0.5); overflow-y: auto;}
+        
+        .target-box { background: rgba(14,165,233,0.1); border: 1px solid var(--highlight); padding: 15px; border-radius: 8px; text-align: center; position: relative;}
+        .target-label { font-family: 'Share Tech Mono', monospace; font-size: 13px; color: var(--highlight); text-transform: uppercase; margin-bottom: 5px;}
+        .target-name { font-size: 21px; font-weight: bold; color: #fff; margin: 0; line-height: 1.3;}
+
+        .rules-box { flex: 1; background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 15px;}
+        .rules-title { font-family: 'Share Tech Mono', monospace; font-size: 15px; color: #94a3b8; border-bottom: 1px dashed #334155; padding-bottom: 5px; margin-bottom: 10px;}
+        .valence-list { display: flex; flex-direction: column; gap: 8px; font-size: 14px;}
+        
+        .valence-item { display: flex; align-items: center; justify-content: space-between; background: #1e293b; padding: 6px 10px; border-radius: 4px;}
+        .v-atom { display: flex; align-items: center; gap: 8px; font-weight: bold;}
+        .v-circle { width: 14px; height: 14px; border-radius: 50%; display: inline-block; border: 1px solid rgba(255,255,255,0.5);}
+        .v-bonds { color: var(--highlight); font-family: 'Share Tech Mono', monospace;}
+
+        .controls-hint { margin-top: auto; font-size: 13px; color: #cbd5e1; background: rgba(56,189,248,0.1); padding: 10px; border-radius: 6px; border-left: 4px solid var(--highlight); line-height: 1.3;}
+
+        /* =========================================================
+           REACTOR (DERECHA - CANVAS/SVG)
+           ========================================================= */
+        .reactor-area { flex: 1; background: #020617; border: 2px solid var(--border-color); border-radius: 12px; position: relative; box-shadow: 0 0 30px rgba(14,165,233,0.1), inset 0 0 50px #000; overflow: hidden; display: flex; justify-content: center; align-items: center; touch-action: none;}
+        
+        #bonds-layer { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;}
+
+        .bond-line { stroke: rgba(255,255,255,0.8); stroke-linecap: round; pointer-events: auto; cursor: pointer; transition: stroke 0.2s;}
+        .bond-line:hover { stroke: var(--warning); stroke-width: 8 !important; filter: drop-shadow(0 0 5px var(--warning));}
+        .bond-glow { stroke: var(--highlight); stroke-linecap: round; opacity: 0.6; filter: blur(4px); pointer-events: none;}
+
+        #atoms-layer { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none;}
+        
+        .atom { position: absolute; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-family: 'Share Tech Mono', monospace; font-size: 26px; font-weight: bold; color: #fff; text-align: center; cursor: grab; pointer-events: auto; transform: translate(-50%, -50%); transition: box-shadow 0.2s; border: 3px solid rgba(255,255,255,0.9); box-shadow: inset -4px -4px 12px rgba(0,0,0,0.6), 0 5px 15px rgba(0,0,0,0.6); user-select: none; z-index: 10;}
+        
+        .atom:active { cursor: grabbing; }
+        .atom.selected { border-color: var(--highlight); box-shadow: 0 0 25px var(--highlight), inset -4px -4px 12px rgba(0,0,0,0.5); z-index: 11;}
+
+        /* Botones de acción del reactor */
+        .reactor-actions { position: absolute; bottom: 20px; right: 20px; display: flex; gap: 10px; z-index: 20;}
+        .r-btn { background: rgba(15,23,42,0.9); border: 1px solid #475569; color: #fff; padding: 12px 18px; border-radius: 6px; cursor: pointer; font-family: 'Share Tech Mono', monospace; font-size: 15px; transition: all 0.2s; backdrop-filter: blur(4px); font-weight: bold;}
+        .r-btn:hover { border-color: var(--warning); color: var(--warning); background: rgba(245,158,11,0.1);}
+        
+        .r-btn-verify { border-color: var(--success); color: var(--success); }
+        .r-btn-verify:hover { background: var(--success); color: #000; box-shadow: 0 0 20px var(--success);}
+
+        /* MODAL */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 1000; visibility: hidden; opacity: 0; transition: all 0.3s; backdrop-filter: blur(8px);}
+        .modal-overlay.active { visibility: visible; opacity: 1; }
+        .modal-box { background: var(--panel-bg); padding: 40px; border-radius: 12px; text-align: center; max-width: 85%; width: 480px; transform: scale(0.9); transition: transform 0.3s; border: 2px solid var(--success); box-shadow: 0 0 50px rgba(16,185,129,0.2);}
+        .modal-overlay.active .modal-box { transform: scale(1); }
+        .modal-title { font-family: 'Share Tech Mono', monospace; font-size: 32px; margin-top: 0; margin-bottom: 15px; color: var(--success); text-shadow: 0 0 15px rgba(16,185,129,0.5);}
+        .modal-msg { font-size: 18px; margin-bottom: 30px; color: #e2e8f0; white-space: pre-line; line-height: 1.5;}
+        .modal-btn { background: transparent; border: 2px solid var(--success); color: var(--success); padding: 12px 30px; font-size: 18px; border-radius: 6px; text-transform: uppercase; font-weight: bold; cursor:pointer; font-family: 'Share Tech Mono', monospace; transition: all 0.2s;}
+        .modal-btn:hover { background: var(--success); color: #000; box-shadow: 0 0 20px var(--success);}
+
+    </style>
+</head>
+<body>
+
+    <audio id="bgm" loop><source src="../assets/musicaFondo/cancion1.mp3" type="audio/mpeg"></audio>
+    <div class="decorations"><div class="grid-bg"></div></div>
+    <button id="soundToggle" class="sound-toggle" aria-label="Activar sonido">🔇</button>
+
+    <!-- INSTRUCCIONES -->
+    <div id="instructions-screen">
+        <div class="instructions-card">
+            <h1>REACTOR QUÍMICO ⚠️</h1>
+            <div class="instruction-step">
+                <span class="instruction-icon">🔬</span>
+                <span class="instruction-text"><b>SÍNTESIS PURA:</b> Lee el nombre sistemático complejo y deduce qué átomos necesitas basándote únicamente en sus <b>símbolos químicos (H, O, C, N, Cl)</b> dentro de los orbes.</span>
+            </div>
+            <div class="instruction-step">
+                <span class="instruction-icon">🧪</span>
+                <span class="instruction-text"><b>CONTAMINACIÓN:</b> El reactor arroja <span style="color:var(--danger); font-weight:bold;">átomos extraños</span> que no corresponden. Ignóralos o déjalos aislados.</span>
+            </div>
+            <div class="instruction-step">
+                <span class="instruction-icon">⚡</span>
+                <span class="instruction-text"><b>REGLA DEL OCTETO (HONC):</b> Clic de un átomo a otro para enlazar. (Repite para enlace doble/triple). Cada elemento debe satisfacer su valencia estricta de memoria.</span>
+            </div>
+            <button class="start-btn" onclick="startGame()">ACCEDER AL REACTOR</button>
+        </div>
+    </div>
+
+    <!-- JUEGO -->
+    <div class="game-header">
+        <div class="title-display">SÍNTESIS_LAB [AVANZADO]</div>
+        <div class="hud-box">SÍNTESIS EXITOSAS: <span id="level-display">0</span></div>
+    </div>
+
+    <div class="main-layout">
+        
+        <!-- PANEL DE INFORMACIÓN -->
+        <div class="info-panel">
+            <div class="target-box">
+                <div class="target-label">Sintetizar Compuesto Complejo</div>
+                <h2 class="target-name" id="t-name">Cargando...</h2>
+            </div>
+
+            <div class="rules-box">
+                <div class="rules-title">// VALENCIAS DE MEMORIA</div>
+                <div class="valence-list" id="v-list">
+                    <!-- Inyectado por JS -->
+                </div>
+            </div>
+
+            <div class="controls-hint">
+                <b>💡 CONSEJO DE LABORATORIO:</b><br>
+                • Los orbes muestran únicamente su <b>símbolo químico</b>.<br>
+                • Hay elementos sobrantes en el reactor.<br>
+                • <b>Arrastra</b> los orbes para organizarlos.<br>
+                • <b>Clic ➔ Clic</b> para enlazar los correctos.
+            </div>
+        </div>
+
+        <!-- REACTOR AREA -->
+        <div class="reactor-area" id="reactor">
+            <svg id="bonds-layer"></svg>
+            <div id="atoms-layer"></div>
+            
+            <div class="reactor-actions">
+                <button class="r-btn" onclick="clearBonds()">[ PURGAR ENLACES ]</button>
+                <button class="r-btn r-btn-verify" onclick="verifyMolecule()">VERIFICAR SÍNTESIS ➔</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MODAL -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal-box">
+            <h2 class="modal-title" id="m-title">Título</h2>
+            <p class="modal-msg" id="m-msg">Mensaje</p>
+            <button class="modal-btn" id="m-btn" onclick="closeModal()">CONTINUAR</button>
+        </div>
+    </div>
+
+    <script>
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx; let isMuted = true;
+        const bgAudio = document.getElementById('bgm');
+        const soundToggle = document.getElementById('soundToggle');
+
+        soundToggle.addEventListener('click', () => {
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            isMuted = !isMuted;
+            if(isMuted) { bgAudio.pause(); soundToggle.innerText = '🔇'; } 
+            else { bgAudio.volume = 0.25; bgAudio.play().catch(e=>e); soundToggle.innerText = '🔊'; }
+        });
+
+        function playTone(freq, type, duration, vol = 0.1) {
+            if (!audioCtx || isMuted) return;
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + duration);
+        }
+
+        function sfxClick() { playTone(800, 'sine', 0.05, 0.05); }
+        function sfxSelect() { playTone(600, 'square', 0.1, 0.05); }
+        function sfxBond() { playTone(1200, 'sine', 0.1, 0.1); setTimeout(()=>playTone(1500, 'sine', 0.1, 0.1), 50); }
+        function sfxUnbond() { playTone(300, 'sawtooth', 0.15, 0.1); }
+        function sfxError() { playTone(200, 'sawtooth', 0.3, 0.2); }
+        function sfxWin() { [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => setTimeout(() => playTone(f, 'square', 0.15, 0.1), i * 150)); }
+
+        // VALENCIAS HONC 1234 + Cloro
+        const ELEMENTS = {
+            'H': { color: 'var(--atom-H)', val: 1, name: 'Hidrógeno' },
+            'O': { color: 'var(--atom-O)', val: 2, name: 'Oxígeno' },
+            'N': { color: 'var(--atom-N)', val: 3, name: 'Nitrógeno' },
+            'C': { color: 'var(--atom-C)', val: 4, name: 'Carbono' },
+            'Cl':{ color: 'var(--atom-Cl)', val: 1, name: 'Cloro' }
+        };
+
+        // POOL AMPLIADO CON COMPUESTOS QUÍMICOS MÁS COMPLEJOS Y AVANZADOS
+        const MOLECULE_POOL = [
+            { name: "Ácido Etanoico (Ácido Acético)", atoms: ['C','C','O','O','H','H','H','H'] },
+            { name: "Hidroxietano (Etanol)", atoms: ['C','C','O','H','H','H','H','H','H'] },
+            { name: "Propanona (Acetona)", atoms: ['C','C','C','O','H','H','H','H','H','H'] },
+            { name: "Peróxido de Dihidrógeno (Agua Oxigenada)", atoms: ['H','H','O','O'] },
+            { name: "Ácido Sulfúrico (Simplificado en Enlaces Covalentes)", atoms: ['S','O','O','O','O','H','H'] }, // Nota: Usaremos O, S si lo agregamos, o nos centramos en C, H, O, N, Cl
+            { name: "Metanal (Formaldehído)", atoms: ['C','O','H','H'] },
+            { name: "Monoclorometano", atoms: ['C','H','H','H','Cl'] },
+            { name: "Etino (Acetileno)", atoms: ['C','C','H','H'] },
+            { name: "Dióxido de Dinitrógeno", atoms: ['N','N','O'] },
+            { name: "Tetracloruro de Carbono", atoms: ['C','Cl','Cl','Cl','Cl'] },
+            { name: "Ácido Cianhídrico", atoms: ['H','C','N'] }
+        ];
+
+        let synthesisCount = 0;
+        let activeMol = null;
+        let atoms = []; 
+        let bonds = []; 
+        let selectedAtomId = null;
+
+        function startGame() {
+            if (!audioCtx && !isMuted) { audioCtx = new AudioContext(); bgAudio.play().catch(e=>e); }
+            sfxClick();
+            document.getElementById('instructions-screen').style.display = 'none';
+            generateProceduralLevel();
+        }
+
+        function generateProceduralLevel() {
+            let molTemplate = MOLECULE_POOL[Math.floor(Math.random() * MOLECULE_POOL.length)];
+            activeMol = molTemplate;
+            
+            document.getElementById('level-display').innerText = synthesisCount;
+            document.getElementById('t-name').innerText = molTemplate.name;
+
+            let levelSymbols = [...molTemplate.atoms];
+
+            // AÑADIR MÁS ÁTOMOS CONTAMINANTES (Mayor complejidad)
+            let contaminantPool = ['H', 'C', 'O', 'N', 'Cl'];
+            let extraCount = Math.floor(Math.random() * 3) + 3; // 3 a 5 contaminantes extra
+            for(let i=0; i<extraCount; i++) {
+                levelSymbols.push(contaminantPool[Math.floor(Math.random() * contaminantPool.length)]);
+            }
+
+            levelSymbols.sort(() => Math.random() - 0.5);
+
+            atoms = levelSymbols.map((sym, index) => {
+                return {
+                    id: index + 1,
+                    sym: sym,
+                    name: ELEMENTS[sym].name,
+                    x: 12 + Math.random() * 76,
+                    y: 12 + Math.random() * 76
+                };
+            });
+
+            bonds = [];
+
+            let uniqueSyms = Object.keys(ELEMENTS);
+            let vListHtml = '';
+            uniqueSyms.forEach(sym => {
+                let e = ELEMENTS[sym];
+                vListHtml += `
+                    <div class="valence-item">
+                        <div class="v-atom">
+                            <span class="v-circle" style="background-color: ${e.color}"></span>
+                            <b>${sym}</b> (${e.name})
+                        </div>
+                        <div class="v-bonds">${e.val} Enlace${e.val>1?'s':''}</div>
+                    </div>`;
+            });
+            document.getElementById('v-list').innerHTML = vListHtml;
+
+            selectedAtomId = null;
+            renderAtoms();
+            updateBondsVisuals();
+        }
+
+        /* --- DRAG & DROP LOGIC --- */
+        let dragTarget = null;
+        let dragStartX = 0;
+        let dragStartY = 0;
+        let didMove = false;
+
+        function attachDragEvents(el, atomObj) {
+            el.onpointerdown = (e) => {
+                e.stopPropagation();
+                dragTarget = atomObj;
+                didMove = false;
+                dragStartX = e.clientX;
+                dragStartY = e.clientY;
+                el.setPointerCapture(e.pointerId);
+            };
+            
+            el.onpointermove = (e) => {
+                if (!dragTarget || dragTarget.id !== atomObj.id) return;
+                
+                if (Math.abs(e.clientX - dragStartX) > 3 || Math.abs(e.clientY - dragStartY) > 3) {
+                    didMove = true;
+                }
+                
+                if (didMove) {
+                    let reactor = document.getElementById('reactor');
+                    let rect = reactor.getBoundingClientRect();
+                    
+                    let newX = ((e.clientX - rect.left) / rect.width) * 100;
+                    let newY = ((e.clientY - rect.top) / rect.height) * 100;
+                    
+                    newX = Math.max(5, Math.min(95, newX));
+                    newY = Math.max(5, Math.min(95, newY));
+
+                    dragTarget.x = newX;
+                    dragTarget.y = newY;
+                    
+                    el.style.left = `${newX}%`;
+                    el.style.top = `${newY}%`;
+                    
+                    updateBondsVisuals(); 
+                }
+            };
+            
+            el.onpointerup = (e) => {
+                el.releasePointerCapture(e.pointerId);
+                if (dragTarget) {
+                    if (!didMove) {
+                        handleAtomClick(dragTarget.id);
+                    } else {
+                        updateBondsVisuals();
+                    }
+                    dragTarget = null;
+                }
+            };
+        }
+
+        function renderAtoms() {
+            let layer = document.getElementById('atoms-layer');
+            layer.innerHTML = '';
+            
+            atoms.forEach(a => {
+                let div = document.createElement('div');
+                div.className = 'atom';
+                div.id = `atom-${a.id}`;
+                div.style.backgroundColor = ELEMENTS[a.sym].color;
+                
+                if(['C', 'O', 'N', 'Cl'].includes(a.sym)) div.style.color = '#fff';
+                else div.style.color = '#000';
+
+                div.style.left = `${a.x}%`;
+                div.style.top = `${a.y}%`;
+                
+                div.innerHTML = `${a.sym}`;
+                
+                layer.appendChild(div);
+                a.el = div;
+                
+                attachDragEvents(div, a);
+            });
+        }
+
+        function handleAtomClick(id) {
+            if (selectedAtomId === null) {
+                sfxSelect();
+                selectedAtomId = id;
+                atoms.forEach(a => a.el.classList.remove('selected'));
+                document.getElementById(`atom-${id}`).classList.add('selected');
+            } else if (selectedAtomId === id) {
+                sfxClick();
+                selectedAtomId = null;
+                document.getElementById(`atom-${id}`).classList.remove('selected');
+            } else {
+                tryBond(selectedAtomId, id);
+                selectedAtomId = null;
+                atoms.forEach(a => a.el.classList.remove('selected'));
+            }
+        }
+
+        document.getElementById('reactor').onpointerdown = (e) => {
+            if(e.target.id === 'reactor' || e.target.id === 'bonds-layer') {
+                if(selectedAtomId) { sfxClick(); selectedAtomId = null; atoms.forEach(a => a.el.classList.remove('selected')); }
+            }
+        };
+
+        function getAtomBondsCount(id) {
+            let total = 0;
+            bonds.forEach(b => { if(b.a === id || b.b === id) total += b.count; });
+            return total;
+        }
+
+        function tryBond(id1, id2) {
+            let existingBond = bonds.find(b => (b.a === id1 && b.b === id2) || (b.a === id2 && b.b === id1));
+            let a1 = atoms.find(a => a.id === id1);
+            let a2 = atoms.find(a => a.id === id2);
+            let maxVal1 = ELEMENTS[a1.sym].val;
+            let maxVal2 = ELEMENTS[a2.sym].val;
+            let current1 = getAtomBondsCount(id1);
+            let current2 = getAtomBondsCount(id2);
+
+            if (existingBond) {
+                if (existingBond.count < 3 && current1 < maxVal1 && current2 < maxVal2) {
+                    existingBond.count++;
+                    sfxBond();
+                } else {
+                    sfxError();
+                }
+            } else {
+                if (current1 < maxVal1 && current2 < maxVal2) {
+                    bonds.push({ a: id1, b: id2, count: 1 });
+                    sfxBond();
+                } else {
+                    sfxError(); 
+                }
+            }
+            
+            updateBondsVisuals();
+        }
+
+        function removeBond(index) {
+            sfxUnbond();
+            bonds.splice(index, 1);
+            updateBondsVisuals();
+        }
+
+        function clearBonds() {
+            if(bonds.length === 0) return;
+            sfxUnbond();
+            bonds = [];
+            selectedAtomId = null;
+            atoms.forEach(a => a.el.classList.remove('selected'));
+            updateBondsVisuals();
+        }
+
+        function updateBondsVisuals() {
+            let svg = document.getElementById('bonds-layer');
+            Array.from(svg.children).forEach(c => c.remove());
+            
+            let rect = document.getElementById('reactor').getBoundingClientRect();
+            
+            bonds.forEach((b, index) => {
+                let a1 = atoms.find(a => a.id === b.a);
+                let a2 = atoms.find(a => a.id === b.b);
+                
+                let x1 = (a1.x / 100) * rect.width;
+                let y1 = (a1.y / 100) * rect.height;
+                let x2 = (a2.x / 100) * rect.width;
+                let y2 = (a2.y / 100) * rect.height;
+
+                let g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                g.onpointerdown = (e) => { e.stopPropagation(); removeBond(index); };
+                g.style.cursor = "pointer";
+
+                let hitArea = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                hitArea.setAttribute("x1", x1); hitArea.setAttribute("y1", y1);
+                hitArea.setAttribute("x2", x2); hitArea.setAttribute("y2", y2);
+                hitArea.setAttribute("stroke", "transparent");
+                hitArea.setAttribute("stroke-width", "30");
+                g.appendChild(hitArea);
+
+                let dx = x2 - x1; let dy = y2 - y1;
+                let len = Math.sqrt(dx*dx + dy*dy);
+                if(len === 0) len = 1;
+                let nx = -dy/len; let ny = dx/len; 
+                
+                let offsets = [];
+                if (b.count === 1) offsets = [0];
+                else if (b.count === 2) offsets = [-6, 6];
+                else if (b.count === 3) offsets = [-10, 0, 10];
+
+                offsets.forEach(off => {
+                    let glow = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                    glow.setAttribute("x1", x1 + nx*off); glow.setAttribute("y1", y1 + ny*off);
+                    glow.setAttribute("x2", x2 + nx*off); glow.setAttribute("y2", y2 + ny*off);
+                    glow.setAttribute("class", "bond-glow");
+                    glow.setAttribute("stroke-width", "8");
+                    g.appendChild(glow);
+
+                    let line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                    line.setAttribute("x1", x1 + nx*off); line.setAttribute("y1", y1 + ny*off);
+                    line.setAttribute("x2", x2 + nx*off); line.setAttribute("y2", y2 + ny*off);
+                    line.setAttribute("class", "bond-line");
+                    line.setAttribute("stroke-width", "4");
+                    g.appendChild(line);
+                });
+
+                svg.appendChild(g);
+            });
+        }
+
+        window.addEventListener('resize', () => { 
+            if(atoms.length > 0) updateBondsVisuals(); 
+        });
+
+        function verifyMolecule() {
+            let activeAtomIds = new Set();
+            bonds.forEach(b => {
+                activeAtomIds.add(b.a);
+                activeAtomIds.add(b.b);
+            });
+
+            let usedAtoms = atoms.filter(a => activeAtomIds.has(a.id));
+
+            if (usedAtoms.length === 0) {
+                sfxError();
+                document.getElementById('m-title').style.color = "var(--danger)";
+                showModal("REACTOR VACÍO ⚠️", "No has creado ningún enlace químico.");
+                return;
+            }
+
+            for (let a of usedAtoms) {
+                let currentBonds = getAtomBondsCount(a.id);
+                if (currentBonds !== ELEMENTS[a.sym].val) {
+                    sfxError();
+                    document.getElementById('m-title').style.color = "var(--danger)";
+                    showModal("ESTRUCTURA INESTABLE ⚠️", `El átomo de ${a.sym} no cumple con su valencia estricta (${ELEMENTS[a.sym].val} enlaces necesarios).`);
+                    return;
+                }
+            }
+
+            let visited = new Set();
+            let adj = {};
+            usedAtoms.forEach(a => adj[a.id] = []);
+            bonds.forEach(b => {
+                if(adj[b.a] && adj[b.b]) {
+                    adj[b.a].push(b.b);
+                    adj[b.b].push(b.a);
+                }
+            });
+
+            function dfs(nodeId) {
+                visited.add(nodeId);
+                if(adj[nodeId]) {
+                    adj[nodeId].forEach(neighbor => {
+                        if(!visited.has(neighbor)) dfs(neighbor);
+                    });
+                }
+            }
+            
+            dfs(usedAtoms[0].id);
+            if (visited.size !== usedAtoms.length) {
+                sfxError();
+                document.getElementById('m-title').style.color = "var(--warning)";
+                showModal("FRAGMENTACIÓN ⚠️", "Has creado sub-moléculas separadas. Deben estar conectadas en una sola estructura.");
+                return;
+            }
+
+            let usedCounts = {};
+            usedAtoms.forEach(a => {
+                usedCounts[a.sym] = (usedCounts[a.sym] || 0) + 1;
+            });
+
+            let requiredCounts = {};
+            activeMol.atoms.forEach(sym => {
+                requiredCounts[sym] = (requiredCounts[sym] || 0) + 1;
+            });
+
+            let formulaMatch = true;
+            let allKeys = new Set([...Object.keys(usedCounts), ...Object.keys(requiredCounts)]);
+            allKeys.forEach(k => {
+                if ((usedCounts[k] || 0) !== (requiredCounts[k] || 0)) formulaMatch = false;
+            });
+
+            if (!formulaMatch) {
+                sfxError();
+                document.getElementById('m-title').style.color = "var(--danger)";
+                showModal("COMPUESTO INCORRECTO ❌", `La estructura armada no corresponde a la composición de ${activeMol.name}. (¿Dejaste átomos sobrantes conectados o faltó alguno?).`);
+                return;
+            }
+
+            // WIN!
+            sfxWin();
+            document.getElementById('m-title').style.color = "var(--success)";
+            synthesisCount++;
+            showModal("¡SÍNTESIS EXITOSA! 💎", `Compuesto "${activeMol.name}" sintetizado con alta pureza.\n\nPreparando siguiente compuesto...`, () => {
+                generateProceduralLevel();
+            });
+        }
+
+        let modalCallback = null;
+        function showModal(title, msg, callback = null) { 
+            document.getElementById('m-title').innerText = title; 
+            document.getElementById('m-msg').innerText = msg; 
+            document.getElementById('modal').classList.add('active'); 
+            modalCallback = callback; 
+        }
+        function closeModal() { 
+            sfxClick(); 
+            document.getElementById('modal').classList.remove('active'); 
+            if(modalCallback) { modalCallback(); modalCallback = null; } 
+        }
+
+    </script>
+</body>
+</html>
