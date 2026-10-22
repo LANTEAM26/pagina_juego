@@ -144,7 +144,8 @@
             overflow: hidden; margin-bottom: 1vh; display: flex; justify-content: center; align-items: center;
         }
         
-        #gameCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: crosshair; touch-action: none; mix-blend-mode: screen; }
+        /* OPTIMIZACIÓN: Eliminación de mix-blend-mode para mejorar drásticamente los FPS */
+        #gameCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: crosshair; touch-action: none; }
 
         @keyframes damageShake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-15px) rotate(-1deg); } 40%, 80% { transform: translateX(15px) rotate(1deg); } }
         .damage-shake { animation: damageShake 0.4s cubic-bezier(.36,.07,.19,.97) both; border-color: var(--neon-pink) !important; box-shadow: inset 0 0 80px rgba(255,0,85,0.4) !important;}
@@ -168,33 +169,7 @@
 
     <div class="decorations"><div class="grid"></div></div>
 
-    <!-- PANTALLA DE INSTRUCCIONES -->
-    <div id="instructions-screen" style="display: flex;">
-        <div class="instructions-card">
-            <h1>CÓMO JUGAR</h1>
-            
-            <div class="instruction-step">
-                <span class="instruction-icon">🎯</span>
-                <span class="instruction-text"><b>OBJETIVO:</b> Fíjate en el grupo químico solicitado en la parte superior y busca el elemento correcto que orbita en la pantalla.</span>
-            </div>
-            <div class="instruction-step">
-                <span class="instruction-icon">⭕</span>
-                <span class="instruction-text"><b>MECÁNICA:</b> Toca la pantalla y <b>dibuja círculos continuos</b> alrededor del elemento sin soltar el dedo para capturarlo.</span>
-            </div>
-            <div class="instruction-step">
-                <span class="instruction-icon">☠️</span>
-                <span class="instruction-text"><b class="danger">PELIGRO:</b> Evita la Anti-Materia roja. Si la encierras en tu lazo por error, explotará y perderás integridad de escudo.</span>
-            </div>
-            <div class="instruction-step">
-                <span class="instruction-icon">⚠️</span>
-                <span class="instruction-text"><b class="warn">TÁCTICA:</b> En el instante que empieces a trazar un lazo sobre el objetivo correcto, la Anti-Materia intentará empujarlo. ¡Sé rápido aislando el elemento!</span>
-            </div>
-
-            <button class="continue-btn" onclick="showSetup()">ENTENDIDO</button>
-        </div>
-    </div>
-
-    <!-- LOBBY -->
+    <!-- LOBBY DE CONFIGURACIÓN -->
     <div id="setup-screen">
         <div class="setup-card">
             <h1>RANGER CUÁNTICO</h1>
@@ -239,6 +214,32 @@
         </div>
     </div>
 
+    <!-- PANTALLA DE INSTRUCCIONES -->
+    <div id="instructions-screen" style="display: flex;">
+        <div class="instructions-card">
+            <h1>CÓMO JUGAR</h1>
+            
+            <div class="instruction-step">
+                <span class="instruction-icon">🎯</span>
+                <span class="instruction-text"><b>OBJETIVO:</b> Fíjate en el grupo químico solicitado en la parte superior y busca el elemento correcto que orbita en la pantalla.</span>
+            </div>
+            <div class="instruction-step">
+                <span class="instruction-icon">⭕</span>
+                <span class="instruction-text"><b>MECÁNICA:</b> Toca la pantalla y <b>dibuja círculos continuos</b> alrededor del elemento sin soltar el dedo para capturarlo.</span>
+            </div>
+            <div class="instruction-step">
+                <span class="instruction-icon">☠️</span>
+                <span class="instruction-text"><b class="danger">PELIGRO:</b> Evita la Anti-Materia roja. Si la encierras en tu lazo por error, explotará y perderás integridad de escudo.</span>
+            </div>
+            <div class="instruction-step">
+                <span class="instruction-icon">⚠️</span>
+                <span class="instruction-text"><b class="warn">TÁCTICA:</b> En el instante que empieces a trazar un lazo sobre el objetivo correcto, la Anti-Materia intentará empujarlo. ¡Sé rápido aislando el elemento!</span>
+            </div>
+
+            <button class="continue-btn" onclick="showSetup()">ENTENDIDO</button>
+        </div>
+    </div>
+
     <!-- JUEGO -->
     <div id="game-screen">
         <div class="game-header">
@@ -254,7 +255,7 @@
 
         <div class="prompt-box">
             Aísla elementos del grupo: <br> <span class="highlight-text" id="target-category">...</span>
-            <div style="font-size: 14px; font-weight: normal; margin-top: 8px; color:#aaa; font-family: 'Share Tech Mono', monospace; text-shadow: none;">LA ANTI-MATERIA [☠️] ATACARÁ CUANDO INICIES LA CAPTURA</div>
+            <div style="font-size: 14px; font-weight: normal; margin-top: 8px; color:#aaa; font-family: 'Share Tech Mono', monospace;">LA ANTI-MATERIA [☠️] ATACARÁ CUANDO INICIES LA CAPTURA</div>
         </div>
 
         <div class="game-area-wrapper" id="canvas-wrapper">
@@ -279,6 +280,9 @@
             { sym: 'F', name: 'Flúor', cat: 'Halógeno' }, { sym: 'Cl', name: 'Cloro', cat: 'Halógeno' }, { sym: 'Br', name: 'Bromo', cat: 'Halógeno' }, { sym: 'I', name: 'Yodo', cat: 'Halógeno' },
             { sym: 'Fe', name: 'Hierro', cat: 'Metal Transición' }, { sym: 'Cu', name: 'Cobre', cat: 'Metal Transición' }, { sym: 'Au', name: 'Oro', cat: 'Metal Transición' }, { sym: 'Ag', name: 'Plata', cat: 'Metal Transición' }
         ];
+
+        // OPTIMIZACIÓN: Variables constantes en caché matemático
+        const PI2 = Math.PI * 2;
 
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx; let isMuted = true;
@@ -394,7 +398,7 @@
             let baseRequiredLoops = currentDifficulty === 1 ? 4 : 6; 
 
             selectedNodes.forEach(data => {
-                let angle = Math.random() * Math.PI * 2;
+                let angle = Math.random() * PI2;
                 let speed = (Math.random() * 1.5 + 0.8) * speedMult;
                 
                 nodes.push({
@@ -408,7 +412,7 @@
 
             let numMines = currentDifficulty === 1 ? 1 : 2;
             for(let i=0; i<numMines; i++) {
-                let angle = Math.random() * Math.PI * 2;
+                let angle = Math.random() * PI2;
                 nodes.push({
                     text: '☠️', name: 'Anti-Materia', cat: 'Peligro', isTarget: false, isMine: true,
                     x: getRandomInt(60, canvas.width - 60), y: getRandomInt(60, canvas.height - 60),
@@ -459,9 +463,9 @@
                         let ang = Math.atan2(pointerPos.y - n.y, pointerPos.x - n.x);
                         if (n.lastAngle !== null) {
                             let delta = ang - n.lastAngle;
-                            while (delta > Math.PI) delta -= 2*Math.PI; while (delta < -Math.PI) delta += 2*Math.PI;
+                            while (delta > Math.PI) delta -= PI2; while (delta < -Math.PI) delta += PI2;
                             n.accumAngle += delta;
-                            if (Math.abs(n.accumAngle) >= 2*Math.PI) {
+                            if (Math.abs(n.accumAngle) >= PI2) {
                                 n.accumAngle = 0; n.capLoops++; sfxLoop();
                                 createRing(n.x, n.y, n.radius*1.5, n.isMine ? '#ff0055' : '#00ffff');
                                 if (n.capLoops >= n.reqLoops) {
@@ -490,23 +494,41 @@
             }
         }
 
-        // CLASES DE PARTÍCULAS
+        // CLASES DE PARTÍCULAS OPTIMIZADAS (Sin ShadowBlur)
         class Ring {
             constructor(x,y,r,c,b=false) { this.x=x; this.y=y; this.r=r; this.c=c; this.life=1; this.b=b; this.dr=b?6:2; }
             update() { this.r+=this.dr; this.life-=this.b?0.06:0.08; }
-            draw(ctx) { ctx.globalAlpha=Math.max(0,this.life); ctx.strokeStyle=this.c; ctx.lineWidth=this.b?4:2; ctx.beginPath(); ctx.arc(this.x,this.y,this.r,0,Math.PI*2); ctx.stroke(); ctx.globalAlpha=1; }
+            draw(ctx) { 
+                ctx.globalAlpha=Math.max(0,this.life); 
+                ctx.strokeStyle=this.c; 
+                ctx.lineWidth=this.b?4:2; 
+                ctx.beginPath(); ctx.arc(this.x,this.y,this.r,0,PI2); ctx.stroke(); 
+                ctx.globalAlpha=1; 
+            }
         }
         
         class TxtPart {
             constructor(x,y,t,c) { this.x=x; this.y=y; this.t=t; this.c=c; this.life=1; this.vy=-2; }
             update() { this.y+=this.vy; this.life-=0.02; }
-            draw(ctx) { ctx.globalAlpha=Math.max(0,this.life); ctx.fillStyle=this.c; ctx.font="bold 24px 'Share Tech Mono'"; ctx.textAlign="center"; ctx.shadowBlur=10; ctx.shadowColor=this.c; ctx.fillText(this.t,this.x,this.y); ctx.shadowBlur=0; ctx.globalAlpha=1; }
+            draw(ctx) { 
+                ctx.globalAlpha=Math.max(0,this.life); 
+                ctx.fillStyle=this.c; 
+                ctx.font="bold 24px 'Share Tech Mono'"; 
+                ctx.textAlign="center"; 
+                ctx.fillText(this.t,this.x,this.y); 
+                ctx.globalAlpha=1; 
+            }
         }
 
         class Spark {
             constructor(x,y,c) { this.x=x; this.y=y; this.c=c; this.life=1; this.vx=(Math.random()-0.5)*4; this.vy=(Math.random()-0.5)*4; this.size=Math.random()*3+1;}
             update() { this.x+=this.vx; this.y+=this.vy; this.life-=0.05; }
-            draw(ctx) { ctx.globalAlpha=Math.max(0,this.life); ctx.fillStyle=this.c; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill(); ctx.globalAlpha=1;}
+            draw(ctx) { 
+                ctx.globalAlpha=Math.max(0,this.life); 
+                ctx.fillStyle=this.c; 
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, PI2); ctx.fill(); 
+                ctx.globalAlpha=1;
+            }
         }
 
         function createRing(x,y,r,c,b=false) { particles.push(new Ring(x,y,r,c,b)); }
@@ -651,6 +673,7 @@
                 n.history.push({x: n.x, y: n.y});
                 if (n.history.length > (n.isDashing || Math.hypot(n.vx, n.vy) > n.baseSpeed*1.5 ? 15 : 6)) n.history.shift();
 
+                // DIBUJADO DE NODOS (Optimizado sin shadowBlur)
                 if (n.history.length > 1) {
                     ctx.beginPath();
                     ctx.moveTo(n.history[0].x, n.history[0].y);
@@ -669,47 +692,53 @@
                 ctx.strokeStyle = n.isMine ? "#ff0055" : "#00ffff";
                 ctx.lineWidth = 2;
                 ctx.setLineDash([10, 10]);
-                ctx.beginPath(); ctx.arc(0, 0, n.radius * 1.3, 0, Math.PI*2); ctx.stroke();
+                ctx.beginPath(); ctx.arc(0, 0, n.radius * 1.3, 0, PI2); ctx.stroke();
                 ctx.restore();
 
-                ctx.beginPath(); ctx.arc(0,0,n.radius,0,Math.PI*2);
+                ctx.beginPath(); ctx.arc(0,0,n.radius,0,PI2);
                 ctx.fillStyle = n.isMine ? "rgba(255,0,85,0.2)" : "rgba(0,255,255,0.15)"; ctx.fill();
                 ctx.strokeStyle = n.isMine ? "#ff0055" : "#00ffff"; 
                 ctx.lineWidth = 2; ctx.stroke();
                 
                 ctx.fillStyle = n.isMine ? "#ff0055" : "#fff"; 
                 ctx.font = "bold 20px 'Rajdhani'"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-                ctx.shadowBlur = 5; ctx.shadowColor = ctx.fillStyle;
                 ctx.fillText(n.text, 0, 0);
-                ctx.shadowBlur = 0;
 
                 if (n.capLoops > 0) {
-                    ctx.beginPath(); ctx.arc(0,0,n.radius+8, -Math.PI/2, (-Math.PI/2)+(Math.PI*2*(n.capLoops/n.reqLoops)));
+                    ctx.beginPath(); ctx.arc(0,0,n.radius+8, -Math.PI/2, (-Math.PI/2)+(PI2*(n.capLoops/n.reqLoops)));
                     ctx.strokeStyle = n.isMine ? "#ff0055" : "#00ffcc"; 
                     ctx.lineWidth = 5; ctx.lineCap = "round"; ctx.stroke();
-                    ctx.shadowBlur = 15; ctx.shadowColor = ctx.strokeStyle; ctx.stroke(); ctx.shadowBlur = 0;
                 }
                 ctx.restore();
             });
 
             updateMechanics();
 
+            // DIBUJADO DEL LAZO (Optimizado con trazado de neón multicapa)
             if (trail.length > 1) {
                 ctx.beginPath(); ctx.moveTo(trail[0].x, trail[0].y);
                 for(let i=1; i<trail.length; i++) { let xc=(trail[i].x+trail[i-1].x)/2; let yc=(trail[i].y+trail[i-1].y)/2; ctx.quadraticCurveTo(trail[i-1].x, trail[i-1].y, xc, yc); }
                 ctx.lineTo(trail[trail.length-1].x, trail[trail.length-1].y);
                 
+                ctx.lineCap="round"; ctx.lineJoin="round"; 
+                
+                // Capa 1: Resplandor (Glow simulado)
+                ctx.strokeStyle = "rgba(0, 255, 255, 0.3)";
+                ctx.lineWidth = 14;
+                ctx.stroke();
+
+                // Capa 2: Cuerpo del láser
                 ctx.strokeStyle = "rgba(179, 0, 255, 0.9)"; 
-                ctx.lineWidth = 6; ctx.lineCap="round"; ctx.lineJoin="round"; 
-                ctx.shadowBlur = 20; ctx.shadowColor = "#00ffff"; 
+                ctx.lineWidth = 6; 
                 ctx.stroke(); 
                 
-                ctx.strokeStyle = "#fff"; ctx.lineWidth = 2; ctx.stroke(); 
-                ctx.shadowBlur = 0; 
+                // Capa 3: Núcleo brillante
+                ctx.strokeStyle = "#fff"; 
+                ctx.lineWidth = 2; 
+                ctx.stroke(); 
             }
 
             for(let i=particles.length-1; i>=0; i--) { particles[i].update(); particles[i].draw(ctx); if(particles[i].life<=0) particles.splice(i,1); }
-            requestAnimationFrame(gameLoop);
         }
 
         function endGame(isTimeout) {
@@ -724,7 +753,15 @@
         function closeModal() { sfxClick(); document.getElementById('modal').classList.remove('active'); if(modalCallback) { modalCallback(); modalCallback = null; } }
 
         function resetGame() { 
-            score = 0; lives = 3; document.getElementById('score-display').innerText = `${score} / ${targetCount}`; document.getElementById('lives-display').innerText = lives;
+            score = 0; 
+            document.getElementById('score-display').innerText = `${score} / ${targetCount}`; 
+            
+            let valLives = parseInt(document.getElementById('setup-lives').value);
+            let initialLives = (isNaN(valLives) || valLives < 0) ? 3 : valLives;
+            infiniteLives = (initialLives === 0);
+            lives = initialLives;
+            document.getElementById('lives-display').innerText = infiniteLives ? "∞" : lives;
+            
             nodes = []; particles = []; trail = []; isDrawing = false;
             setupTimer(); isGameActive = true; generateRound(); 
             

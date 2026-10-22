@@ -58,70 +58,74 @@
         .start-btn:active { transform: translateY(5px); box-shadow: 0 0 0 #7a3a0b, inset 0 0 10px rgba(0,0,0,0.5); }
 
         /* HEADER */
-        .game-header { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 900px; padding: 15px 2vw; z-index: 10; box-sizing: border-box;}
+        .game-header { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1100px; padding: 15px 2vw; z-index: 10; box-sizing: border-box;}
         .back-menu-btn { background: var(--wood-dark); border: 2px solid var(--brass); padding: 8px 15px; border-radius: 5px; font-size: 14px; color: var(--brass); cursor: pointer; transition: all 0.1s; font-family: 'Courier Prime', monospace; box-shadow: 0 4px 0 var(--brass-dark);}
         .back-menu-btn:active { transform: translateY(4px); box-shadow: none; }
         .hud-box { background: var(--wood-dark); padding: 8px 15px; border-radius: 5px; border: 2px solid var(--brass); font-size: 18px; color: var(--brass); box-shadow: 0 4px 0 var(--brass-dark); font-family: 'Rye', serif;}
 
-        .main-layout { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 900px; flex: 1; padding: 0 2vw 2vh 2vw; box-sizing: border-box; overflow: hidden; align-items: stretch;}
+        /* LAYOUT A 2 COLUMNAS */
+        .main-layout { display: flex; flex-direction: row; gap: 25px; width: 100%; max-width: 1100px; flex: 1; padding: 0 2vw 2vh 2vw; box-sizing: border-box; overflow: hidden; align-items: stretch;}
+        @media (max-width: 850px) { .main-layout { flex-direction: column; overflow-y: auto;} }
+
+        /* COLUMNA VISUAL (IZQUIERDA) */
+        .visual-column { flex: 1; display: flex; flex-direction: column; gap: 20px; min-width: 0; }
 
         /* TABLERO DE MISIONES (CARTA) */
-        .briefing-board { background: var(--paper); color: var(--ink); padding: 15px 25px; border-radius: 2px; box-shadow: 2px 2px 10px rgba(0,0,0,0.5); font-weight: bold; position: relative; font-size: clamp(14px, 2.5vh, 18px); transform: rotate(-1deg); border: 1px solid #d4c4a1;}
-        .briefing-board::before { content: '📌'; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); font-size: 24px;}
-        .briefing-title { font-family: 'Rye', serif; font-size: 20px; color: #8b0000; margin-bottom: 5px; text-transform: uppercase; border-bottom: 2px dashed #8b0000; padding-bottom: 5px;}
+        .briefing-board { background: var(--paper); color: var(--ink); padding: 20px 30px; border-radius: 4px; box-shadow: 2px 2px 15px rgba(0,0,0,0.6); font-weight: bold; position: relative; font-size: clamp(16px, 2.5vh, 20px); transform: rotate(-1deg); border: 1px solid #d4c4a1;}
+        .briefing-board::before { content: '📌'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); font-size: 30px;}
+        .briefing-title { font-family: 'Rye', serif; font-size: 24px; color: #8b0000; margin-bottom: 10px; text-transform: uppercase; border-bottom: 2px dashed #8b0000; padding-bottom: 5px;}
 
         /* FÁBRICA Y CINTA TRANSPORTADORA */
-        .factory-floor { flex: 0 0 180px; background: #222; border: 8px solid var(--steel); border-radius: 10px; position: relative; box-shadow: inset 0 0 30px #000, 0 10px 20px rgba(0,0,0,0.8); overflow: hidden; display: flex; flex-direction: column;}
+        .factory-floor { flex: 1; background: #1a1a1a; border: 10px solid var(--steel); border-radius: 12px; position: relative; box-shadow: inset 0 0 50px #000, 0 10px 30px rgba(0,0,0,0.8); overflow: hidden; display: flex; flex-direction: column;}
         
-        .belt-bg { position: absolute; bottom: 10px; left: 0; width: 200%; height: 60px; background: repeating-linear-gradient( 90deg, #333, #333 30px, #111 30px, #111 60px ); border-top: 4px solid #555; border-bottom: 4px solid #111; z-index: 1;}
+        .belt-bg { position: absolute; bottom: 20px; left: 0; width: 200%; height: 110px; background: repeating-linear-gradient( 90deg, #333, #333 40px, #111 40px, #111 80px ); border-top: 8px solid #555; border-bottom: 8px solid #111; z-index: 1;}
         .belt-bg.moving { animation: beltMove 1s linear infinite; }
-        @keyframes beltMove { from { transform: translateX(0); } to { transform: translateX(-60px); } }
+        @keyframes beltMove { from { transform: translateX(0); } to { transform: translateX(-80px); } }
 
-        .scanner-arch { position: absolute; left: 50%; top: 0; transform: translateX(-50%); width: 100px; height: 100%; border: 6px solid var(--copper); border-bottom: none; border-radius: 10px 10px 0 0; z-index: 5; pointer-events: none; box-shadow: inset 0 5px 15px rgba(0,0,0,0.8), 0 5px 15px rgba(0,0,0,0.5);}
-        .scanner-arch::after { content: 'SENSOR ÓPTICO'; position: absolute; top: -6px; left: -10px; width: 120px; background: var(--copper); color: #000; font-family: 'Courier Prime', monospace; font-size: 10px; font-weight: bold; text-align: center; padding: 2px 0; border-radius: 5px;}
-        .laser { position: absolute; left: 50%; top: 20px; width: 4px; height: 0; background: var(--steam-green); transform: translateX(-50%); box-shadow: 0 0 10px var(--steam-green); z-index: 6; transition: height 0.2s;}
-
-        .item-container { position: absolute; bottom: 25px; left: -100px; z-index: 3; font-size: 50px; filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.8)); transition: left 0.5s ease-out, bottom 0.5s ease-in, opacity 0.5s;}
+        .scanner-arch { position: absolute; left: 50%; top: 0; transform: translateX(-50%); width: 200px; height: 100%; border: 14px solid var(--copper); border-bottom: none; border-radius: 20px 20px 0 0; z-index: 5; pointer-events: none; box-shadow: inset 0 5px 25px rgba(0,0,0,0.9), 0 5px 25px rgba(0,0,0,0.7);}
+        .scanner-arch::after { content: 'SENSOR ÓPTICO'; position: absolute; top: -18px; left: -14px; width: 200px; background: var(--copper); color: #000; font-family: 'Courier Prime', monospace; font-size: 16px; font-weight: bold; text-align: center; padding: 6px 0; border-radius: 5px;}
         
-        /* Filtros de color para las piezas */
+        .laser { position: absolute; left: 50%; top: 30px; width: 8px; height: 0; background: var(--steam-green); transform: translateX(-50%); box-shadow: 0 0 20px var(--steam-green), 0 0 40px var(--steam-green); z-index: 6; transition: height 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);}
+
+        .item-container { position: absolute; bottom: 45px; left: -150px; z-index: 3; font-size: clamp(40px, 6vh, 60px); filter: drop-shadow(4px 4px 10px rgba(0,0,0,0.8)); transition: left 0.5s ease-out, bottom 0.5s ease-in, opacity 0.5s;}
+        
         .color-bronce { filter: sepia(1) hue-rotate(10deg) saturate(2) brightness(0.9); }
         .color-plata { filter: grayscale(1) brightness(1.5); }
         .color-oxido { filter: sepia(1) hue-rotate(-20deg) saturate(1.5) brightness(0.6); }
         .estado-roto { transform: rotate(15deg); opacity: 0.8; }
-        .estado-roto::after { content: '💥'; position: absolute; font-size: 25px; top: -5px; right: -5px; }
+        .estado-roto::after { content: '💥'; position: absolute; font-size: 45px; top: -10px; right: -10px; }
 
-        /* Panel de Variables (Tooltip del escáner) */
-        .var-panel { position: absolute; top: 15px; left: 50%; transform: translateX(60px); background: rgba(0,0,0,0.8); border: 2px solid var(--steam-green); color: var(--steam-green); padding: 8px 12px; font-size: 14px; border-radius: 5px; z-index: 10; opacity: 0; transition: opacity 0.2s; box-shadow: 0 0 10px rgba(74,222,128,0.2); pointer-events: none;}
+        .var-panel { position: absolute; top: 40px; left: 50%; transform: translateX(-50%); background: rgba(0,15,0,0.85); border: 4px solid var(--steam-green); color: var(--steam-green); padding: 20px 30px; font-size: 22px; border-radius: 10px; z-index: 10; opacity: 0; transition: opacity 0.2s; box-shadow: 0 0 30px rgba(74,222,128,0.3), inset 0 0 20px rgba(74,222,128,0.2); pointer-events: none; width: 85%; max-width: 400px; box-sizing: border-box;}
         .var-panel.active { opacity: 1; }
-        .var-title { font-weight: bold; margin-bottom: 5px; border-bottom: 1px dashed var(--steam-green); padding-bottom: 3px; color: #fff;}
-        .var-line { display: flex; justify-content: space-between; gap: 15px; margin-bottom: 2px;}
-        .var-val { color: #fff; font-weight: bold; }
+        .var-title { font-weight: bold; font-size: 26px; margin-bottom: 15px; border-bottom: 2px dashed var(--steam-green); padding-bottom: 8px; color: #fff; text-align: center; text-shadow: 0 0 10px rgba(255,255,255,0.5);}
+        .var-line { display: flex; justify-content: space-between; gap: 15px; margin-bottom: 8px;}
+        .var-val { color: #fff; font-weight: bold; text-shadow: 0 0 8px rgba(255,255,255,0.8);}
 
-        /* EDITOR DE LÓGICA (SEUDOCÓDIGO EN ESPAÑOL) */
-        .code-editor { flex: 1; background: var(--wood-dark); border: 6px solid var(--brass); border-radius: 10px; padding: 20px; box-shadow: inset 0 0 30px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 15px; position: relative;}
+        /* EDITOR DE LÓGICA (COLUMNA DERECHA) */
+        .code-editor { flex: 1.2; background: var(--wood-dark); border: 6px solid var(--brass); border-radius: 12px; padding: 20px; box-shadow: inset 0 0 40px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 15px; position: relative;}
         
-        .code-block { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 5px; border-left: 4px solid var(--copper); font-size: clamp(14px, 2.5vh, 18px); color: #ddd; box-shadow: inset 0 0 10px rgba(0,0,0,0.8);}
-        .logic-header { font-family: 'Rye', serif; color: var(--brass); font-size: 20px; margin-bottom: 10px; text-shadow: 1px 1px 2px #000; letter-spacing: 1px; border-bottom: 1px solid var(--wood-light); padding-bottom: 5px;}
-        .logic-keyword { color: #d4af37; font-weight: bold; padding: 0 4px; background: rgba(212,175,55,0.1); border-radius: 3px;}
+        .code-block { background: rgba(0,0,0,0.6); padding: 20px; border-radius: 8px; border-left: 6px solid var(--copper); font-size: clamp(14px, 2.5vh, 18px); color: #ddd; box-shadow: inset 0 0 15px rgba(0,0,0,0.8); flex: 1; overflow-y: auto;}
+        .logic-header { font-family: 'Rye', serif; color: var(--brass); font-size: 22px; margin-bottom: 15px; text-shadow: 1px 1px 2px #000; letter-spacing: 1px; border-bottom: 2px solid var(--wood-light); padding-bottom: 10px;}
+        .logic-keyword { color: #d4af37; font-weight: bold; padding: 2px 6px; background: rgba(212,175,55,0.15); border-radius: 4px; font-size: 110%;}
         
-        .condition-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 12px 0 12px 25px; background: rgba(255,255,255,0.05); padding: 8px; border-radius: 5px; border: 1px dashed rgba(255,255,255,0.1);}
+        .condition-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 15px 0 15px 20px; background: rgba(255,255,255,0.05); padding: 12px; border-radius: 6px; border: 1px dashed rgba(255,255,255,0.2);}
         
-        select { background: #111; color: var(--steam-green); border: 2px solid var(--steel); padding: 6px 10px; font-family: 'Courier Prime', monospace; font-size: 16px; border-radius: 4px; cursor: pointer; outline: none; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);}
-        select:focus { border-color: var(--copper); }
+        select { background: #111; color: var(--steam-green); border: 2px solid var(--steel); padding: 6px 10px; font-family: 'Courier Prime', monospace; font-size: 16px; border-radius: 6px; cursor: pointer; outline: none; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5); font-weight: bold;}
+        select:focus { border-color: var(--copper); box-shadow: 0 0 10px rgba(184,93,25,0.5);}
         select.op-select { color: var(--steam-red); font-weight: bold; }
         select.val-select { color: #fff; }
         select.conn-select { background: var(--copper); color: #000; font-weight: bold; border-color: var(--brass);}
 
-        .connector-row { margin: 5px 0 5px 25px; display: flex; align-items: center; gap: 10px;}
+        .connector-row { margin: 10px 0 10px 20px; display: flex; align-items: center; gap: 10px;}
 
-        .result-blocks { margin-top: 15px; margin-left: 25px; display: flex; flex-direction: column; gap: 8px;}
+        .result-blocks { margin-top: 15px; margin-left: 20px; display: flex; flex-direction: column; gap: 8px; font-size: 110%;}
         .res-line { color: #ccc; }
-        .res-accept { color: var(--steam-green); font-weight: bold; background: rgba(74,222,128,0.1); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--steam-green);}
-        .res-reject { color: var(--steam-red); font-weight: bold; background: rgba(248,113,113,0.1); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--steam-red);}
+        .res-accept { color: var(--steam-green); font-weight: bold; background: rgba(74,222,128,0.15); padding: 4px 8px; border-radius: 6px; border: 2px solid var(--steam-green);}
+        .res-reject { color: var(--steam-red); font-weight: bold; background: rgba(248,113,113,0.15); padding: 4px 8px; border-radius: 6px; border: 2px solid var(--steam-red);}
 
         .controls { display: flex; justify-content: flex-end; margin-top: auto;}
-        .run-btn { background: var(--steam-green); border: 2px solid #22c55e; padding: 12px 30px; font-size: 18px; color: #000; border-radius: 5px; text-transform: uppercase; font-weight: bold; font-family: 'Courier Prime', monospace; cursor:pointer; transition: all 0.1s; box-shadow: 0 4px 0 #166534; display: flex; align-items: center; gap: 10px;}
-        .run-btn:active { transform: translateY(4px); box-shadow: none; }
+        .run-btn { background: var(--steam-green); border: 3px solid #22c55e; padding: 15px 25px; font-size: 20px; color: #000; border-radius: 8px; text-transform: uppercase; font-weight: bold; font-family: 'Courier Prime', monospace; cursor:pointer; transition: all 0.1s; box-shadow: 0 6px 0 #166534; display: flex; align-items: center; gap: 10px; width: 100%; justify-content: center; letter-spacing: 1px;}
+        .run-btn:active { transform: translateY(6px); box-shadow: none; }
         .run-btn:disabled { background: #444; border-color: #333; color: #777; box-shadow: none; cursor: not-allowed; transform: none;}
 
         /* MODAL */
@@ -132,13 +136,13 @@
         .modal-title { font-family: 'Rye', serif; font-size: 28px; margin-top: 0; margin-bottom: 10px; color: var(--brass); text-shadow: 2px 2px 4px #000;}
         .modal-msg { font-size: 18px; margin-bottom: 25px; color: var(--paper); white-space: pre-line; line-height: 1.5; }
         
-        .feedback-overlay { position: absolute; inset: 0; z-index: 50; display: flex; justify-content: center; align-items: center; font-family: 'Rye', serif; font-size: 60px; pointer-events: none; opacity: 0; transition: opacity 0.2s, transform 0.2s;}
+        .feedback-overlay { position: absolute; inset: 0; z-index: 50; display: flex; justify-content: center; align-items: center; font-family: 'Rye', serif; font-size: 100px; pointer-events: none; opacity: 0; transition: opacity 0.2s, transform 0.2s;}
         .feedback-overlay.show { opacity: 1; transform: scale(1.2); }
-        .feedback-accept { color: var(--steam-green); text-shadow: 0 0 20px #000; }
-        .feedback-reject { color: var(--steam-red); text-shadow: 0 0 20px #000; }
+        .feedback-accept { color: var(--steam-green); text-shadow: 0 0 30px #000; }
+        .feedback-reject { color: var(--steam-red); text-shadow: 0 0 30px #000; }
         
         .alarm-flash { animation: flashRed 0.5s infinite alternate; }
-        @keyframes flashRed { from { box-shadow: inset 0 0 30px #000; } to { box-shadow: inset 0 0 80px rgba(255,0,0,0.8); } }
+        @keyframes flashRed { from { box-shadow: inset 0 0 30px #000; } to { box-shadow: inset 0 0 100px rgba(255,0,0,0.9); } }
     </style>
 </head>
 <body>
@@ -157,7 +161,7 @@
             <h1>CONTROL DE CALIDAD</h1>
             <div class="instruction-step">
                 <span class="instruction-icon">📋</span>
-                <span class="instruction-text"><b>EL TRABAJO:</b> Eres el inspector de la fábrica. Debes configurar la máquina para que acepte solo las piezas que el Jefe pide. ¡La dificultad es máxima!</span>
+                <span class="instruction-text"><b>EL TRABAJO:</b> Eres el inspector de la fábrica. Debes traducir las órdenes ambiguas del Jefe a reglas lógicas precisas para la máquina.</span>
             </div>
             <div class="instruction-step">
                 <span class="instruction-icon">⚙️</span>
@@ -165,11 +169,11 @@
             </div>
             <div class="instruction-step">
                 <span class="instruction-icon">🧠</span>
-                <span class="instruction-text"><b>LÓGICA DURA:</b> Usa los selectores para construir tu regla condicional (<b>SI</b> esto pasa <b>ENTONCES</b> hacemos esto).</span>
+                <span class="instruction-text"><b>LÓGICA DEDUCTIVA:</b> Si el Jefe te dice "nada de chatarra oxidada", tu código debe decir: SI el Color es DISTINTO A "Óxido".</span>
             </div>
             <div class="instruction-step">
                 <span class="instruction-icon">🔀</span>
-                <span class="instruction-text"><b>CONECTORES:</b> En estos niveles avanzados <b class="err">SIEMPRE</b> usarás 2 condiciones unidas por <b>"Y ADEMÁS"</b> (ambas deben cumplirse) u <b>"O TAMBIÉN"</b> (basta con una).</span>
+                <span class="instruction-text"><b>CONECTORES:</b> Configura 2 condiciones unidas por <b>"Y ADEMÁS"</b> (ambas deben cumplirse) u <b>"O TAMBIÉN"</b> (basta con una sola).</span>
             </div>
             <button class="start-btn" onclick="startGame()">FICHAR ENTRADA</button>
         </div>
@@ -181,36 +185,40 @@
         <div class="hud-box">LOTES EVALUADOS: <span id="level-display">0</span></div>
     </div>
 
+    <!-- DISEÑO 2 COLUMNAS -->
     <div class="main-layout">
         
-        <!-- NOTA DEL JEFE -->
-        <div class="briefing-board">
-            <div class="briefing-title">Orden del Jefe:</div>
-            <div id="mission-text">Cargando instrucciones...</div>
-        </div>
-
-        <!-- FÁBRICA VISUAL -->
-        <div class="factory-floor" id="factory">
-            <div class="belt-bg" id="belt"></div>
-            
-            <div class="scanner-arch">
-                <div class="laser" id="laser"></div>
+        <!-- COLUMNA VISUAL (IZQUIERDA) -->
+        <div class="visual-column">
+            <!-- NOTA DEL JEFE (LENGUAJE NATURAL) -->
+            <div class="briefing-board">
+                <div class="briefing-title">Nota del Jefe:</div>
+                <div id="mission-text" style="font-family: 'Courier Prime', monospace; color: #2c1e16; font-weight: normal; line-height: 1.4;">Cargando instrucciones...</div>
             </div>
 
-            <div class="item-container" id="item">⚙️</div>
+            <!-- FÁBRICA VISUAL -->
+            <div class="factory-floor" id="factory">
+                <div class="belt-bg" id="belt"></div>
+                
+                <div class="scanner-arch">
+                    <div class="laser" id="laser"></div>
+                </div>
 
-            <!-- Panel de Variables (Tooltip) -->
-            <div class="var-panel" id="var-panel">
-                <div class="var-title">DATOS ESCANEADOS</div>
-                <div class="var-line"><span>Tipo:</span> <span class="var-val" id="var-tipo">---</span></div>
-                <div class="var-line"><span>Color:</span> <span class="var-val" id="var-color">---</span></div>
-                <div class="var-line"><span>Estado:</span> <span class="var-val" id="var-estado">---</span></div>
+                <div class="item-container" id="item">⚙️</div>
+
+                <!-- Panel de Variables (Tooltip GIGANTE) -->
+                <div class="var-panel" id="var-panel">
+                    <div class="var-title">DATOS ESCANEADOS</div>
+                    <div class="var-line"><span>Tipo:</span> <span class="var-val" id="var-tipo">---</span></div>
+                    <div class="var-line"><span>Color:</span> <span class="var-val" id="var-color">---</span></div>
+                    <div class="var-line"><span>Estado:</span> <span class="var-val" id="var-estado">---</span></div>
+                </div>
+
+                <div class="feedback-overlay" id="feedback-msg"></div>
             </div>
-
-            <div class="feedback-overlay" id="feedback-msg"></div>
         </div>
 
-        <!-- EDITOR DE LÓGICA (SEUDOCÓDIGO EN ESPAÑOL) -->
+        <!-- EDITOR DE LÓGICA (COLUMNA DERECHA) -->
         <div class="code-editor">
             <div class="code-block">
                 <div class="logic-header">⚙️ REGLA DE INSPECCIÓN COMPUESTA</div>
@@ -284,11 +292,11 @@
                 </div>
 
                 <div class="result-blocks">
-                    <div class="res-line"><span class="logic-keyword">ENTONCES</span> <span class="res-accept">ACEPTAR</span> la pieza.</div>
+                    <div class="res-line"><span class="logic-keyword">ENTONCES</span> <span class="res-accept">ACEPTAR</span> pieza.</div>
                 </div>
                 
                 <div class="result-blocks" style="margin-top: 8px;">
-                    <div class="res-line"><span class="logic-keyword">DE LO CONTRARIO</span> <span class="res-reject">RECHAZAR</span> la pieza.</div>
+                    <div class="res-line"><span class="logic-keyword">DE LO CONTRARIO</span> <span class="res-reject">RECHAZAR</span> pieza.</div>
                 </div>
             </div>
 
@@ -349,7 +357,45 @@
         // DATOS DEL JUEGO
         const emojis = { 'Engranaje': '⚙️', 'Llave': '🔧', 'Imán': '🧲' };
         
-        // DICCIONARIOS PARA GENERACIÓN PROCEDURAL
+        // Diccionario de lenguaje natural (Requerimientos de Negocio)
+        const naturalPhrases = {
+            'Engranaje': { 
+                '==': ['que sea un engranaje', 'necesito engranajes', 'busco ruedas dentadas (engranajes)', 'solo me sirven engranajes', 'piezas dentadas tipo engranaje'], 
+                '!=': ['que NO sea un engranaje', 'evita los engranajes a toda costa', 'nada de engranajes', 'tira los engranajes a la fundición', 'ninguna rueda dentada'] 
+            },
+            'Llave': { 
+                '==': ['que sea una llave', 'ocupamos llaves de ajuste', 'solo llaves mecánicas', 'pasa únicamente las llaves', 'necesito una llave'], 
+                '!=': ['que NO sea una llave', 'tira cualquier llave que veas', 'cero llaves', 'rechaza las herramientas tipo llave', 'que no pase ninguna llave'] 
+            },
+            'Imán': { 
+                '==': ['que sea un imán', 'requerimos piezas magnéticas (imanes)', 'solo imanes', 'asegúrate de que sea un imán', 'necesitamos un imán urgente'], 
+                '!=': ['que NO sea un imán', 'aleja los imanes de aquí', 'descarta los imanes', 'nada magnético', 'los imanes son basura hoy'] 
+            },
+            'Bronce': { 
+                '==': ['que tenga un acabado de bronce', 'de color bronce', 'hecha de bronce', 'con aspecto de bronce', 'que sea puro bronce'], 
+                '!=': ['que NO sea de bronce', 'rechaza el bronce', 'de cualquier color menos bronce', 'evita el tono cobrizo del bronce', 'tira el bronce'] 
+            },
+            'Plata': { 
+                '==': ['que brille como la plata', 'de color plata', 'plateada', 'que sea metal plateado', 'buscamos color plata'], 
+                '!=': ['que NO sea de plata', 'evita las piezas de plata', 'nada plateado', 'ningún metal color plata', 'cero cosas plateadas'] 
+            },
+            'Óxido': { 
+                '==': ['que esté cubierta de óxido', 'de color óxido', 'oxidada', 'con tono óxido', 'que sea óxido puro'], 
+                '!=': ['que NO tenga óxido', 'rechaza las piezas oxidadas', 'que no sea color óxido', 'nada de basura oxidada', 'tira todo lo oxidado'] 
+            },
+            'Nuevo': { 
+                '==': ['que esté en estado nuevo', 'recién fabricada (nueva)', 'impecable y nueva', 'en condición nueva', 'que sea nueva'], 
+                '!=': ['que NO sea nueva', 'evita las piezas nuevas', 'rechaza lo nuevo', 'nada que brille de nuevo', 'las nuevas no sirven'] 
+            },
+            'Roto': { 
+                '==': ['que esté rota', 'que sea chatarra rota', 'en estado roto', 'que venga rota', 'buscamos cosas rotas'], 
+                '!=': ['que NO esté rota', 'nada de chatarra rota', 'que esté entera (no rota)', 'evita las piezas rotas', 'cero piezas rotas'] 
+            }
+        };
+        
+        const andConnectors = ['y que además', 'y al mismo tiempo', 'y estrictamente', 'y asegúrate de', 'y por supuesto'];
+        const orConnectors = ['o como alternativa', 'o si no, me sirve', 'o en su defecto', 'o también acepto', 'o bien'];
+
         const propKeys = ['tipo', 'color', 'estado'];
         const valuesDict = {
             'tipo': ['Engranaje', 'Llave', 'Imán'],
@@ -358,10 +404,6 @@
         };
         const opKeys = ['==', '!='];
         const connKeys = ['AND', 'OR'];
-
-        const propNombres = { 'tipo': "el Tipo", 'color': "el Color", 'estado': "el Estado" };
-        const opNombres = { '==': "sea EXACTAMENTE", '!=': "NO SEA" };
-        const connNombres = { 'AND': "Y ADEMÁS", 'OR': "O TAMBIÉN" };
 
         let levelsCompleted = 0;
         let currentLevelDef = null;
@@ -380,12 +422,10 @@
         }
 
         function generateProceduralLevel() {
-            // Seleccionar Propiedad 1
             let p1 = propKeys[Math.floor(Math.random() * propKeys.length)];
             let o1 = opKeys[Math.floor(Math.random() * opKeys.length)];
             let v1 = valuesDict[p1][Math.floor(Math.random() * valuesDict[p1].length)];
 
-            // Seleccionar Propiedad 2 (diferente a la 1 para que sea un reto real)
             let p2;
             do {
                 p2 = propKeys[Math.floor(Math.random() * propKeys.length)];
@@ -396,15 +436,18 @@
 
             let cn = connKeys[Math.floor(Math.random() * connKeys.length)];
 
-            // Construir función de evaluación
             let evalFunc = (pieza) => {
                 let res1 = (o1 === '==') ? (pieza[p1] === v1) : (pieza[p1] !== v1);
                 let res2 = (o2 === '==') ? (pieza[p2] === v2) : (pieza[p2] !== v2);
                 return (cn === 'AND') ? (res1 && res2) : (res1 || res2);
             };
 
-            // Construir texto de la misión
-            let missionText = `NUEVA ORDEN DE FABRICACIÓN:\n\n-> Necesito que aceptes la pieza SÓLO SI ${propNombres[p1]} ${opNombres[o1]} "${v1}"\n\n   ${connNombres[cn]} si ${propNombres[p2]} ${opNombres[o2]} "${v2}".\n\n(Rechaza todo lo demás que no cumpla esto).`;
+            // Construir texto en lenguaje natural
+            let phrase1 = naturalPhrases[v1][o1][Math.floor(Math.random() * naturalPhrases[v1][o1].length)];
+            let phrase2 = naturalPhrases[v2][o2][Math.floor(Math.random() * naturalPhrases[v2][o2].length)];
+            let connWord = (cn === 'AND') ? andConnectors[Math.floor(Math.random() * andConnectors.length)] : orConnectors[Math.floor(Math.random() * orConnectors.length)];
+
+            let missionText = `"Escucha bien, inspector. Configura la máquina para que pase el lote.\n\nSolo quiero piezas ${phrase1}...\n${connWord} ${phrase2}.\n\n¡El resto tíralo a la fundición!"`;
 
             return { text: missionText, evalFunc: evalFunc };
         }
@@ -419,8 +462,6 @@
 
         function generateBatchForLevel() {
             currentBatch = [];
-            
-            // Generar 5 piezas aleatorias para el lote
             for(let i=0; i<5; i++) {
                 currentBatch.push({
                     tipo: valuesDict['tipo'][Math.floor(Math.random() * valuesDict['tipo'].length)],
@@ -430,7 +471,6 @@
             }
         }
 
-        // MOTOR EVALUADOR DEL JUGADOR
         function evaluatePlayerLogic(pieza) {
             const getVal = (prop) => pieza[prop];
             
@@ -478,38 +518,32 @@
             let feedback = document.getElementById('feedback-msg');
             let laser = document.getElementById('laser');
 
-            // Reset item styles
             itemEl.className = 'item-container';
-            itemEl.style.left = '-100px';
-            itemEl.style.bottom = '25px';
+            itemEl.style.left = '-150px';
+            itemEl.style.bottom = '45px';
             itemEl.style.opacity = '1';
             
-            // Set visuals based on properties
             itemEl.innerText = emojis[pieza.tipo];
             itemEl.classList.add(`color-${pieza.color.toLowerCase().replace('ó','o')}`);
             if(pieza.estado === 'Roto') itemEl.classList.add('estado-roto');
 
             sfxBelt();
 
-            // Animar entrada
             setTimeout(() => {
                 itemEl.style.left = '50%';
                 itemEl.style.transform = 'translateX(-50%)';
             }, 100);
 
-            // Escanear
             setTimeout(() => {
                 document.getElementById('belt').classList.remove('moving');
                 sfxScan();
-                laser.style.height = '60px'; // Bajar laser
+                laser.style.height = 'calc(100% - 150px)'; 
                 
-                // Mostrar variables en tooltip
                 document.getElementById('var-tipo').innerText = `"${pieza.tipo}"`;
                 document.getElementById('var-color').innerText = `"${pieza.color}"`;
                 document.getElementById('var-estado').innerText = `"${pieza.estado}"`;
                 varPanel.classList.add('active');
 
-                // Evaluar
                 setTimeout(() => {
                     laser.style.height = '0';
                     varPanel.classList.remove('active');
@@ -520,21 +554,20 @@
                     if (playerDecision !== correctDecision) {
                         hasErrorInBatch = true;
                         triggerError(playerDecision, correctDecision, pieza);
-                        return; // Se detiene aquí
+                        return; 
                     }
 
-                    // Animación de salida correcta
                     feedback.className = 'feedback-overlay show';
                     if (playerDecision) {
                         sfxAccept();
                         feedback.innerText = '✔️';
                         feedback.classList.add('feedback-accept');
-                        itemEl.style.left = '120%'; // Mover derecha
+                        itemEl.style.left = '120%'; 
                     } else {
                         sfxReject();
                         feedback.innerText = '❌';
                         feedback.classList.add('feedback-reject');
-                        itemEl.style.bottom = '-100px'; // Caer por la trampilla
+                        itemEl.style.bottom = '-150px'; 
                         itemEl.style.opacity = '0';
                     }
 
@@ -545,9 +578,9 @@
                         processNextItem();
                     }, 800);
 
-                }, 1500); // Tiempo escaneando
+                }, 1500); 
 
-            }, 700); // Tiempo de entrada
+            }, 700); 
         }
 
         function triggerError(pDec, cDec, pieza) {
@@ -563,7 +596,7 @@
             showModal("⚠️ LÓGICA INCORRECTA ⚠️", msg, () => {
                 document.getElementById('factory').classList.remove('alarm-flash');
                 document.getElementById('belt').classList.remove('moving');
-                document.getElementById('item').style.left = '-100px';
+                document.getElementById('item').style.left = '-150px';
                 isProcessing = false;
                 document.getElementById('run-btn').disabled = false;
             });
@@ -579,7 +612,7 @@
                 showModal("¡LOTE APROBADO!", "Tu regla filtró las 5 piezas perfectamente.\nPreparando la siguiente orden del Jefe...", () => {
                     isProcessing = false;
                     document.getElementById('run-btn').disabled = false;
-                    generateAndLoadLevel(); // Cargar siguiente nivel procedural
+                    generateAndLoadLevel(); 
                 });
             }
         }

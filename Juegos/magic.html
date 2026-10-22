@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Vector Drive: Estructuras de Datos 🏎️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Rajdhani:wght@500;700;800&family=Righteous&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { 
+            --bg-dark: #090314;
+            --neon-pink: #ff2a6d;
+            --neon-blue: #05d9e8;
+            --neon-yellow: #fffa65;
+            --grid-color: #011f4b;
+            --panel-bg: rgba(9, 3, 20, 0.85);
+            
+            --val-rojo: #ff2a6d;
+            --val-azul: #05d9e8;
+            --val-ama: #fffa65;
+        }
+
+        body, html { 
+            font-family: 'Rajdhani', sans-serif; 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            margin: 0; padding: 0; width: 100vw; height: 100vh; 
+            color: #fff; background-color: var(--bg-dark); 
+            overflow: hidden; box-sizing: border-box; user-select: none;
+        }
+
+        /* FONDO SYNTHWAVE */
+        .decorations { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; background: linear-gradient(to bottom, #11052C 0%, #3D087B 50%, #090314 50%, #090314 100%); }
+        
+        .sun { position: absolute; width: 300px; height: 300px; background: linear-gradient(to bottom, #fffa65 0%, #ff2a6d 100%); border-radius: 50%; left: 50%; top: 50%; transform: translate(-50%, -100%); box-shadow: 0 0 50px #ff2a6d; clip-path: polygon(0 0, 100% 0, 100% 70%, 0 70%, 0 75%, 100% 75%, 100% 80%, 0 80%, 0 85%, 100% 85%, 100% 90%, 0 90%, 0 95%, 100% 95%, 100% 100%, 0 100%);}
+        
+        .mountains { position: absolute; bottom: 50%; left: 0; width: 100%; height: 100px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 100' preserveAspectRatio='none'%3E%3Cpath d='M0,100 L100,20 L200,80 L350,10 L500,90 L650,30 L800,70 L900,10 L1000,100 Z' fill='%23011f4b' stroke='%2305d9e8' stroke-width='2'/%3E%3C/svg%3E") repeat-x; background-size: auto 100%;}
+        
+        .grid-bg { position: absolute; top: 50%; left: -50%; width: 200%; height: 100%; background-image: linear-gradient(var(--neon-pink) 1px, transparent 1px), linear-gradient(90deg, var(--neon-blue) 1px, transparent 1px); background-size: 60px 40px; transform: perspective(300px) rotateX(60deg); transform-origin: top center; animation: gridScroll 1s linear infinite; box-shadow: inset 0 50px 100px #090314;}
+        
+        @keyframes gridScroll { from { background-position: 0 0; } to { background-position: 0 40px; } }
+
+        .sound-toggle { position: absolute; top: 15px; right: 15px; background: rgba(9,3,20,0.8); border: 2px solid var(--neon-blue); border-radius: 8px; width: 45px; height: 45px; font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 1000; box-shadow: 0 0 15px rgba(5,217,232,0.3); transition: all 0.2s; color: var(--neon-blue);}
+        .sound-toggle:active { transform: scale(0.9); }
+
+        /* PANTALLA DE INSTRUCCIONES */
+        #instructions-screen { position: absolute; inset: 0; z-index: 600; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(9,3,20,0.95); backdrop-filter: blur(8px); }
+        .instructions-card { background: var(--panel-bg); padding: 40px; border-radius: 12px; border: 2px solid var(--neon-pink); max-width: 90%; width: 750px; display: flex; flex-direction: column; gap: 20px; box-shadow: 0 0 50px rgba(255,42,109,0.3); }
+        .instructions-card h1 { font-family: 'Righteous', cursive; font-size: 45px; color: var(--neon-blue); margin: 0; text-align: center; text-shadow: 2px 2px 0px var(--neon-pink), 0 0 20px var(--neon-blue); letter-spacing: 2px;}
+        .instruction-step { display: flex; gap: 15px; align-items: flex-start; font-size: 17px; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; border: 1px solid rgba(5,217,232,0.3);}
+        .instruction-icon { font-size: 30px; flex-shrink: 0; }
+        .instruction-text b { color: var(--neon-yellow); font-family: 'Fira Code', monospace;}
+        .instruction-text .kw { color: var(--neon-pink); font-family: 'Fira Code', monospace;}
+        
+        .start-btn { background: var(--neon-pink); border: none; padding: 15px 40px; font-size: 22px; color: #fff; border-radius: 6px; text-transform: uppercase; font-weight: bold; font-family: 'Righteous', cursive; cursor:pointer; transition: all 0.2s; align-self: center; box-shadow: 0 5px 0 #b3003a, 0 10px 20px rgba(255,42,109,0.4); letter-spacing: 2px;}
+        .start-btn:active { transform: translateY(5px); box-shadow: 0 0 0 #b3003a; }
+
+        /* HEADER DEL JUEGO */
+        .game-header { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1200px; padding: 15px 2vw; z-index: 10; box-sizing: border-box;}
+        .title-display { font-family: 'Righteous', cursive; font-size: 28px; color: var(--neon-blue); text-shadow: 2px 2px 0 var(--neon-pink); letter-spacing: 2px;}
+        .hud-box { background: var(--panel-bg); padding: 8px 20px; border-radius: 6px; border: 1px solid var(--neon-yellow); font-size: 20px; color: #fff; box-shadow: 0 0 15px rgba(255,250,101,0.2); font-family: 'Fira Code', monospace;}
+        .hud-box span { color: var(--neon-yellow); font-weight: bold;}
+
+        /* LAYOUT PRINCIPAL */
+        .main-layout { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 1200px; flex: 1; padding: 0 2vw 2vh 2vw; box-sizing: border-box; overflow: hidden;}
+        
+        /* =========================================================
+           ESCENA VISUAL (ARRIBA)
+           ========================================================= */
+        .scene-container { flex: 1; background: transparent; border: 2px solid var(--neon-blue); border-radius: 12px; position: relative; box-shadow: inset 0 0 50px rgba(5,217,232,0.2); display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 20px; overflow: hidden;}
+        
+        /* Puerta de Seguridad (Target Array) */
+        .security-gate { background: rgba(0,0,0,0.8); border: 2px dashed var(--neon-pink); border-radius: 8px; padding: 15px 30px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 0 30px rgba(255,42,109,0.5); z-index: 5; margin-top: 10px;}
+        .gate-title { font-family: 'Fira Code', monospace; color: var(--neon-pink); font-size: 16px; margin-bottom: 10px; text-transform: uppercase; font-weight: bold;}
+        .array-display { display: flex; gap: 10px; background: #000; padding: 10px; border-radius: 6px; border: 1px solid #333; min-width: 60px; min-height: 40px; justify-content: center; align-items: center;}
+        
+        /* Bloques de Datos */
+        .data-block { width: 35px; height: 35px; border-radius: 4px; border: 2px solid #fff; display: flex; justify-content: center; align-items: center; font-weight: bold; font-family: 'Fira Code', monospace; color: #000; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 0 10px currentColor;}
+        .val-R { background: var(--val-rojo); color: var(--val-rojo); border-color: #fff;}
+        .val-B { background: var(--val-azul); color: var(--val-azul); border-color: #fff;}
+        .val-Y { background: var(--val-ama); color: var(--val-ama); border-color: #000;}
+
+        /* Vehículo (Current Array) */
+        .car-container { position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; transition: transform 0.5s ease-in;}
+        .car-sprite { font-size: 60px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.8)); margin-bottom: -15px; z-index: 2;}
+        .car-array { display: flex; gap: 5px; background: rgba(5,217,232,0.1); border: 2px solid var(--neon-blue); padding: 8px; border-radius: 6px; box-shadow: 0 0 20px rgba(5,217,232,0.4); backdrop-filter: blur(4px); z-index: 3; min-width: 45px; min-height: 40px; justify-content: center; align-items: center;}
+        
+        .array-index { position: absolute; font-size: 10px; color: #888; bottom: -15px; font-family: 'Fira Code', monospace;}
+
+        /* Animaciones para los métodos */
+        .anim-push { animation: slideInRight 0.3s forwards; }
+        .anim-pop { animation: popOutRight 0.3s forwards; }
+        .anim-unshift { animation: slideInLeft 0.3s forwards; }
+        .anim-shift { animation: popOutLeft 0.3s forwards; }
+        
+        @keyframes slideInRight { from { transform: translateX(30px) scale(0); opacity: 0; } to { transform: translateX(0) scale(1); opacity: 1; } }
+        @keyframes popOutRight { to { transform: translateX(30px) scale(0); opacity: 0; margin-right: -40px;} }
+        @keyframes slideInLeft { from { transform: translateX(-30px) scale(0); opacity: 0; } to { transform: translateX(0) scale(1); opacity: 1; } }
+        @keyframes popOutLeft { to { transform: translateX(-30px) scale(0); opacity: 0; margin-left: -40px;} }
+
+        /* =========================================================
+           CONSOLA DE PROGRAMACIÓN (ABAJO)
+           ========================================================= */
+        .console-section { display: flex; flex-direction: column; gap: 15px;}
+
+        /* Selector de Datos (Parámetros) */
+        .data-selector { background: var(--panel-bg); border: 1px solid #333; padding: 15px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; gap: 10px;}
+        .ds-title { font-family: 'Fira Code', monospace; color: #aaa; font-size: 14px;}
+        .color-palette { display: flex; gap: 15px;}
+        .color-btn { width: 50px; height: 50px; border-radius: 8px; cursor: pointer; border: 3px solid transparent; transition: all 0.2s; box-shadow: 0 0 10px currentColor;}
+        .color-btn.selected { border-color: #fff; transform: scale(1.1); box-shadow: 0 0 20px #fff, 0 0 30px currentColor;}
+
+        /* Botones de Métodos */
+        .methods-panel { display: flex; flex-direction: column; gap: 10px; background: var(--panel-bg); border: 2px solid var(--grid-color); padding: 15px; border-radius: 8px; box-shadow: inset 0 0 20px rgba(0,0,0,0.8);}
+        
+        .method-row { display: flex; justify-content: space-between; align-items: center; gap: 10px;}
+        .method-center { flex: 1; text-align: center; font-family: 'Fira Code', monospace; font-size: 18px; color: #fff; border-bottom: 2px dashed #444; padding-bottom: 5px;}
+        .method-center span { color: var(--neon-blue); }
+
+        .method-btn { background: #111; border: 2px solid; padding: 12px 20px; font-family: 'Fira Code', monospace; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; min-width: 160px; color: #fff;}
+        .method-btn:hover { filter: brightness(1.3); transform: translateY(-2px);}
+        .method-btn:active { transform: translateY(2px);}
+        .method-btn small { font-size: 11px; font-family: 'Rajdhani', sans-serif; opacity: 0.8; margin-top: 3px;}
+
+        /* Colores por zona (Inicio vs Final) */
+        .btn-shift { border-color: var(--neon-pink); color: var(--neon-pink); }
+        .btn-unshift { border-color: var(--neon-pink); background: rgba(255,42,109,0.1); }
+        .btn-pop { border-color: var(--neon-yellow); color: var(--neon-yellow); }
+        .btn-push { border-color: var(--neon-yellow); background: rgba(255,250,101,0.1); color: var(--neon-yellow);}
+
+        /* Log de ejecución */
+        .code-log { background: #000; border: 1px solid #333; padding: 10px; border-radius: 4px; font-family: 'Fira Code', monospace; font-size: 14px; color: #888; height: 60px; overflow-y: auto; display: flex; flex-direction: column; justify-content: flex-end;}
+        .log-entry { margin-top: 2px; color: #a5d6ff;}
+        .log-entry span.kw { color: #ff7b72; }
+
+        /* Botón Verificar */
+        .verify-btn { background: var(--neon-blue); border: none; padding: 15px; font-size: 20px; color: #000; border-radius: 8px; text-transform: uppercase; font-weight: bold; font-family: 'Righteous', cursive; cursor: pointer; transition: all 0.2s; box-shadow: 0 5px 0 #02808a, 0 5px 20px rgba(5,217,232,0.4); letter-spacing: 2px; margin-top: 5px;}
+        .verify-btn:active { transform: translateY(5px); box-shadow: none; }
+        .verify-btn:disabled { background: #333; color: #777; box-shadow: none; cursor: not-allowed;}
+
+        /* MODAL */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 1000; visibility: hidden; opacity: 0; transition: all 0.3s; backdrop-filter: blur(8px);}
+        .modal-overlay.active { visibility: visible; opacity: 1; }
+        .modal-box { background: var(--panel-bg); padding: 40px; border-radius: 12px; text-align: center; max-width: 85%; width: 450px; transform: scale(0.9); transition: transform 0.3s; border: 2px solid var(--neon-blue); box-shadow: 0 0 50px rgba(5,217,232,0.3);}
+        .modal-overlay.active .modal-box { transform: scale(1); }
+        .modal-title { font-family: 'Righteous', cursive; font-size: 32px; margin-top: 0; margin-bottom: 15px; color: var(--neon-blue); text-shadow: 0 0 15px rgba(5,217,232,0.5);}
+        .modal-msg { font-size: 18px; margin-bottom: 30px; color: #fff; white-space: pre-line; line-height: 1.5; font-family: 'Rajdhani', sans-serif;}
+        .modal-btn { background: transparent; border: 2px solid var(--neon-pink); color: var(--neon-pink); padding: 12px 30px; font-size: 18px; border-radius: 6px; text-transform: uppercase; font-weight: bold; cursor:pointer; font-family: 'Righteous', cursive; transition: all 0.2s;}
+        .modal-btn:hover { background: var(--neon-pink); color: #fff; box-shadow: 0 0 20px var(--neon-pink);}
+        
+        .car-drive-anim { animation: driveThrough 1s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;}
+        @keyframes driveThrough { 0% { transform: translateY(0) scale(1); } 100% { transform: translateY(-300px) scale(0.2); opacity: 0;} }
+
+    </style>
+</head>
+<body>
+
+    <audio id="bgm" loop><source src="../assets/musicaFondo/cancion1.mp3" type="audio/mpeg"></audio>
+    <div class="decorations">
+        <div class="sun"></div>
+        <div class="mountains"></div>
+        <div class="grid-bg"></div>
+    </div>
+    <button id="soundToggle" class="sound-toggle" aria-label="Activar sonido">🔇</button>
+
+    <!-- INSTRUCCIONES -->
+    <div id="instructions-screen">
+        <div class="instructions-card">
+            <h1>VECTOR DRIVE</h1>
+            <div class="instruction-step">
+                <span class="instruction-icon">🏎️</span>
+                <span class="instruction-text"><b>LA AUTOPISTA DE DATOS:</b> Eres un hacker transportando un <i>Arreglo</i> (Array) de datos de colores. Para hackear la barrera y avanzar, tu arreglo debe ser <b>exactamente igual</b> al de la barrera.</span>
+            </div>
+            <div class="instruction-step">
+                <span class="instruction-icon">🔧</span>
+                <span class="instruction-text"><b>MÉTODOS DE ARREGLO:</b> Modifica tu carga usando botones.
+                <br>• <span class="kw">push()</span> y <span class="kw">pop()</span> afectan el <b>FINAL</b> de la lista (Lado Derecho).
+                <br>• <span class="kw">unshift()</span> y <span class="kw">shift()</span> afectan el <b>INICIO</b> de la lista (Lado Izquierdo).</span>
+            </div>
+            <div class="instruction-step">
+                <span class="instruction-icon">🎨</span>
+                <span class="instruction-text"><b>PARÁMETROS:</b> Para añadir datos con `push` o `unshift`, primero debes seleccionar un color (parámetro) en la paleta inferior.</span>
+            </div>
+            <button class="start-btn" onclick="startGame()">INICIAR MOTORES</button>
+        </div>
+    </div>
+
+    <!-- JUEGO -->
+    <div class="game-header">
+        <div class="title-display">VECTOR DRIVE</div>
+        <div class="hud-box">NIVEL: <span id="level-display">1/5</span></div>
+    </div>
+
+    <div class="main-layout">
+        
+        <!-- ESCENA VISUAL (AUTOPISTA) -->
+        <div class="scene-container" id="scene">
+            
+            <div class="security-gate">
+                <div class="gate-title">PUERTA DE ENLACE: TARGET ARRAY</div>
+                <div class="array-display" id="target-array">
+                    <!-- Target Blocks -->
+                </div>
+            </div>
+
+            <div class="car-container" id="car">
+                <div class="array-display car-array" id="current-array">
+                    <!-- Current Blocks -->
+                </div>
+                <div class="car-sprite">🏎️</div>
+            </div>
+
+        </div>
+
+        <!-- CONSOLA DE MÉTODOS -->
+        <div class="console-section">
+            
+            <div class="data-selector">
+                <div class="ds-title">// const valor = seleccionarColor();</div>
+                <div class="color-palette">
+                    <div class="color-btn val-R" data-color="R" onclick="selectColor('R')"></div>
+                    <div class="color-btn val-B" data-color="B" onclick="selectColor('B')"></div>
+                    <div class="color-btn val-Y" data-color="Y" onclick="selectColor('Y')"></div>
+                </div>
+            </div>
+
+            <div class="methods-panel">
+                
+                <!-- Fila de Agregar -->
+                <div class="method-row">
+                    <button class="method-btn btn-unshift" onclick="executeMethod('unshift')">
+                        vector.unshift(val)
+                        <small>➕ Inserta al Inicio [0]</small>
+                    </button>
+                    <div class="method-center"><span>[</span> ... ARREGLO ... <span>]</span></div>
+                    <button class="method-btn btn-push" onclick="executeMethod('push')">
+                        vector.push(val)
+                        <small>➕ Inserta al Final [N]</small>
+                    </button>
+                </div>
+
+                <!-- Fila de Quitar -->
+                <div class="method-row">
+                    <button class="method-btn btn-shift" onclick="executeMethod('shift')">
+                        vector.shift()
+                        <small>🗑️ Elimina del Inicio</small>
+                    </button>
+                    <div class="method-center" style="border:none;"></div>
+                    <button class="method-btn btn-pop" onclick="executeMethod('pop')">
+                        vector.pop()
+                        <small>🗑️ Elimina del Final</small>
+                    </button>
+                </div>
+
+            </div>
+
+            <div class="code-log" id="log-container">
+                <div style="color:#555;">// Historial de comandos</div>
+            </div>
+
+            <button class="verify-btn" id="verify-btn" onclick="verifyArray()">HACKEAR BARRERA (Ejecutar)</button>
+
+        </div>
+    </div>
+
+    <!-- MODAL -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal-box">
+            <h2 class="modal-title" id="m-title">Título</h2>
+            <p class="modal-msg" id="m-msg">Mensaje</p>
+            <button class="modal-btn" id="m-btn" onclick="closeModal()">CONTINUAR</button>
+        </div>
+    </div>
+
+    <script>
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx; let isMuted = true;
+        const bgAudio = document.getElementById('bgm');
+        const soundToggle = document.getElementById('soundToggle');
+
+        soundToggle.addEventListener('click', () => {
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            isMuted = !isMuted;
+            if(isMuted) { bgAudio.pause(); soundToggle.innerText = '🔇'; } 
+            else { bgAudio.volume = 0.25; bgAudio.play().catch(e=>e); soundToggle.innerText = '🔊'; }
+        });
+
+        function playTone(freq, type, duration, vol = 0.1) {
+            if (!audioCtx || isMuted) return;
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + duration);
+        }
+        function playNoise(duration, vol) {
+            if (!audioCtx || isMuted) return;
+            const bufferSize = audioCtx.sampleRate * duration; const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate); const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+            const noise = audioCtx.createBufferSource(); noise.buffer = buffer;
+            const gain = audioCtx.createGain(); gain.gain.setValueAtTime(vol, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            const filter = audioCtx.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 800;
+            noise.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination); noise.start();
+        }
+
+        function sfxClick() { playTone(800, 'square', 0.05, 0.05); }
+        function sfxAdd() { playTone(600, 'sine', 0.1, 0.1); setTimeout(()=>playTone(900, 'sine', 0.1, 0.1), 100); }
+        function sfxDel() { playTone(400, 'triangle', 0.1, 0.1); setTimeout(()=>playTone(200, 'triangle', 0.1, 0.1), 100); }
+        function sfxError() { playTone(150, 'sawtooth', 0.3, 0.2); }
+        function sfxDrive() { playNoise(0.5, 0.2); playTone(100, 'sawtooth', 0.5, 0.2); }
+        function sfxWin() { [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => setTimeout(() => playTone(f, 'square', 0.15, 0.1), i * 150)); }
+
+        // ESTADO DEL JUEGO
+        let currentLevel = 0;
+        let isRunning = false;
+        
+        let targetArr = [];
+        let currentArr = [];
+        let selectedColor = 'B'; // Default Blue
+
+        const levels = [
+            { target: ['R', 'B', 'Y'], init: ['R', 'B'], tip: "Falta un color al FINAL. Usa push()." },
+            { target: ['Y', 'R', 'B'], init: ['R', 'B'], tip: "Falta un color al INICIO. Usa unshift()." },
+            { target: ['B', 'Y'], init: ['R', 'B'], tip: "Sobra uno al inicio y falta otro al final. Combina shift() y push()." },
+            { target: ['Y', 'Y', 'B'], init: ['R', 'Y', 'R'], tip: "Modifica ambos extremos usando pop(), shift(), unshift() y push()." },
+            { target: 'RANDOM', init: 'RANDOM', tip: "Nivel de Hackeo Libre. Ajusta el vector hasta que coincida exactamente." }
+        ];
+
+        function logConsole(cmd) {
+            let out = document.getElementById('log-container');
+            let p = document.createElement('div');
+            p.className = 'log-entry';
+            p.innerHTML = `> <span class="kw">vector</span>.${cmd};`;
+            out.appendChild(p);
+            out.scrollTop = out.scrollHeight;
+        }
+
+        function startGame() {
+            if (!audioCtx && !isMuted) { audioCtx = new AudioContext(); bgAudio.play().catch(e=>e); }
+            sfxClick();
+            document.getElementById('instructions-screen').style.display = 'none';
+            selectColor('B');
+            loadLevel();
+        }
+
+        function generateRandomArray(length) {
+            const colors = ['R', 'B', 'Y'];
+            let arr = [];
+            for(let i=0; i<length; i++) arr.push(colors[Math.floor(Math.random() * colors.length)]);
+            return arr;
+        }
+
+        function loadLevel() {
+            if(currentLevel >= levels.length) {
+                showModal("¡CURSO COMPLETADO! 🎓", "Has dominado la manipulación de arreglos.\nPush, Pop, Shift y Unshift ya no son un misterio para ti.", () => {
+                    currentLevel = 0;
+                    loadLevel();
+                });
+                return;
+            }
+
+            let data = levels[currentLevel];
+            
+            if (data.target === 'RANDOM') {
+                targetArr = generateRandomArray(Math.floor(Math.random() * 2) + 3); // 3 a 4
+                currentArr = generateRandomArray(Math.floor(Math.random() * 2) + 2); // 2 a 3
+            } else {
+                targetArr = [...data.target];
+                currentArr = [...data.init];
+            }
+
+            document.getElementById('level-display').innerText = `${currentLevel + 1}/${levels.length}`;
+            
+            document.getElementById('log-container').innerHTML = '<div style="color:#555;">// Historial de comandos</div>';
+            logConsole(`// CONSEJO: ${data.tip}`);
+
+            // Reset Car
+            let car = document.getElementById('car');
+            car.classList.remove('car-drive-anim');
+            car.style.opacity = '1';
+
+            renderArrays(true);
+        }
+
+        function selectColor(c) {
+            sfxClick();
+            selectedColor = c;
+            document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('selected'));
+            document.querySelector(`.color-btn[data-color="${c}"]`).classList.add('selected');
+        }
+
+        function renderArrays(instant = false) {
+            // Target
+            let targetHtml = '';
+            targetArr.forEach((c, idx) => {
+                targetHtml += `<div class="data-block val-${c}">${c}</div>`;
+            });
+            document.getElementById('target-array').innerHTML = targetHtml;
+
+            // Current
+            let currentContainer = document.getElementById('current-array');
+            if (instant) {
+                currentContainer.innerHTML = '';
+                currentArr.forEach((c, idx) => {
+                    currentContainer.innerHTML += `<div class="data-block val-${c}" id="curr-${idx}">
+                        ${c}
+                        <span class="array-index">[${idx}]</span>
+                    </div>`;
+                });
+            } else {
+                // Animaciones manejadas por los métodos
+                // Solo re-indexamos el html limpio
+                setTimeout(() => {
+                    currentContainer.innerHTML = '';
+                    currentArr.forEach((c, idx) => {
+                        currentContainer.innerHTML += `<div class="data-block val-${c}" id="curr-${idx}">
+                            ${c}
+                            <span class="array-index">[${idx}]</span>
+                        </div>`;
+                    });
+                }, 300); // Despues de la animación CSS
+            }
+        }
+
+        function executeMethod(method) {
+            if (isRunning) return;
+            if (currentArr.length >= 7 && (method === 'push' || method === 'unshift')) {
+                sfxError();
+                logConsole('// Error: Memory Overflow (Máx 7 elementos)');
+                return;
+            }
+            if (currentArr.length === 0 && (method === 'pop' || method === 'shift')) {
+                sfxError();
+                logConsole('// Error: Array is empty (No se puede eliminar)');
+                return;
+            }
+
+            let container = document.getElementById('current-array');
+
+            if (method === 'push') {
+                sfxAdd();
+                currentArr.push(selectedColor);
+                logConsole(`push('${selectedColor}')`);
+                
+                let el = document.createElement('div');
+                el.className = `data-block val-${selectedColor} anim-push`;
+                el.innerHTML = `${selectedColor}`;
+                container.appendChild(el);
+                
+            } else if (method === 'pop') {
+                sfxDel();
+                currentArr.pop();
+                logConsole(`pop()`);
+                
+                let lastEl = container.lastElementChild;
+                if(lastEl) lastEl.classList.add('anim-pop');
+                
+            } else if (method === 'unshift') {
+                sfxAdd();
+                currentArr.unshift(selectedColor);
+                logConsole(`unshift('${selectedColor}')`);
+                
+                let el = document.createElement('div');
+                el.className = `data-block val-${selectedColor} anim-unshift`;
+                el.innerHTML = `${selectedColor}`;
+                container.insertBefore(el, container.firstChild);
+                
+            } else if (method === 'shift') {
+                sfxDel();
+                currentArr.shift();
+                logConsole(`shift()`);
+                
+                let firstEl = container.firstElementChild;
+                if(firstEl) firstEl.classList.add('anim-shift');
+            }
+
+            renderArrays(false); // Esperará a que termine la animación para re-indexar limpio
+        }
+
+        function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+
+        async function verifyArray() {
+            if (isRunning) return;
+            sfxClick();
+            isRunning = true;
+            document.getElementById('verify-btn').disabled = true;
+
+            // Comparar arrays
+            let isMatch = true;
+            if (currentArr.length !== targetArr.length) {
+                isMatch = false;
+            } else {
+                for(let i=0; i<currentArr.length; i++) {
+                    if(currentArr[i] !== targetArr[i]) {
+                        isMatch = false; break;
+                    }
+                }
+            }
+
+            if (isMatch) {
+                sfxDrive();
+                let car = document.getElementById('car');
+                car.classList.add('car-drive-anim'); // Conduce hacia la barrera y desaparece
+                
+                await sleep(1000);
+                sfxWin();
+                
+                document.getElementById('m-title').style.color = "var(--neon-blue)";
+                showModal("¡ACCESO CONCEDIDO! 🔓", "El firewall validó tu vector de datos correctamente.", () => {
+                    currentLevel++;
+                    isRunning = false;
+                    document.getElementById('verify-btn').disabled = false;
+                    loadLevel();
+                });
+            } else {
+                sfxError();
+                let gate = document.querySelector('.security-gate');
+                gate.style.borderColor = "var(--neon-pink)";
+                gate.style.boxShadow = "0 0 50px var(--neon-pink)";
+                
+                document.getElementById('car').style.transform = "translateY(10px) rotate(2deg)"; // Chocó visualmente
+                
+                setTimeout(() => {
+                    gate.style.borderColor = "var(--neon-blue)";
+                    gate.style.boxShadow = "0 0 30px rgba(5,217,232,0.5)";
+                    document.getElementById('car').style.transform = "none";
+                    
+                    document.getElementById('m-title').style.color = "var(--neon-pink)";
+                    showModal("ACCESO DENEGADO 🛑", "El vector de datos no coincide.\n\nFíjate bien en el orden de los colores y usa correctamente Shift/Unshift para el inicio y Push/Pop para el final.", () => {
+                        isRunning = false;
+                        document.getElementById('verify-btn').disabled = false;
+                        loadLevel(); // Reinicia el nivel
+                    });
+                }, 800);
+            }
+        }
+
+        let modalCallback = null;
+        function showModal(title, msg, callback = null) { 
+            document.getElementById('m-title').innerText = title; 
+            document.getElementById('m-msg').innerText = msg; 
+            document.getElementById('modal').classList.add('active'); 
+            modalCallback = callback; 
+        }
+        function closeModal() { 
+            sfxClick(); 
+            document.getElementById('modal').classList.remove('active'); 
+            if(modalCallback) { modalCallback(); modalCallback = null; } 
+        }
+
+    </script>
+</body>
+</html>
