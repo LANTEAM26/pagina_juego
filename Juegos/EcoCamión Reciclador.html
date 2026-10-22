@@ -45,7 +45,7 @@ button:disabled{
     display:none!important;
 }
 
-/* DISTRIBUCIÓN */
+/* DISTRIBUCIÓN ORIGINAL */
 
 #juego{
     width:100%;
@@ -102,13 +102,7 @@ button:disabled{
     background:linear-gradient(#b0e7f8,#dff0cf);
 }
 
-/*
-UNA SOLA IMAGEN DE FONDO.
-
-No se repite.
-No se desplaza.
-Se muestra completa ocupando el escenario.
-*/
+/* UNA SOLA IMAGEN COMPLETA */
 
 #imagen-fondo{
     position:absolute;
@@ -175,12 +169,6 @@ Se muestra completa ocupando el escenario.
     pointer-events:none;
 }
 
-#camion-respaldo{
-    font-size:110px;
-    line-height:1;
-    transform:scaleX(-1);
-}
-
 #camion.andando #imagen-camion{
     animation:suspension .24s ease-in-out infinite;
 }
@@ -220,6 +208,7 @@ Se muestra completa ocupando el escenario.
         opacity:.8;
         transform:translateX(0) scale(.5);
     }
+
     to{
         opacity:0;
         transform:translateX(-65px) scale(1.5);
@@ -365,6 +354,7 @@ Se muestra completa ocupando el escenario.
     25%{
         transform:translateX(-6px);
     }
+
     75%{
         transform:translateX(6px);
     }
@@ -842,6 +832,240 @@ Se muestra completa ocupando el escenario.
     }
 }
 
+/* ==========================================================
+   AÑADIDOS SOBRE TU DISEÑO
+   ========================================================== */
+
+/* Escenario un poco más alto */
+
+#juego{
+    grid-template-rows:60% 40%;
+}
+
+/* Tu imagen del camión en el encabezado y las pantallas */
+
+.titulo{
+    display:flex;
+    align-items:center;
+    gap:7px;
+}
+
+.logo-camion{
+    width:48px;
+    height:32px;
+    object-fit:contain;
+    display:block;
+}
+
+.camion-presentacion{
+    width:min(250px,65%);
+    height:115px;
+    object-fit:contain;
+    display:block;
+    margin:0 auto 5px;
+}
+
+#camion{
+    will-change:left;
+}
+
+/* Residuo que se puede arrastrar */
+
+#pieza-residuo{
+    width:100%;
+    height:70%;
+    min-height:65px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    touch-action:none;
+    user-select:none;
+    -webkit-user-select:none;
+    cursor:grab;
+    border-radius:16px;
+}
+
+#pieza-residuo.arrastrando{
+    opacity:.3;
+    cursor:grabbing;
+}
+
+#pieza-residuo.bloqueada{
+    cursor:default;
+}
+
+#pieza-residuo #imagen-residuo{
+    width:100%;
+    height:100%;
+    max-height:100%;
+    pointer-events:none;
+}
+
+#residuo-respaldo{
+    pointer-events:none;
+}
+
+/* Resaltar el tacho sobre el que se arrastra */
+
+.tacho.destino{
+    background:#ffffff99;
+    box-shadow:0 0 0 4px #f0b83f;
+    transform:translateY(-4px);
+}
+
+/* Copia de la imagen que sigue al dedo o ratón */
+
+.fantasma{
+    position:fixed;
+    left:0;
+    top:0;
+    width:115px;
+    height:115px;
+    z-index:1000;
+    pointer-events:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    filter:drop-shadow(0 10px 5px #0003);
+}
+
+.fantasma img{
+    max-width:100%;
+    max-height:100%;
+    object-fit:contain;
+}
+
+.fantasma span{
+    font-size:85px;
+}
+
+/* Instrucciones */
+
+.pasos{
+    display:grid;
+    gap:10px;
+    margin:18px 0;
+    text-align:left;
+}
+
+.paso{
+    display:flex;
+    gap:12px;
+    align-items:center;
+    background:#edf5e5;
+    padding:12px;
+    border-radius:14px;
+    font-size:14px;
+    line-height:1.4;
+}
+
+.paso b{
+    background:#258a5a;
+    color:white;
+    min-width:29px;
+    height:29px;
+    display:grid;
+    place-items:center;
+    border-radius:50%;
+}
+
+#detalle-nivel{
+    font-weight:bold;
+    color:#26784f;
+}
+
+/* Espacio para que sigan entrando los controles */
+
+#clasificacion{
+    gap:9px;
+}
+
+.tacho{
+    height:clamp(90px,19vh,180px);
+}
+
+@media(max-width:700px) and (orientation:portrait){
+    #juego{
+        grid-template-rows:52% 48%;
+    }
+
+    .logo-camion{
+        width:34px;
+        height:25px;
+    }
+
+    .titulo{
+        gap:4px;
+        font-size:14px;
+    }
+
+    .indicador,
+    .boton-pequeno{
+        font-size:12px;
+        padding:6px;
+    }
+
+    #pieza-residuo{
+        width:85px;
+        height:78px;
+        min-height:0;
+    }
+
+    #clasificacion{
+        gap:6px;
+    }
+
+    .tacho{
+        height:clamp(60px,9vh,90px);
+    }
+
+    #controles.cuatro .tacho{
+        height:clamp(95px,15vh,140px);
+    }
+
+    .camion-presentacion{
+        height:90px;
+    }
+}
+
+@media(max-height:550px) and (orientation:landscape){
+    #juego{
+        grid-template-rows:57% 43%;
+    }
+
+    .logo-camion{
+        width:38px;
+        height:25px;
+    }
+
+    #pieza-residuo{
+        height:85px;
+        min-height:0;
+    }
+
+    #clasificacion{
+        gap:5px;
+    }
+
+    .tacho{
+        height:clamp(60px,21vh,90px);
+    }
+
+    .camion-presentacion{
+        height:65px;
+    }
+
+    .pasos{
+        gap:6px;
+        margin:10px 0;
+    }
+
+    .paso{
+        padding:8px;
+        font-size:12px;
+    }
+}
+
 @media(prefers-reduced-motion:reduce){
     *,
     *::before,
@@ -858,7 +1082,14 @@ Se muestra completa ocupando el escenario.
 <main id="juego">
 
     <header class="encabezado">
-        <div class="titulo">🚛 EcoCamión</div>
+
+        <div class="titulo">
+            <img
+                class="logo-camion imagen-camion-extra"
+                alt=""
+            >
+            EcoCamión
+        </div>
 
         <div class="hud">
 
@@ -870,7 +1101,11 @@ Se muestra completa ocupando el escenario.
                 ⚙️ <span class="texto-menu">Menú</span>
             </button>
 
-            <span class="indicador" id="vidas">
+            <span
+                class="indicador"
+                id="vidas"
+                aria-label="3 vidas"
+            >
                 ❤️❤️❤️
             </span>
 
@@ -882,12 +1117,16 @@ Se muestra completa ocupando el escenario.
                 class="boton-pequeno"
                 id="boton-sonido"
                 aria-label="Activar sonido"
+                aria-pressed="false"
             >🔇</button>
 
         </div>
     </header>
 
-    <section id="escenario" aria-label="Ruta del camión">
+    <section
+        id="escenario"
+        aria-label="Recorrido del camión"
+    >
 
         <img id="imagen-fondo" alt="">
 
@@ -899,11 +1138,10 @@ Se muestra completa ocupando el escenario.
         </div>
 
         <div id="camion">
-            <img id="imagen-camion" alt="Camión recolector">
-
-            <span id="camion-respaldo" class="oculto">
-                🚛
-            </span>
+            <img
+                id="imagen-camion"
+                alt="Camión recolector"
+            >
 
             <i class="polvo"></i>
             <i class="polvo segundo"></i>
@@ -918,13 +1156,17 @@ Se muestra completa ocupando el escenario.
         <div id="clasificacion">
 
             <div class="fila-progreso">
-                <h2>¿En qué tacho va?</h2>
+                <h2>Arrastra o elige un tacho</h2>
                 <span id="contador">0 / 10</span>
             </div>
 
             <div id="tachos"></div>
 
-            <div id="mensaje" role="status" aria-live="polite">
+            <div
+                id="mensaje"
+                role="status"
+                aria-live="polite"
+            >
                 ¡Vamos a reciclar!
             </div>
 
@@ -943,30 +1185,53 @@ Se muestra completa ocupando el escenario.
         </div>
 
         <div id="panel-residuo">
-            <small>CLASIFICA ESTE RESIDUO</small>
 
-            <img
-                id="imagen-residuo"
-                alt="Residuo para clasificar"
+            <small>
+                ARRASTRA ESTE RESIDUO<br>
+                O TOCA UN TACHO
+            </small>
+
+            <div
+                id="pieza-residuo"
+                aria-label="Residuo que puedes arrastrar"
             >
 
-            <span
-                id="residuo-respaldo"
-                class="oculto"
-            ></span>
+                <img
+                    id="imagen-residuo"
+                    alt="Residuo para clasificar"
+                    draggable="false"
+                >
+
+                <span
+                    id="residuo-respaldo"
+                    class="oculto"
+                    aria-hidden="true"
+                ></span>
+
+            </div>
+
         </div>
 
     </section>
+
 </main>
 
 <!-- MENÚ -->
 
 <div id="menu" class="pantalla">
-    <section class="tarjeta">
+    <section
+        class="tarjeta"
+        aria-labelledby="titulo-menu"
+    >
 
-        <div class="icono-grande">🚛🌱</div>
+        <img
+            class="camion-presentacion imagen-camion-extra"
+            alt="Tu camioncito recolector"
+        >
 
-        <h1>¡Una ruta por el planeta!</h1>
+        <h1 id="titulo-menu">
+            ¡Una ruta por el planeta!
+        </h1>
 
         <p>
             Clasifica los residuos y acompaña al camión.<br>
@@ -1011,7 +1276,10 @@ Se muestra completa ocupando el escenario.
 
         </div>
 
-        <button id="boton-iniciar" class="principal">
+        <button
+            id="boton-instrucciones"
+            class="principal"
+        >
             ¡A reciclar! →
         </button>
 
@@ -1022,23 +1290,115 @@ Se muestra completa ocupando el escenario.
     </section>
 </div>
 
+<!-- NUEVA PANTALLA DE INSTRUCCIONES -->
+
+<div id="instrucciones" class="pantalla oculto">
+    <section
+        class="tarjeta"
+        aria-labelledby="titulo-instrucciones"
+    >
+
+        <img
+            class="camion-presentacion imagen-camion-extra"
+            alt="Tu camioncito recolector"
+        >
+
+        <h1 id="titulo-instrucciones">
+            ¿Cómo jugamos?
+        </h1>
+
+        <p id="detalle-nivel"></p>
+
+        <div class="pasos">
+
+            <div class="paso">
+                <b>1</b>
+                <span>
+                    Observa el residuo que aparece junto a los tachos.
+                </span>
+            </div>
+
+            <div class="paso">
+                <b>2</b>
+                <span>
+                    <strong>Arrástralo al tacho correcto</strong>
+                    con el dedo o el ratón.
+                    También puedes
+                    <strong>tocar o hacer clic en el tacho</strong>.
+                </span>
+            </div>
+
+            <div class="paso">
+                <b>3</b>
+                <span>
+                    Cada acierto suma <strong>10 puntos</strong>
+                    y hace avanzar al camión.
+                    Una respuesta incorrecta cuesta
+                    <strong>una vida</strong>.
+                    Tienes tres.
+                </span>
+            </div>
+
+            <div class="paso">
+                <b>4</b>
+                <span>
+                    Cuando el camión llegue a la última casa
+                    y completes la ruta,
+                    conocerás un nuevo escenario.
+                </span>
+            </div>
+
+        </div>
+
+        <button id="boton-iniciar" class="principal">
+            ¡Comenzar la ruta!
+        </button>
+
+        <button
+            id="boton-volver-niveles"
+            class="secundario"
+        >
+            ← Elegir otro nivel
+        </button>
+
+    </section>
+</div>
+
 <!-- FINAL -->
 
 <div id="final" class="pantalla oculto">
-    <section class="tarjeta">
+    <section
+        class="tarjeta"
+        aria-labelledby="titulo-final"
+    >
 
-        <div id="icono-final" class="icono-grande">🏆</div>
+        <img
+            class="camion-presentacion imagen-camion-extra"
+            alt="Tu camioncito recolector"
+        >
+
+        <div
+            id="icono-final"
+            class="icono-grande"
+        >🏆</div>
 
         <h1 id="titulo-final"></h1>
+
         <p id="texto-final"></p>
 
         <div id="resultado"></div>
 
-        <button id="boton-reiniciar" class="principal">
+        <button
+            id="boton-reiniciar"
+            class="principal"
+        >
             🔄 Volver a jugar
         </button>
 
-        <button id="boton-final-menu" class="secundario">
+        <button
+            id="boton-final-menu"
+            class="secundario"
+        >
             Cambiar dificultad
         </button>
 
@@ -1049,35 +1409,15 @@ Se muestra completa ocupando el escenario.
 "use strict";
 
 /* ==========================================================
-   CARPETA DE LAS IMÁGENES
-
-   Este código supone:
-
-   Tu archivo HTML está junto a la carpeta img_EcoCamion.
-
-   Dentro de img_EcoCamion están:
-   - Los cinco fondos.
-   - Las treinta casitas.
-   - Los catorce tachos.
-   - Los residuos.
-   - camion.png
-
-   Si la ubicación es diferente, cambia SOLO esta constante.
+   TU RUTA ORIGINAL: SE CONSERVA
    ========================================================== */
 
 const CARPETA = "../assets/img_EcoCamion/";
-
-/* ==========================================================
-   CAMIÓN
-   ========================================================== */
 
 const ARCHIVO_CAMION = "camion.png";
 
 /* ==========================================================
    FONDOS Y CASITAS
-
-   Todos los nombres se escriben completos, incluyendo .png.
-   No se añade ninguna extensión automáticamente.
    ========================================================== */
 
 const ESCENARIOS = [
@@ -1144,7 +1484,7 @@ const ESCENARIOS = [
 ];
 
 /* ==========================================================
-   TACHOS: IMÁGENES DEFINIDAS EXPLÍCITAMENTE
+   TACHOS
    ========================================================== */
 
 const TIPOS = {
@@ -1251,13 +1591,7 @@ const NIVELES = {
 };
 
 /* ==========================================================
-   RESIDUOS
-
-   Reemplaza el nombre del archivo por el tuyo si es diferente.
-   Incluye .png.
-
-   No se muestran nombres de residuos durante el juego.
-   El emoji solo aparece si falta la imagen.
+   TUS RESIDUOS
    ========================================================== */
 
 const RESIDUOS = [
@@ -1334,17 +1668,21 @@ let sesion = 0;
 
 let anchoCasa = 220;
 let separacion = 310;
-let anclaCamion = 0;
+
+let inicioCamion = 180;
+let finCamion = 700;
 
 let sonido = false;
 let contextoAudio;
+
+let arrastre = null;
 
 const esperar = ms => new Promise(
     resolver => setTimeout(resolver, ms)
 );
 
 /* ==========================================================
-   RUTAS Y CARGA DIRECTA DE IMÁGENES
+   IMÁGENES
    ========================================================== */
 
 function obtenerURL(archivo) {
@@ -1354,7 +1692,7 @@ function obtenerURL(archivo) {
     ).href;
 }
 
-function cargarImagen(imagen, archivo, respaldo) {
+function cargarImagen(imagen, archivo, respaldo = null) {
     imagen.onload = () => {
         imagen.classList.remove("oculto");
 
@@ -1385,12 +1723,20 @@ function cargarImagen(imagen, archivo, respaldo) {
     imagen.src = obtenerURL(archivo);
 }
 
-function cargarCamion() {
+function cargarCamiones() {
     cargarImagen(
         $("imagen-camion"),
-        ARCHIVO_CAMION,
-        $("camion-respaldo")
+        ARCHIVO_CAMION
     );
+
+    document.querySelectorAll(
+        ".imagen-camion-extra"
+    ).forEach(imagen => {
+        cargarImagen(
+            imagen,
+            ARCHIVO_CAMION
+        );
+    });
 }
 
 /* ==========================================================
@@ -1408,8 +1754,11 @@ function tono(frecuencia) {
 
         contextoAudio.resume();
 
-        const oscilador = contextoAudio.createOscillator();
-        const ganancia = contextoAudio.createGain();
+        const oscilador =
+            contextoAudio.createOscillator();
+
+        const ganancia =
+            contextoAudio.createGain();
 
         oscilador.frequency.value = frecuencia;
 
@@ -1424,13 +1773,19 @@ function tono(frecuencia) {
         );
 
         oscilador.connect(ganancia);
-        ganancia.connect(contextoAudio.destination);
+
+        ganancia.connect(
+            contextoAudio.destination
+        );
 
         oscilador.start();
-        oscilador.stop(contextoAudio.currentTime + .18);
+
+        oscilador.stop(
+            contextoAudio.currentTime + .18
+        );
 
     } catch (error) {
-        // El juego puede funcionar sin sonido.
+        // El juego sigue funcionando sin audio.
     }
 }
 
@@ -1447,16 +1802,19 @@ function cantidadTachos() {
         return 7;
     }
 
-    // Parque 4, Escuela 5, Ciudad 6, Playa 7, Bosque 7.
     return [4, 5, 6, 7, 7][escenarioActual];
 }
 
 function tiposDisponibles() {
-    return ORDEN.slice(0, cantidadTachos());
+    return ORDEN.slice(
+        0,
+        cantidadTachos()
+    );
 }
 
 function residuosPorEscenario() {
-    return NIVELES[nivel].total / ESCENARIOS.length;
+    return NIVELES[nivel].total /
+        ESCENARIOS.length;
 }
 
 /* ==========================================================
@@ -1470,6 +1828,16 @@ function bloquear(valor) {
         boton => {
             boton.disabled = valor || !activo;
         }
+    );
+
+    $("pieza-residuo").classList.toggle(
+        "bloqueada",
+        valor || !activo
+    );
+
+    $("pieza-residuo").setAttribute(
+        "aria-disabled",
+        String(valor || !activo)
     );
 }
 
@@ -1535,8 +1903,13 @@ function crearTachos() {
     for (const tipo of tiposDisponibles()) {
         const datos = TIPOS[tipo];
 
-        const boton = document.createElement("button");
+        const boton =
+            document.createElement("button");
+
         boton.className = "tacho";
+
+        // Se utiliza para identificar el tacho al soltar.
+        boton.dataset.tipo = tipo;
 
         boton.setAttribute(
             "aria-label",
@@ -1545,13 +1918,17 @@ function crearTachos() {
                 : `Tacho ${datos.color}`
         );
 
-        const imagen = document.createElement("img");
+        const imagen =
+            document.createElement("img");
+
         imagen.alt = "";
         imagen.draggable = false;
 
-        const respaldo = document.createElement("span");
+        const respaldo =
+            document.createElement("span");
 
-        respaldo.className = "tacho-respaldo oculto";
+        respaldo.className =
+            "tacho-respaldo oculto";
 
         respaldo.style.setProperty(
             "--color",
@@ -1584,6 +1961,7 @@ function crearTachos() {
             respaldo
         );
 
+        // Sigue funcionando tocar o hacer clic.
         boton.onclick = () => {
             responder(boton, tipo);
         };
@@ -1595,7 +1973,7 @@ function crearTachos() {
 }
 
 /* ==========================================================
-   RECORRIDO
+   RECORRIDO Y AVANCE REAL DEL CAMIÓN
    ========================================================== */
 
 function actualizarRuta() {
@@ -1626,7 +2004,11 @@ function actualizarRuta() {
 }
 
 function ajustarEscenario() {
-    const ancho = $("escenario").clientWidth;
+    const ancho =
+        $("escenario").clientWidth;
+
+    const mitadCamion =
+        $("camion").getBoundingClientRect().width / 2;
 
     anchoCasa = Math.max(
         160,
@@ -1638,12 +2020,20 @@ function ajustarEscenario() {
         anchoCasa + 90
     );
 
-    const verticalMovil = window.matchMedia(
-        "(max-width:700px) and (orientation:portrait)"
-    ).matches;
+    // Posición inicial sin que el camión se salga.
+    inicioCamion = Math.max(
+        mitadCamion + 14,
+        ancho * .18
+    );
 
-    anclaCamion = ancho * (
-        verticalMovil ? .27 : .25
+    // Posición final hacia la derecha.
+    finCamion = Math.max(
+        inicioCamion,
+
+        Math.min(
+            ancho * .78,
+            ancho - mitadCamion - 14
+        )
     );
 
     document.querySelectorAll(".casa").forEach(
@@ -1655,44 +2045,57 @@ function ajustarEscenario() {
 
             casa.style.left =
                 (
-                    anclaCamion +
+                    inicioCamion +
                     indice * separacion -
                     anchoCasa / 2
                 ) + "px";
         }
     );
 
-    posicionarCasas(false);
+    posicionarMundo(false);
 }
 
-function posicionarCasas(animar = true) {
+function posicionarMundo(animar = true) {
     const avance = Math.min(
         1,
         completadosEscenario /
         residuosPorEscenario()
     );
 
-    const desplazamiento =
-        separacion * 5 * avance;
+    // Avance visible del camión por la pantalla.
+    const viajeCamion =
+        (finCamion - inicioCamion) * avance;
+
+    // Las casas siguen desplazándose.
+    // La última casa termina delante del camión.
+    const viajeCasas =
+        separacion * 5 * avance - viajeCamion;
 
     $("casas").style.transition = animar
         ? "transform .7s ease-in-out"
         : "none";
 
-    $("casas").style.transform =
-        `translateX(${-desplazamiento}px)`;
+    $("camion").style.transition = animar
+        ? "left .7s ease-in-out"
+        : "none";
 
-    // El fondo no se mueve ni se repite.
+    $("casas").style.transform =
+        `translateX(${-viajeCasas}px)`;
+
+    $("camion").style.left =
+        (inicioCamion + viajeCamion) + "px";
+
+    // El fondo permanece completo y fijo.
     actualizarRuta();
 }
 
 function prepararEscenario() {
-    const datos = ESCENARIOS[escenarioActual];
+    const datos =
+        ESCENARIOS[escenarioActual];
 
     $("nombre-escenario").textContent =
         datos.nombre;
 
-    // Una sola imagen de fondo.
     cargarImagen(
         $("imagen-fondo"),
         datos.fondo,
@@ -1702,15 +2105,22 @@ function prepararEscenario() {
     $("casas").replaceChildren();
 
     datos.casas.forEach(archivo => {
-        const casa = document.createElement("div");
+        const casa =
+            document.createElement("div");
+
         casa.className = "casa";
 
-        const imagen = document.createElement("img");
+        const imagen =
+            document.createElement("img");
+
         imagen.alt = "";
         imagen.draggable = false;
 
-        const respaldo = document.createElement("span");
-        respaldo.className = "casa-respaldo oculto";
+        const respaldo =
+            document.createElement("span");
+
+        respaldo.className =
+            "casa-respaldo oculto";
 
         respaldo.textContent =
             escenarioActual === 2
@@ -1742,7 +2152,11 @@ function prepararEscenario() {
 function mezclar(lista) {
     const copia = [...lista];
 
-    for (let i = copia.length - 1; i > 0; i--) {
+    for (
+        let i = copia.length - 1;
+        i > 0;
+        i--
+    ) {
         const j = Math.floor(
             Math.random() * (i + 1)
         );
@@ -1755,7 +2169,8 @@ function mezclar(lista) {
 }
 
 function prepararResiduos() {
-    const disponibles = tiposDisponibles();
+    const disponibles =
+        tiposDisponibles();
 
     let anteriores = disponibles;
 
@@ -1784,9 +2199,12 @@ function prepararResiduos() {
     ];
 
     while (
-        tipos.length < residuosPorEscenario()
+        tipos.length <
+        residuosPorEscenario()
     ) {
-        tipos.push(...mezclar(disponibles));
+        tipos.push(
+            ...mezclar(disponibles)
+        );
     }
 
     cola = tipos
@@ -1823,7 +2241,225 @@ function siguienteResiduo() {
 }
 
 /* ==========================================================
-   RESPUESTA, VIDAS Y MOVIMIENTO
+   NUEVO: ARRASTRAR CON RATÓN, DEDO O LÁPIZ
+   ========================================================== */
+
+function tachoEn(x, y) {
+    const elementos =
+        document.elementsFromPoint(x, y);
+
+    for (const elemento of elementos) {
+        const boton =
+            elemento.closest?.(".tacho");
+
+        if (
+            boton &&
+            !boton.disabled
+        ) {
+            return boton;
+        }
+    }
+
+    return null;
+}
+
+function marcarDestino(boton) {
+    document.querySelectorAll(".tacho").forEach(
+        otro => {
+            otro.classList.toggle(
+                "destino",
+                otro === boton
+            );
+        }
+    );
+}
+
+function cancelarArrastre() {
+    if (!arrastre) return;
+
+    const identificador = arrastre.id;
+
+    if (arrastre.fantasma) {
+        arrastre.fantasma.remove();
+    }
+
+    arrastre = null;
+
+    $("pieza-residuo").classList.remove(
+        "arrastrando"
+    );
+
+    marcarDestino(null);
+
+    try {
+        if (
+            $("pieza-residuo").hasPointerCapture(
+                identificador
+            )
+        ) {
+            $("pieza-residuo").releasePointerCapture(
+                identificador
+            );
+        }
+    } catch (error) {
+        // El puntero ya pudo haberse liberado.
+    }
+}
+
+function empezarArrastre(evento) {
+    if (
+        !activo ||
+        bloqueado ||
+        !residuoActual ||
+        arrastre ||
+        evento.button !== 0
+    ) {
+        return;
+    }
+
+    arrastre = {
+        id: evento.pointerId,
+        x: evento.clientX,
+        y: evento.clientY,
+        movido: false,
+        fantasma: null
+    };
+
+    $("pieza-residuo").setPointerCapture(
+        evento.pointerId
+    );
+
+    evento.preventDefault();
+}
+
+function moverArrastre(evento) {
+    if (
+        !arrastre ||
+        arrastre.id !== evento.pointerId
+    ) {
+        return;
+    }
+
+    if (!activo || bloqueado) {
+        cancelarArrastre();
+        return;
+    }
+
+    const distancia = Math.hypot(
+        evento.clientX - arrastre.x,
+        evento.clientY - arrastre.y
+    );
+
+    if (
+        !arrastre.movido &&
+        distancia < 8
+    ) {
+        return;
+    }
+
+    if (!arrastre.movido) {
+        arrastre.movido = true;
+
+        const fantasma =
+            document.createElement("div");
+
+        fantasma.className = "fantasma";
+
+        fantasma.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+        const imagenVisible =
+            !$("imagen-residuo").classList.contains(
+                "oculto"
+            );
+
+        if (imagenVisible) {
+            const imagen =
+                document.createElement("img");
+
+            imagen.src =
+                $("imagen-residuo").src;
+
+            imagen.alt = "";
+            imagen.draggable = false;
+
+            fantasma.append(imagen);
+
+        } else {
+            const icono =
+                document.createElement("span");
+
+            icono.textContent =
+                residuoActual.emoji;
+
+            fantasma.append(icono);
+        }
+
+        document.body.append(fantasma);
+
+        arrastre.fantasma = fantasma;
+
+        $("pieza-residuo").classList.add(
+            "arrastrando"
+        );
+    }
+
+    arrastre.fantasma.style.transform =
+        `translate(
+            ${evento.clientX - 57}px,
+            ${evento.clientY - 57}px
+        )`;
+
+    marcarDestino(
+        tachoEn(
+            evento.clientX,
+            evento.clientY
+        )
+    );
+
+    evento.preventDefault();
+}
+
+function soltarArrastre(evento) {
+    if (
+        !arrastre ||
+        arrastre.id !== evento.pointerId
+    ) {
+        return;
+    }
+
+    const destino = arrastre.movido
+        ? tachoEn(
+            evento.clientX,
+            evento.clientY
+        )
+        : null;
+
+    const movido = arrastre.movido;
+
+    cancelarArrastre();
+
+    if (destino) {
+        responder(
+            destino,
+            destino.dataset.tipo
+        );
+
+    } else if (
+        movido &&
+        activo &&
+        !bloqueado
+    ) {
+        mostrarMensaje(
+            "Suelta el residuo encima de un tacho. No perdiste ninguna vida."
+        );
+    }
+}
+
+/* ==========================================================
+   RESPUESTA: FUNCIONA CON CLIC Y ARRASTRE
    ========================================================== */
 
 async function responder(boton, tipo) {
@@ -1835,6 +2471,8 @@ async function responder(boton, tipo) {
         return;
     }
 
+    cancelarArrastre();
+
     const sesionActual = sesion;
 
     bloquear(true);
@@ -1843,7 +2481,9 @@ async function responder(boton, tipo) {
         tipo === residuoActual.tipo;
 
     boton.classList.add(
-        correcto ? "correcto" : "incorrecto"
+        correcto
+            ? "correcto"
+            : "incorrecto"
     );
 
     /* INCORRECTO */
@@ -1863,9 +2503,15 @@ async function responder(boton, tipo) {
 
         await esperar(420);
 
-        if (sesionActual !== sesion) return;
+        if (
+            sesionActual !== sesion
+        ) {
+            return;
+        }
 
-        boton.classList.remove("incorrecto");
+        boton.classList.remove(
+            "incorrecto"
+        );
 
         if (vidas === 0) {
             terminar(false);
@@ -1889,20 +2535,30 @@ async function responder(boton, tipo) {
     actualizarIndicadores();
 
     mostrarMensaje(
-        "¡Muy bien! 🚛 Seguimos avanzando."
+        "¡Muy bien! Tu camión sigue avanzando."
     );
 
-    $("camion").classList.add("andando");
+    $("camion").classList.add(
+        "andando"
+    );
 
-    posicionarCasas(true);
+    posicionarMundo(true);
 
     await esperar(760);
 
-    if (sesionActual !== sesion) return;
+    if (
+        sesionActual !== sesion
+    ) {
+        return;
+    }
 
-    $("camion").classList.remove("andando");
+    $("camion").classList.remove(
+        "andando"
+    );
 
-    boton.classList.remove("correcto");
+    boton.classList.remove(
+        "correcto"
+    );
 
     /* ÚLTIMA CASA */
 
@@ -1911,12 +2567,16 @@ async function responder(boton, tipo) {
         residuosPorEscenario()
     ) {
         mostrarMensaje(
-            "¡Llegamos a la última casa! 🌟"
+            "¡Llegamos a la última casa! Ruta completada."
         );
 
         await esperar(650);
 
-        if (sesionActual !== sesion) return;
+        if (
+            sesionActual !== sesion
+        ) {
+            return;
+        }
 
         if (
             escenarioActual ===
@@ -1942,10 +2602,42 @@ async function responder(boton, tipo) {
 }
 
 /* ==========================================================
+   NUEVO: EXPLICACIÓN DESPUÉS DE ELEGIR NIVEL
+   ========================================================== */
+
+function mostrarInstrucciones() {
+    const descripciones = {
+        facil:
+            "Fácil: 10 residuos y cuatro tachos con referencias.",
+
+        intermedio:
+            "Intermedio: 25 residuos y siete tachos con referencias.",
+
+        dificil:
+            "Difícil: 50 residuos. Los tachos aumentan de cuatro a siete, sin referencias."
+    };
+
+    $("detalle-nivel").textContent =
+        descripciones[nivel];
+
+    $("menu").classList.add(
+        "oculto"
+    );
+
+    $("instrucciones").classList.remove(
+        "oculto"
+    );
+
+    $("boton-iniciar").focus();
+}
+
+/* ==========================================================
    INICIAR Y REINICIAR
    ========================================================== */
 
 function iniciar() {
+    cancelarArrastre();
+
     sesion++;
 
     puntos = 0;
@@ -1960,21 +2652,34 @@ function iniciar() {
     activo = true;
     bloqueado = true;
 
-    $("menu").classList.add("oculto");
-    $("final").classList.add("oculto");
+    $("menu").classList.add(
+        "oculto"
+    );
 
-    $("camion").classList.remove("andando");
+    $("instrucciones").classList.add(
+        "oculto"
+    );
+
+    $("final").classList.add(
+        "oculto"
+    );
+
+    $("camion").classList.remove(
+        "andando"
+    );
 
     actualizarIndicadores();
     prepararEscenario();
     siguienteResiduo();
 
     mostrarMensaje(
-        "Elige el tacho correcto. ¡Tienes tres vidas!"
+        "Arrastra el residuo al tacho correcto o toca un tacho."
     );
 }
 
 function volverMenu() {
+    cancelarArrastre();
+
     sesion++;
 
     activo = false;
@@ -1982,12 +2687,23 @@ function volverMenu() {
 
     bloquear(true);
 
-    $("camion").classList.remove("andando");
+    $("camion").classList.remove(
+        "andando"
+    );
 
-    $("final").classList.add("oculto");
-    $("menu").classList.remove("oculto");
+    $("instrucciones").classList.add(
+        "oculto"
+    );
 
-    $("boton-iniciar").focus();
+    $("final").classList.add(
+        "oculto"
+    );
+
+    $("menu").classList.remove(
+        "oculto"
+    );
+
+    $("boton-instrucciones").focus();
 }
 
 /* ==========================================================
@@ -1995,6 +2711,8 @@ function volverMenu() {
    ========================================================== */
 
 function terminar(gano) {
+    cancelarArrastre();
+
     activo = false;
     residuoActual = null;
 
@@ -2015,10 +2733,53 @@ function terminar(gano) {
         `${puntos} puntos · ` +
         `${completados}/${NIVELES[nivel].total} residuos`;
 
-    $("final").classList.remove("oculto");
+    $("final").classList.remove(
+        "oculto"
+    );
 
     $("boton-reiniciar").focus();
 }
+
+/* ==========================================================
+   EVENTOS DEL ARRASTRE
+   ========================================================== */
+
+const pieza = $("pieza-residuo");
+
+pieza.addEventListener(
+    "pointerdown",
+    empezarArrastre
+);
+
+pieza.addEventListener(
+    "pointermove",
+    moverArrastre
+);
+
+pieza.addEventListener(
+    "pointerup",
+    soltarArrastre
+);
+
+pieza.addEventListener(
+    "pointercancel",
+    cancelarArrastre
+);
+
+pieza.addEventListener(
+    "lostpointercapture",
+    cancelarArrastre
+);
+
+pieza.addEventListener(
+    "dragstart",
+    evento => evento.preventDefault()
+);
+
+window.addEventListener(
+    "blur",
+    cancelarArrastre
+);
 
 /* ==========================================================
    BOTONES
@@ -2046,11 +2807,23 @@ document.querySelectorAll(".nivel").forEach(
     }
 );
 
-$("boton-iniciar").onclick = iniciar;
-$("boton-reiniciar").onclick = iniciar;
+$("boton-instrucciones").onclick =
+    mostrarInstrucciones;
 
-$("boton-menu").onclick = volverMenu;
-$("boton-final-menu").onclick = volverMenu;
+$("boton-iniciar").onclick =
+    iniciar;
+
+$("boton-reiniciar").onclick =
+    iniciar;
+
+$("boton-volver-niveles").onclick =
+    volverMenu;
+
+$("boton-menu").onclick =
+    volverMenu;
+
+$("boton-final-menu").onclick =
+    volverMenu;
 
 $("boton-sonido").onclick = () => {
     sonido = !sonido;
@@ -2065,21 +2838,114 @@ $("boton-sonido").onclick = () => {
             : "Activar sonido"
     );
 
+    $("boton-sonido").setAttribute(
+        "aria-pressed",
+        String(sonido)
+    );
+
     tono(660);
 };
 
 window.addEventListener(
     "resize",
-    ajustarEscenario
+    () => {
+        cancelarArrastre();
+        ajustarEscenario();
+    }
 );
+
+
+
 
 /* VISTA INICIAL */
 
-cargarCamion();
+cargarCamiones();
 prepararEscenario();
 actualizarIndicadores();
 bloquear(true);
 
+
+
+</script>
+<!-- MÚSICA DE FONDO -->
+<audio
+    id="musicaFondo"
+    src="../assets/img_EcoCamion/morning_sweep.mp3"
+    loop
+    preload="auto"
+></audio>
+
+<script>
+(() => {
+    const musica = document.getElementById("musicaFondo");
+    const botonSonido = document.getElementById("boton-sonido");
+
+    // Volumen inicial: 12 %.
+    // Puedes bajarlo a 0.05 o subirlo a 0.20.
+    musica.volume = 0.12;
+
+    function actualizarBoton() {
+        botonSonido.textContent = sonido ? "🔊" : "🔇";
+
+        botonSonido.setAttribute(
+            "aria-label",
+            sonido ? "Silenciar sonido" : "Activar sonido"
+        );
+
+        botonSonido.setAttribute(
+            "aria-pressed",
+            String(sonido)
+        );
+    }
+
+    function comenzarMusica() {
+        sonido = true;
+        actualizarBoton();
+
+        musica.play().catch(error => {
+            console.warn(
+                "No se pudo reproducir morning_sweep. Revisa la ruta y la extensión.",
+                error
+            );
+        });
+    }
+
+    // Comienza al pulsar “¡Comenzar la ruta!”.
+    document.getElementById("boton-iniciar")
+        .addEventListener("click", comenzarMusica);
+
+    // También funciona al volver a jugar.
+    document.getElementById("boton-reiniciar")
+        .addEventListener("click", comenzarMusica);
+
+    // El mismo botón controla música y efectos.
+    // Sustituye la acción anterior de este botón.
+    botonSonido.onclick = () => {
+        sonido = !sonido;
+        actualizarBoton();
+
+        if (sonido) {
+            musica.play().catch(error => {
+                console.warn("No se pudo reproducir la música.", error);
+            });
+
+            tono(660);
+        } else {
+            musica.pause();
+        }
+    };
+
+    // Pausar la música al regresar al menú.
+    function pausarMusica() {
+        musica.pause();
+    }
+
+    document.getElementById("boton-menu")
+        .addEventListener("click", pausarMusica);
+
+    document.getElementById("boton-final-menu")
+        .addEventListener("click", pausarMusica);
+})();
 </script>
 </body>
 </html>
