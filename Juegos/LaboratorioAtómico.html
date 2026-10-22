@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab Atómico 3D</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        html, body { margin: 0; height: 100%; overflow: hidden; background: #0b1020; color: #e2e8f0; user-select: none; -webkit-user-select: none;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif; }
+        #canvas-container { position: fixed; inset: 0; }
+        #canvas-container canvas { display: block; touch-action: none; }
+
+        .panel { background: rgba(15, 23, 42, .74); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(148, 163, 184, .2); box-shadow: 0 12px 30px -12px rgba(0, 0, 0, .7); }
+        .btn { background: rgba(15, 23, 42, .74); backdrop-filter: blur(14px); border: 1px solid rgba(148, 163, 184, .2);
+            color: #e2e8f0; font-weight: 600; padding: .7rem 1rem; border-radius: .85rem; display: flex; align-items: center; gap: .5rem;
+            transition: all .15s; cursor: pointer; }
+        .btn:hover { background: rgba(51, 65, 85, .85); transform: translateY(-1px); }
+        .btn:active { transform: translateY(0) scale(.97); }
+        .btn-primary { background: linear-gradient(90deg, #06b6d4, #6366f1); border-color: transparent; color: #fff;
+            box-shadow: 0 0 22px rgba(6, 182, 212, .35); }
+        .btn-primary:hover { background: linear-gradient(90deg, #0891b2, #4f46e5); }
+        .btn-quiz { background: linear-gradient(90deg, #f59e0b, #ef4444); border-color: transparent; color: #fff;
+            box-shadow: 0 0 20px rgba(245, 158, 11, .3); }
+        .btn-quiz:hover { background: linear-gradient(90deg, #d97706, #dc2626); }
+        .btn-icon { padding: .7rem .8rem; }
+
+        .chip { display: flex; align-items: center; gap: .45rem; padding: .5rem .8rem; border-radius: .7rem; color: #cbd5e1; font-size: .85rem;
+            font-weight: 700; transition: all .15s; cursor: pointer; border: 1px solid transparent; }
+        .chip:hover { background: rgba(51, 65, 85, .7); color: #fff; }
+        .chip.active { background: rgba(6, 182, 212, .18); color: #67e8f9; border-color: rgba(6, 182, 212, .5); }
+
+        .lvl-card { position: relative; display: flex; flex-direction: column; align-items: center; gap: .1rem; padding: .75rem .4rem;
+            border-radius: .85rem; border: 1px solid rgba(148, 163, 184, .25); background: rgba(30, 41, 59, .6); cursor: pointer; transition: all .15s; }
+        .lvl-card:hover { background: rgba(51, 65, 85, .85); transform: translateY(-2px); }
+        .lvl-card.active { border-color: #22d3ee; background: rgba(6, 182, 212, .15); }
+        .lvl-card .lvl-sym { font-size: 1.4rem; font-weight: 800; line-height: 1.1; }
+        .lvl-card .lvl-name { font-size: .7rem; color: #94a3b8; font-weight: 600; text-align: center; }
+        .lvl-card .lvl-done { display: none; position: absolute; top: 6px; right: 7px; color: #34d399; font-size: .75rem; }
+        .lvl-card.done .lvl-done { display: block; }
+
+        .dot { width: .7rem; height: .7rem; border-radius: 999px; display: inline-block; box-shadow: 0 0 8px currentColor; }
+
+        .toast { opacity: 0; transform: translateY(8px); transition: all .25s; pointer-events: none;
+            background: rgba(15, 23, 42, .9); border: 1px solid rgba(148, 163, 184, .3); color: #f1f5f9; padding: .55rem 1.1rem;
+            border-radius: 999px; font-size: .85rem; font-weight: 600; text-align: center; max-width: 92vw; }
+        .toast.show { opacity: 1; transform: none; }
+        .toast.ok { border-color: #34d399; }
+        .toast.bad { border-color: #f87171; }
+        .toast.hint { border-color: #facc15; }
+
+        #info-panel { transform: translateX(105%); transition: transform .3s ease; }
+        #info-panel.open { transform: none; }
+        #info-panel::-webkit-scrollbar { width: 6px; }
+        #info-panel::-webkit-scrollbar-thumb { background: #334155; border-radius: 6px; }
+
+        .tile { width: 84px; height: 84px; border-radius: .8rem; border: 2px solid; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; flex-shrink: 0; position: relative; }
+        .tile .z { position: absolute; top: 5px; left: 8px; font-size: .7rem; font-weight: 700; opacity: .85; }
+        .tile .m { position: absolute; bottom: 5px; font-size: .62rem; opacity: .8; }
+        .tile .s { font-size: 2rem; font-weight: 800; line-height: 1; }
+
+        #victory { transition: all .45s; }
+        #victory.hide { opacity: 0; transform: translate(-50%, 20px); pointer-events: none; }
+
+        .qopt { display: block; width: 100%; text-align: left; padding: .7rem .9rem; border-radius: .8rem; border: 1px solid rgba(148, 163, 184, .3);
+            background: rgba(30, 41, 59, .7); color: #e2e8f0; font-size: .9rem; font-weight: 600; transition: all .15s; cursor: pointer; }
+        .qopt:hover:not(:disabled) { background: rgba(51, 65, 85, .9); border-color: #67e8f9; }
+        .qopt.ok { background: rgba(16, 185, 129, .2); border-color: #34d399; color: #a7f3d0; }
+        .qopt.bad { background: rgba(239, 68, 68, .18); border-color: #f87171; color: #fecaca; }
+        .qopt:disabled { cursor: default; }
+    </style>
+</head>
+<body>
+
+    <div id="canvas-container"></div>
+
+    <!-- ===== INTERFAZ ===== -->
+    <div class="fixed inset-0 pointer-events-none z-10 flex flex-col justify-between p-3 md:p-5">
+
+        <!-- Parte superior -->
+        <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="panel rounded-2xl px-4 py-3 pointer-events-auto max-w-sm">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-atom text-3xl text-cyan-400"></i>
+                    <div>
+                        <h1 class="font-extrabold text-base leading-tight bg-gradient-to-r from-cyan-300 to-indigo-400 bg-clip-text text-transparent">LAB ATÓMICO 3D</h1>
+                        <p id="level-name" class="text-xs text-slate-400 font-semibold"></p>
+                    </div>
+                </div>
+                <p id="level-objective" class="mt-2 text-xs text-slate-300 leading-snug"></p>
+            </div>
+
+            <div class="panel rounded-2xl p-1.5 flex items-center gap-1 pointer-events-auto">
+                <button id="lvl-prev" class="chip" title="Modelo anterior"><i class="fa-solid fa-chevron-left"></i></button>
+                <button id="btn-levels" class="chip active" title="Elegir modelo"><i class="fa-solid fa-layer-group"></i><span id="levels-label">Modelos</span></button>
+                <button id="lvl-next" class="chip" title="Modelo siguiente"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+
+            <div class="panel rounded-2xl px-4 py-3 pointer-events-auto w-52">
+                <div class="flex items-end justify-between mb-1.5">
+                    <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Progreso</span>
+                    <span id="progress-text" class="font-mono font-bold text-lg leading-none">0 / 0</span>
+                </div>
+                <div class="h-1.5 rounded-full bg-slate-700 overflow-hidden mb-3">
+                    <div id="progress-bar" class="h-full bg-gradient-to-r from-cyan-400 to-emerald-400 transition-all duration-300" style="width:0%"></div>
+                </div>
+                <div id="counters" class="flex flex-col gap-1.5"></div>
+            </div>
+        </div>
+
+        <!-- Parte inferior -->
+        <div class="flex flex-col items-center">
+            <div id="toast" class="toast mb-3"></div>
+
+            <div class="flex flex-wrap items-center justify-center gap-2 pointer-events-auto">
+                <button id="btn-info" class="btn btn-primary"><i class="fa-solid fa-circle-info"></i><span>Información</span></button>
+                <button id="btn-quiz" class="btn btn-quiz"><i class="fa-solid fa-circle-question"></i><span>Quiz</span></button>
+                <button id="btn-hint" class="btn" title="Te señala dónde va una pieza"><i class="fa-regular fa-lightbulb text-yellow-300"></i><span class="hidden sm:inline">Pista</span></button>
+                <button id="btn-solve" class="btn" title="Arma todo automáticamente"><i class="fa-solid fa-wand-magic-sparkles text-violet-300"></i><span class="hidden sm:inline">Resolver</span></button>
+                <button id="btn-reset" class="btn" title="Reiniciar nivel"><i class="fa-solid fa-rotate-left text-sky-300"></i><span class="hidden sm:inline">Reiniciar</span></button>
+                <button id="btn-zoom-in" class="btn btn-icon" title="Acercar"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+                <button id="btn-zoom-out" class="btn btn-icon" title="Alejar"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+                <button id="btn-cam" class="btn btn-icon" title="Restablecer cámara"><i class="fa-solid fa-camera-rotate"></i></button>
+                <button id="btn-sound" class="btn btn-icon" title="Sonido"><i id="sound-icon" class="fa-solid fa-volume-high"></i></button>
+                <button id="btn-help" class="btn btn-icon" title="¿Cómo se juega?"><i class="fa-solid fa-question"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tarjeta de nivel completado -->
+    <div id="victory" class="hide fixed left-1/2 bottom-24 -translate-x-1/2 z-20 panel rounded-2xl px-6 py-4 text-center w-[92vw] max-w-md pointer-events-auto">
+        <button id="victory-close" class="absolute top-2 right-2 w-8 h-8 rounded-lg hover:bg-slate-700 text-slate-300" title="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+        <div class="text-3xl mb-1">🎉</div>
+        <h2 id="victory-title" class="font-extrabold text-lg text-emerald-300"></h2>
+        <p id="victory-sub" class="text-xs text-slate-300 mt-1 mb-3"></p>
+        <div class="flex flex-wrap gap-2 justify-center">
+            <button id="victory-info" class="btn"><i class="fa-solid fa-circle-info text-cyan-300"></i>Información</button>
+            <button id="victory-quiz" class="btn"><i class="fa-solid fa-circle-question text-amber-300"></i>Quiz</button>
+            <button id="victory-next" class="btn btn-primary"><span id="victory-next-text">Siguiente</span><i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <!-- Panel de información -->
+    <aside id="info-panel" class="fixed top-0 right-0 h-full w-full max-w-md z-30 overflow-y-auto bg-slate-900/95 backdrop-blur-xl border-l border-slate-700/70 shadow-2xl">
+        <div class="sticky top-0 z-10 flex items-center justify-between px-5 py-3 bg-slate-900/95 border-b border-slate-700/60">
+            <h2 class="font-bold text-slate-100"><i class="fa-solid fa-flask text-cyan-400 mr-2"></i>Lo que estás armando</h2>
+            <button id="info-close" class="w-8 h-8 rounded-lg hover:bg-slate-700 text-slate-300"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="info-content" class="p-5 text-slate-200"></div>
+    </aside>
+
+    <!-- Menú de modelos -->
+    <div id="levels-modal" class="fixed inset-0 z-40 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="panel rounded-3xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-2">
+                <h2 class="text-xl font-extrabold text-cyan-300"><i class="fa-solid fa-layer-group mr-2"></i>Elige un modelo</h2>
+                <button id="levels-close" class="w-8 h-8 rounded-lg hover:bg-slate-700 text-slate-300"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="levels-grid"></div>
+        </div>
+    </div>
+
+    <!-- Quiz -->
+    <div id="quiz-modal" class="fixed inset-0 z-40 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="panel rounded-3xl p-6 max-w-lg w-full max-h-[92vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="text-xl font-extrabold text-amber-300"><i class="fa-solid fa-circle-question mr-2"></i>Quiz</h2>
+                <button id="quiz-close" class="w-8 h-8 rounded-lg hover:bg-slate-700 text-slate-300"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="quiz-body"></div>
+        </div>
+    </div>
+
+    <!-- Ayuda -->
+    <div id="help-modal" class="fixed inset-0 z-40 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="panel rounded-3xl p-6 max-w-md w-full">
+            <h2 class="text-xl font-extrabold mb-4 text-cyan-300"><i class="fa-solid fa-hand-pointer mr-2"></i>¿Cómo se juega?</h2>
+            <ol class="space-y-3 text-sm text-slate-200">
+                <li class="flex gap-3"><span class="w-7 h-7 shrink-0 rounded-full bg-cyan-500/20 text-cyan-300 font-bold flex items-center justify-center">1</span>
+                    <span><b>Arrastra cada pieza</b> hacia el <b>hueco brillante de su mismo color</b>. No hace falta alinearla perfecto: si <b>se ve encima del hueco desde tu vista</b>, se encaja sola.</span></li>
+                <li class="flex gap-3"><span class="w-7 h-7 shrink-0 rounded-full bg-cyan-500/20 text-cyan-300 font-bold flex items-center justify-center">2</span>
+                    <span><b>Gira la vista</b> arrastrando en un espacio vacío. Usa la <b>rueda del ratón</b> (o pellizca en el móvil) para acercar y alejar.</span></li>
+                <li class="flex gap-3"><span class="w-7 h-7 shrink-0 rounded-full bg-cyan-500/20 text-cyan-300 font-bold flex items-center justify-center">3</span>
+                    <span><b>Información</b> explica qué armas, <b>Quiz</b> te hace preguntas y <b>Pista</b> te señala una pieza y su lugar.</span></li>
+            </ol>
+            <button id="help-close" class="btn btn-primary w-full justify-center mt-5">¡Entendido!</button>
+        </div>
+    </div>
+
+    <script>
+    // =====================================================================
+    //  DATOS: piezas y niveles  (para agregar un modelo nuevo, añade un objeto a LEVELS)
+    // =====================================================================
+    const PART_INFO = {
+        proton:   { name: 'Protón',   plural: 'Protones',   label: '+', text: '#ffffff', color: 0xef4444, radius: 0.30,
+                    desc: 'Carga positiva (+). Está en el núcleo. Cuántos protones tiene un átomo define qué elemento es.' },
+        neutron:  { name: 'Neutrón',  plural: 'Neutrones',  label: 'n', text: '#0f172a', color: 0x94a3b8, radius: 0.30,
+                    desc: 'Sin carga eléctrica. Está en el núcleo y ayuda a mantenerlo estable.' },
+        electron: { name: 'Electrón', plural: 'Electrones', label: '−', text: '#0f172a', color: 0x38bdf8, radius: 0.20,
+                    desc: 'Carga negativa (−). Orbita alrededor del núcleo en capas. Los de la última capa forman los enlaces.' },
+        H: { name: 'Hidrógeno', plural: 'Hidrógeno (H)', label: 'H', text: '#0f172a', color: 0xf1f5f9, radius: 0.45,
+             desc: 'Átomo de hidrógeno: aporta 1 electrón para compartir en un enlace.' },
+        C: { name: 'Carbono',   plural: 'Carbono (C)',   label: 'C', text: '#ffffff', color: 0x64748b, radius: 0.70,
+             desc: 'Átomo de carbono: tiene 4 electrones externos, por eso puede formar 4 enlaces.' },
+        N: { name: 'Nitrógeno', plural: 'Nitrógeno (N)', label: 'N', text: '#ffffff', color: 0x3b82f6, radius: 0.65,
+             desc: 'Átomo de nitrógeno: tiene 5 electrones externos y puede formar 3 enlaces.' },
+        O: { name: 'Oxígeno',   plural: 'Oxígeno (O)',   label: 'O', text: '#ffffff', color: 0xef4444, radius: 0.65,
+             desc: 'Átomo de oxígeno: tiene 6 electrones externos y le faltan 2 para completar su capa.' }
+    };
+    const TYPE_ORDER = ['proton', 'neutron', 'electron', 'H', 'C', 'N', 'O'];
+
+    // Geometrías moleculares
+    const TET = [[1, 1, 1], [1, -1, -1], [-1, 1, -1], [-1, -1, 1]].map(v => v.map(x => x * 1.9 / Math.sqrt(3)));   // metano
+    const HALF = 52.25 * Math.PI / 180;                                                                            // agua 104,5°
+    const NH3_H = [0, 1, 2].map(k => { const a = 68.2 * Math.PI / 180, ph = (90 + 120 * k) * Math.PI / 180;       // amoníaco ≈107°
+        return [1.9 * Math.sin(a) * Math.cos(ph), -1.9 * Math.cos(a), 1.9 * Math.sin(a) * Math.sin(ph)]; });
+
+    // Q(pregunta, respuesta correcta, [incorrectas], explicación)
+    const Q = (q, ok, bad, why) => ({ q, ok, bad, why });
+
+    const LEVELS = [
+        // ---------------------------- ÁTOMOS ----------------------------
+        {
+            id: 'h', kind: 'atom', name: 'Hidrógeno', tag: 'H', z: 1, mass: '1,008', color: 0xf1f5f9,
+            protons: 1, neutrons: 0, shells: [1],
+            info: {
+                subtitle: 'El elemento más simple del universo',
+                text: 'El hidrógeno es el átomo más sencillo: un solo protón en el núcleo y un electrón que lo orbita. Es el elemento más abundante del universo y el combustible de las estrellas, que lo fusionan para formar helio.',
+                facts: [['Número atómico (Z)', '1 (un protón)'], ['Masa atómica', '1,008 u'], ['Configuración electrónica', '1s¹ (1 electrón en la 1.ª capa)'],
+                        ['Estado a temperatura ambiente', 'Gas'], ['Isótopo más común', 'Protio: no tiene neutrones']],
+                fun: 'En el Sol, cada segundo se fusionan unos 600 millones de toneladas de hidrógeno en helio.'
+            },
+            quiz: [
+                Q('¿Cuántos protones tiene un átomo de hidrógeno?', '1', ['2', '0', '4'], 'El número de protones (Z) define el elemento. El hidrógeno tiene Z = 1.'),
+                Q('¿Qué ocurre con el hidrógeno dentro de las estrellas?', 'Se fusiona y forma helio', ['Se convierte en hierro de golpe', 'Se vuelve sólido', 'Se divide en neutrones sueltos'], 'La fusión nuclear une núcleos de hidrógeno para formar helio y libera energía.'),
+                Q('El isótopo más común del hidrógeno (protio) tiene…', 'Ningún neutrón', ['Un neutrón', 'Dos neutrones', 'Tres neutrones'], 'El protio es solo 1 protón y 1 electrón, sin neutrones.')
+            ]
+        },
+        {
+            id: 'he', kind: 'atom', name: 'Helio', tag: 'He', z: 2, mass: '4,0026', color: 0xfacc15,
+            protons: 2, neutrons: 2, shells: [2],
+            info: {
+                subtitle: 'Un gas noble: casi no reacciona con nada',
+                text: 'El helio tiene 2 protones y, en su forma más común (helio-4), 2 neutrones. Sus 2 electrones llenan por completo la primera capa (que admite máximo 2). Con la capa llena es muy estable, por eso es un gas noble.',
+                facts: [['Número atómico (Z)', '2 (dos protones)'], ['Masa atómica', '4,0026 u'], ['Configuración electrónica', '1s² (capa completa)'],
+                        ['Familia', 'Gases nobles'], ['Núcleo de helio-4', 'Es una partícula alfa (2 p + 2 n)']],
+                fun: 'Se detectó primero en el Sol (1868), por una línea en su espectro, antes de encontrarlo en la Tierra. Su nombre viene de «Helios», el Sol.'
+            },
+            quiz: [
+                Q('¿Por qué el helio casi no reacciona con otros elementos?', 'Su única capa está llena con 2 electrones', ['Tiene muchos neutrones', 'No tiene electrones', 'Es un metal muy pesado'], 'Una capa externa completa vuelve estable al átomo: no necesita ganar ni compartir electrones.'),
+                Q('El núcleo de helio-4 (partícula alfa) está formado por…', '2 protones y 2 neutrones', ['4 protones', '2 protones y 2 electrones', '4 neutrones'], 'Helio-4: Z = 2 protones y 4 − 2 = 2 neutrones.'),
+                Q('¿Cuál es la capacidad máxima de la primera capa electrónica?', '2 electrones', ['1 electrón', '8 electrones', '18 electrones'], 'La primera capa solo admite 2 electrones. La segunda, hasta 8.')
+            ]
+        },
+        {
+            id: 'li', kind: 'atom', name: 'Litio', tag: 'Li', z: 3, mass: '6,94', color: 0xc084fc,
+            protons: 3, neutrons: 4, shells: [2, 1],
+            info: {
+                subtitle: 'El metal más ligero',
+                text: 'El litio tiene 3 protones y, en su isótopo más abundante (litio-7), 4 neutrones. Sus 3 electrones se reparten así: 2 en la primera capa (ya llena) y 1 solitario en la segunda. Ese único electrón externo lo pierde con mucha facilidad, y por eso el litio es tan reactivo.',
+                facts: [['Número atómico (Z)', '3 (tres protones)'], ['Masa atómica', '6,94 u'], ['Configuración electrónica', '1s² 2s¹ (2 + 1 electrones)'],
+                        ['Familia', 'Metales alcalinos'], ['Uso', 'Baterías recargables de iones de litio']],
+                fun: 'Es el metal más liviano: es menos denso que el agua y flota sobre ella. Las baterías de muchos celulares y autos eléctricos usan iones de litio.'
+            },
+            quiz: [
+                Q('¿Cuántos electrones tiene el litio en su segunda capa?', '1', ['2', '3', '0'], 'Configuración 2-1: dos electrones en la primera capa y uno en la segunda.'),
+                Q('¿A qué familia pertenece el litio?', 'Metales alcalinos', ['Gases nobles', 'Halógenos', 'No metales'], 'Los alcalinos tienen 1 electrón externo que ceden con facilidad.'),
+                Q('El litio-7 tiene 3 protones y…', '4 neutrones', ['3 neutrones', '7 neutrones', '10 neutrones'], 'Número másico 7 = 3 protones + 4 neutrones.')
+            ]
+        },
+        {
+            id: 'c', kind: 'atom', name: 'Carbono', tag: 'C', z: 6, mass: '12,011', color: 0x94a3b8,
+            protons: 6, neutrons: 6, shells: [2, 4],
+            info: {
+                subtitle: 'La base química de la vida',
+                text: 'El carbono tiene 6 protones y, en su forma más común (carbono-12), 6 neutrones. Sus 6 electrones se reparten así: 2 en la primera capa (que se llena primero) y 4 en la segunda. Esos 4 electrones externos le permiten formar 4 enlaces, y de ahí sale la química de la vida.',
+                facts: [['Número atómico (Z)', '6 (seis protones)'], ['Masa atómica', '12,011 u'], ['Configuración electrónica', '1s² 2s² 2p² (2 + 4 electrones)'],
+                        ['Electrones de valencia', '4'], ['Formas puras', 'Grafito, diamante, grafeno']],
+                fun: 'El carbono-12 es el átomo de referencia: 1 unidad de masa atómica (u) se define como exactamente 1/12 de su masa.'
+            },
+            quiz: [
+                Q('¿Cuántos enlaces suele formar un átomo de carbono?', '4', ['1', '2', '6'], 'Tiene 4 electrones externos, así que comparte 4 para completar su capa de 8.'),
+                Q('¿Cuántos electrones tiene el carbono en su segunda capa?', '4', ['2', '6', '8'], 'Configuración 2-4: 2 en la primera capa y 4 en la segunda.'),
+                Q('El carbono-12 se usa como referencia para definir…', 'La unidad de masa atómica (u)', ['El litro', 'El grado Celsius', 'El segundo'], '1 u equivale a 1/12 de la masa de un átomo de carbono-12.')
+            ]
+        },
+        {
+            id: 'n', kind: 'atom', name: 'Nitrógeno', tag: 'N', z: 7, mass: '14,007', color: 0x3b82f6,
+            protons: 7, neutrons: 7, shells: [2, 5],
+            info: {
+                subtitle: 'El gas que más abunda en el aire',
+                text: 'El nitrógeno tiene 7 protones y, en su isótopo más común (nitrógeno-14), 7 neutrones. Sus 7 electrones se reparten 2 + 5. Con 5 electrones externos le faltan 3 para completar la capa, así que suele formar 3 enlaces.',
+                facts: [['Número atómico (Z)', '7 (siete protones)'], ['Masa atómica', '14,007 u'], ['Configuración electrónica', '1s² 2s² 2p³ (2 + 5 electrones)'],
+                        ['Electrones externos', '5 (forma 3 enlaces)'], ['En el aire', '≈ 78 % (como N₂)']],
+                fun: 'El aire es casi 4/5 nitrógeno, pero tu cuerpo no puede usarlo tal cual: ciertas bacterias del suelo lo transforman en compuestos que absorben las plantas. Además, está en tus proteínas y en tu ADN.'
+            },
+            quiz: [
+                Q('¿Cuántos electrones externos tiene el nitrógeno?', '5', ['3', '7', '8'], 'Configuración 2-5: la última capa tiene 5 electrones.'),
+                Q('¿Qué porcentaje aproximado del aire es nitrógeno?', '78 %', ['21 %', '1 %', '50 %'], 'El aire es ≈ 78 % N₂, ≈ 21 % O₂ y el resto otros gases.'),
+                Q('¿Cuántos enlaces suele formar el nitrógeno?', '3', ['1', '2', '5'], 'Le faltan 3 electrones para completar los 8 de su última capa.')
+            ]
+        },
+        {
+            id: 'o', kind: 'atom', name: 'Oxígeno', tag: 'O', z: 8, mass: '15,999', color: 0xef4444,
+            protons: 8, neutrons: 8, shells: [2, 6],
+            info: {
+                subtitle: 'El gas que respiramos',
+                text: 'El oxígeno tiene 8 protones y, en su isótopo más común (oxígeno-16), 8 neutrones. Sus 8 electrones se reparten 2 + 6. Le faltan 2 electrones para completar la segunda capa, por eso es muy reactivo y forma 2 enlaces.',
+                facts: [['Número atómico (Z)', '8 (ocho protones)'], ['Masa atómica', '15,999 u'], ['Configuración electrónica', '1s² 2s² 2p⁴ (2 + 6 electrones)'],
+                        ['En el aire', '≈ 21 % (como O₂)'], ['En la corteza terrestre', 'El elemento más abundante (casi la mitad de su masa)']],
+                fun: 'Casi la mitad de la masa de la corteza terrestre es oxígeno, pero está combinado con otros elementos en rocas y minerales, no como gas.'
+            },
+            quiz: [
+                Q('¿Cuántos electrones tiene el oxígeno en su última capa?', '6', ['2', '4', '8'], 'Configuración 2-6. Le faltan 2 para llegar a 8.'),
+                Q('¿Cuántos neutrones tiene el oxígeno-16?', '8', ['16', '6', '10'], 'Neutrones = número másico − protones = 16 − 8 = 8.'),
+                Q('¿Qué porcentaje aproximado del aire es oxígeno (O₂)?', '21 %', ['78 %', '5 %', '50 %'], 'El aire seco tiene ≈ 21 % de oxígeno.')
+            ]
+        },
+        {
+            id: 'ne', kind: 'atom', name: 'Neón', tag: 'Ne', z: 10, mass: '20,180', color: 0xfb923c,
+            protons: 10, neutrons: 10, shells: [2, 8],
+            info: {
+                subtitle: 'Un gas noble que brilla',
+                text: 'El neón tiene 10 protones y, en su isótopo más común (neón-20), 10 neutrones. Sus 10 electrones llenan la primera capa (2) y la segunda (8). Con la capa externa completa es muy estable y casi no forma compuestos: es un gas noble.',
+                facts: [['Número atómico (Z)', '10 (diez protones)'], ['Masa atómica', '20,180 u'], ['Configuración electrónica', '1s² 2s² 2p⁶ (2 + 8 electrones)'],
+                        ['Familia', 'Gases nobles'], ['Uso', 'Letreros luminosos']],
+                fun: 'En los letreros de neón, una corriente eléctrica excita el gas y este emite una luz rojo-anaranjada.'
+            },
+            quiz: [
+                Q('¿Por qué el neón es un gas noble?', 'Tiene completa su capa externa (8 electrones)', ['Tiene solo 1 electrón', 'No tiene protones', 'Es muy pesado'], 'Con la capa externa llena no necesita reaccionar.'),
+                Q('¿Cuántos electrones tiene un átomo de neón?', '10', ['8', '2', '20'], 'Átomo neutro: electrones = protones = 10 (2 + 8).'),
+                Q('¿Qué color emite el neón en un letrero luminoso?', 'Rojo-anaranjado', ['Verde', 'Violeta', 'Blanco'], 'El gas neón excitado emite luz rojo-anaranjada.')
+            ]
+        },
+        {
+            id: 'na', kind: 'atom', name: 'Sodio', tag: 'Na', z: 11, mass: '22,990', color: 0xfbbf24,
+            protons: 11, neutrons: 12, shells: [2, 8, 1],
+            info: {
+                subtitle: 'Un metal blando que reacciona con el agua',
+                text: 'El sodio tiene 11 protones y, en su único isótopo estable (sodio-23), 12 neutrones. Sus 11 electrones se reparten 2 + 8 + 1. Ese electrón solitario de la tercera capa lo cede con facilidad y forma el ion Na⁺; con el cloro forma la sal de mesa (NaCl). ¡Es el modelo más grande!',
+                facts: [['Número atómico (Z)', '11 (once protones)'], ['Masa atómica', '22,990 u'], ['Configuración electrónica', '1s² 2s² 2p⁶ 3s¹ (2 + 8 + 1)'],
+                        ['Familia', 'Metales alcalinos'], ['Ion común', 'Na⁺ (pierde 1 electrón)']],
+                fun: 'Es tan blando que se corta con un cuchillo, y reacciona con el agua con tanta energía que se guarda sumergido en aceite.'
+            },
+            quiz: [
+                Q('¿Cómo se distribuyen los 11 electrones del sodio?', '2 – 8 – 1', ['2 – 9', '8 – 3', '1 – 8 – 2'], 'Primera capa: 2, segunda: 8, tercera: 1.'),
+                Q('¿Qué ion forma el sodio con facilidad?', 'Na⁺ (pierde 1 electrón)', ['Na⁻ (gana 1 electrón)', 'Na²⁺', 'Na³⁻'], 'Al perder su único electrón externo queda con la capa anterior completa.'),
+                Q('¿Qué compuesto de uso diario forma el sodio con el cloro?', 'Sal de mesa (NaCl)', ['Azúcar', 'Agua', 'Cal'], 'Na⁺ y Cl⁻ forman cloruro de sodio.')
+            ]
+        },
+
+        // ---------------------------- MOLÉCULAS ----------------------------
+        {
+            id: 'h2', kind: 'molecule', name: 'Hidrógeno molecular', tag: 'H₂', formula: 'H₂', mass: '2,016 g/mol', color: 0xf1f5f9,
+            atoms: [{ el: 'H', pos: [-0.8, 0, 0] }, { el: 'H', pos: [0.8, 0, 0] }],
+            bonds: [{ a: 0, b: 1, order: 1 }],
+            info: {
+                subtitle: 'La molécula más pequeña',
+                text: 'Dos átomos de hidrógeno comparten un par de electrones (un enlace covalente simple). Así cada átomo «siente» 2 electrones y completa su capa, igual que el helio. Es una molécula diatómica y apolar.',
+                facts: [['Fórmula', 'H₂'], ['Masa molar', '≈ 2,016 g/mol'], ['Enlace', '1 enlace simple H–H (1 par compartido)'],
+                        ['Geometría', 'Lineal (solo 2 átomos)'], ['Polaridad', 'Apolar']],
+                fun: 'Es el gas más ligero que existe y se estudia como combustible limpio: al quemarse con oxígeno solo produce agua.'
+            },
+            quiz: [
+                Q('¿Cuántos electrones se comparten en el enlace H–H?', '2 (un par)', ['1', '4', '0'], 'Cada hidrógeno aporta 1 electrón; el par compartido forma el enlace.'),
+                Q('¿Qué tipo de enlace une a los dos átomos de H₂?', 'Covalente simple', ['Iónico', 'Doble', 'Triple'], 'Comparten un solo par de electrones.'),
+                Q('Al compartir electrones, cada átomo de H completa su capa con…', '2 electrones, como el helio', ['8 electrones', '1 electrón', '4 electrones'], 'La primera capa se llena con 2 electrones.')
+            ]
+        },
+        {
+            id: 'o2', kind: 'molecule', name: 'Oxígeno molecular', tag: 'O₂', formula: 'O₂', mass: '31,998 g/mol', color: 0xef4444,
+            atoms: [{ el: 'O', pos: [-1.05, 0, 0] }, { el: 'O', pos: [1.05, 0, 0] }],
+            bonds: [{ a: 0, b: 1, order: 2 }],
+            info: {
+                subtitle: 'El gas que respiramos',
+                text: 'Dos átomos de oxígeno se unen con un doble enlace: comparten 2 pares de electrones (4 en total). Así cada uno completa su capa de 8 electrones. Es la forma en que el oxígeno existe en el aire.',
+                facts: [['Fórmula', 'O₂'], ['Masa molar', '≈ 32,00 g/mol'], ['Enlace', '1 doble enlace O=O'],
+                        ['Geometría', 'Lineal'], ['En el aire', '≈ 21 %']],
+                fun: 'El oxígeno líquido es de color azul pálido y es atraído por un imán (es paramagnético).'
+            },
+            quiz: [
+                Q('¿Qué tipo de enlace hay entre los dos átomos de O₂?', 'Doble', ['Simple', 'Triple', 'Iónico'], 'Comparten 2 pares de electrones: O=O.'),
+                Q('¿Cuántos electrones se comparten en total en el enlace del O₂?', '4', ['2', '6', '8'], 'Un doble enlace son 2 pares = 4 electrones.'),
+                Q('¿Qué curiosidad tiene el oxígeno líquido?', 'Es azul pálido y lo atrae un imán', ['Es verde y repele los imanes', 'Es incoloro y no pesa', 'Es rojo y brilla'], 'El O₂ es paramagnético, por eso un imán lo atrae.')
+            ]
+        },
+        {
+            id: 'n2', kind: 'molecule', name: 'Nitrógeno molecular', tag: 'N₂', formula: 'N₂', mass: '28,014 g/mol', color: 0x3b82f6,
+            atoms: [{ el: 'N', pos: [-1.05, 0, 0] }, { el: 'N', pos: [1.05, 0, 0] }],
+            bonds: [{ a: 0, b: 1, order: 3 }],
+            info: {
+                subtitle: 'Casi 4/5 del aire',
+                text: 'Dos átomos de nitrógeno se unen con un triple enlace: comparten 3 pares de electrones (6 en total). Es uno de los enlaces más fuertes que existen, por eso el N₂ es muy poco reactivo.',
+                facts: [['Fórmula', 'N₂'], ['Masa molar', '≈ 28,014 g/mol'], ['Enlace', '1 triple enlace N≡N'],
+                        ['Geometría', 'Lineal'], ['En el aire', '≈ 78 %']],
+                fun: 'Como casi no reacciona, se usa para llenar bolsas de papas fritas: desplaza al oxígeno y evita que los alimentos se pongan rancios.'
+            },
+            quiz: [
+                Q('¿Qué tipo de enlace une los átomos de N₂?', 'Triple', ['Simple', 'Doble', 'Iónico'], 'Cada N necesita 3 electrones más, así que comparten 3 pares.'),
+                Q('¿Por qué el N₂ es tan poco reactivo?', 'Su triple enlace es muy fuerte', ['Porque es muy pesado', 'Porque no tiene electrones', 'Porque es un metal'], 'Romper un triple enlace requiere mucha energía.'),
+                Q('¿Cuánto nitrógeno hay aproximadamente en el aire?', '78 %', ['21 %', '10 %', '1 %'], 'Es el gas más abundante de la atmósfera.')
+            ]
+        },
+        {
+            id: 'h2o', kind: 'molecule', name: 'Agua', tag: 'H₂O', formula: 'H₂O', mass: '18,015 g/mol', color: 0x38bdf8,
+            atoms: [
+                { el: 'O', pos: [0, 0, 0] },
+                { el: 'H', pos: [-2.0 * Math.sin(HALF), -2.0 * Math.cos(HALF), 0] },
+                { el: 'H', pos: [2.0 * Math.sin(HALF), -2.0 * Math.cos(HALF), 0] }
+            ],
+            bonds: [{ a: 0, b: 1, order: 1 }, { a: 0, b: 2, order: 1 }],
+            info: {
+                subtitle: 'La molécula de la vida',
+                text: 'Una molécula de agua une 1 átomo de oxígeno con 2 de hidrógeno mediante enlaces covalentes: los átomos comparten electrones. Su forma es angular (unos 104,5°), no recta, y eso la vuelve una molécula polar: un lado algo negativo (el oxígeno) y otro algo positivo (los hidrógenos).',
+                facts: [['Fórmula', 'H₂O'], ['Masa molar', '≈ 18,015 g/mol'], ['Enlaces', '2 enlaces covalentes simples O–H'],
+                        ['Geometría', 'Angular, ≈ 104,5°'], ['Polaridad', 'Polar']],
+                fun: 'Por ser polar, sus moléculas se atraen entre sí (puentes de hidrógeno). Por eso el hielo es menos denso que el agua líquida y flota.'
+            },
+            quiz: [
+                Q('¿Cuántos átomos de hidrógeno hay en una molécula de agua?', '2', ['1', '3', '4'], 'H₂O: 2 hidrógenos y 1 oxígeno.'),
+                Q('¿Qué forma tiene la molécula de agua?', 'Angular (≈ 104,5°)', ['Lineal', 'Tetraédrica', 'Cuadrada'], 'Los pares de electrones sin compartir del oxígeno cierran el ángulo.'),
+                Q('¿Por qué flota el hielo en el agua líquida?', 'Es menos denso que el agua líquida', ['Es más pesado pero tiene aire', 'Porque está más caliente', 'Porque tiene sal'], 'Los puentes de hidrógeno ordenan las moléculas en el hielo dejando más espacio entre ellas.'),
+                Q('¿Qué tipo de enlace une al oxígeno con cada hidrógeno?', 'Covalente', ['Iónico', 'Metálico', 'Ninguno'], 'Comparten electrones.')
+            ]
+        },
+        {
+            id: 'co2', kind: 'molecule', name: 'Dióxido de carbono', tag: 'CO₂', formula: 'CO₂', mass: '44,01 g/mol', color: 0x94a3b8,
+            atoms: [{ el: 'C', pos: [0, 0, 0] }, { el: 'O', pos: [-2.4, 0, 0] }, { el: 'O', pos: [2.4, 0, 0] }],
+            bonds: [{ a: 0, b: 1, order: 2 }, { a: 0, b: 2, order: 2 }],
+            info: {
+                subtitle: 'El gas que usan las plantas',
+                text: 'El dióxido de carbono tiene 1 átomo de carbono en el centro unido a 2 de oxígeno por dobles enlaces (en cada uno se comparten 2 pares de electrones). Es lineal (180°), así que, aunque cada enlace es polar, la molécula en conjunto es apolar.',
+                facts: [['Fórmula', 'CO₂'], ['Masa molar', '≈ 44,01 g/mol'], ['Enlaces', '2 dobles enlaces C=O'],
+                        ['Geometría', 'Lineal, 180°'], ['Papel', 'Lo usan las plantas en la fotosíntesis; es gas de efecto invernadero']],
+                fun: 'El hielo seco es CO₂ sólido: a presión normal no se derrite, pasa directo a gas (sublima) a −78,5 °C.'
+            },
+            quiz: [
+                Q('¿Qué forma tiene la molécula de CO₂?', 'Lineal', ['Angular', 'Tetraédrica', 'Piramidal'], 'O=C=O está alineada a 180°.'),
+                Q('¿Cuántos dobles enlaces tiene el CO₂?', '2', ['1', '3', '4'], 'El carbono forma un doble enlace con cada oxígeno.'),
+                Q('¿Qué es el «hielo seco»?', 'CO₂ en estado sólido', ['Agua congelada sin sal', 'Nitrógeno líquido', 'Metano congelado'], 'Sublima: pasa directo de sólido a gas.')
+            ]
+        },
+        {
+            id: 'nh3', kind: 'molecule', name: 'Amoníaco', tag: 'NH₃', formula: 'NH₃', mass: '17,03 g/mol', color: 0x3b82f6,
+            atoms: [{ el: 'N', pos: [0, 0, 0] }, { el: 'H', pos: NH3_H[0] }, { el: 'H', pos: NH3_H[1] }, { el: 'H', pos: NH3_H[2] }],
+            bonds: [{ a: 0, b: 1, order: 1 }, { a: 0, b: 2, order: 1 }, { a: 0, b: 3, order: 1 }],
+            info: {
+                subtitle: 'La base de muchos fertilizantes',
+                text: 'El amoníaco une 1 nitrógeno con 3 hidrógenos mediante enlaces covalentes simples. Además, el nitrógeno conserva un par de electrones sin compartir, que empuja a los enlaces y da una forma de pirámide (ángulos de unos 107°). Es una molécula polar.',
+                facts: [['Fórmula', 'NH₃'], ['Masa molar', '≈ 17,03 g/mol'], ['Enlaces', '3 enlaces simples N–H'],
+                        ['Geometría', 'Piramidal, ≈ 107°'], ['Polaridad', 'Polar']],
+                fun: 'Se fabrica a escala industrial con el proceso Haber-Bosch y es la base de gran parte de los fertilizantes que sostienen la agricultura moderna.'
+            },
+            quiz: [
+                Q('¿Cuántos átomos de hidrógeno tiene el amoníaco?', '3', ['2', '4', '1'], 'Fórmula NH₃.'),
+                Q('¿Qué forma tiene la molécula de NH₃?', 'Piramidal', ['Plana en triángulo', 'Lineal', 'Cuadrada'], 'El par de electrones sin compartir del N la deforma en pirámide.'),
+                Q('¿Para qué se usa principalmente el amoníaco a gran escala?', 'Para fabricar fertilizantes', ['Para hacer vidrio', 'Para iluminar letreros', 'Para fabricar baterías'], 'El proceso Haber-Bosch lo produce a partir de N₂ y H₂.')
+            ]
+        },
+        {
+            id: 'ch4', kind: 'molecule', name: 'Metano', tag: 'CH₄', formula: 'CH₄', mass: '16,04 g/mol', color: 0x94a3b8,
+            atoms: [{ el: 'C', pos: [0, 0, 0] }, { el: 'H', pos: TET[0] }, { el: 'H', pos: TET[1] }, { el: 'H', pos: TET[2] }, { el: 'H', pos: TET[3] }],
+            bonds: [{ a: 0, b: 1, order: 1 }, { a: 0, b: 2, order: 1 }, { a: 0, b: 3, order: 1 }, { a: 0, b: 4, order: 1 }],
+            info: {
+                subtitle: 'El hidrocarburo más simple',
+                text: 'El metano une 1 carbono con 4 hidrógenos mediante enlaces covalentes simples. Los 4 hidrógenos se reparten en forma de tetraedro, con ángulos de unos 109,5°, para quedar lo más lejos posible entre sí.',
+                facts: [['Fórmula', 'CH₄'], ['Masa molar', '≈ 16,04 g/mol'], ['Enlaces', '4 enlaces simples C–H'],
+                        ['Geometría', 'Tetraédrica, ≈ 109,5°'], ['Uso', 'Componente principal del gas natural']],
+                fun: 'También se produce en pantanos, en la digestión del ganado y al descomponerse materia orgánica. Es un potente gas de efecto invernadero.'
+            },
+            quiz: [
+                Q('¿Qué geometría tiene el metano?', 'Tetraédrica', ['Lineal', 'Angular', 'Piramidal'], 'Los 4 hidrógenos se reparten a ≈ 109,5° entre sí.'),
+                Q('¿Cuántos hidrógenos se unen al carbono en el metano?', '4', ['2', '3', '6'], 'El carbono forma 4 enlaces: CH₄.'),
+                Q('¿Cuál es el componente principal del gas natural?', 'Metano', ['Oxígeno', 'Helio', 'Dióxido de carbono'], 'Por eso el gas de cocina natural es sobre todo CH₄.')
+            ]
+        }
+    ];
+
+    // =====================================================================
+    //  UTILIDADES
+    // =====================================================================
+    const $ = id => document.getElementById(id);
+    const hex = c => '#' + c.toString(16).padStart(6, '0');
+    function shuffle(a) { const b = [...a]; for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; }
+
+    function storeGet(key, fallback) { try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; } }
+    function storeSet(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {} }
+
+    class SoundFX {
+        constructor() { this.ctx = null; this.enabled = true; }
+        init() { if (!this.ctx) { try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } }
+        tone(type, f0, f1, dur, vol, delay = 0) {
+            if (!this.enabled) return; this.init(); if (!this.ctx) return;
+            const t = this.ctx.currentTime + delay;
+            const o = this.ctx.createOscillator(), g = this.ctx.createGain();
+            o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + dur);
+            g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+            o.connect(g); g.connect(this.ctx.destination); o.start(t); o.stop(t + dur);
+        }
+        snap() { this.tone('sine', 420, 960, 0.13, 0.18); }
+        wrong() { this.tone('square', 200, 120, 0.18, 0.08); }
+        hint() { this.tone('sine', 700, 700, 0.12, 0.1); }
+        good() { this.tone('triangle', 520, 880, 0.2, 0.14); }
+        win() { [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => this.tone('triangle', f, f * 1.001, 0.35, 0.15, i * 0.1)); }
+    }
+    const sfx = new SoundFX();
+
+    // =====================================================================
+    //  ESCENA
+    // =====================================================================
+    let scene, camera, renderer, controls;
+    let structure = null, glow = null;
+    let slots = [], pieces = [], spinGroups = [], bondObjs = [];
+    let filledCount = 0, completed = false, assisted = false, solving = false;
+    let currentLevel = 0, looseRadius = 4;
+    let doneSet = new Set(storeGet('atomLabDone', []));
+
+    let draggingPiece = null, hoverPiece = null, highlightedSlot = null, dragNearest = null;
+    let hint = null, hintLine = null;
+    let isCamMoving = false;
+    const camTargetPos = new THREE.Vector3(), camTargetLook = new THREE.Vector3();
+
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    const ptr = { x: 0, y: 0 };                 // posición del puntero en píxeles
+    const dragPlane = new THREE.Plane();
+    const dragTarget = new THREE.Vector3();
+    const tmpV = new THREE.Vector3();
+
+    const SPHERE = new THREE.SphereGeometry(1, 32, 24);
+    const labelCache = {};
+
+    let stars, burstPoints, burstMat, burstVel = [], burstLife = 0;
+    const BURST_N = 60;
+    const clock = new THREE.Clock();
+
+    function makeLine(color, opacity) {
+        const g = new THREE.BufferGeometry();
+        g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3));
+        const l = new THREE.Line(g, new THREE.LineBasicMaterial({ color, transparent: true, opacity }));
+        l.visible = false; l.frustumCulled = false;
+        scene.add(l);
+        return l;
+    }
+
+    function initScene() {
+        const container = $('canvas-container');
+
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0b1020);
+
+        camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 500);
+
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(innerWidth, innerHeight);
+        renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
+
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.07;
+        controls.enablePan = false;
+        controls.rotateSpeed = 0.8;
+        controls.autoRotateSpeed = 1.6;
+
+        scene.add(new THREE.AmbientLight(0xffffff, 0.75));
+        const key = new THREE.DirectionalLight(0xffffff, 0.95); key.position.set(5, 8, 6); scene.add(key);
+        const back = new THREE.DirectionalLight(0x6aa8ff, 0.5); back.position.set(-6, -3, -5); scene.add(back);
+
+        // Estrellas de fondo
+        const sp = new Float32Array(900 * 3);
+        for (let i = 0; i < 900; i++) {
+            const r = 40 + Math.random() * 60, th = Math.random() * Math.PI * 2, ph = Math.acos(2 * Math.random() - 1);
+            sp[i * 3] = r * Math.sin(ph) * Math.cos(th); sp[i * 3 + 1] = r * Math.cos(ph); sp[i * 3 + 2] = r * Math.sin(ph) * Math.sin(th);
+        }
+        const sg = new THREE.BufferGeometry(); sg.setAttribute('position', new THREE.BufferAttribute(sp, 3));
+        stars = new THREE.Points(sg, new THREE.PointsMaterial({ color: 0xcbd5e1, size: 0.22, transparent: true, opacity: 0.7 }));
+        scene.add(stars);
+
+        // Partículas de encaje
+        const bg = new THREE.BufferGeometry();
+        bg.setAttribute('position', new THREE.BufferAttribute(new Float32Array(BURST_N * 3), 3));
+        burstMat = new THREE.PointsMaterial({ size: 0.14, color: 0xffffff, transparent: true, opacity: 0, depthWrite: false });
+        burstPoints = new THREE.Points(bg, burstMat);
+        burstPoints.frustumCulled = false;
+        scene.add(burstPoints);
+        for (let i = 0; i < BURST_N; i++) burstVel.push(new THREE.Vector3());
+
+        hintLine = makeLine(0xfacc15, 0.95);    // pista (amarilla)
+
+        setupEvents();
+        buildLevelMenu();
+        loadLevel(0);
+    }
+
+    // =====================================================================
+    //  CONSTRUCCIÓN DE NIVELES
+    // =====================================================================
+    function labelTexture(text, color) {
+        const key = text + color;
+        if (labelCache[key]) return labelCache[key];
+        const c = document.createElement('canvas'); c.width = c.height = 128;
+        const x = c.getContext('2d');
+        x.font = 'bold 84px system-ui, sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle';
+        x.fillStyle = color; x.fillText(text, 64, 70);
+        return (labelCache[key] = new THREE.CanvasTexture(c));
+    }
+
+    function glowTexture() {
+        const c = document.createElement('canvas'); c.width = c.height = 256;
+        const x = c.getContext('2d');
+        const g = x.createRadialGradient(128, 128, 0, 128, 128, 128);
+        g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(0.35, 'rgba(255,255,255,.35)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+        x.fillStyle = g; x.fillRect(0, 0, 256, 256);
+        return new THREE.CanvasTexture(c);
+    }
+
+    function clearLevel() {
+        if (structure) scene.remove(structure);
+        pieces.forEach(p => scene.remove(p));
+        structure = null; glow = null;
+        slots = []; pieces = []; spinGroups = []; bondObjs = [];
+        filledCount = 0; completed = false; assisted = false; solving = false;
+        draggingPiece = null; hoverPiece = null; highlightedSlot = null; dragNearest = null; hint = null;
+        hintLine.visible = false; burstLife = 0; burstMat.opacity = 0;
+        controls.enabled = true; controls.autoRotate = false;
+        $('victory').classList.add('hide');
+    }
+
+    function addSlot(type, localPos, parent) {
+        const info = PART_INFO[type];
+        const m = new THREE.Mesh(SPHERE, new THREE.MeshBasicMaterial({ color: info.color, transparent: true, opacity: 0.28, depthWrite: false }));
+        m.scale.setScalar(info.radius);
+        m.position.copy(localPos);
+        const w = new THREE.Mesh(SPHERE, new THREE.MeshBasicMaterial({ color: info.color, wireframe: true, transparent: true, opacity: 0.45 }));
+        m.add(w);
+        parent.add(m);
+        const slot = { type, marker: m, wire: w, filled: false, piece: null, radius: info.radius, phase: Math.random() * 6 };
+        slots.push(slot);
+        return slot;
+    }
+
+    function nucleusPoints(N, pr) {
+        if (N === 1) return [new THREE.Vector3()];
+        if (N === 2) return [new THREE.Vector3(-pr * 1.05, 0, 0), new THREE.Vector3(pr * 1.05, 0, 0)];
+        const R = 0.8 * pr * Math.sqrt(N), pts = [], ga = Math.PI * (3 - Math.sqrt(5));
+        for (let i = 0; i < N; i++) {
+            const y = 1 - (i + 0.5) / N * 2, r = Math.sqrt(1 - y * y), ph = i * ga;
+            pts.push(new THREE.Vector3(Math.cos(ph) * r * R, y * R, Math.sin(ph) * r * R));
+        }
+        return pts;
+    }
+
+    function buildAtom(L) {
+        // Núcleo: protones y neutrones intercalados
+        const types = []; let p = L.protons, n = L.neutrons;
+        while (p > 0 || n > 0) { if (p > 0) { types.push('proton'); p--; } if (n > 0) { types.push('neutron'); n--; } }
+        const pts = nucleusPoints(types.length, 0.3);
+        let nucR = 0.3;
+        pts.forEach(v => { nucR = Math.max(nucR, v.length() + 0.3); });
+        types.forEach((t, i) => addSlot(t, pts[i], structure));
+
+        // Capas de electrones
+        let r = nucR + 0.85;
+        L.shells.forEach((count, si) => {
+            const tilt = new THREE.Group();
+            tilt.rotation.set(si % 2 ? -0.5 : 0.45, 0, si * 0.6);
+            structure.add(tilt);
+
+            const ring = new THREE.Mesh(new THREE.RingGeometry(r - 0.015, r + 0.015, 128),
+                new THREE.MeshBasicMaterial({ color: 0x64748b, transparent: true, opacity: 0.55, side: THREE.DoubleSide }));
+            ring.rotation.x = -Math.PI / 2;
+            tilt.add(ring);
+
+            const spin = new THREE.Group();
+            tilt.add(spin);
+            spinGroups.push({ g: spin, speed: (1.1 - si * 0.25) * (si % 2 ? -1 : 1) });
+
+            for (let k = 0; k < count; k++) {
+                const a = (k / count) * Math.PI * 2 + si * 0.5;
+                addSlot('electron', new THREE.Vector3(Math.cos(a) * r, 0, Math.sin(a) * r), spin);
+            }
+            r += 0.85;
+        });
+
+        // Resplandor del núcleo
+        glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTexture(), color: L.color, blending: THREE.AdditiveBlending,
+            transparent: true, opacity: 0.12, depthWrite: false }));
+        glow.scale.setScalar((nucR + 0.8) * 4);
+        structure.add(glow);
+
+        return r - 0.85 + 0.2;
+    }
+
+    function makeBond(p1, p2, order, mat, rad) {
+        const g = new THREE.Group();
+        const dir = new THREE.Vector3().subVectors(p2, p1), len = dir.length(); dir.normalize();
+        const perp = new THREE.Vector3().crossVectors(dir, new THREE.Vector3(0, 1, 0));
+        if (perp.lengthSq() < 0.01) perp.set(1, 0, 0);
+        perp.normalize();
+        const offsets = order === 3 ? [-0.2, 0, 0.2] : order === 2 ? [-0.15, 0.15] : [0];
+        offsets.forEach(o => {
+            const c = new THREE.Mesh(new THREE.CylinderGeometry(rad, rad, len, 14), mat);
+            c.position.copy(p1).add(p2).multiplyScalar(0.5).addScaledVector(perp, o);
+            c.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
+            g.add(c);
+        });
+        return g;
+    }
+
+    function buildMolecule(L) {
+        const pts = L.atoms.map(a => new THREE.Vector3(...a.pos));
+        const c = new THREE.Vector3(); pts.forEach(v => c.add(v)); c.multiplyScalar(1 / pts.length);
+        pts.forEach(v => v.sub(c));
+
+        let maxR = 0;
+        L.atoms.forEach((a, i) => { addSlot(a.el, pts[i], structure); maxR = Math.max(maxR, pts[i].length() + PART_INFO[a.el].radius); });
+
+        const ghostMat = new THREE.MeshBasicMaterial({ color: 0x94a3b8, transparent: true, opacity: 0.3 });
+        const solidMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.2, roughness: 0.4 });
+        L.bonds.forEach(b => {
+            const solidRad = b.order === 3 ? 0.05 : b.order === 2 ? 0.07 : 0.1;
+            const ghost = makeBond(pts[b.a], pts[b.b], b.order, ghostMat, 0.04);
+            const solid = makeBond(pts[b.a], pts[b.b], b.order, solidMat, solidRad);
+            solid.visible = false;
+            structure.add(ghost, solid);
+            bondObjs.push({ a: b.a, b: b.b, solid, ghost });
+        });
+        return maxR;
+    }
+
+    function makePiece(type) {
+        const info = PART_INFO[type];
+        const mesh = new THREE.Mesh(SPHERE, new THREE.MeshStandardMaterial({
+            color: info.color, roughness: 0.35, metalness: 0.1, emissive: info.color, emissiveIntensity: 0.18 }));
+        mesh.scale.setScalar(info.radius);
+        const label = new THREE.Sprite(new THREE.SpriteMaterial({ map: labelTexture(info.label, info.text), transparent: true, depthTest: false }));
+        label.scale.set(1.3, 1.3, 1); label.renderOrder = 10;
+        mesh.add(label);
+        mesh.userData = { type, slot: null, label, home: new THREE.Vector3(), phase: Math.random() * 6, snapT: 1, returning: false, returnAt: 0 };
+        return mesh;
+    }
+
+    function loadLevel(i) {
+        clearLevel();
+        currentLevel = (i + LEVELS.length) % LEVELS.length;
+        const L = LEVELS[currentLevel];
+
+        structure = new THREE.Group();
+        scene.add(structure);
+
+        const structR = L.kind === 'atom' ? buildAtom(L) : buildMolecule(L);
+        structure.updateMatrixWorld(true);
+        looseRadius = Math.max(structR + 2.0, 3.4);
+
+        // Piezas sueltas, agrupadas por tipo alrededor de la estructura
+        const types = slots.map(s => s.type).sort((a, b) => TYPE_ORDER.indexOf(a) - TYPE_ORDER.indexOf(b));
+        types.forEach((t, k) => {
+            const p = makePiece(t);
+            const ang = (k / types.length) * Math.PI * 2 + 0.6;
+            const rr = looseRadius * (0.93 + Math.random() * 0.14);
+            p.userData.home.set(Math.cos(ang) * rr, (Math.random() - 0.5) * 1.1, Math.sin(ang) * rr);
+            p.position.copy(p.userData.home);
+            scene.add(p); pieces.push(p);
+        });
+
+        $('level-name').textContent = `Modelo ${currentLevel + 1} de ${LEVELS.length} · ${L.name}`;
+        $('level-objective').textContent = objectiveText(L);
+
+        updateProgress(); refreshLevelUI(); renderInfo();
+        frameCamera(true);
+        toast('Arrastra cada pieza a su hueco brillante del mismo color', 'info');
+    }
+
+    function objectiveText(L) {
+        if (L.kind === 'atom') {
+            const e = L.shells.reduce((a, b) => a + b, 0);
+            const parts = [`${L.protons} protón${L.protons > 1 ? 'es' : ''}`];
+            if (L.neutrons) parts.push(`${L.neutrons} neutrón${L.neutrons > 1 ? 'es' : ''}`);
+            parts.push(`${e} electrón${e > 1 ? 'es' : ''}`);
+            return `Construye un átomo de ${L.name.toLowerCase()}: ${parts.join(', ').replace(/, ([^,]*)$/, ' y $1')}.`;
+        }
+        const counts = {}; L.atoms.forEach(a => counts[a.el] = (counts[a.el] || 0) + 1);
+        const txt = Object.entries(counts).map(([el, n]) => `${n} de ${PART_INFO[el].name.toLowerCase()}`).join(' + ');
+        return `Arma la molécula de ${L.name.toLowerCase()} (${L.formula}): ${txt}.`;
+    }
+
+    // =====================================================================
+    //  CÁMARA
+    // =====================================================================
+    function frameCamera(immediate) {
+        const fov = camera.fov * Math.PI / 180, t = Math.tan(fov / 2);
+        const dH = looseRadius * 1.1 / (t * Math.min(camera.aspect, 1.8));
+        const dV = (looseRadius * 0.6 + 1.2) / t;
+        const d = Math.max(dH, dV, 6);
+        camTargetPos.set(0, d * 0.42, d * 0.91);
+        camTargetLook.set(0, 0, 0);
+        controls.minDistance = 2.5;
+        controls.maxDistance = d * 2.5;
+        if (immediate) { camera.position.copy(camTargetPos); controls.target.copy(camTargetLook); controls.update(); isCamMoving = false; }
+        else isCamMoving = true;
+    }
+
+    function zoomCamera(f) {
+        const dir = new THREE.Vector3().subVectors(camera.position, controls.target).multiplyScalar(f);
+        camTargetPos.copy(controls.target).add(dir);
+        camTargetLook.copy(controls.target);
+        isCamMoving = true;
+    }
+
+    // =====================================================================
+    //  MECÁNICA: arrastrar y encajar (el encaje se calcula EN PANTALLA)
+    //  Si la pieza "se ve" sobre el hueco desde tu vista actual, encaja,
+    //  sin importar la profundidad. Así no hace falta cambiar de perspectiva.
+    // =====================================================================
+    function slotWorld(s, out) { return s.marker.getWorldPosition(out || new THREE.Vector3()); }
+    const _s = new THREE.Vector3();
+    function toScreen(v) { _s.copy(v).project(camera); return { x: (_s.x * 0.5 + 0.5) * innerWidth, y: (-_s.y * 0.5 + 0.5) * innerHeight }; }
+    function pxPerUnit() { return innerHeight / (2 * Math.tan(camera.fov * Math.PI / 360) * Math.max(camera.position.length(), 1)); }
+    function snapPx(p) { return Math.min(130, 38 + pxPerUnit() * PART_INFO[p.userData.type].radius * 1.5); }
+
+    function setMouse(e) {
+        ptr.x = e.clientX; ptr.y = e.clientY;
+        mouse.x = (e.clientX / innerWidth) * 2 - 1; mouse.y = -(e.clientY / innerHeight) * 2 + 1;
+    }
+
+    function pickPiece() {
+        raycaster.setFromCamera(mouse, camera);
+        const loose = pieces.filter(p => !p.userData.slot);
+        const hit = raycaster.intersectObjects(loose, false)[0];
+        return hit ? hit.object : null;
+    }
+
+    // Busca el hueco del mismo tipo que "se ve" más cerca del puntero
+    function findTargets(p) {
+        const w = new THREE.Vector3(), lim = snapPx(p), ppu = pxPerUnit(), centerDist = camera.position.length();
+        let best = null, bs = Infinity, nearest = null, nd = Infinity;
+        slots.forEach(s => {
+            if (s.filled || s.type !== p.userData.type) return;
+            slotWorld(s, w);
+            const sc = toScreen(w), d = Math.hypot(sc.x - ptr.x, sc.y - ptr.y);
+            if (d < nd) { nd = d; nearest = s; }
+            if (d < lim) {
+                const dz = Math.abs(camera.position.distanceTo(w) - centerDist);
+                const score = d + ppu * dz * 0.15;      // desempate: el más cercano en profundidad
+                if (score < bs) { bs = score; best = s; }
+            }
+        });
+        return { best, nearest };
+    }
+
+    function startDrag(p) {
+        draggingPiece = p;
+        controls.enabled = false;
+        p.userData.returning = false;
+        camera.getWorldDirection(tmpV);
+        dragPlane.setFromNormalAndCoplanarPoint(tmpV, new THREE.Vector3(0, 0, 0));   // plano a la profundidad del modelo
+        hint = null; hintLine.visible = false;
+        renderer.domElement.style.cursor = 'grabbing';
+        updateDrag();
+    }
+
+    function setSlotColor(s, on) {
+        const c = on ? 0x4ade80 : PART_INFO[s.type].color;
+        s.marker.material.color.setHex(c); s.wire.material.color.setHex(c);
+    }
+
+    function updateDrag() {
+        raycaster.setFromCamera(mouse, camera);
+        const hit = new THREE.Vector3();
+        if (!raycaster.ray.intersectPlane(dragPlane, hit)) return;
+        const { best, nearest } = findTargets(draggingPiece);
+        dragNearest = nearest;
+        if (best !== highlightedSlot) {
+            if (highlightedSlot) setSlotColor(highlightedSlot, false);
+            highlightedSlot = best;
+            if (best) setSlotColor(best, true);
+        }
+        dragTarget.copy(hit);
+        if (best) dragTarget.lerp(slotWorld(best), 0.6);     // efecto imán
+    }
+
+    function endDrag() {
+        const p = draggingPiece; draggingPiece = null; dragNearest = null;
+        controls.enabled = true;
+        renderer.domElement.style.cursor = '';
+        if (highlightedSlot) setSlotColor(highlightedSlot, false);
+        const target = highlightedSlot; highlightedSlot = null;
+
+        if (target) { placePiece(p, target); return; }
+
+        // ¿La soltó sobre un hueco de otro tipo?
+        const w = new THREE.Vector3(), lim = snapPx(p) * 0.6;
+        const wrong = slots.find(s => !s.filled && s.type !== p.userData.type && (() => { const sc = toScreen(slotWorld(s, w)); return Math.hypot(sc.x - ptr.x, sc.y - ptr.y) < lim; })());
+        p.userData.returning = true;
+        p.userData.returnAt = performance.now() + (wrong ? 450 : 0);
+        if (wrong) {
+            sfx.wrong();
+            const a = PART_INFO[p.userData.type], b = PART_INFO[wrong.type];
+            toast(`Esa pieza es ${a.name.toLowerCase()}; ahí va ${b.name.toLowerCase()}. Fíjate en el color.`, 'bad');
+        }
+    }
+
+    function placePiece(p, s, silent) {
+        p.userData.slot = s; p.userData.snapT = 0; p.userData.returning = false; p.userData.label.visible = false;
+        s.filled = true; s.piece = p; s.marker.visible = false;
+        filledCount++;
+        if (!silent) {
+            sfx.snap();
+            burst(slotWorld(s), PART_INFO[s.type].color);
+            toast(`${PART_INFO[s.type].name} colocado ✓`, 'ok');
+        }
+        updateProgress(); renderInfo();
+        if (filledCount === slots.length) onComplete();
+    }
+
+    function onComplete() {
+        completed = true;
+        controls.autoRotate = true;
+        const L = LEVELS[currentLevel];
+        if (!assisted) { doneSet.add(L.id); storeSet('atomLabDone', [...doneSet]); }
+        refreshLevelUI();
+        sfx.win();
+        const isAtom = L.kind === 'atom';
+        $('victory-title').textContent = `¡${isAtom ? 'Átomo' : 'Molécula'} de ${L.name.toLowerCase()} ${isAtom ? 'completado' : 'completada'}!`;
+        $('victory-sub').textContent = assisted
+            ? 'Así queda armado. Pulsa «Reiniciar» e inténtalo tú. Gira la vista para verlo desde todos lados.'
+            : 'Gira la vista para verlo desde todos los lados. ¿Te animas con el quiz?';
+        $('victory-next-text').textContent = currentLevel === LEVELS.length - 1 ? 'Volver al inicio' : 'Siguiente';
+        setTimeout(() => { if (completed) $('victory').classList.remove('hide'); }, 700);
+    }
+
+    function giveHint() {
+        if (completed || solving) return;
+        const free = slots.filter(s => !s.filled);
+        if (!free.length) return;
+        const options = free.map(s => ({ s, p: pieces.find(p => !p.userData.slot && p.userData.type === s.type) })).filter(o => o.p);
+        if (!options.length) return;
+        const o = options[Math.floor(Math.random() * options.length)];
+        hint = { slot: o.s, piece: o.p, until: performance.now() + 4000 };
+        sfx.hint();
+        toast(`Lleva este ${PART_INFO[o.s.type].name.toLowerCase()} a su hueco brillante`, 'hint');
+    }
+
+    function solveAll() {
+        if (completed || solving) return;
+        solving = true; assisted = true;
+        if (draggingPiece) { draggingPiece = null; controls.enabled = true; }
+        hint = null; hintLine.visible = false;
+        const free = slots.filter(s => !s.filled);
+        free.forEach((s, i) => {
+            setTimeout(() => {
+                const p = pieces.find(p => !p.userData.slot && p.userData.type === s.type);
+                if (p && !s.filled) { placePiece(p, s, true); sfx.tone('sine', 500 + i * 20, 800 + i * 20, 0.08, 0.06); }
+            }, i * 90);
+        });
+    }
+
+    function burst(pos, color) {
+        const a = burstPoints.geometry.attributes.position.array;
+        for (let i = 0; i < BURST_N; i++) {
+            a[i * 3] = pos.x; a[i * 3 + 1] = pos.y; a[i * 3 + 2] = pos.z;
+            burstVel[i].set(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize().multiplyScalar(1 + Math.random() * 2.2);
+        }
+        burstPoints.geometry.attributes.position.needsUpdate = true;
+        burstMat.color.setHex(color); burstMat.opacity = 1; burstLife = 1;
+    }
+
+    // =====================================================================
+    //  EVENTOS
+    // =====================================================================
+    function closeModals() {
+        ['levels-modal', 'quiz-modal', 'help-modal'].forEach(id => $(id).classList.add('hidden'));
+        $('victory').classList.add('hide');
+        $('info-panel').classList.remove('open');
+    }
+
+    function setupEvents() {
+        const container = $('canvas-container');
+
+        // Captura: si tocamos una pieza, OrbitControls no debe enterarse
+        container.addEventListener('pointerdown', e => {
+            sfx.init();
+            if (e.pointerType === 'mouse' && e.button !== 0) return;
+            if (solving || completed) return;
+            setMouse(e);
+            const p = pickPiece();
+            if (p) { e.stopPropagation(); e.preventDefault(); startDrag(p); }
+        }, true);
+
+        window.addEventListener('pointermove', e => {
+            setMouse(e);
+            if (draggingPiece) { updateDrag(); return; }
+            if (e.target !== renderer.domElement) return;
+            hoverPiece = (solving || completed) ? null : pickPiece();
+            renderer.domElement.style.cursor = hoverPiece ? 'grab' : '';
+        });
+        const up = () => { if (draggingPiece) endDrag(); };
+        window.addEventListener('pointerup', up);
+        window.addEventListener('pointercancel', up);
+
+        window.addEventListener('resize', () => {
+            camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
+            renderer.setSize(innerWidth, innerHeight);
+        });
+
+        $('btn-info').onclick = () => $('info-panel').classList.toggle('open');
+        $('info-close').onclick = () => $('info-panel').classList.remove('open');
+        $('btn-quiz').onclick = openQuiz;
+        $('quiz-close').onclick = () => $('quiz-modal').classList.add('hidden');
+        $('btn-hint').onclick = giveHint;
+        $('btn-solve').onclick = solveAll;
+        $('btn-reset').onclick = () => loadLevel(currentLevel);
+        $('btn-zoom-in').onclick = () => zoomCamera(0.78);
+        $('btn-zoom-out').onclick = () => zoomCamera(1.28);
+        $('btn-cam').onclick = () => frameCamera(false);
+        $('btn-sound').onclick = () => {
+            sfx.enabled = !sfx.enabled;
+            $('sound-icon').className = sfx.enabled ? 'fa-solid fa-volume-high' : 'fa-solid fa-volume-xmark text-slate-500';
+        };
+        $('btn-help').onclick = () => $('help-modal').classList.remove('hidden');
+        $('help-close').onclick = () => { $('help-modal').classList.add('hidden'); storeSet('atomLabHelpSeen', true); };
+        $('btn-levels').onclick = () => $('levels-modal').classList.remove('hidden');
+        $('levels-close').onclick = () => $('levels-modal').classList.add('hidden');
+        $('lvl-prev').onclick = () => loadLevel(currentLevel - 1);
+        $('lvl-next').onclick = () => loadLevel(currentLevel + 1);
+        $('victory-close').onclick = () => $('victory').classList.add('hide');
+        $('victory-info').onclick = () => $('info-panel').classList.add('open');
+        $('victory-quiz').onclick = openQuiz;
+        $('victory-next').onclick = () => loadLevel(currentLevel + 1);
+
+        window.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModals();
+            if ((e.key === 'i' || e.key === 'I') && $('quiz-modal').classList.contains('hidden')) $('info-panel').classList.toggle('open');
+        });
+
+        if (!storeGet('atomLabHelpSeen', false)) $('help-modal').classList.remove('hidden');
+    }
+
+    // =====================================================================
+    //  INTERFAZ
+    // =====================================================================
+    let toastTimer;
+    function toast(msg, kind = 'info') {
+        const el = $('toast');
+        el.textContent = msg; el.className = `toast mb-3 show ${kind}`;
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => el.classList.remove('show'), 3400);
+    }
+
+    function buildLevelMenu() {
+        const groups = [['atom', 'Átomos'], ['molecule', 'Moléculas']];
+        $('levels-grid').innerHTML = groups.map(([kind, title]) => {
+            const cards = LEVELS.map((L, i) => ({ L, i })).filter(o => o.L.kind === kind).map(({ L, i }) =>
+                `<button class="lvl-card" data-i="${i}" onclick="selectLevel(${i})">
+                    <span class="lvl-sym" style="color:${hex(L.color)}">${L.tag}</span>
+                    <span class="lvl-name">${L.name}</span>
+                    <i class="fa-solid fa-circle-check lvl-done"></i></button>`).join('');
+            return `<h3 class="text-xs uppercase tracking-wider text-slate-400 font-bold mb-2 mt-4">${title}</h3>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">${cards}</div>`;
+        }).join('');
+    }
+
+    function selectLevel(i) { $('levels-modal').classList.add('hidden'); loadLevel(i); }
+
+    function refreshLevelUI() {
+        $('levels-label').textContent = `${currentLevel + 1}/${LEVELS.length} · ${LEVELS[currentLevel].tag}`;
+        [...document.querySelectorAll('.lvl-card')].forEach(b => {
+            const i = +b.dataset.i;
+            b.classList.toggle('active', i === currentLevel);
+            b.classList.toggle('done', doneSet.has(LEVELS[i].id));
+        });
+    }
+
+    function updateProgress() {
+        const total = slots.length;
+        $('progress-text').textContent = `${filledCount} / ${total}`;
+        $('progress-bar').style.width = (total ? filledCount / total * 100 : 0) + '%';
+        const types = TYPE_ORDER.filter(t => slots.some(s => s.type === t));
+        $('counters').innerHTML = types.map(t => {
+            const tot = slots.filter(s => s.type === t).length, d = slots.filter(s => s.type === t && s.filled).length, I = PART_INFO[t];
+            return `<div class="flex items-center gap-2 text-xs">
+                <span class="dot" style="background:${hex(I.color)};color:${hex(I.color)}"></span>
+                <span class="flex-1 text-slate-300">${I.plural}</span>
+                <span class="font-mono font-bold ${d === tot ? 'text-emerald-400' : 'text-slate-100'}">${d}/${tot}</span></div>`;
+        }).join('');
+        if (glow) glow.material.opacity = 0.12 + 0.55 * (total ? filledCount / total : 0);
+    }
+
+    function renderInfo() {
+        const L = LEVELS[currentLevel], I = L.info;
+        const col = hex(L.color);
+        const tile = L.kind === 'atom'
+            ? `<div class="tile" style="border-color:${col};color:${col};background:${col}1a"><span class="z">${L.z}</span><span class="s">${L.tag}</span><span class="m">${L.mass}</span></div>`
+            : `<div class="tile" style="border-color:${col};color:${col};background:${col}1a"><span class="s" style="font-size:1.5rem">${L.formula}</span><span class="m">${L.mass}</span></div>`;
+
+        const types = TYPE_ORDER.filter(t => slots.some(s => s.type === t));
+        const parts = types.map(t => {
+            const tot = slots.filter(s => s.type === t).length, d = slots.filter(s => s.type === t && s.filled).length, P = PART_INFO[t];
+            return `<div class="flex gap-3 p-3 rounded-xl bg-slate-800/70 border border-slate-700/60">
+                <span class="dot mt-1 shrink-0" style="background:${hex(P.color)};color:${hex(P.color)}"></span>
+                <div class="flex-1"><div class="flex justify-between"><b class="text-sm">${P.name}</b>
+                <span class="font-mono text-xs ${d === tot ? 'text-emerald-400' : 'text-slate-400'}">${d}/${tot}</span></div>
+                <p class="text-xs text-slate-400 mt-0.5 leading-snug">${P.desc}</p></div></div>`;
+        }).join('');
+
+        const facts = I.facts.map(([k, v]) => `<div class="flex justify-between gap-4 py-2 border-b border-slate-700/50 text-sm">
+            <span class="text-slate-400">${k}</span><span class="text-right font-semibold">${v}</span></div>`).join('');
+
+        $('info-content').innerHTML = `
+            <div class="flex gap-4 items-center mb-4">${tile}
+                <div><h3 class="text-2xl font-extrabold leading-tight">${L.name}</h3><p class="text-sm text-cyan-300">${I.subtitle}</p>
+                <p class="text-[11px] uppercase tracking-wider text-slate-500 mt-1">${L.kind === 'atom' ? 'Átomo' : 'Molécula'}</p></div>
+            </div>
+            <p class="text-sm leading-relaxed text-slate-300 mb-5">${I.text}</p>
+            <h4 class="text-xs uppercase tracking-wider text-slate-500 font-bold mb-2">Piezas del modelo</h4>
+            <div class="flex flex-col gap-2 mb-5">${parts}</div>
+            <h4 class="text-xs uppercase tracking-wider text-slate-500 font-bold mb-1">Datos clave</h4>
+            <div class="mb-5">${facts}</div>
+            <div class="p-4 rounded-xl bg-amber-400/10 border border-amber-400/30">
+                <div class="text-xs font-bold text-amber-300 mb-1"><i class="fa-solid fa-star mr-1"></i>¿Sabías que…?</div>
+                <p class="text-sm text-slate-200 leading-relaxed">${I.fun}</p>
+            </div>
+            <button class="btn btn-quiz w-full justify-center mt-5" onclick="$('info-panel').classList.remove('open'); openQuiz();">
+                <i class="fa-solid fa-circle-question"></i>Ponte a prueba con el quiz</button>`;
+    }
+
+    // =====================================================================
+    //  QUIZ
+    // =====================================================================
+    let quiz = null;
+
+    function openQuiz() {
+        $('quiz-modal').classList.remove('hidden');
+        renderQuizStart();
+    }
+
+    function renderQuizStart() {
+        const L = LEVELS[currentLevel];
+        const total = LEVELS.reduce((n, l) => n + l.quiz.length, 0);
+        $('quiz-body').innerHTML = `
+            <p class="text-sm text-slate-300 mb-4">Pon a prueba lo que aprendiste. Elige el tipo de quiz:</p>
+            <div class="flex flex-col gap-2">
+                <button class="btn justify-center" onclick="startQuiz('level')"><i class="fa-solid fa-bullseye text-cyan-300"></i>Este tema: ${L.name} (${L.quiz.length} preguntas)</button>
+                <button class="btn justify-center" onclick="startQuiz('mix')"><i class="fa-solid fa-shuffle text-violet-300"></i>Mezcla de todo el temario (10 de ${total} preguntas)</button>
+            </div>
+            <p class="text-xs text-slate-500 mt-4">Consejo: abre «Información» antes si quieres repasar.</p>`;
+    }
+
+    function startQuiz(mode) {
+        const L = LEVELS[currentLevel];
+        let list;
+        if (mode === 'level') list = shuffle(L.quiz).map(q => ({ ...q, from: L.name }));
+        else list = shuffle(LEVELS.flatMap(l => l.quiz.map(q => ({ ...q, from: l.name })))).slice(0, 10);
+        quiz = { list, i: 0, score: 0, mode, answered: false, opts: [], correct: 0 };
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const q = quiz.list[quiz.i];
+        quiz.opts = shuffle([q.ok, ...q.bad]);
+        quiz.correct = quiz.opts.indexOf(q.ok);
+        quiz.answered = false;
+        const letters = ['A', 'B', 'C', 'D'];
+        $('quiz-body').innerHTML = `
+            <div class="flex justify-between text-xs text-slate-400 mb-2">
+                <span>Pregunta ${quiz.i + 1} de ${quiz.list.length}</span><span>Aciertos: <b class="text-emerald-300">${quiz.score}</b></span></div>
+            <div class="h-1.5 rounded-full bg-slate-700 overflow-hidden mb-4"><div class="h-full bg-gradient-to-r from-amber-400 to-rose-400" style="width:${quiz.i / quiz.list.length * 100}%"></div></div>
+            ${quiz.mode === 'mix' ? `<div class="text-[11px] uppercase tracking-wider text-slate-500 mb-1">Tema: ${q.from}</div>` : ''}
+            <h3 class="font-bold text-lg leading-snug mb-4 text-slate-50">${q.q}</h3>
+            <div class="flex flex-col gap-2" id="quiz-options">
+                ${quiz.opts.map((o, k) => `<button class="qopt" onclick="answerQuiz(${k})"><b class="text-slate-400 mr-2">${letters[k]}.</b>${o}</button>`).join('')}
+            </div>
+            <div id="quiz-feedback" class="mt-4"></div>`;
+    }
+
+    function answerQuiz(k) {
+        if (quiz.answered) return;
+        quiz.answered = true;
+        const q = quiz.list[quiz.i], right = k === quiz.correct;
+        if (right) { quiz.score++; sfx.good(); } else sfx.wrong();
+        [...document.querySelectorAll('#quiz-options .qopt')].forEach((b, idx) => {
+            b.disabled = true;
+            if (idx === quiz.correct) b.classList.add('ok');
+            else if (idx === k) b.classList.add('bad');
+        });
+        const last = quiz.i === quiz.list.length - 1;
+        $('quiz-feedback').innerHTML = `
+            <div class="p-3 rounded-xl border ${right ? 'bg-emerald-500/10 border-emerald-400/40' : 'bg-rose-500/10 border-rose-400/40'}">
+                <div class="font-bold text-sm mb-1 ${right ? 'text-emerald-300' : 'text-rose-300'}">${right ? '¡Correcto!' : 'No del todo…'}</div>
+                <p class="text-sm text-slate-200 leading-snug">${q.why}</p></div>
+            <button class="btn btn-primary w-full justify-center mt-3" onclick="nextQuestion()">${last ? 'Ver resultado' : 'Siguiente'}<i class="fa-solid fa-arrow-right"></i></button>`;
+    }
+
+    function nextQuestion() {
+        quiz.i++;
+        if (quiz.i >= quiz.list.length) renderQuizEnd(); else renderQuestion();
+    }
+
+    function renderQuizEnd() {
+        const n = quiz.list.length, s = quiz.score, ratio = s / n;
+        if (ratio >= 0.8) sfx.win();
+        const msg = ratio >= 0.8 ? ['🏆', '¡Excelente!', 'Dominas este tema.']
+                  : ratio >= 0.5 ? ['👍', '¡Bien hecho!', 'Repasa la información y vuelve a intentarlo para mejorar.']
+                  : ['📚', 'Sigue practicando', 'Abre «Información», juega el modelo otra vez y reintenta.'];
+        $('quiz-body').innerHTML = `
+            <div class="text-center py-2">
+                <div class="text-5xl mb-2">${msg[0]}</div>
+                <h3 class="text-2xl font-extrabold">${msg[1]}</h3>
+                <p class="text-slate-300 text-sm mt-1">${msg[2]}</p>
+                <div class="my-5 inline-block px-6 py-3 rounded-2xl bg-slate-800/80 border border-slate-600/60">
+                    <span class="text-4xl font-extrabold text-amber-300">${s}</span><span class="text-xl text-slate-400"> / ${n}</span></div>
+                <div class="flex flex-wrap gap-2 justify-center">
+                    <button class="btn btn-primary" onclick="startQuiz('${quiz.mode}')"><i class="fa-solid fa-rotate-right"></i>Repetir</button>
+                    <button class="btn" onclick="renderQuizStart()"><i class="fa-solid fa-list"></i>Otro quiz</button>
+                    <button class="btn" onclick="$('quiz-modal').classList.add('hidden')">Cerrar</button>
+                </div>
+            </div>`;
+    }
+
+    // =====================================================================
+    //  BUCLE PRINCIPAL
+    // =====================================================================
+    const wp = new THREE.Vector3();
+    function setLine(line, a, b) {
+        const arr = line.geometry.attributes.position.array;
+        arr[0] = a.x; arr[1] = a.y; arr[2] = a.z; arr[3] = b.x; arr[4] = b.y; arr[5] = b.z;
+        line.geometry.attributes.position.needsUpdate = true;
+        line.visible = true;
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        const dt = Math.min(clock.getDelta(), 0.05), t = clock.elapsedTime;
+        const now = performance.now();
+
+        // Cámara
+        if (isCamMoving) {
+            camera.position.lerp(camTargetPos, 0.09);
+            controls.target.lerp(camTargetLook, 0.09);
+            if (camera.position.distanceTo(camTargetPos) < 0.03) isCamMoving = false;
+        }
+        controls.update();
+
+        stars.rotation.y += dt * 0.006;
+
+        // Estructura terminada: los electrones orbitan / la molécula gira
+        if (completed && structure) {
+            spinGroups.forEach(s => { s.g.rotation.y += s.speed * dt; });
+            if (!spinGroups.length) structure.rotation.y += 0.35 * dt;
+        }
+
+        // Huecos
+        slots.forEach(s => {
+            if (s.filled) return;
+            const matching = draggingPiece && draggingPiece.userData.type === s.type;
+            const target = s === highlightedSlot ? 0.65 : draggingPiece ? (matching ? 0.42 : 0.1) : 0.28;
+            s.marker.material.opacity += (target - s.marker.material.opacity) * 0.2;
+            const pulse = 1 + (s === highlightedSlot ? 0.25 : 0.07) * Math.sin(t * 3 + s.phase);
+            s.marker.scale.setScalar(s.radius * pulse);
+        });
+
+        // Piezas
+        pieces.forEach(p => {
+            const u = p.userData, info = PART_INFO[u.type];
+            if (u.slot) {
+                slotWorld(u.slot, wp);
+                if (u.snapT < 1) { u.snapT = Math.min(1, u.snapT + dt * 4); p.position.lerp(wp, 0.35); } else p.position.copy(wp);
+                p.scale.setScalar(info.radius);
+                return;
+            }
+            let target = info.radius;
+            if (p === draggingPiece) target *= 1.15;
+            else if (p === hoverPiece) target *= 1.1;
+            if (hint && hint.piece === p) target *= 1 + 0.2 * Math.abs(Math.sin(t * 6));
+            p.scale.setScalar(p.scale.x + (target - p.scale.x) * 0.25);
+
+            if (p === draggingPiece) {
+                p.position.lerp(dragTarget, 0.4);
+            } else if (u.returning) {
+                if (now >= u.returnAt) {
+                    p.position.lerp(u.home, 0.12);
+                    if (p.position.distanceTo(u.home) < 0.04) { p.position.copy(u.home); u.returning = false; }
+                }
+            } else if (!solving) {
+                p.position.y = u.home.y + Math.sin(t * 1.3 + u.phase) * 0.07;
+            }
+        });
+
+        // Pista
+        if (hint) {
+            if (now > hint.until || hint.slot.filled || hint.piece.userData.slot) { hint = null; hintLine.visible = false; }
+            else {
+                slotWorld(hint.slot, wp);
+                setLine(hintLine, hint.piece.position, wp);
+                hint.slot.marker.scale.setScalar(hint.slot.radius * (1.3 + 0.3 * Math.sin(t * 8)));
+            }
+        }
+
+        // Enlaces de moléculas: aparecen cuando ambos átomos están puestos
+        bondObjs.forEach(b => {
+            const ready = slots[b.a].filled && slots[b.b].filled && slots[b.a].piece.userData.snapT >= 1 && slots[b.b].piece.userData.snapT >= 1;
+            b.solid.visible = ready; b.ghost.visible = !ready;
+        });
+
+        // Partículas
+        if (burstLife > 0) {
+            burstLife -= dt * 1.6;
+            const a = burstPoints.geometry.attributes.position.array;
+            for (let i = 0; i < BURST_N; i++) {
+                a[i * 3] += burstVel[i].x * dt; a[i * 3 + 1] += burstVel[i].y * dt; a[i * 3 + 2] += burstVel[i].z * dt;
+                burstVel[i].multiplyScalar(0.94);
+            }
+            burstPoints.geometry.attributes.position.needsUpdate = true;
+            burstMat.opacity = Math.max(burstLife, 0);
+        }
+
+        renderer.render(scene, camera);
+    }
+
+    window.onload = () => { initScene(); animate(); };
+    </script>
+</body>
+</html>
