@@ -1,0 +1,3505 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#102d38">
+<title>El árbol de los deseos · Aurora</title>
+
+<style>
+:root{
+    font-family:"Trebuchet MS",Arial,sans-serif;
+    color:#fff5dc;
+    background:#102d38;
+    --gold:#ffd175;
+    --green:#8cd3b5;
+    --cream:#fff5dc;
+    --muted:#b3c9cc;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    background:radial-gradient(ellipse at top,#244f53,#102d38 75%);
+    min-height:100dvh;
+}
+
+button,input,select{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+    color:inherit;
+    border:0;
+    touch-action:manipulation;
+}
+
+button:hover{
+    filter:brightness(1.1);
+}
+
+button:active{
+    transform:translateY(1px);
+}
+
+button:disabled{
+    opacity:.4;
+    cursor:default;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible{
+    outline:3px solid var(--gold);
+    outline-offset:3px;
+}
+
+header{
+    max-width:1080px;
+    margin:auto;
+    padding:22px 24px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+}
+
+.brand{
+    font-size:22px;
+    font-weight:800;
+    letter-spacing:4px;
+}
+
+.brand span{
+    color:var(--gold);
+}
+
+.brand small{
+    display:block;
+    font-size:8px;
+    letter-spacing:2px;
+    color:var(--muted);
+    margin-top:5px;
+}
+
+.sound{
+    background:#ffffff0c;
+    border:1px solid #ffffff25;
+    border-radius:50%;
+    width:40px;
+    height:40px;
+}
+
+.header-right{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    font-size:12px;
+    color:var(--gold);
+}
+
+.gamebox{
+    max-width:1040px;
+    margin:0 auto 30px;
+    border:1px solid #ffffff25;
+    background:#143640;
+    border-radius:23px;
+    overflow:hidden;
+}
+
+.gamehead{
+    padding:18px 24px;
+    border-bottom:1px solid #ffffff20;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+}
+
+.gamehead h1{
+    font-size:23px;
+    margin:7px 0 0;
+}
+
+.card-tag{
+    font-size:9px;
+    letter-spacing:1.5px;
+    color:var(--green);
+}
+
+.gamebody{
+    padding:20px;
+    text-align:center;
+}
+
+.gamebody p{
+    font-size:13px;
+    line-height:1.7;
+    color:var(--muted);
+}
+
+.primary{
+    background:var(--gold);
+    color:#283c39;
+    font-weight:800;
+    border-radius:11px;
+    padding:14px 20px;
+    box-shadow:0 3px 0 #ba9345;
+}
+
+.secondary{
+    background:#ffffff08;
+    border:1px solid #ffffff25;
+    border-radius:10px;
+    padding:10px 14px;
+    font-size:11px;
+}
+
+.feedback{
+    min-height:30px;
+    font-size:12px;
+    line-height:1.65;
+    color:var(--gold);
+    margin:17px 0 0;
+}
+
+.tree-intro{
+    margin:0 0 16px;
+}
+
+.tree-layout{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 220px;
+    gap:18px;
+    text-align:left;
+}
+
+.tree-view{
+    position:relative;
+    align-self:start;
+    min-width:0;
+    background:#102938;
+    border:1px solid #ffffff20;
+    border-radius:17px;
+    overflow:hidden;
+}
+
+.tree-canvas{
+    display:block;
+    width:100%;
+    height:500px;
+    touch-action:none;
+    cursor:crosshair;
+}
+
+.tree-canvas:active{
+    cursor:grabbing;
+}
+
+.tree-tip{
+    position:absolute;
+    bottom:12px;
+    left:0;
+    right:0;
+    text-align:center;
+    font-size:8px;
+    letter-spacing:1px;
+    padding:0 10px;
+    color:#c0dbd4;
+    pointer-events:none;
+}
+
+.tree-angle{
+    position:absolute;
+    top:12px;
+    left:13px;
+    font-size:9px;
+    color:#b6d2ce;
+    letter-spacing:1px;
+    pointer-events:none;
+}
+
+.tree-counter{
+    position:absolute;
+    right:13px;
+    top:12px;
+    font-size:9px;
+    color:#d8e7d8;
+    pointer-events:none;
+}
+
+.tree-tools{
+    background:#0d2b34;
+    border-radius:15px;
+    padding:15px;
+    align-self:start;
+}
+
+.tree-tools h3{
+    font-size:14px;
+    margin:0 0 13px;
+}
+
+.tree-tools h3 small{
+    display:block;
+    font-size:8px;
+    font-weight:400;
+    letter-spacing:1.5px;
+    color:var(--green);
+    margin-top:6px;
+}
+
+.tree-types{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:6px;
+}
+
+.tree-types button{
+    background:#ffffff0a;
+    border:1px solid #ffffff18;
+    border-radius:9px;
+    min-height:36px;
+    font-size:22px;
+}
+
+.tree-types .selected{
+    border-color:var(--gold);
+    background:#ffd17520;
+}
+
+.tree-colors{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin:14px 0;
+}
+
+.tree-colors button{
+    width:26px;
+    height:26px;
+    border:2px solid #ffffff40;
+    border-radius:50%;
+}
+
+.tree-colors .selected{
+    outline:2px solid var(--gold);
+    outline-offset:2px;
+}
+
+.tree-range{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
+    font-size:10px;
+    color:var(--muted);
+    margin:13px 0;
+}
+
+.tree-range input{
+    width:73px;
+    accent-color:var(--gold);
+}
+
+.tree-range select{
+    background:#183e47;
+    border:1px solid #ffffff25;
+    color:var(--cream);
+    border-radius:8px;
+    font-size:10px;
+    padding:7px;
+    width:125px;
+    max-width:100%;
+}
+
+.tree-actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+}
+
+.tree-actions .secondary{
+    margin:0;
+    font-size:9px;
+    padding:10px 4px;
+}
+
+.tree-goals{
+    font-size:11px;
+    line-height:2.1;
+    color:var(--muted);
+    margin-top:15px;
+}
+
+.tree-goals .done{
+    color:var(--green);
+}
+
+.tree-goals b{
+    float:right;
+    font-weight:400;
+}
+
+.tree-bottom{
+    display:flex;
+    gap:9px;
+    align-items:center;
+    flex-wrap:wrap;
+    justify-content:center;
+    margin-top:15px;
+}
+
+.tree-bottom label{
+    font-size:11px;
+    color:var(--muted);
+    display:flex;
+    align-items:center;
+    gap:5px;
+}
+
+.tree-bottom input{
+    width:80px;
+    accent-color:var(--gold);
+}
+
+.result{
+    padding:35px 15px;
+}
+
+.result h2{
+    font-size:30px;
+}
+
+.result-stars{
+    font-size:55px;
+    letter-spacing:5px;
+    color:var(--gold);
+    margin:25px 0;
+}
+
+.result p{
+    max-width:500px;
+    margin:15px auto;
+}
+
+footer{
+    text-align:center;
+    color:var(--muted);
+    font-size:10px;
+    padding:0 20px 24px;
+}
+
+@media(max-width:1080px){
+    .gamebox{
+        margin:0 14px 25px;
+    }
+}
+
+@media(max-width:700px){
+    header{
+        padding:18px;
+    }
+
+    .brand{
+        font-size:19px;
+    }
+
+    .gamehead{
+        padding:16px;
+    }
+
+    .gamehead h1{
+        font-size:20px;
+    }
+
+    .gamebody{
+        padding:14px 10px;
+    }
+
+    .tree-layout{
+        grid-template-columns:1fr;
+        gap:10px;
+    }
+
+    .tree-canvas{
+        height:390px;
+    }
+
+    .tree-tools{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:10px 15px;
+        padding:12px;
+    }
+
+    .tree-tools h3{
+        grid-column:1/-1;
+        margin:0;
+    }
+
+    .tree-tools h3 small{
+        display:inline;
+        margin-left:10px;
+    }
+
+    .tree-types{
+        grid-row:2/4;
+    }
+
+    .tree-colors{
+        margin:0;
+        align-content:start;
+        align-self:start;
+    }
+
+    .tree-range{
+        margin:0;
+        flex-wrap:wrap;
+    }
+
+    .tree-actions{
+        grid-column:1/-1;
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .tree-goals{
+        grid-column:1/-1;
+        display:flex;
+        gap:12px;
+        flex-wrap:wrap;
+        margin-top:0;
+        font-size:10px;
+    }
+
+    .tree-goals b{
+        float:none;
+    }
+
+    .tree-bottom{
+        gap:7px;
+        margin-top:12px;
+    }
+
+    .tree-bottom .secondary{
+        padding:10px;
+    }
+
+    .tree-bottom .primary{
+        font-size:12px;
+        padding:12px 14px;
+    }
+
+    .tree-intro{
+        font-size:11px!important;
+    }
+}
+
+@media(max-width:370px){
+    .tree-canvas{
+        height:350px;
+    }
+
+    .tree-colors{
+        gap:8px;
+    }
+
+    .tree-colors button{
+        width:22px;
+        height:22px;
+    }
+
+    .tree-tools{
+        gap:10px;
+    }
+
+    .tree-tools h3 small{
+        display:none;
+    }
+}
+
+@media(prefers-reduced-motion:reduce){
+    *{
+        scroll-behavior:auto!important;
+        transition:none!important;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="brand">
+        <span>✧</span> AURORA
+        <small>EL ÁRBOL DE LOS DESEOS</small>
+    </div>
+
+    <div class="header-right">
+        <span id="bestStars">☆☆☆</span>
+
+        <button
+            id="sound"
+            class="sound"
+            aria-label="Activar sonido"
+        >♪</button>
+    </div>
+</header>
+
+<main class="gamebox">
+    <div class="gamehead">
+        <div>
+            <span class="card-tag">
+                CREATIVIDAD · DECORACIÓN 360°
+            </span>
+
+            <h1>El árbol de los deseos</h1>
+        </div>
+
+        <span style="color:var(--gold);font-size:26px">✦</span>
+    </div>
+
+    <div class="gamebody" id="gameBody"></div>
+</main>
+
+<footer>
+    Aurora · NashForge · Tu imaginación enciende la Navidad.
+</footer>
+
+<script>
+"use strict";
+
+const $ = selector => document.querySelector(selector);
+
+const rand = max => Math.floor(Math.random() * max);
+
+let cleanup = () => {};
+
+let enabled = false;
+
+let audio = null;
+
+/* SONIDOS */
+
+function tone(frequency = 660, duration = .15){
+    if(!enabled) return;
+
+    try{
+        audio ??= new (
+            window.AudioContext ||
+            window.webkitAudioContext
+        )();
+
+        audio.resume();
+
+        const oscillator = audio.createOscillator();
+
+        const gain = audio.createGain();
+
+        oscillator.type = "sine";
+
+        oscillator.frequency.value = frequency;
+
+        gain.gain.setValueAtTime(
+            .035,
+            audio.currentTime
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+            .001,
+            audio.currentTime + duration
+        );
+
+        oscillator.connect(gain);
+
+        gain.connect(audio.destination);
+
+        oscillator.start();
+
+        oscillator.stop(
+            audio.currentTime + duration
+        );
+    }catch(error){}
+}
+
+$("#sound").onclick = () => {
+    enabled = !enabled;
+
+    $("#sound").textContent = enabled ? "♫" : "♪";
+
+    $("#sound").setAttribute(
+        "aria-label",
+        enabled
+            ? "Desactivar sonido"
+            : "Activar sonido"
+    );
+
+    tone(784,.3);
+};
+
+/* ESTRELLAS Y RESULTADOS */
+
+function showBest(){
+    let stars = 0;
+
+    try{
+        stars = Math.max(
+            0,
+            Math.min(
+                3,
+                Number(
+                    localStorage.getItem(
+                        "aurora-tree-best"
+                    )
+                ) || 0
+            )
+        );
+    }catch(error){}
+
+    $("#bestStars").textContent =
+        "★".repeat(stars) +
+        "☆".repeat(3 - stars);
+}
+
+function finish(stars, description){
+    cleanup();
+
+    let best = stars;
+
+    try{
+        best = Math.max(
+            stars,
+            Number(
+                localStorage.getItem(
+                    "aurora-tree-best"
+                )
+            ) || 0
+        );
+
+        localStorage.setItem(
+            "aurora-tree-best",
+            String(best)
+        );
+    }catch(error){}
+
+    showBest();
+
+    $("#gameBody").innerHTML = `
+        <section class="result">
+            <span class="card-tag">
+                ¡TU NAVIDAD TIENE SU PROPIA MAGIA!
+            </span>
+
+            <h2>
+                ${
+                    stars === 3
+                        ? "¡Un árbol lleno de deseos!"
+                        : "¡Qué bonito está quedando!"
+                }
+            </h2>
+
+            <div
+                class="result-stars"
+                aria-label="${stars} de 3 estrellas"
+            >
+                ${
+                    "★".repeat(stars) +
+                    "☆".repeat(3 - stars)
+                }
+            </div>
+
+            <p>${description}</p>
+
+            <p>
+                Mejor resultado: ${best} / 3 estrellas.
+            </p>
+
+            <button
+                class="primary"
+                id="continueTree"
+            >
+                Seguir decorando ↗
+            </button>
+        </section>
+    `;
+
+    $("#continueTree").onclick = treeGame;
+
+    [523,659,784,1047].forEach((frequency,index) => {
+        setTimeout(
+            () => tone(frequency,.35),
+            index * 130
+        );
+    });
+}
+
+/* AVENTURA DEL ÁRBOL */
+
+function treeGame(){
+    cleanup();
+
+    const reduced = matchMedia(
+        "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    let stored = {};
+
+    try{
+        stored = JSON.parse(
+            localStorage.getItem(
+                "aurora-tree-v1"
+            ) || "{}"
+        ) || {};
+    }catch(error){}
+
+    const types = [
+        ["ball","●","Esfera"],
+        ["star","✦","Estrella"],
+        ["candy","♬","Bastón"],
+        ["bow","⋈","Lazo"],
+        ["snow","❄","Copo"],
+        ["bell","♧","Campana"],
+        ["heart","♥","Corazón"]
+    ];
+
+    const palette = [
+        "#ef7976",
+        "#ffd175",
+        "#8ed8bf",
+        "#b9a4ec",
+        "#fff5df",
+        "#7cc9e8",
+        "#f098c5",
+        "#d79d64"
+    ];
+
+    let ornaments = Array.isArray(stored.ornaments)
+        ? stored.ornaments.filter(ornament => (
+            Number.isFinite(ornament.y) &&
+            Number.isFinite(ornament.a) &&
+            ornament.y >= -115 &&
+            ornament.y <= 175 &&
+            types.some(type => (
+                type[0] === ornament.type
+            )) &&
+            /^#[a-f0-9]{6}$/i.test(ornament.color)
+        )).slice(0,120)
+        : [];
+
+    ornaments = ornaments.map(ornament => ({
+        ...ornament,
+
+        size:Math.max(
+            .65,
+            Math.min(
+                1.5,
+                Number(ornament.size) || 1
+            )
+        )
+    }));
+
+    let rotation = Number.isFinite(stored.rotation)
+        ? stored.rotation
+        : 0;
+
+    let lights = !!stored.lights;
+
+    let topstar = !!stored.topstar;
+
+    let turned = !!stored.turned;
+
+    let garland = stored.garland !== false;
+
+    let snowfall = stored.snowfall !== false;
+
+    let scene = [
+        "night",
+        "dusk",
+        "forest"
+    ].includes(stored.scene)
+        ? stored.scene
+        : "night";
+
+    let selected = "ball";
+
+    let paint = palette[0];
+
+    let size = 1;
+
+    let zoom = 1;
+
+    let auto = false;
+
+    let disposed = false;
+
+    let drag = null;
+
+    let dirty = true;
+
+    let raf = 0;
+
+    let last = 0;
+
+    let moving = -1;
+
+    let history = [];
+
+    $(".gamebox").classList.add(
+        "tree-dialog"
+    );
+
+    $("#gameBody").innerHTML = `
+        <p class="tree-intro">
+            Un árbol con tu personalidad.
+            <b>Arrastra para girar</b>
+            · Toca una rama para decorar.
+        </p>
+
+        <div class="tree-layout">
+
+            <div class="tree-view">
+
+                <span
+                    class="tree-angle"
+                    id="treeAngle"
+                >
+                    VISTA 360°
+                </span>
+
+                <span
+                    class="tree-counter"
+                    id="treeCounter"
+                ></span>
+
+                <canvas
+                    id="treeCanvas"
+                    class="tree-canvas"
+                    tabindex="0"
+                    aria-label="Árbol de Navidad 360 grados. Arrastra para girar, toca para decorar o usa las flechas del teclado."
+                ></canvas>
+
+                <span class="tree-tip">
+                    GIRA EL ÁRBOL PARA DECORAR
+                    TAMBIÉN SU PARTE TRASERA
+                </span>
+
+            </div>
+
+            <aside class="tree-tools">
+
+                <h3>
+                    Tu estudio navideño
+                    <small>CREA A TU MANERA</small>
+                </h3>
+
+                <div class="tree-types">
+                    ${
+                        types.map(
+                            ([id,mark,label],index) => `
+                                <button
+                                    data-ornament="${id}"
+                                    class="${
+                                        index === 0
+                                            ? "selected"
+                                            : ""
+                                    }"
+                                    aria-label="Adorno ${label}"
+                                    title="${label}"
+                                >
+                                    ${mark}
+                                </button>
+                            `
+                        ).join("")
+                    }
+
+                    <button
+                        data-ornament="move"
+                        aria-label="Mover adorno"
+                        title="Mover adorno"
+                    >✥</button>
+
+                    <button
+                        data-ornament="erase"
+                        aria-label="Quitar adorno"
+                        title="Quitar adorno"
+                    >⌫</button>
+                </div>
+
+                <div class="tree-colors">
+                    ${
+                        palette.map((color,index) => `
+                            <button
+                                data-paint="${color}"
+                                class="${
+                                    index === 0
+                                        ? "selected"
+                                        : ""
+                                }"
+                                style="background:${color}"
+                                aria-label="Color ${
+                                    [
+                                        "Coral",
+                                        "Dorado",
+                                        "Menta",
+                                        "Lavanda",
+                                        "Marfil",
+                                        "Azul",
+                                        "Rosa",
+                                        "Cobre"
+                                    ][index]
+                                }"
+                            ></button>
+                        `).join("")
+                    }
+                </div>
+
+                <label class="tree-range">
+                    Tamaño del adorno
+
+                    <input
+                        id="ornSize"
+                        type="range"
+                        min="65"
+                        max="150"
+                        value="100"
+                        aria-label="Tamaño del adorno"
+                    >
+                </label>
+
+                <div class="tree-actions">
+
+                    <button
+                        class="secondary"
+                        id="addOrnament"
+                    >
+                        ＋ Añadir adorno
+                    </button>
+
+                    <button
+                        class="secondary"
+                        id="treeLights"
+                    ></button>
+
+                    <button
+                        class="secondary"
+                        id="treeStar"
+                    ></button>
+
+                    <button
+                        class="secondary"
+                        id="treeRibbon"
+                    ></button>
+
+                    <button
+                        class="secondary"
+                        id="treeSnow"
+                    ></button>
+
+                    <button
+                        class="secondary"
+                        id="treeUndo"
+                    >
+                        ↶ Deshacer
+                    </button>
+
+                </div>
+
+                <label class="tree-range">
+                    Elige el ambiente
+
+                    <select
+                        id="treeScene"
+                        aria-label="Ambiente del árbol"
+                    >
+                        <option value="night">
+                            Noche de auroras
+                        </option>
+
+                        <option value="dusk">
+                            Atardecer rosado
+                        </option>
+
+                        <option value="forest">
+                            Bosque encantado
+                        </option>
+                    </select>
+                </label>
+
+                <div
+                    class="tree-goals"
+                    id="treeGoals"
+                ></div>
+
+            </aside>
+
+        </div>
+
+        <div class="tree-bottom">
+
+            <button
+                class="secondary"
+                id="rotateLeft"
+                aria-label="Girar árbol a la izquierda"
+            >
+                ↶ 45°
+            </button>
+
+            <button
+                class="secondary"
+                id="treeAuto"
+            >
+                ▷ Giro automático
+            </button>
+
+            <button
+                class="secondary"
+                id="rotateRight"
+                aria-label="Girar árbol a la derecha"
+            >
+                45° ↷
+            </button>
+
+            <label>
+                Zoom
+
+                <input
+                    id="treeZoom"
+                    type="range"
+                    min="80"
+                    max="115"
+                    value="100"
+                    aria-label="Zoom del árbol"
+                >
+            </label>
+
+            <button
+                class="secondary"
+                id="treePhoto"
+            >
+                ▣ Guardar foto
+            </button>
+
+            <button
+                class="primary"
+                id="treeDone"
+            >
+                Celebrar mi árbol ✦
+            </button>
+
+        </div>
+
+        <div
+            class="feedback"
+            id="feedback"
+            role="status"
+        >
+            Tu diseño se guarda en este navegador.
+            Puedes empezar por la estrella
+            o por tus adornos favoritos.
+        </div>
+    `;
+
+    const canvas = $("#treeCanvas");
+
+    const ctx = canvas.getContext("2d");
+
+    let width = 600;
+
+    let height = 500;
+
+    let scale = 1;
+
+    function say(text){
+        $("#feedback").textContent = text;
+    }
+
+    /* HISTORIAL PARA DESHACER */
+
+    function snapshot(){
+        history.push(
+            JSON.stringify({
+                ornaments,
+                lights,
+                topstar,
+                garland,
+                snowfall,
+                scene
+            })
+        );
+
+        if(history.length > 50){
+            history.shift();
+        }
+    }
+
+    /* GUARDADO AUTOMÁTICO */
+
+    function save(){
+        try{
+            localStorage.setItem(
+                "aurora-tree-v1",
+                JSON.stringify({
+                    ornaments,
+                    rotation,
+                    lights,
+                    topstar,
+                    turned,
+                    garland,
+                    snowfall,
+                    scene
+                })
+            );
+        }catch(error){
+            say(
+                "El navegador no permite guardar " +
+                "automáticamente. Puedes guardar una foto."
+            );
+        }
+
+        dirty = true;
+
+        goals();
+    }
+
+    function goals(){
+        const variety = new Set(
+            ornaments.map(ornament => (
+                ornament.type
+            ))
+        ).size;
+
+        const objectives = [
+            [
+                ornaments.length >= 12,
+                "12 adornos",
+                Math.min(12,ornaments.length) + "/12"
+            ],
+            [
+                variety >= 3,
+                "3 tipos distintos",
+                Math.min(3,variety) + "/3"
+            ],
+            [
+                turned && lights && topstar,
+                "Gira, ilumina y corona",
+                ""
+            ]
+        ];
+
+        $("#treeGoals").innerHTML =
+            objectives.map(
+                ([done,text,count]) => `
+                    <div class="${done ? "done" : ""}">
+                        ${done ? "✓" : "○"}
+                        ${text}
+                        <b>${count}</b>
+                    </div>
+                `
+            ).join("");
+
+        $("#treeLights").textContent = lights
+            ? "✧ Luces encendidas"
+            : "✧ Encender luces";
+
+        $("#treeStar").textContent = topstar
+            ? "★ Estrella colocada"
+            : "☆ Colocar estrella";
+
+        $("#treeRibbon").textContent = garland
+            ? "〰 Guirnalda dorada"
+            : "〰 Añadir guirnalda";
+
+        $("#treeSnow").textContent = snowfall
+            ? "❄ Nieve activada"
+            : "❄ Activar nieve";
+
+        $("#treeCounter").textContent =
+            ornaments.length + " / 120 adornos";
+
+        $("#treeUndo").disabled =
+            !history.length;
+
+        $("#treeScene").value = scene;
+    }
+
+    /* CANVAS RESPONSIVE, SIN ESTIRAR EL ÁRBOL */
+
+    function resize(){
+        const bounds = canvas.getBoundingClientRect();
+
+        const resolution = Math.min(
+            devicePixelRatio || 1,
+            2
+        );
+
+        width = bounds.width;
+
+        height = bounds.height;
+
+        canvas.width = Math.round(
+            width * resolution
+        );
+
+        canvas.height = Math.round(
+            height * resolution
+        );
+
+        ctx.setTransform(
+            resolution,0,
+            0,resolution,
+            0,0
+        );
+
+        scale = Math.min(
+            width / 350,
+            height / 500
+        ) * zoom;
+
+        dirty = true;
+    }
+
+    const observer = new ResizeObserver(
+        resize
+    );
+
+    observer.observe(canvas);
+
+    /* GEOMETRÍA DEL ÁRBOL */
+
+    const tiers = [
+        {top:40,bottom:-123,r:116},
+        {top:80,bottom:-75,r:102},
+        {top:117,bottom:-24,r:83},
+        {top:148,bottom:25,r:64},
+        {top:174,bottom:72,r:44},
+        {top:190,bottom:116,r:27}
+    ];
+
+    const TAU = Math.PI * 2;
+
+    function surface(tier,progress,angle){
+        const ripple = (
+            Math.sin(
+                angle * 9 + tier.top
+            ) * .035 +
+
+            Math.sin(
+                angle * 17
+            ) * .018
+        ) * progress * progress;
+
+        return{
+            r:
+                tier.r *
+                Math.pow(progress,.82) *
+                (1 + ripple),
+
+            y:
+                tier.top +
+                (
+                    tier.bottom -
+                    tier.top
+                ) * progress +
+
+                Math.cos(
+                    angle * 9 +
+                    tier.top
+                ) * 2.6 *
+                progress * progress
+        };
+    }
+
+    function radius(y){
+        let result = 0;
+
+        for(const tier of tiers){
+            if(
+                y <= tier.top &&
+                y >= tier.bottom
+            ){
+                result = Math.max(
+                    result,
+
+                    surface(
+                        tier,
+
+                        (
+                            tier.top - y
+                        ) / (
+                            tier.top -
+                            tier.bottom
+                        ),
+
+                        0
+                    ).r
+                );
+            }
+        }
+
+        return result;
+    }
+
+    function project(x,y,z){
+        return{
+            x:
+                width / 2 +
+                x * scale,
+
+            y:
+                height * .54 -
+                (
+                    y + z * .18
+                ) * scale
+        };
+    }
+
+    /* FIGURAS DE APOYO */
+
+    function star(
+        x,y,
+        radius,
+        color,
+        points = 5
+    ){
+        ctx.beginPath();
+
+        for(
+            let index = 0;
+            index < points * 2;
+            index++
+        ){
+            const angle =
+                index * Math.PI / points -
+                Math.PI / 2;
+
+            const length = index % 2
+                ? radius * .44
+                : radius;
+
+            ctx.lineTo(
+                x + Math.cos(angle) * length,
+                y + Math.sin(angle) * length
+            );
+        }
+
+        ctx.closePath();
+
+        ctx.fillStyle = color;
+
+        ctx.fill();
+    }
+
+    function ellipse(
+        x,y,
+        radiusX,
+        radiusY,
+        color
+    ){
+        ctx.fillStyle = color;
+
+        ctx.beginPath();
+
+        ctx.ellipse(
+            x,y,
+            radiusX,
+            radiusY,
+            0,0,TAU
+        );
+
+        ctx.fill();
+    }
+
+    function gift(
+        x,y,z,
+        size,
+        color
+    ){
+        const point = project(x,y,z);
+
+        ctx.save();
+
+        ctx.translate(
+            point.x,
+            point.y
+        );
+
+        ctx.scale(
+            scale * size,
+            scale * size
+        );
+
+        ellipse(
+            0,9,
+            26,7,
+            "#173c4538"
+        );
+
+        ctx.fillStyle = color;
+
+        ctx.beginPath();
+
+        ctx.roundRect(
+            -21,-23,
+            42,30,
+            4
+        );
+
+        ctx.fill();
+
+        ctx.fillStyle = "#00000018";
+
+        ctx.fillRect(
+            10,-22,
+            10,28
+        );
+
+        ctx.fillStyle = "#ffe7a2";
+
+        ctx.fillRect(
+            -3,-24,
+            6,31
+        );
+
+        ctx.fillRect(
+            -23,-25,
+            46,7
+        );
+
+        ctx.strokeStyle = "#ffe7a2";
+
+        ctx.lineWidth = 3;
+
+        ctx.beginPath();
+
+        ctx.ellipse(
+            -7,-30,
+            8,4,
+            .5,0,TAU
+        );
+
+        ctx.ellipse(
+            7,-30,
+            8,4,
+            -.5,0,TAU
+        );
+
+        ctx.stroke();
+
+        ctx.restore();
+    }
+
+    /* SE GENERAN LAS RAMAS UNA SOLA VEZ */
+
+    const meshes = tiers.map(
+        (tier,tierIndex) => {
+            const patches = [];
+
+            for(
+                let segment = 0;
+                segment < 32;
+                segment++
+            ){
+                for(
+                    let ring = 0;
+                    ring < 6;
+                    ring++
+                ){
+                    const angleA =
+                        segment / 32 * TAU;
+
+                    const angleB =
+                        (segment + 1) / 32 * TAU;
+
+                    const progressA =
+                        ring / 6;
+
+                    const progressB =
+                        (ring + 1) / 6;
+
+                    patches.push({
+                        a:
+                            (
+                                angleA +
+                                angleB
+                            ) / 2,
+
+                        u:
+                            (
+                                progressA +
+                                progressB
+                            ) / 2,
+
+                        points:[
+                            [progressA,angleA],
+                            [progressB,angleA],
+                            [progressB,angleB],
+                            [progressA,angleB]
+                        ].map(
+                            ([progress,angle]) => ({
+                                ...surface(
+                                    tier,
+                                    progress,
+                                    angle
+                                ),
+
+                                a:angle
+                            })
+                        ),
+
+                        t:tierIndex
+                    });
+                }
+            }
+
+            return patches;
+        }
+    );
+
+    const snowflakes = Array.from(
+        {length:55},
+
+        (_,index) => ({
+            x:
+                (
+                    (
+                        index * 137 + 43
+                    ) % 997
+                ) / 997,
+
+            y:
+                (
+                    (
+                        index * 89 + 19
+                    ) % 751
+                ) / 751,
+
+            s:
+                .6 +
+                index % 4 * .45,
+
+            v:
+                7 +
+                index % 5 * 4
+        })
+    );
+
+    /* DIBUJO DE LOS ADORNOS */
+
+    function drawOrnament(
+        ornament,
+        timestamp
+    ){
+        const angle =
+            ornament.a + rotation;
+
+        const distance =
+            radius(ornament.y) + 7;
+
+        const z =
+            Math.cos(angle) * distance;
+
+        if(z < 0) return;
+
+        const point = project(
+            Math.sin(angle) * distance,
+            ornament.y,
+            z
+        );
+
+        ctx.save();
+
+        ctx.translate(
+            point.x,
+            point.y
+        );
+
+        ctx.scale(
+            scale * ornament.size,
+            scale * ornament.size
+        );
+
+        ctx.shadowColor = "#061d2870";
+
+        ctx.shadowBlur = 3;
+
+        ctx.shadowOffsetY = 3;
+
+        ctx.strokeStyle = "#ead19c";
+
+        ctx.lineWidth = 1;
+
+        ctx.beginPath();
+
+        ctx.moveTo(0,-15);
+
+        ctx.lineTo(0,-9);
+
+        ctx.stroke();
+
+        ctx.shadowOffsetY = 0;
+
+        ctx.shadowBlur = 0;
+
+        if(ornament.type === "ball"){
+            const gradient =
+                ctx.createRadialGradient(
+                    -3,-4,.6,
+                    1,2,12
+                );
+
+            gradient.addColorStop(
+                0,
+                "#fff8e8"
+            );
+
+            gradient.addColorStop(
+                .16,
+                ornament.color
+            );
+
+            gradient.addColorStop(
+                .65,
+                ornament.color
+            );
+
+            gradient.addColorStop(
+                1,
+                "#233f4d"
+            );
+
+            ellipse(
+                0,0,
+                10,10,
+                gradient
+            );
+
+            ellipse(
+                -3,-4,
+                2,1.4,
+                "#ffffffc0"
+            );
+
+            ctx.fillStyle = "#e5c27e";
+
+            ctx.fillRect(
+                -3,-12,
+                6,4
+            );
+
+            ctx.strokeStyle = "#f8e9b0";
+
+            ctx.strokeRect(
+                -2,-12,
+                4,2
+            );
+        }
+
+        else if(ornament.type === "star"){
+            star(
+                1,2,
+                13,
+                "#31474a"
+            );
+
+            star(
+                0,0,
+                13,
+                ornament.color
+            );
+
+            star(
+                -2,-2,
+                6,
+                "#fff3bd80"
+            );
+        }
+
+        else if(ornament.type === "candy"){
+            ctx.lineCap = "round";
+
+            ctx.strokeStyle = "#18374470";
+
+            ctx.lineWidth = 8;
+
+            ctx.beginPath();
+
+            ctx.moveTo(3,13);
+
+            ctx.lineTo(3,-8);
+
+            ctx.bezierCurveTo(
+                3,-20,
+                -10,-20,
+                -10,-8
+            );
+
+            ctx.stroke();
+
+            ctx.strokeStyle =
+                ornament.color;
+
+            ctx.lineWidth = 6;
+
+            ctx.stroke();
+
+            ctx.strokeStyle = "#fff7e1";
+
+            ctx.lineWidth = 2.5;
+
+            for(
+                let y = -6;
+                y < 12;
+                y += 6
+            ){
+                ctx.beginPath();
+
+                ctx.moveTo(1,y);
+
+                ctx.lineTo(5,y + 3);
+
+                ctx.stroke();
+            }
+
+            ctx.beginPath();
+
+            ctx.moveTo(-9,-12);
+
+            ctx.lineTo(-5,-15);
+
+            ctx.stroke();
+        }
+
+        else if(ornament.type === "bow"){
+            for(const direction of [-1,1]){
+                ctx.fillStyle =
+                    ornament.color;
+
+                ctx.beginPath();
+
+                ctx.moveTo(0,0);
+
+                ctx.bezierCurveTo(
+                    direction * 21,-17,
+                    direction * 21,17,
+                    0,0
+                );
+
+                ctx.fill();
+
+                ctx.beginPath();
+
+                ctx.moveTo(
+                    direction * 2,
+                    1
+                );
+
+                ctx.lineTo(
+                    direction * 10,
+                    16
+                );
+
+                ctx.lineTo(
+                    direction * 3,
+                    12
+                );
+
+                ctx.lineTo(
+                    direction * 1,
+                    16
+                );
+
+                ctx.closePath();
+
+                ctx.fill();
+
+                ctx.strokeStyle =
+                    "#ffffff40";
+
+                ctx.beginPath();
+
+                ctx.moveTo(
+                    direction * 3,
+                    -1
+                );
+
+                ctx.lineTo(
+                    direction * 12,
+                    -5
+                );
+
+                ctx.stroke();
+            }
+
+            ellipse(
+                0,0,
+                3,4,
+                "#f9d68b"
+            );
+        }
+
+        else if(ornament.type === "bell"){
+            ctx.fillStyle =
+                ornament.color;
+
+            ctx.beginPath();
+
+            ctx.moveTo(-10,8);
+
+            ctx.quadraticCurveTo(
+                -6,1,
+                -6,-4
+            );
+
+            ctx.bezierCurveTo(
+                -6,-14,
+                6,-14,
+                6,-4
+            );
+
+            ctx.quadraticCurveTo(
+                6,1,
+                10,8
+            );
+
+            ctx.closePath();
+
+            ctx.fill();
+
+            ellipse(
+                0,8,
+                11,3,
+                "#e9c17c"
+            );
+
+            ellipse(
+                0,10,
+                3,3,
+                "#ffebb9"
+            );
+
+            ctx.strokeStyle =
+                "#ffffff70";
+
+            ctx.lineWidth = 2;
+
+            ctx.beginPath();
+
+            ctx.moveTo(-3,-7);
+
+            ctx.lineTo(-5,2);
+
+            ctx.stroke();
+        }
+
+        else if(ornament.type === "heart"){
+            ctx.fillStyle =
+                ornament.color;
+
+            ctx.beginPath();
+
+            ctx.moveTo(0,12);
+
+            ctx.bezierCurveTo(
+                -25,-3,
+                -10,-20,
+                0,-9
+            );
+
+            ctx.bezierCurveTo(
+                10,-20,
+                25,-3,
+                0,12
+            );
+
+            ctx.fill();
+
+            ellipse(
+                -6,-5,
+                3,1.5,
+                "#ffffff65"
+            );
+        }
+
+        else{
+            ctx.strokeStyle =
+                ornament.color;
+
+            ctx.lineWidth = 2;
+
+            for(
+                let index = 0;
+                index < 6;
+                index++
+            ){
+                ctx.save();
+
+                ctx.rotate(
+                    index * Math.PI / 3
+                );
+
+                ctx.beginPath();
+
+                ctx.moveTo(0,0);
+
+                ctx.lineTo(0,-12);
+
+                ctx.moveTo(-3,-8);
+
+                ctx.lineTo(0,-5);
+
+                ctx.lineTo(3,-8);
+
+                ctx.stroke();
+
+                ctx.restore();
+            }
+
+            ellipse(
+                0,0,
+                2,2,
+                "#fff6d9"
+            );
+        }
+
+        if(
+            moving ===
+            ornaments.indexOf(ornament)
+        ){
+            ctx.strokeStyle = "#ffe4a0";
+
+            ctx.lineWidth = 1.5;
+
+            ctx.setLineDash([3,3]);
+
+            ctx.beginPath();
+
+            ctx.arc(
+                0,0,
+                19,
+                0,TAU
+            );
+
+            ctx.stroke();
+
+            ctx.setLineDash([]);
+        }
+
+        ctx.restore();
+    }
+
+    /* ESCENA Y ANIMACIÓN */
+
+    let painted = 0;
+
+    function render(timestamp = 0){
+        if(disposed) return;
+
+        if(
+            !dirty &&
+            timestamp - painted < 33
+        ){
+            raf = requestAnimationFrame(
+                render
+            );
+
+            return;
+        }
+
+        painted = timestamp;
+
+        const delta = last
+            ? Math.min(
+                (
+                    timestamp - last
+                ) / 1000,
+
+                .05
+            )
+            : 0;
+
+        last = timestamp;
+
+        if(auto){
+            rotation += delta * .3;
+
+            turned = true;
+
+            dirty = true;
+        }
+
+        if(
+            dirty ||
+            (
+                !reduced &&
+                (
+                    lights ||
+                    snowfall
+                )
+            )
+        ){
+            dirty = false;
+
+            ctx.clearRect(
+                0,0,
+                width,height
+            );
+
+            const themes = {
+                night:[
+                    "#102737",
+                    "#254f58",
+                    "#8fe2bf"
+                ],
+
+                dusk:[
+                    "#422f54",
+                    "#8f6472",
+                    "#ffd49e"
+                ],
+
+                forest:[
+                    "#112f30",
+                    "#3b6758",
+                    "#d0e8ae"
+                ]
+            };
+
+            const theme = themes[scene];
+
+            const background =
+                ctx.createLinearGradient(
+                    0,0,
+                    0,height
+                );
+
+            background.addColorStop(
+                0,
+                theme[0]
+            );
+
+            background.addColorStop(
+                1,
+                theme[1]
+            );
+
+            ctx.fillStyle = background;
+
+            ctx.fillRect(
+                0,0,
+                width,height
+            );
+
+            const halo =
+                ctx.createRadialGradient(
+                    width * .5,
+                    height * .35,
+                    0,
+
+                    width * .5,
+                    height * .4,
+                    width * .65
+                );
+
+            halo.addColorStop(
+                0,
+                theme[2] + "28"
+            );
+
+            halo.addColorStop(
+                1,
+                theme[2] + "00"
+            );
+
+            ctx.fillStyle = halo;
+
+            ctx.fillRect(
+                0,0,
+                width,height
+            );
+
+            /* AURORA DEL FONDO */
+
+            ctx.strokeStyle =
+                theme[2] + "13";
+
+            ctx.lineWidth = 26;
+
+            ctx.beginPath();
+
+            ctx.moveTo(
+                -20,
+                height * .22
+            );
+
+            ctx.bezierCurveTo(
+                width * .25,-25,
+                width * .6,height * .28,
+                width + 20,20
+            );
+
+            ctx.stroke();
+
+            /* BOSQUE LEJANO */
+
+            for(
+                let index = 0;
+                index < 10;
+                index++
+            ){
+                const x =
+                    index / 9 * width;
+
+                const y =
+                    height * .75 +
+                    index % 3 * 12;
+
+                const treeHeight =
+                    45 +
+                    (
+                        index * 41
+                    ) % 75;
+
+                ctx.fillStyle =
+                    "#0a27362b";
+
+                ctx.beginPath();
+
+                ctx.moveTo(
+                    x,
+                    y - treeHeight
+                );
+
+                ctx.lineTo(
+                    x - treeHeight * .32,
+                    y
+                );
+
+                ctx.lineTo(
+                    x + treeHeight * .32,
+                    y
+                );
+
+                ctx.closePath();
+
+                ctx.fill();
+            }
+
+            /* ESTRELLAS DEL CIELO */
+
+            for(
+                let index = 0;
+                index < 22;
+                index++
+            ){
+                const x = (
+                    (
+                        index * 173 + 23
+                    ) % 997
+                ) / 997 * width;
+
+                const y = (
+                    (
+                        index * 79 + 15
+                    ) % 419
+                ) / 419 * height * .65;
+
+                const size = index % 3 === 0
+                    ? 1.4
+                    : .7;
+
+                ellipse(
+                    x,y,
+                    size,size,
+                    "#fff7de65"
+                );
+            }
+
+            /* BASE NEVADA */
+
+            const base = project(
+                0,-165,0
+            );
+
+            ellipse(
+                base.x,
+                base.y + 4 * scale,
+                143 * scale,
+                28 * scale,
+                "#203b4140"
+            );
+
+            ellipse(
+                base.x,
+                base.y,
+                139 * scale,
+                25 * scale,
+                "#c2d9d2"
+            );
+
+            ellipse(
+                base.x,
+                base.y - 5 * scale,
+                139 * scale,
+                24 * scale,
+                "#e8eee0"
+            );
+
+            ellipse(
+                base.x,
+                base.y - 7 * scale,
+                115 * scale,
+                17 * scale,
+                "#f7f5e7"
+            );
+
+            ellipse(
+                base.x,
+                base.y - 12 * scale,
+                70 * scale,
+                13 * scale,
+                "#38584d36"
+            );
+
+            /* TRONCO */
+
+            const trunk = project(
+                -10,-112,0
+            );
+
+            const wood =
+                ctx.createLinearGradient(
+                    trunk.x,0,
+                    trunk.x + 20 * scale,0
+                );
+
+            wood.addColorStop(
+                0,
+                "#815538"
+            );
+
+            wood.addColorStop(
+                .4,
+                "#c49a62"
+            );
+
+            wood.addColorStop(
+                1,
+                "#805a3b"
+            );
+
+            ctx.fillStyle = wood;
+
+            ctx.fillRect(
+                trunk.x,
+                trunk.y,
+                20 * scale,
+                43 * scale
+            );
+
+            /* CAPAS DE RAMAS CON PROFUNDIDAD */
+
+            for(
+                let tierIndex = 0;
+                tierIndex < tiers.length;
+                tierIndex++
+            ){
+                const faces =
+                    meshes[tierIndex].map(
+                        face => ({
+                            ...face,
+
+                            z:Math.cos(
+                                face.a +
+                                rotation
+                            ),
+
+                            vertices:face.points.map(
+                                point => project(
+                                    Math.sin(
+                                        point.a +
+                                        rotation
+                                    ) * point.r,
+
+                                    point.y,
+
+                                    Math.cos(
+                                        point.a +
+                                        rotation
+                                    ) * point.r
+                                )
+                            )
+                        })
+                    ).sort(
+                        (a,b) => a.z - b.z
+                    );
+
+                for(const face of faces){
+                    const illumination =
+                        Math.max(
+                            0,
+
+                            Math.cos(
+                                face.a +
+                                rotation -
+                                .65
+                            )
+                        );
+
+                    const shade =
+                        21 +
+                        illumination * 18 +
+                        face.u * 3 +
+
+                        Math.sin(
+                            face.a * 11 +
+                            face.u * 19 +
+                            tierIndex
+                        ) * 2;
+
+                    ctx.fillStyle = `
+                        hsl(
+                            ${151 + tierIndex * 1.5}
+                            ${36 + illumination * 9}%
+                            ${shade}%
+                        )
+                    `;
+
+                    ctx.beginPath();
+
+                    face.vertices.forEach(
+                        (point,index) => {
+                            if(index){
+                                ctx.lineTo(
+                                    point.x,
+                                    point.y
+                                );
+                            }else{
+                                ctx.moveTo(
+                                    point.x,
+                                    point.y
+                                );
+                            }
+                        }
+                    );
+
+                    ctx.closePath();
+
+                    ctx.fill();
+                }
+
+                /* PEQUEÑAS AGUJAS Y TOQUES DE NIEVE */
+
+                for(
+                    let index = 0;
+                    index < 115;
+                    index++
+                ){
+                    const progress =
+                        .28 +
+
+                        (
+                            (
+                                index * 47 +
+                                tierIndex * 19
+                            ) % 101
+                        ) / 140;
+
+                    const angle =
+                        index * 2.39996 +
+                        tierIndex * 1.7;
+
+                    const branch = surface(
+                        tiers[tierIndex],
+                        Math.min(progress,.98),
+                        angle
+                    );
+
+                    const z =
+                        Math.cos(
+                            angle + rotation
+                        ) * branch.r;
+
+                    if(z <= 0) continue;
+
+                    const point = project(
+                        Math.sin(
+                            angle + rotation
+                        ) * branch.r,
+
+                        branch.y,
+
+                        z
+                    );
+
+                    ctx.strokeStyle =
+                        index % 6 === 0
+                            ? "#d9e6d183"
+                            : index % 2
+                                ? "#76aa853b"
+                                : "#164c3e70";
+
+                    ctx.lineWidth =
+                        index % 6 === 0
+                            ? 1.3
+                            : .8;
+
+                    ctx.beginPath();
+
+                    ctx.moveTo(
+                        point.x - 2 * scale,
+                        point.y - 2 * scale
+                    );
+
+                    ctx.lineTo(
+                        point.x + 1 * scale,
+                        point.y + 3 * scale
+                    );
+
+                    ctx.stroke();
+                }
+            }
+
+            /* GUIRNALDA Y LUCES */
+
+            if(garland || lights){
+                let previous = null;
+
+                for(
+                    let index = 0;
+                    index < 380;
+                    index++
+                ){
+                    const y =
+                        177 - index * .77;
+
+                    const angle =
+                        index * .076 +
+                        rotation;
+
+                    const distance =
+                        radius(y) + 5;
+
+                    const z =
+                        Math.cos(angle) *
+                        distance;
+
+                    const point = project(
+                        Math.sin(angle) *
+                        distance,
+
+                        y,
+
+                        z
+                    );
+
+                    if(z < 0){
+                        previous = null;
+
+                        continue;
+                    }
+
+                    if(
+                        garland &&
+                        previous
+                    ){
+                        ctx.strokeStyle =
+                            "#bc8d49";
+
+                        ctx.lineWidth =
+                            2 * scale;
+
+                        ctx.beginPath();
+
+                        ctx.moveTo(
+                            previous.x,
+                            previous.y
+                        );
+
+                        ctx.lineTo(
+                            point.x,
+                            point.y
+                        );
+
+                        ctx.stroke();
+
+                        ctx.strokeStyle =
+                            "#ffe7a085";
+
+                        ctx.lineWidth =
+                            .7 * scale;
+
+                        ctx.stroke();
+                    }
+
+                    if(
+                        lights &&
+                        index % 7 === 0
+                    ){
+                        const color = palette[
+                            Math.floor(
+                                index / 7
+                            ) % palette.length
+                        ];
+
+                        ctx.shadowColor =
+                            color;
+
+                        ctx.shadowBlur = (
+                            reduced
+                                ? 8
+                                : 8 + 4 * Math.sin(
+                                    timestamp / 900 +
+                                    index
+                                )
+                        ) * scale;
+
+                        ellipse(
+                            point.x,
+                            point.y,
+                            2.4 * scale,
+                            3 * scale,
+                            color
+                        );
+
+                        ctx.shadowBlur = 0;
+
+                        ellipse(
+                            point.x - .5 * scale,
+                            point.y - 1 * scale,
+                            1 * scale,
+                            1 * scale,
+                            "#fff9db"
+                        );
+                    }
+
+                    previous = point;
+                }
+            }
+
+            /* ADORNOS ORDENADOS POR PROFUNDIDAD */
+
+            ornaments.slice().sort(
+                (a,b) => (
+                    Math.cos(
+                        a.a + rotation
+                    ) * radius(a.y)
+                ) - (
+                    Math.cos(
+                        b.a + rotation
+                    ) * radius(b.y)
+                )
+            ).forEach(
+                ornament => drawOrnament(
+                    ornament,
+                    timestamp
+                )
+            );
+
+            /* ESTRELLA DE LA PUNTA */
+
+            const top = project(
+                0,204,0
+            );
+
+            if(topstar){
+                const glow =
+                    ctx.createRadialGradient(
+                        top.x,
+                        top.y,
+                        1,
+
+                        top.x,
+                        top.y,
+                        44 * scale
+                    );
+
+                glow.addColorStop(
+                    0,
+                    "#ffdb8960"
+                );
+
+                glow.addColorStop(
+                    1,
+                    "#ffdb8900"
+                );
+
+                ctx.fillStyle = glow;
+
+                ctx.fillRect(
+                    top.x - 45 * scale,
+                    top.y - 45 * scale,
+                    90 * scale,
+                    90 * scale
+                );
+
+                star(
+                    top.x + 2 * scale,
+                    top.y + 3 * scale,
+                    23 * scale,
+                    "#af792b"
+                );
+
+                star(
+                    top.x,
+                    top.y,
+                    23 * scale,
+                    "#ffe19a"
+                );
+
+                for(
+                    let index = 0;
+                    index < 5;
+                    index++
+                ){
+                    const angleA =
+                        index * TAU / 5 -
+                        Math.PI / 2;
+
+                    const angleB =
+                        angleA +
+                        Math.PI / 5;
+
+                    ctx.fillStyle =
+                        index % 2
+                            ? "#fff3bf"
+                            : "#eebf65";
+
+                    ctx.beginPath();
+
+                    ctx.moveTo(
+                        top.x,
+                        top.y
+                    );
+
+                    ctx.lineTo(
+                        top.x +
+                        Math.cos(angleA) *
+                        23 * scale,
+
+                        top.y +
+                        Math.sin(angleA) *
+                        23 * scale
+                    );
+
+                    ctx.lineTo(
+                        top.x +
+                        Math.cos(angleB) *
+                        10 * scale,
+
+                        top.y +
+                        Math.sin(angleB) *
+                        10 * scale
+                    );
+
+                    ctx.closePath();
+
+                    ctx.fill();
+                }
+            }else{
+                ctx.strokeStyle =
+                    "#ffe8a560";
+
+                ctx.setLineDash([3,4]);
+
+                ctx.beginPath();
+
+                ctx.arc(
+                    top.x,
+                    top.y,
+                    17 * scale,
+                    0,TAU
+                );
+
+                ctx.stroke();
+
+                ctx.setLineDash([]);
+            }
+
+            /* REGALOS EN LA BASE */
+
+            gift(
+                -78,-151,55,
+                .72,
+                "#dd7d75"
+            );
+
+            gift(
+                83,-151,32,
+                .65,
+                "#9c8bc5"
+            );
+
+            gift(
+                53,-155,67,
+                .45,
+                "#70b49e"
+            );
+
+            /* NIEVE ANIMADA */
+
+            if(snowfall){
+                for(const flake of snowflakes){
+                    const y = (
+                        flake.y * height +
+
+                        (
+                            reduced
+                                ? 0
+                                : timestamp *
+                                  .001 *
+                                  flake.v
+                        )
+                    ) % (
+                        height + 15
+                    ) - 7;
+
+                    const x =
+                        flake.x * width +
+
+                        (
+                            reduced
+                                ? 0
+                                : Math.sin(
+                                    timestamp / 3500 +
+                                    flake.y * 9
+                                ) * 9
+                        );
+
+                    ellipse(
+                        x,y,
+                        flake.s,
+                        flake.s,
+                        "#fff9e48a"
+                    );
+                }
+            }
+
+            const degrees = Math.round(
+                (
+                    rotation * 180 /
+                    Math.PI % 360 +
+                    360
+                ) % 360
+            );
+
+            $("#treeAngle").textContent =
+                `VISTA 360° · ${degrees}°`;
+        }
+
+        raf = requestAnimationFrame(
+            render
+        );
+    }
+
+    /* ENCONTRAR UN ADORNO VISIBLE */
+
+    function nearest(px,py){
+        return ornaments.map(
+            (ornament,index) => {
+                const angle =
+                    ornament.a +
+                    rotation;
+
+                const distance =
+                    radius(ornament.y) + 7;
+
+                const z =
+                    Math.cos(angle) *
+                    distance;
+
+                const point = project(
+                    Math.sin(angle) *
+                    distance,
+
+                    ornament.y,
+
+                    z
+                );
+
+                return{
+                    i:index,
+
+                    d:z < 0
+                        ? Infinity
+                        : Math.hypot(
+                            point.x - px,
+                            point.y - py
+                        )
+                };
+            }
+        ).sort(
+            (a,b) => a.d - b.d
+        )[0];
+    }
+
+    /* COLOCAR UN ADORNO */
+
+    function place(y,angle){
+        if(ornaments.length >= 120){
+            say(
+                "Tu árbol ya tiene 120 adornos. " +
+                "Puedes mover o quitar alguno."
+            );
+
+            return;
+        }
+
+        snapshot();
+
+        ornaments.push({
+            y,
+            a:angle,
+            type:selected,
+            color:paint,
+            size
+        });
+
+        tone(
+            620 + rand(300),
+            .1
+        );
+
+        save();
+
+        say(
+            `${ornaments.length} ` +
+
+            (
+                ornaments.length === 1
+                    ? "adorno guardado"
+                    : "adornos guardados"
+            ) +
+
+            ". ¡Cada lado puede tener " +
+            "su propio estilo!"
+        );
+    }
+
+    /* TOCAR RAMAS, ESTRELLA O ADORNOS */
+
+    function handleTap(px,py){
+        const top = project(
+            0,204,0
+        );
+
+        if(
+            Math.hypot(
+                px - top.x,
+                py - top.y
+            ) < 26 * scale
+        ){
+            snapshot();
+
+            topstar = !topstar;
+
+            save();
+
+            return;
+        }
+
+        if(
+            selected === "erase" ||
+            (
+                selected === "move" &&
+                moving < 0
+            )
+        ){
+            const hit = nearest(
+                px,py
+            );
+
+            if(
+                !hit ||
+                hit.d > 25 * scale
+            ){
+                say(
+                    "Toca un adorno visible para " +
+
+                    (
+                        selected === "erase"
+                            ? "quitarlo."
+                            : "seleccionarlo."
+                    )
+                );
+
+                return;
+            }
+
+            if(selected === "erase"){
+                snapshot();
+
+                ornaments.splice(
+                    hit.i,
+                    1
+                );
+
+                save();
+
+                say(
+                    "Adorno retirado. Puedes " +
+                    "recuperarlo con Deshacer."
+                );
+            }else{
+                moving = hit.i;
+
+                dirty = true;
+
+                say(
+                    "Adorno seleccionado. Toca " +
+                    "otra rama para moverlo."
+                );
+            }
+
+            return;
+        }
+
+        /*
+        Busca la superficie frontal debajo del toque.
+        Considera también la inclinación de la vista.
+        */
+
+        const dx =
+            (
+                px - width / 2
+            ) / scale;
+
+        const screenY =
+            (
+                height * .54 - py
+            ) / scale;
+
+        let found = null;
+
+        for(
+            let y = -112;
+            y <= 175;
+            y += .5
+        ){
+            const distance =
+                radius(y) + 7;
+
+            if(
+                Math.abs(dx) >
+                distance
+            ){
+                continue;
+            }
+
+            const z = Math.sqrt(
+                Math.max(
+                    0,
+
+                    distance * distance -
+                    dx * dx
+                )
+            );
+
+            const error = Math.abs(
+                screenY -
+                (
+                    y + z * .18
+                )
+            );
+
+            if(
+                !found ||
+                error < found.error
+            ){
+                found = {
+                    y,
+
+                    a:
+                        Math.asin(
+                            Math.max(
+                                -1,
+                                Math.min(
+                                    1,
+                                    dx / distance
+                                )
+                            )
+                        ) - rotation,
+
+                    error
+                };
+            }
+        }
+
+        if(
+            !found ||
+            found.error > 4
+        ){
+            say(
+                "Toca una rama verde " +
+                "para colocar el adorno."
+            );
+
+            return;
+        }
+
+        if(selected === "move"){
+            snapshot();
+
+            ornaments[moving] = {
+                ...ornaments[moving],
+                y:found.y,
+                a:found.a
+            };
+
+            moving = -1;
+
+            save();
+
+            say(
+                "¡Listo! El adorno está " +
+                "en su nueva rama."
+            );
+        }else{
+            place(
+                found.y,
+                found.a
+            );
+        }
+    }
+
+    /* GIRAR CON RATÓN O DEDO */
+
+    canvas.onpointerdown = event => {
+        auto = false;
+
+        $("#treeAuto").textContent =
+            "▷ Giro automático";
+
+        canvas.setPointerCapture(
+            event.pointerId
+        );
+
+        drag = {
+            x:event.clientX,
+            y:event.clientY,
+            last:event.clientX,
+            moved:false
+        };
+    };
+
+    canvas.onpointermove = event => {
+        if(!drag) return;
+
+        if(
+            Math.hypot(
+                event.clientX - drag.x,
+                event.clientY - drag.y
+            ) > 7
+        ){
+            drag.moved = true;
+        }
+
+        if(drag.moved){
+            rotation += (
+                event.clientX -
+                drag.last
+            ) * .012;
+
+            turned = true;
+
+            dirty = true;
+        }
+
+        drag.last =
+            event.clientX;
+    };
+
+    canvas.onpointerup = event => {
+        if(!drag) return;
+
+        const previousDrag = drag;
+
+        drag = null;
+
+        if(previousDrag.moved){
+            save();
+
+            return;
+        }
+
+        const bounds =
+            canvas.getBoundingClientRect();
+
+        handleTap(
+            event.clientX - bounds.left,
+            event.clientY - bounds.top
+        );
+    };
+
+    canvas.onpointercancel = () => {
+        drag = null;
+
+        save();
+    };
+
+    /* SELECCIÓN DE HERRAMIENTAS */
+
+    document.querySelectorAll(
+        "[data-ornament]"
+    ).forEach(button => {
+        button.onclick = () => {
+            selected =
+                button.dataset.ornament;
+
+            moving = -1;
+
+            dirty = true;
+
+            document.querySelectorAll(
+                "[data-ornament]"
+            ).forEach(other => {
+                other.classList.toggle(
+                    "selected",
+                    other === button
+                );
+            });
+
+            say(
+                selected === "erase"
+                    ? "Toca el adorno que quieres quitar."
+
+                    : selected === "move"
+                        ? "Toca un adorno y después su nueva rama."
+
+                        : "Elige un color y toca una rama para decorar."
+            );
+        };
+    });
+
+    document.querySelectorAll(
+        "[data-paint]"
+    ).forEach(button => {
+        button.onclick = () => {
+            paint =
+                button.dataset.paint;
+
+            document.querySelectorAll(
+                "[data-paint]"
+            ).forEach(other => {
+                other.classList.toggle(
+                    "selected",
+                    other === button
+                );
+            });
+        };
+    });
+
+    $("#ornSize").oninput = event => {
+        size =
+            Number(event.target.value) /
+            100;
+    };
+
+    /* AÑADIR CON BOTÓN */
+
+    $("#addOrnament").onclick = () => {
+        if(
+            selected === "erase" ||
+            selected === "move"
+        ){
+            say(
+                "Selecciona un tipo de " +
+                "adorno para añadirlo."
+            );
+
+            return;
+        }
+
+        let y =
+            -90 + rand(245);
+
+        let angle =
+            -rotation +
+            (
+                Math.random() - .5
+            ) * 1.85;
+
+        for(
+            let attempt = 0;
+            attempt < 16;
+            attempt++
+        ){
+            const overlaps = ornaments.some(
+                ornament => (
+                    Math.abs(
+                        ornament.y - y
+                    ) < 19 &&
+
+                    Math.abs(
+                        Math.atan2(
+                            Math.sin(
+                                ornament.a - angle
+                            ),
+
+                            Math.cos(
+                                ornament.a - angle
+                            )
+                        )
+                    ) < .32
+                )
+            );
+
+            if(!overlaps) break;
+
+            y =
+                -90 + rand(245);
+
+            angle =
+                -rotation +
+                (
+                    Math.random() - .5
+                ) * 1.85;
+        }
+
+        place(
+            y,
+            angle
+        );
+    };
+
+    /* LUCES, ESTRELLA Y AMBIENTE */
+
+    $("#treeLights").onclick = () => {
+        snapshot();
+
+        lights = !lights;
+
+        tone(880,.15);
+
+        save();
+    };
+
+    $("#treeStar").onclick = () => {
+        snapshot();
+
+        topstar = !topstar;
+
+        tone(1047,.3);
+
+        save();
+    };
+
+    $("#treeRibbon").onclick = () => {
+        snapshot();
+
+        garland = !garland;
+
+        save();
+    };
+
+    $("#treeSnow").onclick = () => {
+        snapshot();
+
+        snowfall = !snowfall;
+
+        save();
+    };
+
+    $("#treeScene").onchange = event => {
+        snapshot();
+
+        scene =
+            event.target.value;
+
+        save();
+    };
+
+    /* DESHACER EL ÚLTIMO CAMBIO */
+
+    $("#treeUndo").onclick = () => {
+        if(!history.length) return;
+
+        const previous = JSON.parse(
+            history.pop()
+        );
+
+        ({
+            ornaments,
+            lights,
+            topstar,
+            garland,
+            snowfall,
+            scene
+        } = previous);
+
+        moving = -1;
+
+        save();
+
+        say(
+            "Último cambio deshecho."
+        );
+    };
+
+    /* BOTONES DE ROTACIÓN */
+
+    function rotate(direction){
+        rotation +=
+            direction *
+            Math.PI / 4;
+
+        turned = true;
+
+        save();
+    }
+
+    $("#rotateLeft").onclick = () => {
+        rotate(-1);
+    };
+
+    $("#rotateRight").onclick = () => {
+        rotate(1);
+    };
+
+    $("#treeAuto").onclick = () => {
+        auto = !auto;
+
+        $("#treeAuto").textContent = auto
+            ? "Ⅱ Detener giro"
+            : "▷ Giro automático";
+
+        save();
+    };
+
+    $("#treeZoom").oninput = event => {
+        zoom =
+            Number(event.target.value) /
+            100;
+
+        scale = Math.min(
+            width / 350,
+            height / 500
+        ) * zoom;
+
+        dirty = true;
+    };
+
+    canvas.onkeydown = event => {
+        if(
+            event.key === "ArrowLeft" ||
+            event.key === "ArrowRight"
+        ){
+            event.preventDefault();
+
+            rotate(
+                event.key === "ArrowLeft"
+                    ? -1
+                    : 1
+            );
+        }
+    };
+
+    /* GUARDAR UNA FOTO DEL ÁRBOL */
+
+    $("#treePhoto").onclick = () => {
+        const link =
+            document.createElement("a");
+
+        link.download =
+            "Mi_arbol_de_Aurora.png";
+
+        link.href =
+            canvas.toDataURL(
+                "image/png"
+            );
+
+        link.click();
+
+        say(
+            "¡Un recuerdo de tu Navidad! " +
+            "La imagen se descarga en tu dispositivo."
+        );
+    };
+
+    /* CELEBRAR Y GANAR ESTRELLAS */
+
+    $("#treeDone").onclick = () => {
+        save();
+
+        const variety = new Set(
+            ornaments.map(
+                ornament => ornament.type
+            )
+        ).size;
+
+        const stars =
+            Number(
+                ornaments.length >= 12
+            ) +
+
+            Number(
+                variety >= 3
+            ) +
+
+            Number(
+                turned &&
+                lights &&
+                topstar
+            );
+
+        if(!stars){
+            say(
+                "Gana una estrella: coloca " +
+                "12 adornos, usa 3 tipos o gira " +
+                "el árbol con luces y estrella."
+            );
+
+            return;
+        }
+
+        finish(
+            stars,
+
+            `Tu árbol tiene ${ornaments.length} ` +
+            `adornos y ${variety} tipos distintos. ` +
+            "Tu diseño está guardado para seguir " +
+            "creando cuando quieras."
+        );
+    };
+
+    /* DETENER Y GUARDAR AL SALIR */
+
+    cleanup = () => {
+        disposed = true;
+
+        cancelAnimationFrame(
+            raf
+        );
+
+        observer.disconnect();
+
+        save();
+
+        $(".gamebox").classList.remove(
+            "tree-dialog"
+        );
+
+        cleanup = () => {};
+    };
+
+    goals();
+
+    resize();
+
+    raf = requestAnimationFrame(
+        render
+    );
+}
+
+/* INICIO */
+
+showBest();
+
+treeGame();
+</script>
+
+</body>
+</html>

@@ -2,777 +2,2823 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🐾 Explorador de Animales</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#183e32">
+
+<title>Explorador de animales</title>
+
 <style>
-/* =========================================================
-   RESET
-========================================================= */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900;1000&display=swap');
+
+:root {
+    --ink: #183e32;
+    --green: #24634b;
+    --cream: #faf7ed;
+    --yellow: #f6c85b;
+    --muted: #74877d;
+}
+
 * {
-    margin: 0;
-    padding: 0;
     box-sizing: border-box;
 }
+
 body {
-    font-family: "Trebuchet MS", "Comic Sans MS", sans-serif;
-    overflow: hidden;
-    user-select: none;
-    background: #72d6ff;
+    margin: 0;
+    background:
+        radial-gradient(
+            ellipse at 5% 10%,
+            #fff0c4 0,
+            transparent 40%
+        ),
+        radial-gradient(
+            ellipse at 95% 40%,
+            #d8f3ed 0,
+            transparent 45%
+        ),
+        var(--cream);
+    color: var(--ink);
+    font-family: Nunito, "Trebuchet MS", sans-serif;
 }
-/* =========================================================
-   JUEGO
-========================================================= */
-#game {
-    width: 100vw;
-    height: 100vh;
+
+button {
+    font: inherit;
+    cursor: pointer;
+    color: inherit;
+}
+
+button:focus-visible {
+    outline: 4px solid #dc9a22;
+    outline-offset: 4px;
+}
+
+button:disabled {
+    cursor: default;
+}
+
+header,
+main,
+footer {
     position: relative;
-    overflow: hidden;
-    background: linear-gradient(
-        180deg,
-        #62d7ff 0%,
-        #b8efff 52%,
-        #8bd36e 52%,
-        #4caf50 100%
-    );
+    z-index: 1;
 }
-/* =========================================================
-   CIELO
-========================================================= */
-#sky {
-    position: absolute;
-    inset: 0 0 43% 0;
-    overflow: hidden;
+
+header {
+    min-height: 88px;
+    padding: 14px 5%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #dfe4d7;
+    background: #fffdf5ed;
+    gap: 15px;
+}
+
+.brand {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    font-weight: 1000;
+    font-size: 19px;
+    line-height: 1.05;
+}
+
+.brand small {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 2px;
+    font-weight: 800;
+    margin-top: 7px;
+}
+
+.logo {
+    background: var(--green);
+    color: #fff;
+    border-radius: 15px;
+    padding: 12px;
+    font-size: 24px;
+}
+
+.nav {
+    display: flex;
+    gap: 8px;
+}
+
+.nav button,
+.iconbtn {
+    border: 0;
+    background: transparent;
+    padding: 10px 18px;
+    border-radius: 30px;
+    font-weight: 800;
+}
+
+.nav .active {
+    background: #e7eddd;
+}
+
+.balance {
+    font-weight: 900;
+    background: #fff0be;
+    border: 1px solid #e8d995;
+    padding: 10px 17px;
+    border-radius: 30px;
+    white-space: nowrap;
+}
+
+main {
+    max-width: 1250px;
+    margin: auto;
+    padding: 34px 40px 55px;
+}
+
+.eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 900;
+    font-size: 11px;
+    color: #54795c;
+}
+
+.hero {
+    display: grid;
+    grid-template-columns: 1.08fr 1fr;
+    min-height: 350px;
     background:
         linear-gradient(
-            180deg,
-            #42bdf5 0%,
-            #8be4ff 65%,
-            #d6f8ff 100%
+            120deg,
+            #e0f0cc,
+            #e0f4dd 55%,
+            #fff0ae
+        );
+    border: 2px solid white;
+    border-radius: 28px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 14px 40px #3d875b16;
+}
+
+.hero-copy {
+    padding: 36px 0 35px 38px;
+    position: relative;
+    z-index: 2;
+}
+
+h1 {
+    font-size: clamp(34px, 4.3vw, 55px);
+    letter-spacing: -2px;
+    line-height: 1.03;
+    margin: 16px 0;
+}
+
+h1 em {
+    font-style: normal;
+    color: #36835b;
+}
+
+p {
+    line-height: 1.6;
+}
+
+.hero p {
+    max-width: 400px;
+    font-size: 15px;
+    color: #5b7162;
+}
+
+.primary {
+    border: 0;
+    background: linear-gradient(135deg, #2a8661, #216246);
+    color: white;
+    border-radius: 13px;
+    padding: 15px 25px;
+    font-weight: 900;
+    box-shadow: 0 4px 0 #184733;
+    display: inline-flex;
+    gap: 15px;
+    align-items: center;
+    transition: transform .2s;
+}
+
+.primary:hover {
+    transform: translateY(-2px);
+}
+
+.hero .primary {
+    margin-top: 8px;
+}
+
+.scene {
+    position: relative;
+    min-height: 330px;
+    overflow: hidden;
+    background:
+        radial-gradient(
+            ellipse at 50% 35%,
+            #faf0b8 0,
+            transparent 55%
         );
 }
-/* SOL */
-#sun {
+
+.sun {
     position: absolute;
-    width: 110px;
-    height: 110px;
+    width: 140px;
+    height: 140px;
+    background: #f7d77e;
     border-radius: 50%;
-    right: 7%;
-    top: 9%;
-    background: radial-gradient(
-        circle,
-        #fffde7 0%,
-        #fff176 45%,
-        #ffca28 100%
-    );
-    box-shadow:
-        0 0 30px #ffe082,
-        0 0 70px rgba(255, 193, 7, .55);
-    animation: sunFloat 4s ease-in-out infinite;
+    top: 40px;
+    left: 36%;
 }
-@keyframes sunFloat {
-    0%,100% { transform: translateY(0); }
-    50% { transform: translateY(8px); }
-}
-/* NUBES */
-.cloud {
+
+.hill {
     position: absolute;
-    width: 130px;
-    height: 42px;
-    border-radius: 40px;
-    background: rgba(255,255,255,.9);
-    filter: drop-shadow(0 6px 5px rgba(0,0,0,.08));
-    animation: cloudMove linear infinite;
+    width: 135%;
+    height: 210px;
+    border-radius: 50%;
+    background: #b1c796;
+    bottom: -70px;
+    left: -15%;
+    transform: rotate(-9deg);
 }
-.cloud::before,
-.cloud::after {
+
+.hill.two {
+    background: #8fab78;
+    bottom: -130px;
+    transform: rotate(10deg);
+}
+
+.animal {
+    position: absolute;
+    filter: drop-shadow(0 12px 8px #45673730);
+    font-size: 122px;
+    z-index: 2;
+    animation: bob 4s ease-in-out infinite;
+}
+
+.lion {
+    left: 25%;
+    bottom: 48px;
+}
+
+.giraffe {
+    right: 12%;
+    bottom: 50px;
+    font-size: 170px;
+    animation-delay: -1s;
+}
+
+.tree {
+    position: absolute;
+    font-size: 160px;
+    left: -15px;
+    bottom: 28px;
+    z-index: 1;
+}
+
+.leaf {
+    position: absolute;
+    font-size: 70px;
+    bottom: -10px;
+    z-index: 3;
+}
+
+.leaf.r {
+    right: -10px;
+    transform: rotate(-20deg);
+    font-size: 100px;
+}
+
+.bird {
+    position: absolute;
+    font-size: 45px;
+    right: 16%;
+    top: 27px;
+    transform: rotate(-13deg);
+}
+
+.note {
+    position: absolute;
+    top: 36px;
+    left: 20px;
+    z-index: 3;
+    background: #ffffffdf;
+    box-shadow: 0 5px 15px #35522c10;
+    padding: 9px 14px;
+    border-radius: 12px;
+    transform: rotate(-7deg);
+    font-size: 11px;
+    font-weight: 900;
+}
+
+.section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin: 32px 0 18px;
+}
+
+.section-head h2 {
+    margin: 0;
+    font-size: 24px;
+    letter-spacing: -.7px;
+}
+
+.section-head p {
+    font-size: 12px;
+    color: var(--muted);
+    margin: 4px 0 0;
+}
+
+.tiny {
+    font-size: 12px;
+    font-weight: 800;
+    color: #638269;
+}
+
+.levels {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.level {
+    text-align: left;
+    background: linear-gradient(135deg, #fffefa, var(--tint));
+    border: 2px solid white;
+    border-radius: 20px;
+    padding: 19px;
+    transition: .2s;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 5px 0 #344c3210;
+}
+
+.level:hover {
+    transform: translateY(-5px) rotate(-.5deg);
+    box-shadow: 0 12px 25px #24634b22;
+}
+
+.level-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.level-icon {
+    display: grid;
+    place-items: center;
+    font-size: 34px;
+    width: 63px;
+    height: 63px;
+    background: var(--tint);
+    border-radius: 18px;
+    border: 2px solid #ffffffad;
+    box-shadow: 0 4px 0 #254c3910;
+}
+
+.level-num {
+    font-size: 10px;
+    letter-spacing: 1.6px;
+    font-weight: 900;
+    color: var(--muted);
+}
+
+.level h3 {
+    font-size: 18px;
+    margin: 16px 0 5px;
+    color: #234d3b;
+}
+
+.level p {
+    font-size: 12px;
+    color: #748276;
+    margin: 0 0 17px;
+}
+
+.level-bottom {
+    border-top: 1px solid #e9ebdf;
+    padding-top: 13px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 900;
+    gap: 8px;
+}
+
+.stars {
+    color: #c19425;
+    letter-spacing: 2px;
+    white-space: nowrap;
+}
+
+.arrow {
+    border-radius: 50%;
+    background: #edf1e5;
+    width: 27px;
+    height: 27px;
+    display: inline-grid;
+    place-items: center;
+}
+
+.guide {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: linear-gradient(100deg, #eee3fc, #e1edf8);
+    border: 2px solid white;
+    border-radius: 16px;
+    padding: 15px 22px;
+    margin-top: 22px;
+}
+
+.guide p {
+    font-size: 13px;
+    margin: 0;
+}
+
+.guide strong {
+    display: block;
+}
+
+.guide-icon {
+    font-size: 34px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+footer {
+    text-align: center;
+    font-size: 11px;
+    color: #829080;
+    padding: 0 20px 24px;
+}
+
+.game-top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.back {
+    background: white;
+    border: 1px solid #dce2d3;
+    border-radius: 12px;
+    padding: 10px 16px;
+    font-weight: 800;
+}
+
+.progress {
+    height: 9px;
+    border-radius: 20px;
+    background: #dfe7d6;
+    margin: 20px 0 28px;
+    overflow: hidden;
+}
+
+.progress div {
+    height: 100%;
+    background: linear-gradient(90deg, #51b78b, #bad96c, #ffcb61);
+    border-radius: 20px;
+    transition: width .3s;
+}
+
+.game-layout {
+    display: grid;
+    grid-template-columns: .8fr 1.2fr;
+    gap: 30px;
+}
+
+.specimen {
+    background:
+        radial-gradient(
+            circle at 50% 40%,
+            #fff9d0,
+            #d3edce
+        );
+    border: 3px solid white;
+    border-radius: 25px;
+    min-height: 360px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 25px;
+    box-shadow: 0 10px 30px #32845a15;
+}
+
+.specimen::before {
     content: "";
     position: absolute;
+    width: 300px;
+    height: 300px;
     border-radius: 50%;
-    background: inherit;
+    background: #f1f4df;
+    top: 30px;
 }
-.cloud::before {
-    width: 65px;
-    height: 65px;
-    left: 18px;
-    bottom: 0;
-}
-.cloud::after {
-    width: 55px;
-    height: 55px;
-    right: 18px;
-    bottom: 0;
-}
-.cloud.one { top: 17%; left: -160px; animation-duration: 35s; }
-.cloud.two { top: 32%; left: -220px; transform: scale(.7); animation-duration: 43s; animation-delay: -15s; }
-.cloud.three { top: 9%; left: -250px; transform: scale(.55); animation-duration: 50s; animation-delay: -25s; }
-@keyframes cloudMove { from { left: -250px; } to { left: 110%; } }
-/* =========================================================
-   MONTAÑAS
-========================================================= */
-.mountains {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 45%;
-}
-.mountain {
-    position: absolute;
-    bottom: 0;
-    width: 0;
-    height: 0;
-    border-left: 180px solid transparent;
-    border-right: 180px solid transparent;
-    border-bottom: 260px solid #69a96b;
-}
-.mountain.one { left: -80px; }
-.mountain.two { left: 20%; transform: scale(1.3); border-bottom-color: #5b9d64; }
-.mountain.three { right: -90px; transform: scale(1.1); border-bottom-color: #74b878; }
-/* =========================================================
-   DECORACIÓN
-========================================================= */
-.decor {
-    position: absolute;
-    bottom: 17%;
-    font-size: 55px;
-    z-index: 3;
-    animation: sway 3s ease-in-out infinite;
-}
-.decor.tree1 { left: 4%; }
-.decor.tree2 { left: 17%; font-size: 70px; }
-.decor.tree3 { right: 14%; }
-.decor.flower1 { left: 30%; font-size: 35px; }
-.decor.flower2 { right: 28%; font-size: 38px; }
-@keyframes sway {
-    0%,100% { transform: rotate(-2deg); }
-    50% { transform: rotate(2deg); }
-}
-/* =========================================================
-   HUD
-========================================================= */
-#hud {
-    position: absolute;
-    top: 16px;
-    left: 18px;
-    right: 18px;
-    z-index: 50;
+
+.specimen .big {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 15px;
-}
-.hud-group { display: flex; gap: 10px; }
-.hud-box {
-    background: rgba(255,255,255,.94);
-    border: 4px solid #ffffff;
-    border-radius: 22px;
-    padding: 9px 17px;
-    color: #285943;
-    font-size: 17px;
-    font-weight: 900;
-    box-shadow:
-        0 5px 0 rgba(37, 92, 53, .25),
-        0 8px 18px rgba(0,0,0,.12);
-}
-#title {
-    position: absolute;
-    z-index: 60;
-    top: 17px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 11px 28px;
-    border-radius: 30px;
-    background: linear-gradient(180deg, #ffffff, #e8fff0);
-    border: 4px solid #42b96b;
-    box-shadow: 0 6px 0 #258b4c, 0 10px 25px rgba(0,0,0,.15);
-    color: #238148;
-    font-size: 23px;
-    font-weight: 900;
-    white-space: nowrap;
-}
-/* =========================================================
-   PROGRESO
-========================================================= */
-#progressContainer {
-    position: absolute;
-    top: 84px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 50;
-    width: min(420px, 70vw);
-    height: 18px;
-    background: rgba(255,255,255,.65);
-    border-radius: 20px;
-    border: 3px solid rgba(255,255,255,.9);
-    overflow: hidden;
-}
-#progress {
-    width: 0%;
-    height: 100%;
-    border-radius: 20px;
-    background: linear-gradient(90deg, #00c853, #76ff03, #00e676);
-    transition: width .4s ease;
-}
-/* =========================================================
-   PANEL PRINCIPAL — MÁS ALTO ✅
-========================================================= */
-#gamePanel {
-    position: absolute;
-    z-index: 20;
-    left: 50%;
-    bottom: 3%;
-    transform: translateX(-50%);
-    width: min(1100px, 94vw);
-    height: 58%; /* 🔼 Subido de 48% a 58% — más espacio */
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 25px;
-    padding: 25px 28px;
-    border-radius: 35px;
-    background:
-        linear-gradient(135deg, rgba(255,255,255,.97), rgba(238,255,244,.97));
-    border: 6px solid #ffffff;
-    box-shadow:
-        0 12px 0 rgba(36,104,55,.3),
-        0 22px 45px rgba(0,0,0,.18);
-}
-/* =========================================================
-   ANIMAL CARD — MÁS ESPACIO ✅
-========================================================= */
-#animalArea {
-    width: 39%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    position: relative;
-    padding-top: 8px;
-}
-#animalCard {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    border-radius: 28px;
-    background:
-        radial-gradient(circle at 50% 25%, #ffffff 0%, #e7f9ff 65%, #c5efff 100%);
-    border: 4px solid #78d4f4;
-    box-shadow: inset 0 -8px 0 rgba(0,0,0,.04), 0 8px 15px rgba(0,0,0,.1);
-    padding: 15px 10px 20px;
-}
-/* INSTRUCCIÓN — Arriba, sin tapar ✅ */
-#instruction {
-    width: 100%;
-    padding: 10px 18px;
-    margin-bottom: 15px;
-    border-radius: 20px;
-    color: #ffffff;
-    background: linear-gradient(135deg, #29a65a, #1e8449);
-    font-size: 17px;
-    font-weight: bold;
-    text-align: center;
-    box-shadow: 0 4px 0 #19733d;
-}
-#animalEmoji {
-    font-size: clamp(90px, 11vw, 150px);
-    line-height: 1;
-    margin: 10px 0;
-    filter: drop-shadow(0 10px 6px rgba(0,0,0,.15));
-    animation: animalIdle 2.5s ease-in-out infinite;
-}
-@keyframes animalIdle {
-    0%,100% { transform: translateY(0) rotate(-2deg); }
-    50% { transform: translateY(-10px) rotate(2deg); }
-}
-#animalName {
-    margin-top: 8px;
-    padding: 8px 22px;
-    background: #ffffff;
-    border-radius: 25px;
-    color: #285943;
-    border: 3px solid #80cbc4;
-    font-size: 22px;
-    font-weight: 900;
-    box-shadow: 0 4px 0 #55a99f;
-}
-/* =========================================================
-   HÁBITATS
-========================================================= */
-#habitats {
-    width: 57%;
-    height: 100%;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-}
-.habitat {
-    position: relative;
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-    color: white;
-    font-family: inherit;
-    font-weight: 900;
-    display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    transition: transform .18s ease, filter .18s ease;
-    box-shadow: 0 8px 0 rgba(0,0,0,.25), 0 12px 18px rgba(0,0,0,.12);
-}
-.habitat:hover {
-    transform: translateY(-6px) scale(1.02);
-    filter: brightness(1.08);
-}
-.habitat:active {
-    transform: translateY(3px);
-    box-shadow: 0 4px 0 rgba(0,0,0,.25);
-}
-.habitat-icon {
-    font-size: 55px;
-    margin-bottom: 8px;
-    filter: drop-shadow(0 4px 2px rgba(0,0,0,.25));
-}
-.habitat-name {
-    font-size: 20px;
-    text-shadow: 2px 2px 0 rgba(0,0,0,.25);
-}
-.habitat-info {
-    margin-top: 5px;
-    font-size: 12px;
-    opacity: .9;
-}
-/* COLORES */
-.land { background: linear-gradient(145deg, #66bb6a, #2e7d32); }
-.water { background: linear-gradient(145deg, #29b6f6, #0277bd); }
-.air { background: linear-gradient(145deg, #90caf9, #1565c0); }
-.amphibian { background: linear-gradient(145deg, #ab47bc, #6a1b9a); }
-/* =========================================================
-   ESTADOS DE RESPUESTA
-========================================================= */
-.habitat.correct { animation: correct .55s ease; }
-@keyframes correct {
-    0% { transform: scale(1); }
-    40% { transform: scale(1.08); box-shadow: 0 0 0 8px #69f0ae, 0 12px 0 rgba(0,0,0,.2); }
-    100% { transform: scale(1); }
-}
-.habitat.wrong { animation: wrong .45s ease; }
-@keyframes wrong {
-    0%,100% { transform: translateX(0); }
-    25% { transform: translateX(-10px); }
-    75% { transform: translateX(10px); }
-}
-/* =========================================================
-   MENSAJE — NUEVO ESTILO Y TIPOGRAFÍA ✅
-========================================================= */
-#message {
-    position: absolute;
-    z-index: 150;
-    top: 48%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0);
-    font-family: "Georgia", "Palatino", serif; /* 🔤 Nueva letra */
-    font-size: clamp(32px, 6vw, 65px);
-    font-weight: bold;
-    letter-spacing: 1px;
-    padding: 15px 35px;
-    border-radius: 20px;
-    background: #ffffff;
-    box-shadow: 0 8px 0 rgba(0,0,0,.15), 0 15px 30px rgba(0,0,0,.2);
-    pointer-events: none;
-    transition: transform .35s cubic-bezier(.34,1.56,.64,1);
-    white-space: nowrap;
-}
-#message.show { transform: translate(-50%, -50%) scale(1); }
-/* ✅ Mensaje CORRECTO — Nuevo diseño */
-#message.correct-msg {
-    color: #1b9445;
-    border: 5px solid #69e090;
-    background: linear-gradient(135deg, #ffffff, #ecfdf1);
-}
-/* ✅ Mensaje INCORRECTO — Nuevo diseño */
-#message.wrong-msg {
-    color: #d63030;
-    border: 5px solid #ff9494;
-    background: linear-gradient(135deg, #ffffff, #fff2f2);
-}
-/* =========================================================
-   TARJETA DE INFORMACIÓN
-========================================================= */
-#fact {
-    position: absolute;
-    bottom: 15px;
-    left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    z-index: 140;
-    width: min(600px, 85vw);
-    padding: 14px 22px;
-    border-radius: 20px;
-    background: rgba(255,255,255,.97);
-    border: 4px solid #81c784;
-    color: #355e3b;
-    font-size: 16px;
-    font-weight: bold;
+    gap: 8px;
+    width: 100%;
+    font-size: 125px;
+    position: relative;
+    z-index: 1;
+    animation: bob 4s ease-in-out infinite;
     text-align: center;
-    box-shadow: 0 7px 20px rgba(0,0,0,.18);
-    transition: transform .4s ease;
+    line-height: 1.4;
 }
-#fact.show { transform: translateX(-50%) translateY(0); }
-/* =========================================================
-   PANTALLA FINAL
-========================================================= */
-#endScreen {
+
+.specimen .name {
+    z-index: 1;
+    background: #ffffffc9;
+    border-radius: 30px;
+    padding: 9px 22px;
+    font-weight: 900;
+    margin-top: 20px;
+}
+
+.animal-art {
+    display: inline-grid;
+    place-items: center;
+    position: relative;
+    width: 1.4em;
+    height: 1.4em;
+    flex-shrink: 0;
+    vertical-align: middle;
+}
+
+.animal-art img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
     position: absolute;
     inset: 0;
-    z-index: 500;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 18px;
-    text-align: center;
-    background:
-        radial-gradient(circle at 50% 20%, #ffffff 0%, #d9ffe4 45%, #8ee6a1 100%);
+    filter: drop-shadow(0 7px 5px #204d3020);
 }
-#endScreen.show { display: flex; }
-#endScreen h1 {
-    font-size: clamp(42px, 7vw, 75px);
-    color: #159447;
-    text-shadow: 4px 4px 0 white, 8px 8px 0 #72d98d;
+
+.animal-art .fallback {
+    line-height: 1;
 }
-#endScreen p {
-    padding: 13px 25px;
-    background: white;
-    border-radius: 25px;
-    color: #355e3b;
-    border: 4px solid #65c982;
-    font-size: 21px;
-    font-weight: bold;
-    box-shadow: 0 5px 0 #3f9b5a;
+
+.animal-art.loaded .fallback {
+    visibility: hidden;
 }
-#restartBtn {
-    border: none;
-    padding: 15px 35px;
-    border-radius: 30px;
-    background: linear-gradient(180deg, #66bb6a, #2e7d32);
-    color: white;
-    font-family: inherit;
-    font-size: 21px;
+
+.math-visual {
+    width: 100%;
+    font-size: 22px;
+    font-weight: 1000;
+    margin-top: 10px;
+    background: #ffffffa8;
+    border-radius: 16px;
+    padding: 7px 12px;
+}
+
+.question-panel {
+    padding: 15px 0;
+}
+
+.question-panel h2 {
+    font-size: 30px;
+    line-height: 1.2;
+    letter-spacing: -.7px;
+    margin: 12px 0;
+}
+
+.hint {
+    font-size: 14px;
+    color: #6b7c6b;
+}
+
+.options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 22px 0;
+}
+
+.option {
+    border: 2px solid #dfe5d6;
+    background: #fffdf7;
+    border-radius: 15px;
+    padding: 18px 10px;
     font-weight: 900;
-    cursor: pointer;
-    box-shadow: 0 7px 0 #1b5e20, 0 12px 20px rgba(0,0,0,.15);
-    transition: .2s;
+    font-size: 16px;
+    min-height: 66px;
+    transition: .15s;
+    box-shadow: 0 4px 0 #24442b0c;
 }
-#restartBtn:hover { transform: translateY(-4px); }
-#restartBtn:active { transform: translateY(3px); box-shadow: 0 3px 0 #1b5e20; }
-/* =========================================================
-   CONFETI
-========================================================= */
+
+.option:hover:not(:disabled) {
+    border-color: #6b9168;
+    background: #edf3e6;
+}
+
+.option.correct {
+    border-color: #4f9d6e;
+    background: #e0f1dd;
+    animation: pop .4s ease;
+}
+
+.option.wrong {
+    border-color: #d99278;
+    background: #fae8dd;
+}
+
+.feedback {
+    border-radius: 13px;
+    padding: 13px 16px;
+    background: #edf0e1;
+    font-size: 14px;
+    min-height: 74px;
+    line-height: 1.5;
+}
+
+.next {
+    margin-top: 18px;
+    width: 100%;
+    justify-content: center;
+}
+
+.combo {
+    display: inline-block;
+    background: #fff0b2;
+    padding: 8px 14px;
+    border-radius: 24px;
+    font-size: 12px;
+    font-weight: 1000;
+    color: #855a19;
+}
+
+.result {
+    text-align: center;
+    max-width: 650px;
+    margin: 20px auto;
+    background: linear-gradient(150deg, #fffefa, #fff0bd);
+    border: 3px solid white;
+    padding: 35px;
+    border-radius: 28px;
+}
+
+.result h2 {
+    font-size: 32px;
+}
+
+.medal {
+    font-size: 85px;
+}
+
+.result-stars {
+    font-size: 40px;
+    color: #e5af36;
+    letter-spacing: 10px;
+    margin: 10px;
+}
+
+.result-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.collection {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.entry {
+    background: linear-gradient(140deg, white, #f0f6e5);
+    border: 1px solid #e0e5d5;
+    border-radius: 18px;
+    padding: 20px;
+    text-align: center;
+    transition: transform .2s;
+}
+
+.entry:hover {
+    transform: translateY(-3px);
+}
+
+.entry .emoji,
+.entry .animal-art {
+    font-size: 55px;
+}
+
+.entry h3 {
+    margin: 8px 0;
+}
+
+.entry p {
+    font-size: 12px;
+    color: #6d7d70;
+    margin: 4px;
+}
+
+.badge {
+    background: #e9eedf;
+    border-radius: 20px;
+    padding: 4px 10px;
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 900;
+}
+
+.muted-entry {
+    opacity: .6;
+}
+
+.image-tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.collection-note {
+    font-size: 12px;
+    color: #687d6b;
+}
+
+dialog {
+    border: 1px solid #dce2d3;
+    border-radius: 23px;
+    max-width: 450px;
+    width: 90%;
+    padding: 28px;
+    color: var(--ink);
+    background: var(--cream);
+}
+
+dialog::backdrop {
+    background: #163a2b88;
+}
+
+.dialog-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+dialog p {
+    font-size: 14px;
+}
+
+.image-editor {
+    max-height: 85dvh;
+    overflow: auto;
+}
+
+.image-editor select,
+.image-editor input {
+    font: inherit;
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border: 1px solid #c9d8bc;
+    border-radius: 10px;
+    background: white;
+    color: #183e32;
+}
+
+.image-preview {
+    display: grid;
+    place-items: center;
+    font-size: 80px;
+    background: #e6f0d9;
+    border-radius: 16px;
+    min-height: 140px;
+}
+
+.image-status {
+    min-height: 24px;
+    font-size: 12px;
+}
+
+/* PARTÍCULAS AMBIENTALES */
+
+.sparkles {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.mote {
+    position: absolute;
+    bottom: -40px;
+    font-size: 17px;
+    opacity: 0;
+    animation: float-up var(--duration) linear infinite;
+    animation-delay: var(--delay);
+}
+
+.particle-off .mote {
+    display: none;
+}
+
+/* CONFETI */
+
+.fx {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 40;
+}
+
 .confetti {
     position: absolute;
-    width: 12px;
-    height: 12px;
-    top: -20px;
-    z-index: 600;
-    animation: confettiFall 3s linear forwards;
+    left: 50%;
+    top: 40%;
+    width: 10px;
+    height: 17px;
+    background: var(--c);
+    border-radius: 3px;
+    animation: burst 1.3s ease-out forwards;
 }
-@keyframes confettiFall {
-    to { transform: translateY(110vh) rotate(720deg); }
+
+@keyframes bob {
+    50% {
+        transform: translateY(-9px);
+    }
 }
-/* =========================================================
-   RESPONSIVE
-========================================================= */
+
+@keyframes pop {
+    50% {
+        transform: scale(1.06);
+    }
+}
+
+@keyframes float-up {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+    }
+
+    15% {
+        opacity: .35;
+    }
+
+    85% {
+        opacity: .3;
+    }
+
+    100% {
+        transform: translateY(-115vh) rotate(140deg);
+        opacity: 0;
+    }
+}
+
+@keyframes burst {
+    to {
+        transform:
+            translate(var(--x), var(--y))
+            rotate(var(--r));
+        opacity: 0;
+    }
+}
+
 @media (max-width: 800px) {
-    #title { font-size: 17px; padding: 8px 15px; }
-    .hud-box { font-size: 13px; padding: 7px 10px; }
-    #gamePanel { height: 60%; padding: 15px; gap: 10px; }
-    #animalArea { width: 38%; }
-    #habitats { width: 62%; gap: 8px; }
-    .habitat-icon { font-size: 40px; }
-    .habitat-name { font-size: 15px; }
-    .habitat-info { display: none; }
-    #animalName { font-size: 17px; }
-    #instruction { font-size: 14px; padding: 8px 12px; }
-    #message { font-size: 28px; padding: 12px 25px; }
+    header {
+        padding: 14px 20px;
+    }
+
+    .brand {
+        font-size: 15px;
+    }
+
+    .brand small {
+        font-size: 8px;
+    }
+
+    .nav button {
+        padding: 9px 11px;
+        font-size: 12px;
+    }
+
+    .balance {
+        font-size: 12px;
+        padding: 9px 12px;
+    }
+
+    main {
+        padding: 24px 20px;
+    }
+
+    .hero-copy {
+        padding: 28px 0 28px 25px;
+    }
+
+    .hero {
+        min-height: 320px;
+    }
+
+    .scene {
+        min-height: 300px;
+    }
+
+    .animal {
+        font-size: 95px;
+    }
+
+    .giraffe {
+        font-size: 125px;
+        right: 5%;
+    }
+
+    .lion {
+        left: 14%;
+    }
+
+    .tree {
+        font-size: 120px;
+        left: -28px;
+    }
+
+    .note {
+        left: 0;
+        font-size: 9px;
+    }
+
+    .levels {
+        gap: 12px;
+    }
+
+    .level {
+        padding: 15px;
+    }
+
+    .level h3 {
+        font-size: 16px;
+    }
+
+    .game-layout {
+        gap: 22px;
+    }
+
+    .collection {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
-@media (max-height: 700px) {
-    #gamePanel { height: 62%; }
-    #animalEmoji { font-size: 85px; }
-    #progressContainer { top: 70px; }
+
+@media (max-width: 570px) {
+    header {
+        flex-wrap: wrap;
+        padding: 14px 16px;
+        gap: 14px;
+    }
+
+    .brand {
+        flex: 1;
+    }
+
+    .nav {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        border-top: 1px solid #e1e6d6;
+        padding-top: 10px;
+    }
+
+    .nav button {
+        flex: 1;
+        padding: 9px 6px;
+    }
+
+    .iconbtn {
+        padding: 9px;
+    }
+
+    .balance {
+        padding: 8px 12px;
+    }
+
+    .hero {
+        grid-template-columns: 1fr;
+        border-radius: 22px;
+    }
+
+    .hero-copy {
+        padding: 27px 24px 0;
+    }
+
+    .hero h1 {
+        font-size: 39px;
+        max-width: 290px;
+    }
+
+    .hero p {
+        font-size: 14px;
+    }
+
+    .scene {
+        min-height: 215px;
+    }
+
+    .sun {
+        width: 110px;
+        height: 110px;
+        top: 10px;
+        left: 42%;
+    }
+
+    .lion {
+        left: 35%;
+        bottom: 20px;
+    }
+
+    .giraffe {
+        right: 12%;
+        bottom: 20px;
+        font-size: 130px;
+    }
+
+    .tree {
+        left: 8%;
+        bottom: 10px;
+        font-size: 120px;
+    }
+
+    .note {
+        left: 20px;
+        top: 30px;
+    }
+
+    .bird {
+        top: 0;
+    }
+
+    .leaf {
+        font-size: 50px;
+    }
+
+    .leaf.r {
+        font-size: 70px;
+    }
+
+    .levels {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .level h3 {
+        font-size: 15px;
+    }
+
+    .level p {
+        min-height: 36px;
+        font-size: 11px;
+    }
+
+    .level-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 28px;
+    }
+
+    .level-num {
+        font-size: 8px;
+    }
+
+    .section-head h2 {
+        font-size: 21px;
+    }
+
+    .tiny {
+        max-width: 100px;
+        text-align: right;
+        font-size: 10px;
+    }
+
+    .guide {
+        padding: 13px;
+        gap: 10px;
+    }
+
+    .guide p {
+        font-size: 12px;
+    }
+
+    .game-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .specimen {
+        min-height: 205px;
+        padding: 10px;
+    }
+
+    .specimen::before {
+        width: 200px;
+        height: 200px;
+        top: 5px;
+    }
+
+    .specimen .big {
+        font-size: 85px;
+        gap: 3px;
+    }
+
+    .specimen .name {
+        margin-top: 4px;
+        font-size: 13px;
+    }
+
+    .math-visual {
+        font-size: 18px;
+    }
+
+    .question-panel {
+        padding: 0;
+    }
+
+    .question-panel h2 {
+        font-size: 25px;
+    }
+
+    .options {
+        margin: 18px 0;
+    }
+
+    .option {
+        padding: 14px 8px;
+        font-size: 14px;
+    }
+
+    .collection {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .entry {
+        padding: 15px;
+    }
+
+    .game-top {
+        font-size: 12px;
+    }
+
+    .image-tools .back {
+        font-size: 12px;
+    }
+
+    .result {
+        padding: 25px 18px;
+    }
+
+    .result h2 {
+        font-size: 26px;
+    }
+
+    main {
+        padding: 20px 16px 35px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    .mote,
+    .confetti {
+        display: none;
+    }
 }
 </style>
 </head>
+
 <body>
-<div id="game">
-    <!-- CIELO -->
-    <div id="sky">
-        <div id="sun"></div>
-        <div class="cloud one"></div>
-        <div class="cloud two"></div>
-        <div class="cloud three"></div>
-        <div class="mountains">
-            <div class="mountain one"></div>
-            <div class="mountain two"></div>
-            <div class="mountain three"></div>
+
+<div class="sparkles" id="sparkles" aria-hidden="true"></div>
+<div class="fx" id="fx" aria-hidden="true"></div>
+
+<header>
+    <div class="brand">
+        <span class="logo">♧</span>
+
+        <div>
+            Explorador<br>de animales
+            <small>APRENDE · DESCUBRE · JUEGA</small>
         </div>
     </div>
-    <!-- DECORACIÓN -->
-    <div class="decor tree1">🌳</div>
-    <div class="decor tree2">🌲</div>
-    <div class="decor tree3">🌳</div>
-    <div class="decor flower1">🌻</div>
-    <div class="decor flower2">🌷</div>
-    <!-- HUD -->
-    <div id="hud">
-        <div class="hud-group">
-            <div class="hud-box">⭐ Puntos: <span id="score">0</span></div>
-            <div class="hud-box">❤️ Vidas: <span id="lives">3</span></div>
-        </div>
-        <div class="hud-box">🐾 Animal: <span id="counter">1/20</span></div>
+
+    <nav class="nav" aria-label="Navegación principal">
+        <button id="mapNav" class="active" onclick="showMap()">
+            🧭 Expediciones
+        </button>
+
+        <button id="bookNav" onclick="showBook()">
+            📒 Mi cuaderno
+        </button>
+
+        <button onclick="document.getElementById('helpDialog').showModal()">
+            Cómo jugar
+        </button>
+    </nav>
+
+    <div class="balance">
+        ⭐ <span id="totalStars">0</span> / 18
     </div>
-    <div id="title">🔎🐾 Explorador de Animales 🌎</div>
-    <!-- PROGRESO -->
-    <div id="progressContainer"><div id="progress"></div></div>
-    <!-- PANEL DEL JUEGO -->
-    <div id="gamePanel">
-        <!-- ANIMAL -->
-        <div id="animalArea">
-            <div id="animalCard">
-                <div id="instruction">
-                    🤔 ¿Dónde vive este animal?
-                </div>
-                <div id="animalEmoji">🦁</div>
-                <div id="animalName">León</div>
+
+    <button
+        class="iconbtn"
+        id="sound"
+        aria-label="Desactivar sonidos"
+        onclick="toggleSound()">
+        🔊
+    </button>
+</header>
+
+<main>
+
+    <!-- MAPA -->
+    <section id="map">
+        <div class="hero">
+            <div class="hero-copy">
+                <span class="eyebrow">
+                    Tu próxima gran aventura
+                </span>
+
+                <h1>
+                    Un mundo animal<br>
+                    por <em>descubrir.</em>
+                </h1>
+
+                <p>
+                    Explora sus hábitats, descubre sus familias
+                    y resuelve divertidos retos de matemáticas.
+                </p>
+
+                <button
+                    class="primary"
+                    onclick="startRecommended()">
+                    Comenzar aventura <span>→</span>
+                </button>
+            </div>
+
+            <div
+                class="scene"
+                aria-label="Ilustración de una sabana con león y jirafa">
+
+                <div class="sun"></div>
+                <div class="hill"></div>
+                <div class="hill two"></div>
+
+                <span class="tree">🌳</span>
+                <span class="animal lion">🦁</span>
+                <span class="animal giraffe">🦒</span>
+                <span class="bird">🦜</span>
+                <span class="leaf">🌿</span>
+                <span class="leaf r">🌿</span>
+
+                <span class="note">
+                    ¡La naturaleza te espera!
+                </span>
             </div>
         </div>
-        <!-- HÁBITATS -->
-        <div id="habitats">
-            <button class="habitat land" data-type="land">
-                <div class="habitat-icon">🌳</div>
-                <div class="habitat-name">Terrestre</div>
-                <div class="habitat-info">Vive en tierra</div>
+
+        <div class="section-head">
+            <div>
+                <h2>Elige tu expedición</h2>
+                <p>6 niveles · 32 animales por descubrir</p>
+            </div>
+
+            <span class="tiny" id="completed">
+                0 de 6 completadas
+            </span>
+        </div>
+
+        <div class="levels" id="levels"></div>
+
+        <div class="guide">
+            <span class="guide-icon">🦉</span>
+
+            <p>
+                <strong>Un consejo de Olivia</strong>
+                “Reptil” es un grupo de animales y
+                “terrestre” es un tipo de hábitat.
+                ¡Descubre ambas cosas en tu aventura!
+            </p>
+        </div>
+    </section>
+
+    <!-- JUEGO -->
+    <section id="game" class="hidden">
+        <div class="game-top">
+            <button class="back" onclick="showMap()">
+                ← Mapa
             </button>
-            <button class="habitat water" data-type="water">
-                <div class="habitat-icon">🌊</div>
-                <div class="habitat-name">Acuático</div>
-                <div class="habitat-info">Vive en el agua</div>
-            </button>
-            <button class="habitat air" data-type="air">
-                <div class="habitat-icon">☁️</div>
-                <div class="habitat-name">Aéreo</div>
-                <div class="habitat-info">Se desplaza por el aire</div>
-            </button>
-            <button class="habitat amphibian" data-type="amphibian">
-                <div class="habitat-icon">🐸</div>
-                <div class="habitat-name">Anfibio</div>
-                <div class="habitat-info">Agua y tierra</div>
+
+            <strong id="gameLabel"></strong>
+
+            <span class="combo" id="combo">
+                🌱 ¡A explorar!
+            </span>
+
+            <span id="counter"></span>
+        </div>
+
+        <div class="progress">
+            <div id="progressBar"></div>
+        </div>
+
+        <div class="game-layout">
+            <div class="specimen">
+                <div class="big" id="animalDisplay"></div>
+                <div class="name" id="animalName"></div>
+            </div>
+
+            <div class="question-panel">
+                <span class="eyebrow" id="questionKind"></span>
+
+                <h2 id="question"></h2>
+
+                <p class="hint" id="instruction"></p>
+
+                <div class="options" id="options"></div>
+
+                <div
+                    class="feedback"
+                    id="feedback"
+                    role="status"
+                    aria-live="polite">
+                    🦉 Observa con atención. ¡Tú puedes!
+                </div>
+
+                <button
+                    id="next"
+                    class="primary next hidden"
+                    onclick="nextQuestion()">
+                    Siguiente descubrimiento →
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- RESULTADOS -->
+    <section id="results" class="hidden"></section>
+
+    <!-- CUADERNO -->
+    <section id="book" class="hidden">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">
+                    Pequeños grandes descubrimientos
+                </span>
+
+                <h1 style="font-size:36px">
+                    Mi cuaderno de campo
+                </h1>
+
+                <p id="bookCount"></p>
+            </div>
+
+            <button class="back" onclick="showMap()">
+                ← Mapa
             </button>
         </div>
+
+        <div class="image-tools">
+            <button class="back" onclick="openImages()">
+                🖼️ Cambiar imágenes
+            </button>
+
+            <button
+                class="back"
+                onclick="toggleParticles()"
+                id="particleButton">
+                ✨ Partículas: sí
+            </button>
+        </div>
+
+        <p class="collection-note">
+            Puedes usar tus propias imágenes.
+            Si una imagen falta o no carga,
+            se muestra el emoji del animal.
+        </p>
+
+        <div class="collection" id="collection"></div>
+    </section>
+
+</main>
+
+<footer>
+    EXPLORADOR DE ANIMALES · Cada descubrimiento cuenta 🌿
+</footer>
+
+<!-- AYUDA -->
+<dialog id="helpDialog">
+    <div class="dialog-top">
+        <h2>¡Hola, explorador! 🧭</h2>
+
+        <button
+            class="back"
+            onclick="this.closest('dialog').close()"
+            aria-label="Cerrar ayuda">
+            ✕
+        </button>
     </div>
-    <!-- MENSAJE -->
-    <div id="message"></div>
-    <!-- DATO DEL ANIMAL -->
-    <div id="fact"></div>
-    <!-- PANTALLA FINAL -->
-    <div id="endScreen">
-        <h1>🎉 ¡Gran Explorador! 🎉</h1>
-        <p>🌎 ¡Has clasificado a todos los animales!</p>
-        <p>⭐ Puntuación: <span id="finalScore">0</span></p>
-        <p>🐾 Animales descubiertos: <span id="finalAnimals">0</span></p>
-        <button id="restartBtn">🔄 Jugar de nuevo</button>
+
+    <p>
+        Elige una expedición y toca la respuesta correcta.
+        Cada nivel tiene 6 retos, con opciones mezcladas.
+        Hay 32 animales y aparecen distintos en cada expedición.
+    </p>
+
+    <p>
+        ⭐ Consigue 3 estrellas con 6 aciertos en el primer
+        intento; 2 estrellas con 4 o 5, y 1 estrella al
+        completar el nivel. Puedes volver a intentarlo para mejorar.
+    </p>
+
+    <p>
+        📒 Los animales descubiertos aparecen en tu cuaderno.
+        Tu progreso se guarda en este navegador cuando el
+        almacenamiento está disponible.
+    </p>
+
+    <button
+        class="primary"
+        onclick="this.closest('dialog').close();startRecommended()">
+        ¡Vamos a explorar! →
+    </button>
+</dialog>
+
+<!-- EDITOR DE IMÁGENES -->
+<dialog id="imageDialog" class="image-editor">
+    <div class="dialog-top">
+        <h2>🖼️ Tus animales</h2>
+
+        <button
+            class="back"
+            onclick="this.closest('dialog').close()"
+            aria-label="Cerrar imágenes">
+            ✕
+        </button>
     </div>
-</div>
+
+    <p>
+        Elige un animal y carga una imagen de tu dispositivo.
+    </p>
+
+    <label for="imageAnimal">Animal</label>
+
+    <select
+        id="imageAnimal"
+        onchange="previewImage()">
+    </select>
+
+    <div
+        id="imagePreview"
+        class="image-preview">
+    </div>
+
+    <label for="imageFile">
+        Imagen PNG, JPG o WebP (máximo 5 MB)
+    </label>
+
+    <input
+        type="file"
+        id="imageFile"
+        accept="image/png,image/jpeg,image/webp"
+        onchange="uploadImage(event)">
+
+    <p
+        id="imageStatus"
+        class="image-status"
+        role="status">
+    </p>
+
+    <button class="back" onclick="removeImage()">
+        ↺ Volver al emoji
+    </button>
+</dialog>
+
 <script>
-/* =========================================================
-   DATOS DE LOS ANIMALES
-========================================================= */
+// =====================================================
+// ANIMALES
+// Nombre, emoji, grupo, hábitat y dato educativo.
+// =====================================================
+
 const animals = [
-    { emoji: "🦁", name: "León", type: "land", fact: "🦁 El león vive principalmente en las sabanas y es un mamífero." },
-    { emoji: "🐘", name: "Elefante", type: "land", fact: "🐘 Los elefantes son grandes mamíferos terrestres y tienen una larga trompa." },
-    { emoji: "🐕", name: "Perro", type: "land", fact: "🐕 El perro es un mamífero que puede vivir junto a las personas." },
-    { emoji: "🐱", name: "Gato", type: "land", fact: "🐱 Los gatos son mamíferos y tienen muy buen sentido del equilibrio." },
-    { emoji: "🐼", name: "Panda", type: "land", fact: "🐼 El panda gigante vive en los bosques de China y se alimenta principalmente de bambú." },
-    { emoji: "🐫", name: "Camello", type: "land", fact: "🐫 El camello está adaptado para vivir en lugares secos como los desiertos." },
-    { emoji: "🐬", name: "Delfín", type: "water", fact: "🐬 El delfín es un mamífero marino que respira aire." },
-    { emoji: "🐟", name: "Pez", type: "water", fact: "🐟 Los peces viven en el agua y utilizan branquias para respirar." },
-    { emoji: "🦈", name: "Tiburón", type: "water", fact: "🦈 Los tiburones son peces que viven principalmente en los océanos." },
-    { emoji: "🐳", name: "Ballena", type: "water", fact: "🐳 Las ballenas son mamíferos marinos y necesitan salir a la superficie para respirar." },
-    { emoji: "🐙", name: "Pulpo", type: "water", fact: "🐙 El pulpo vive en el mar y tiene ocho brazos." },
-    { emoji: "🦀", name: "Cangrejo", type: "water", fact: "🦀 Muchos cangrejos viven cerca del mar y tienen un caparazón duro." },
-    { emoji: "🦅", name: "Águila", type: "air", fact: "🦅 Las águilas son aves y utilizan sus alas para desplazarse por el aire." },
-    { emoji: "🦜", name: "Loro", type: "air", fact: "🦜 Los loros son aves con picos fuertes y pueden aprender algunos sonidos." },
-    { emoji: "🦉", name: "Búho", type: "air", fact: "🦉 Los búhos son aves que tienen una excelente visión y suelen estar activos de noche." },
-    { emoji: "🦋", name: "Mariposa", type: "air", fact: "🦋 Las mariposas pasan por una metamorfosis antes de convertirse en adultas." },
-    { emoji: "🐝", name: "Abeja", type: "air", fact: "🐝 Las abejas ayudan a polinizar muchas plantas mientras buscan néctar." },
-    { emoji: "🐸", name: "Rana", type: "amphibian", fact: "🐸 Las ranas son anfibios y pueden vivir tanto en ambientes húmedos como terrestres." },
-    { emoji: "🦎", name: "Salamandra", type: "amphibian", fact: "🦎 Las salamandras viven cerca del agua y necesitan humedad para sobrevivir." },
-    { emoji: "🐢", name: "Tortuga", type: "amphibian", fact: "🐢 Las tortugas pueden vivir tanto en tierra como en el agua según la especie." }
+    [
+        "Lagarto", "🦎", "Reptiles", "Terrestre",
+        "La mayoría de los lagartos vive en tierra y tiene la piel cubierta de escamas."
+    ],
+    [
+        "Rana", "🐸", "Anfibios", "Agua y tierra",
+        "Muchas ranas comienzan su vida en el agua como renacuajos; de adultas usan el agua y la tierra."
+    ],
+    [
+        "Delfín", "🐬", "Mamíferos", "Acuático",
+        "Aunque vive en el agua, el delfín respira aire con pulmones y alimenta a sus crías con leche."
+    ],
+    [
+        "León", "🦁", "Mamíferos", "Terrestre",
+        "El león es un mamífero que vive principalmente en sabanas y pastizales."
+    ],
+    [
+        "Pez payaso", "🐠", "Peces", "Acuático",
+        "El pez payaso respira por branquias y vive en el mar, entre anémonas."
+    ],
+    [
+        "Águila", "🦅", "Aves", "Terrestre y aéreo",
+        "El águila vuela para desplazarse y cazar, y construye su nido en tierra firme."
+    ],
+    [
+        "Jirafa", "🦒", "Mamíferos", "Terrestre",
+        "La jirafa alcanza hojas altas gracias a su largo cuello."
+    ],
+    [
+        "Mariposa", "🦋", "Insectos", "Terrestre y aéreo",
+        "La mariposa es un insecto: tiene seis patas y pasa por una metamorfosis."
+    ],
+    [
+        "Pingüino", "🐧", "Aves", "Agua y tierra",
+        "El pingüino tiene plumas: es un ave que nada y también pasa tiempo en tierra o sobre el hielo."
+    ],
+    [
+        "Tiburón", "🦈", "Peces", "Acuático",
+        "El tiburón es un pez; su esqueleto está formado por cartílago."
+    ],
+    [
+        "Elefante", "🐘", "Mamíferos", "Terrestre",
+        "El elefante usa su trompa para oler, beber y agarrar objetos."
+    ],
+    [
+        "Serpiente", "🐍", "Reptiles", "Terrestre",
+        "Muchas serpientes viven en tierra, aunque también existen especies acuáticas."
+    ],
+    [
+        "Ajolote", "🦎", "Anfibios", "Acuático",
+        "El ajolote es un anfibio que conserva sus branquias externas y vive en el agua."
+    ],
+    [
+        "Pulpo", "🐙", "Moluscos", "Acuático",
+        "El pulpo es un molusco con ocho brazos y un cuerpo muy flexible."
+    ],
+    [
+        "Medusa", "🪼", "Cnidarios", "Acuático",
+        "Las medusas son animales acuáticos con cuerpo gelatinoso y tentáculos."
+    ],
+    [
+        "Cangrejo", "🦀", "Crustáceos", "Agua y tierra",
+        "El cangrejo de manglar usa el agua y las zonas de tierra de los manglares."
+    ],
+    [
+        "Tortuga marina", "🐢", "Reptiles", "Acuático",
+        "La tortuga marina pasa casi toda su vida en el mar; las hembras salen a tierra para poner huevos."
+    ],
+    [
+        "Cocodrilo", "🐊", "Reptiles", "Agua y tierra",
+        "El cocodrilo es un reptil que pasa tiempo tanto en el agua como en tierra."
+    ],
+    [
+        "Ballena", "🐋", "Mamíferos", "Acuático",
+        "La ballena es un mamífero: respira aire y alimenta a sus crías con leche."
+    ],
+    [
+        "Tiburón ballena", "🦈", "Peces", "Acuático",
+        "El tiburón ballena es un pez enorme que se alimenta filtrando pequeños organismos del agua."
+    ],
+    [
+        "Tigre", "🐅", "Mamíferos", "Terrestre",
+        "Las rayas del tigre le ayudan a camuflarse entre la vegetación."
+    ],
+    [
+        "Panda", "🐼", "Mamíferos", "Terrestre",
+        "El panda gigante vive en bosques de montaña y come principalmente bambú."
+    ],
+    [
+        "Zorro", "🦊", "Mamíferos", "Terrestre",
+        "El zorro tiene un oído muy sensible que le ayuda a localizar alimento."
+    ],
+    [
+        "Llama", "🦙", "Mamíferos", "Terrestre",
+        "La llama es un mamífero domesticado de los Andes de América del Sur."
+    ],
+    [
+        "Perezoso", "🦥", "Mamíferos", "Terrestre",
+        "El perezoso pasa gran parte de su vida en los árboles de los bosques tropicales."
+    ],
+    [
+        "Murciélago", "🦇", "Mamíferos", "Terrestre y aéreo",
+        "El murciélago es un mamífero capaz de volar; muchas especies se orientan mediante ecos."
+    ],
+    [
+        "Búho", "🦉", "Aves", "Terrestre y aéreo",
+        "Los búhos son aves; muchas especies tienen una excelente visión con poca luz."
+    ],
+    [
+        "Guacamayo", "🦜", "Aves", "Terrestre y aéreo",
+        "El guacamayo usa su fuerte pico para abrir frutos y semillas."
+    ],
+    [
+        "Abeja", "🐝", "Insectos", "Terrestre y aéreo",
+        "Las abejas ayudan a polinizar muchas plantas mientras visitan sus flores."
+    ],
+    [
+        "Escarabajo", "🪲", "Insectos", "Terrestre",
+        "Los escarabajos son insectos; tienen seis patas y alas delanteras endurecidas."
+    ],
+    [
+        "Araña", "🕷️", "Arácnidos", "Terrestre",
+        "La araña tiene ocho patas y pertenece a los arácnidos, no a los insectos."
+    ],
+    [
+        "Estrella de mar", "⭐", "Equinodermos", "Acuático",
+        "La estrella de mar es un equinodermo; no es un pez y vive en el mar."
+    ]
 ];
 
-/* =========================================================
-   VARIABLES
-========================================================= */
-let currentIndex = 0;
-let score = 0;
-let lives = 3;
-let usedAnimals = [];
+// =====================================================
+// AQUÍ PUEDES CONFIGURAR TUS IMÁGENES
+//
+// Ejemplo:
+// "Lagarto": "imagenes/lagarto.png"
+//
+// Deja "" para usar el emoji.
+// Si una imagen no carga, aparece el emoji.
+//
+// Las imágenes cargadas con el botón del juego tienen
+// prioridad sobre estas rutas.
+// =====================================================
 
-const animalEmoji = document.getElementById("animalEmoji");
-const animalName = document.getElementById("animalName");
-const scoreEl = document.getElementById("score");
-const livesEl = document.getElementById("lives");
-const counterEl = document.getElementById("counter");
-const progressEl = document.getElementById("progress");
-const messageEl = document.getElementById("message");
-const factEl = document.getElementById("fact");
-const endScreen = document.getElementById("endScreen");
-const finalScore = document.getElementById("finalScore");
-const finalAnimals = document.getElementById("finalAnimals");
-const restartBtn = document.getElementById("restartBtn");
-const habitatBtns = document.querySelectorAll(".habitat");
+const ANIMAL_IMAGES = {
+    "Lagarto": "",
+    "Rana": "",
+    "Delfín": "",
+    "León": "",
+    "Pez payaso": "",
+    "Águila": "",
+    "Jirafa": "",
+    "Mariposa": "",
+    "Pingüino": "",
+    "Tiburón": "",
+    "Elefante": "",
+    "Serpiente": "",
+    "Ajolote": "",
+    "Pulpo": "",
+    "Medusa": "",
+    "Cangrejo": "",
+    "Tortuga marina": "",
+    "Cocodrilo": "",
+    "Ballena": "",
+    "Tiburón ballena": "",
+    "Tigre": "",
+    "Panda": "",
+    "Zorro": "",
+    "Llama": "",
+    "Perezoso": "",
+    "Murciélago": "",
+    "Búho": "",
+    "Guacamayo": "",
+    "Abeja": "",
+    "Escarabajo": "",
+    "Araña": "",
+    "Estrella de mar": ""
+};
 
-/* =========================================================
-   MEZCLAR
-========================================================= */
-function shuffleArray(arr) {
-    return [...arr].sort(() => Math.random() - 0.5);
+// =====================================================
+// NIVELES
+// =====================================================
+
+const levels = [
+    {
+        title: "¿Dónde viven?",
+        icon: "🌿",
+        color: "#d8efbc",
+        desc: "Explora tierra, agua y aire.",
+        kind: "Hábitats"
+    },
+    {
+        title: "Familias animales",
+        icon: "🦎",
+        color: "#ffe0b5",
+        desc: "Descubre sus grupos animales.",
+        kind: "Grupos de animales"
+    },
+    {
+        title: "Cuenta y descubre",
+        icon: "🐠",
+        color: "#c8eeff",
+        desc: "Encuentra cuántos animales hay.",
+        kind: "Conteo"
+    },
+    {
+        title: "Sumas de safari",
+        icon: "🦒",
+        color: "#fff0a6",
+        desc: "Nuevos amigos se unen al grupo.",
+        kind: "Sumas"
+    },
+    {
+        title: "¿Cuántos quedan?",
+        icon: "🦋",
+        color: "#ebd5ff",
+        desc: "Resuelve pequeñas restas.",
+        kind: "Restas"
+    },
+    {
+        title: "Patrullas animales",
+        icon: "🐘",
+        color: "#bcebdc",
+        desc: "Multiplica grupos de animales.",
+        kind: "Multiplicaciones"
+    }
+];
+
+// =====================================================
+// DATOS GUARDADOS
+// =====================================================
+
+let progress = {
+    stars: [0, 0, 0, 0, 0, 0],
+    discovered: []
+};
+
+let customImages = {};
+
+try {
+    const saved = JSON.parse(
+        localStorage.getItem("animalExplorerV1")
+    );
+
+    if (
+        saved &&
+        Array.isArray(saved.stars) &&
+        saved.stars.length === 6 &&
+        Array.isArray(saved.discovered)
+    ) {
+        progress = {
+            stars: saved.stars.map(number =>
+                Math.min(
+                    3,
+                    Math.max(0, Number(number) || 0)
+                )
+            ),
+
+            discovered: [
+                ...new Set(
+                    saved.discovered.filter(number =>
+                        Number.isInteger(number) &&
+                        number >= 0 &&
+                        number < animals.length
+                    )
+                )
+            ]
+        };
+    }
+
+    const savedImages = JSON.parse(
+        localStorage.getItem("animalExplorerImages")
+    );
+
+    if (
+        savedImages &&
+        typeof savedImages === "object" &&
+        !Array.isArray(savedImages)
+    ) {
+        customImages = savedImages;
+    }
+} catch (error) {
+    // El juego puede funcionar sin almacenamiento.
 }
 
-/* =========================================================
-   CARGAR ANIMAL
-========================================================= */
-function loadCurrentAnimal() {
-    if (usedAnimals.length === 0) {
-        usedAnimals = shuffleArray([...Array(animals.length).keys()]);
+// =====================================================
+// VARIABLES
+// =====================================================
+
+let level = 0;
+let questions = [];
+let current = 0;
+let firstCorrect = 0;
+let attempts = 0;
+let answered = false;
+let soundOn = true;
+let audioCtx;
+let streak = 0;
+let particlesOn = true;
+
+const $ = id => document.getElementById(id);
+
+function shuffle(array) {
+    array = [...array];
+
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+
+        [array[i], array[j]] = [array[j], array[i]];
     }
-    const idx = usedAnimals.shift();
-    currentIndex = idx;
-    const animal = animals[idx];
-    
-    animalEmoji.textContent = animal.emoji;
-    animalName.textContent = animal.name;
-    counterEl.textContent = `${animals.length - usedAnimals.length}/${animals.length}`;
-    
-    const progress = ((animals.length - usedAnimals.length) / animals.length) * 100;
-    progressEl.style.width = `${progress}%`;
-    
-    scoreEl.textContent = score;
-    livesEl.textContent = lives;
-    
-    factEl.classList.remove("show");
-    messageEl.classList.remove("show", "correct-msg", "wrong-msg");
-    
-    habitatBtns.forEach(btn => {
-        btn.classList.remove("correct", "wrong");
+
+    return array;
+}
+
+function save() {
+    try {
+        localStorage.setItem(
+            "animalExplorerV1",
+            JSON.stringify(progress)
+        );
+    } catch (error) {
+        // El progreso sigue disponible durante la sesión.
+    }
+}
+
+// =====================================================
+// SONIDOS
+// =====================================================
+
+function beep(ok = true) {
+    if (!soundOn) return;
+
+    try {
+        audioCtx = audioCtx || new (
+            window.AudioContext ||
+            window.webkitAudioContext
+        )();
+
+        audioCtx.resume();
+
+        const delays = [0, 0.09, 0.18].slice(
+            0,
+            ok ? 3 : 1
+        );
+
+        delays.forEach((delay, index) => {
+            const oscillator = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            const time = audioCtx.currentTime + delay;
+
+            oscillator.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            oscillator.frequency.value =
+                ok ? [523, 659, 784][index] : 180;
+
+            gain.gain.setValueAtTime(0.025, time);
+
+            gain.gain.exponentialRampToValueAtTime(
+                0.001,
+                time + 0.16
+            );
+
+            oscillator.start(time);
+            oscillator.stop(time + 0.17);
+        });
+    } catch (error) {
+        // El sonido es opcional.
+    }
+}
+
+function toggleSound() {
+    soundOn = !soundOn;
+
+    $("sound").textContent = soundOn ? "🔊" : "🔇";
+
+    $("sound").setAttribute(
+        "aria-label",
+        soundOn ? "Desactivar sonidos" : "Activar sonidos"
+    );
+}
+
+// =====================================================
+// IMAGEN DEL ANIMAL CON EMOJI DE RESPALDO
+// =====================================================
+
+function art(id) {
+    const animal = animals[id];
+
+    const wrapper = document.createElement("span");
+    const emoji = document.createElement("span");
+
+    wrapper.className = "animal-art";
+
+    wrapper.setAttribute("role", "img");
+    wrapper.setAttribute("aria-label", animal[0]);
+
+    emoji.className = "fallback";
+    emoji.textContent = animal[1];
+    emoji.setAttribute("aria-hidden", "true");
+
+    wrapper.appendChild(emoji);
+
+    const hasCustomImage =
+        Object.prototype.hasOwnProperty.call(
+            customImages,
+            animal[0]
+        );
+
+    const source = hasCustomImage
+        ? customImages[animal[0]]
+        : ANIMAL_IMAGES[animal[0]];
+
+    if (typeof source === "string" && source.trim()) {
+        const image = document.createElement("img");
+
+        image.alt = "";
+
+        image.onload = () => {
+            wrapper.classList.add("loaded");
+        };
+
+        image.onerror = () => {
+            image.remove();
+            wrapper.classList.remove("loaded");
+        };
+
+        image.src = source;
+
+        wrapper.appendChild(image);
+    }
+
+    return wrapper;
+}
+
+// =====================================================
+// NAVEGACIÓN
+// =====================================================
+
+function view(id) {
+    ["map", "game", "results", "book"].forEach(section => {
+        $(section).classList.toggle(
+            "hidden",
+            section !== id
+        );
     });
+
+    $("mapNav").classList.toggle(
+        "active",
+        id !== "book"
+    );
+
+    $("bookNav").classList.toggle(
+        "active",
+        id === "book"
+    );
+
+    window.scrollTo({
+        top: 0,
+        behavior: "instant"
+    });
+
+    $("totalStars").textContent = progress.stars.reduce(
+        (total, number) => total + number,
+        0
+    );
 }
 
-/* =========================================================
-   MOSTRAR MENSAJE — NUEVO ESTILO ✅
-========================================================= */
-function showMessage(text, isCorrect) {
-    messageEl.textContent = text;
-    messageEl.classList.remove("correct-msg", "wrong-msg");
-    messageEl.classList.add("show", isCorrect ? "correct-msg" : "wrong-msg");
-    
-    setTimeout(() => {
-        messageEl.classList.remove("show");
-    }, 1400);
+function showMap() {
+    view("map");
+
+    $("completed").textContent =
+        progress.stars.filter(Boolean).length +
+        " de 6 completadas";
+
+    $("levels").innerHTML = levels.map((item, index) => `
+        <button
+            class="level"
+            style="--tint:${item.color}"
+            onclick="startLevel(${index})">
+
+            <div class="level-top">
+                <span class="level-icon">
+                    ${item.icon}
+                </span>
+
+                <span class="level-num">
+                    NIVEL 0${index + 1}
+                </span>
+            </div>
+
+            <h3>${item.title}</h3>
+            <p>${item.desc}</p>
+
+            <div class="level-bottom">
+                <span
+                    class="stars"
+                    aria-label="${progress.stars[index]} de 3 estrellas">
+                    ${
+                        "★".repeat(progress.stars[index]) +
+                        "☆".repeat(3 - progress.stars[index])
+                    }
+                </span>
+
+                <span>
+                    ${
+                        progress.stars[index]
+                            ? "Volver a explorar"
+                            : "6 retos"
+                    }
+
+                    <span class="arrow">→</span>
+                </span>
+            </div>
+        </button>
+    `).join("");
 }
 
-/* =========================================================
-   MOSTRAR DATO
-========================================================= */
-function showFact() {
-    const animal = animals[currentIndex];
-    factEl.textContent = animal.fact;
-    factEl.classList.add("show");
+function startRecommended() {
+    const index = progress.stars.findIndex(
+        stars => stars === 0
+    );
+
+    startLevel(index < 0 ? 0 : index);
 }
 
-/* =========================================================
-   CONFETI
-========================================================= */
-function createConfetti() {
-    const colors = ["#ff6b6b", "#ffd93d", "#6bcb77", "#4d96ff", "#ff6bcb"];
-    for (let i = 0; i < 40; i++) {
-        setTimeout(() => {
-            const c = document.createElement("div");
-            c.className = "confetti";
-            c.style.left = `${Math.random() * 100}%`;
-            c.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            c.style.animationDuration = `${2 + Math.random() * 2}s`;
-            document.getElementById("game").appendChild(c);
-            setTimeout(() => c.remove(), 3000);
-        }, i * 40);
-    }
-}
+// =====================================================
+// GENERACIÓN DE PREGUNTAS
+// Se eligen seis animales distintos por expedición.
+// =====================================================
 
-/* =========================================================
-   COMPROBAR RESPUESTA
-========================================================= */
-habitatBtns.forEach(btn => {
-    btn.addEventListener("click", () => {
-        const selectedType = btn.dataset.type;
-        const correctType = animals[currentIndex].type;
-        
-        if (selectedType === correctType) {
-            score += 10;
-            btn.classList.add("correct");
-            showMessage("¡Muy bien! 🎉", true);
-            showFact();
-            createConfetti();
-            
-            setTimeout(() => {
-                if (usedAnimals.length === 0) {
-                    showEndScreen();
-                } else {
-                    loadCurrentAnimal();
-                }
-            }, 2000);
+function makeQuestions(selectedLevel) {
+    const ids = shuffle(
+        animals.map((animal, index) => index)
+    ).slice(0, 6);
+
+    return ids.map((id, index) => {
+        const animal = animals[id];
+
+        let answer;
+        let question;
+        let options;
+        let fact = animal[4];
+        let count = 1;
+        let equation = "";
+
+        // HÁBITATS Y GRUPOS
+        if (selectedLevel < 2) {
+            const field = selectedLevel === 0 ? 3 : 2;
+
+            answer = animal[field];
+
+            const pool = [
+                ...new Set(
+                    animals.map(item => item[field])
+                )
+            ];
+
+            question = selectedLevel === 0
+                ? "¿Qué hábitat corresponde a este animal?"
+                : "¿A qué grupo pertenece este animal?";
+
+            options = shuffle([
+                answer,
+                ...shuffle(
+                    pool.filter(value => value !== answer)
+                ).slice(0, 3)
+            ]);
+
         } else {
-            lives--;
-            score = Math.max(0, score - 5);
-            btn.classList.add("wrong");
-            showMessage("¡Inténtalo otra vez! 💪", false);
-            
-            scoreEl.textContent = score;
-            livesEl.textContent = lives;
-            
-            if (lives <= 0) {
-                setTimeout(showEndScreen, 1500);
-            }
-        }
-    });
-});
+            let x;
+            let y;
 
-/* =========================================================
-   PANTALLA FINAL
-========================================================= */
-function showEndScreen() {
-    finalScore.textContent = score;
-    finalAnimals.textContent = animals.length;
-    endScreen.classList.add("show");
+            // CONTEO
+            if (selectedLevel === 2) {
+                x = index + 3;
+                count = x;
+                answer = x;
+
+                question =
+                    "¿Cuántos animales puedes contar?";
+
+                fact =
+                    `Hay ${x} animales. Cuenta uno por uno.`;
+            }
+
+            // SUMAS
+            if (selectedLevel === 3) {
+                x = index + 2;
+                y = 1 + Math.floor(Math.random() * 5);
+
+                answer = x + y;
+
+                equation = `${x} + ${y} = ?`;
+
+                question =
+                    `Hay ${x} animales y llegan ${y} más. ` +
+                    "¿Cuántos hay ahora?";
+
+                fact =
+                    `${x} + ${y} = ${answer}. ` +
+                    "¡Juntaste los dos grupos!";
+            }
+
+            // RESTAS
+            if (selectedLevel === 4) {
+                x = index + 6;
+                y = 1 + Math.floor(Math.random() * 4);
+
+                answer = x - y;
+
+                equation = `${x} − ${y} = ?`;
+
+                question =
+                    `Hay ${x} animales y ${y} se van a descansar. ` +
+                    "¿Cuántos quedan?";
+
+                fact =
+                    `${x} − ${y} = ${answer}. ` +
+                    "Quitamos los animales que se fueron.";
+            }
+
+            // MULTIPLICACIONES
+            if (selectedLevel === 5) {
+                x = 2 + index % 3;
+                y = 2 + Math.floor(Math.random() * 4);
+
+                answer = x * y;
+
+                equation = `${x} × ${y} = ?`;
+
+                question =
+                    `Hay ${x} grupos de ${y} animales cada uno. ` +
+                    "¿Cuántos hay en total?";
+
+                fact =
+                    `${x} × ${y} = ${answer}. ` +
+                    "Es lo mismo que " +
+                    Array(x).fill(y).join(" + ") +
+                    ".";
+            }
+
+            const numbers = new Set([answer]);
+
+            while (numbers.size < 4) {
+                const number =
+                    answer +
+                    Math.floor(Math.random() * 9) -
+                    4;
+
+                if (number >= 0) {
+                    numbers.add(number);
+                }
+            }
+
+            options = shuffle([...numbers]);
+        }
+
+        return {
+            id,
+            answer,
+            question,
+            options,
+            fact,
+            count,
+            equation
+        };
+    });
 }
 
-/* =========================================================
-   REINICIAR
-========================================================= */
-restartBtn.addEventListener("click", () => {
-    score = 0;
-    lives = 3;
-    usedAnimals = [];
-    endScreen.classList.remove("show");
-    loadCurrentAnimal();
-});
+// =====================================================
+// INICIO DEL NIVEL
+// =====================================================
 
-/* =========================================================
-   INICIAR
-========================================================= */
-loadCurrentAnimal();
+function startLevel(index) {
+    level = index;
+    questions = makeQuestions(index);
+
+    current = 0;
+    firstCorrect = 0;
+    streak = 0;
+
+    view("game");
+    renderQuestion();
+    beep();
+}
+
+function updateCombo() {
+    $("combo").textContent =
+        streak >= 2
+            ? `🔥 ${streak} aciertos seguidos`
+            : streak === 1
+            ? "✨ ¡Buen comienzo!"
+            : "🌱 ¡A explorar!";
+}
+
+// =====================================================
+// MOSTRAR PREGUNTA
+// =====================================================
+
+function renderQuestion() {
+    attempts = 0;
+    answered = false;
+
+    const question = questions[current];
+
+    $("gameLabel").textContent =
+        levels[level].icon + " " + levels[level].title;
+
+    $("counter").textContent =
+        `Reto ${current + 1} de 6`;
+
+    $("progressBar").style.width =
+        (current / 6 * 100) + "%";
+
+    $("animalDisplay").replaceChildren();
+
+    $("animalDisplay").style.fontSize =
+        level === 2
+            ? "clamp(30px,5vw,50px)"
+            : "";
+
+    for (let i = 0; i < question.count; i++) {
+        $("animalDisplay").appendChild(
+            art(question.id)
+        );
+    }
+
+    if (question.equation) {
+        const equation = document.createElement("div");
+
+        equation.className = "math-visual";
+        equation.textContent = question.equation;
+
+        $("animalDisplay").appendChild(equation);
+    }
+
+    $("animalName").textContent =
+        animals[question.id][0];
+
+    $("questionKind").textContent =
+        levels[level].kind;
+
+    $("question").textContent =
+        question.question;
+
+    $("instruction").textContent =
+        level < 2
+            ? "Observa el animal y elige su relación correcta."
+            : "Observa, piensa y elige el resultado.";
+
+    $("feedback").textContent =
+        "🦉 Olivia: ¡Cada reto es un nuevo descubrimiento!";
+
+    $("next").classList.add("hidden");
+    $("options").replaceChildren();
+
+    question.options.forEach(value => {
+        const button = document.createElement("button");
+
+        button.className = "option";
+        button.textContent = value;
+
+        button.onclick = () => {
+            answerQuestion(value, button);
+        };
+
+        $("options").appendChild(button);
+    });
+
+    $("next").textContent =
+        current === 5
+            ? "🏆 Ver mi recompensa"
+            : "Siguiente descubrimiento →";
+
+    updateCombo();
+}
+
+// =====================================================
+// RESPONDER
+// =====================================================
+
+function answerQuestion(value, button) {
+    if (answered || button.disabled) return;
+
+    const question = questions[current];
+
+    attempts++;
+
+    if (value === question.answer) {
+        answered = true;
+
+        if (attempts === 1) {
+            firstCorrect++;
+            streak++;
+        } else {
+            streak = 0;
+        }
+
+        button.classList.add("correct");
+
+        document.querySelectorAll(".option").forEach(option => {
+            option.disabled = true;
+        });
+
+        const isNew =
+            !progress.discovered.includes(question.id);
+
+        if (isNew) {
+            progress.discovered.push(question.id);
+            save();
+        }
+
+        $("feedback").textContent =
+            (
+                isNew
+                    ? "📒 ¡Nuevo animal descubierto! "
+                    : "✨ ¡Excelente! "
+            ) +
+            question.fact;
+
+        $("next").classList.remove("hidden");
+
+        updateCombo();
+        celebrate(streak >= 3 ? 40 : 22);
+        beep(true);
+
+    } else {
+        streak = 0;
+
+        updateCombo();
+
+        button.classList.add("wrong");
+        button.disabled = true;
+
+        if (level < 2) {
+            $("feedback").textContent =
+                "🍃 Prueba otra opción. Pista: " +
+                question.fact;
+
+        } else {
+            const hint =
+                level === 2
+                    ? "Cuenta los animales de uno en uno."
+                    : level === 3
+                    ? "Junta las dos cantidades."
+                    : level === 4
+                    ? "Quita los que se fueron del grupo inicial."
+                    : "Suma la cantidad de cada grupo.";
+
+            $("feedback").textContent =
+                "🍃 ¡Tú puedes! " + hint;
+        }
+
+        beep(false);
+    }
+}
+
+// =====================================================
+// SIGUIENTE RETO
+// =====================================================
+
+function nextQuestion() {
+    if (!answered) return;
+
+    if (current < 5) {
+        current++;
+        renderQuestion();
+
+    } else {
+        finish();
+    }
+}
+
+// =====================================================
+// RESULTADO Y ESTRELLAS
+// =====================================================
+
+function finish() {
+    const stars =
+        firstCorrect === 6
+            ? 3
+            : firstCorrect >= 4
+            ? 2
+            : 1;
+
+    progress.stars[level] = Math.max(
+        stars,
+        progress.stars[level]
+    );
+
+    save();
+    view("results");
+
+    const nextAction =
+        level < 5
+            ? `startLevel(${level + 1})`
+            : "showBook()";
+
+    const nextLabel =
+        level < 5
+            ? "Siguiente expedición →"
+            : "Ver mi cuaderno →";
+
+    $("results").innerHTML = `
+        <div class="result">
+            <span class="eyebrow">
+                Expedición completada
+            </span>
+
+            <div class="medal">
+                ${stars === 3 ? "🏆" : "🏅"}
+            </div>
+
+            <h2>¡Eres un gran explorador!</h2>
+
+            <div class="result-stars">
+                ${
+                    "★".repeat(stars) +
+                    "☆".repeat(3 - stars)
+                }
+            </div>
+
+            <p>
+                Completaste
+                <strong>${levels[level].title}</strong>.
+                <br>
+                ${firstCorrect} de 6 respuestas correctas
+                al primer intento.
+            </p>
+
+            <p>
+                📒 Colección:
+                ${progress.discovered.length} / ${animals.length}
+                animales
+            </p>
+
+            <p class="hint">
+                ${
+                    stars < 3
+                        ? "¡Otra expedición, otra oportunidad de brillar!"
+                        : "¡Una expedición perfecta! Olivia celebra contigo."
+                }
+            </p>
+
+            <div class="result-actions">
+                <button
+                    class="back"
+                    onclick="startLevel(${level})">
+                    ↻ Repetir
+                </button>
+
+                <button
+                    class="primary"
+                    onclick="${nextAction}">
+                    ${nextLabel}
+                </button>
+
+                <button
+                    class="back"
+                    onclick="showMap()">
+                    Volver al mapa
+                </button>
+            </div>
+        </div>
+    `;
+
+    celebrate(65);
+    beep();
+}
+
+// =====================================================
+// CUADERNO DE CAMPO
+// =====================================================
+
+function showBook() {
+    view("book");
+
+    $("bookCount").textContent =
+        `${progress.discovered.length} de ${animals.length} ` +
+        "animales descubiertos. " +
+        "¡Sigue explorando para encontrarlos a todos!";
+
+    $("collection").replaceChildren();
+
+    animals.forEach((animal, index) => {
+        const found =
+            progress.discovered.includes(index);
+
+        const card = document.createElement("article");
+
+        card.className =
+            "entry " + (found ? "" : "muted-entry");
+
+        const visual = document.createElement("div");
+
+        visual.className = "emoji";
+
+        if (found) {
+            visual.appendChild(art(index));
+        } else {
+            visual.textContent = "🔎";
+        }
+
+        card.appendChild(visual);
+
+        const text = document.createElement("div");
+
+        text.innerHTML = `
+            <h3>
+                ${found ? animal[0] : "Por descubrir"}
+            </h3>
+
+            ${
+                found
+                    ? `
+                        <span class="badge">
+                            ${animal[2]}
+                        </span>
+
+                        <p>${animal[3]}</p>
+                        <p>${animal[4]}</p>
+                    `
+                    : `
+                        <p>
+                            Te espera en las expediciones.
+                        </p>
+                    `
+            }
+        `;
+
+        card.appendChild(text);
+        $("collection").appendChild(card);
+    });
+}
+
+// =====================================================
+// PARTÍCULAS AMBIENTALES
+// =====================================================
+
+function setupParticles() {
+    const symbols = ["✦", "✧", "🍃", "•", "✺"];
+
+    for (let i = 0; i < 18; i++) {
+        const particle = document.createElement("span");
+
+        particle.className = "mote";
+        particle.textContent = symbols[i % symbols.length];
+
+        particle.style.left =
+            Math.random() * 100 + "%";
+
+        particle.style.color =
+            ["#6cb894", "#eab843", "#b29dd5"][i % 3];
+
+        particle.style.setProperty(
+            "--duration",
+            15 + Math.random() * 18 + "s"
+        );
+
+        particle.style.setProperty(
+            "--delay",
+            -Math.random() * 30 + "s"
+        );
+
+        $("sparkles").appendChild(particle);
+    }
+}
+
+function toggleParticles() {
+    particlesOn = !particlesOn;
+
+    document.body.classList.toggle(
+        "particle-off",
+        !particlesOn
+    );
+
+    $("particleButton").textContent =
+        "✨ Partículas: " + (particlesOn ? "sí" : "no");
+
+    if (!particlesOn) {
+        $("fx").replaceChildren();
+    }
+}
+
+// =====================================================
+// CONFETI
+// =====================================================
+
+function celebrate(count) {
+    const reduceMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    if (!particlesOn || reduceMotion) return;
+
+    const colors = [
+        "#ffd260",
+        "#64c9a4",
+        "#b194e3",
+        "#ff9c92",
+        "#7cc5ef"
+    ];
+
+    const width = Math.min(window.innerWidth, 900);
+
+    for (let i = 0; i < count; i++) {
+        const particle = document.createElement("span");
+
+        particle.className = "confetti";
+
+        particle.style.setProperty(
+            "--c",
+            colors[i % colors.length]
+        );
+
+        particle.style.setProperty(
+            "--x",
+            Math.random() * width - width / 2 + "px"
+        );
+
+        particle.style.setProperty(
+            "--y",
+            -200 + Math.random() * 650 + "px"
+        );
+
+        particle.style.setProperty(
+            "--r",
+            Math.random() * 900 + "deg"
+        );
+
+        particle.onanimationend = () => {
+            particle.remove();
+        };
+
+        $("fx").appendChild(particle);
+    }
+}
+
+// =====================================================
+// EDITOR DE IMÁGENES
+// Las imágenes se procesan en el navegador.
+// =====================================================
+
+function openImages() {
+    $("imageAnimal").innerHTML =
+        animals.map((animal, index) => `
+            <option value="${index}">
+                ${animal[1]} ${animal[0]}
+            </option>
+        `).join("");
+
+    $("imageDialog").showModal();
+
+    previewImage();
+}
+
+function previewImage() {
+    const id = Number($("imageAnimal").value);
+
+    $("imagePreview").replaceChildren(art(id));
+
+    $("imageFile").value = "";
+
+    $("imageStatus").textContent =
+        "Si no hay imagen disponible, se muestra el emoji.";
+}
+
+function uploadImage(event) {
+    const file = event.target.files[0];
+
+    if (!file) return;
+
+    const id = Number($("imageAnimal").value);
+
+    const allowedTypes = [
+        "image/png",
+        "image/jpeg",
+        "image/webp"
+    ];
+
+    if (
+        !allowedTypes.includes(file.type) ||
+        file.size > 5 * 1024 * 1024
+    ) {
+        $("imageStatus").textContent =
+            "Elige una imagen PNG, JPG o WebP de hasta 5 MB.";
+
+        return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onerror = () => {
+        $("imageStatus").textContent =
+            "No se pudo leer el archivo.";
+    };
+
+    reader.onload = () => {
+        const image = new Image();
+
+        image.onerror = () => {
+            $("imageStatus").textContent =
+                "No se pudo abrir la imagen. " +
+                "El emoji sigue disponible.";
+        };
+
+        image.onload = () => {
+            // Reduce el tamaño para ahorrar almacenamiento.
+            // Mantiene la proporción original.
+            const scale = Math.min(
+                1,
+                480 / Math.max(image.width, image.height)
+            );
+
+            const canvas = document.createElement("canvas");
+
+            canvas.width = Math.max(
+                1,
+                Math.round(image.width * scale)
+            );
+
+            canvas.height = Math.max(
+                1,
+                Math.round(image.height * scale)
+            );
+
+            const context = canvas.getContext("2d");
+
+            context.drawImage(
+                image,
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
+
+            customImages[animals[id][0]] =
+                canvas.toDataURL("image/webp", 0.85);
+
+            let stored = true;
+
+            try {
+                localStorage.setItem(
+                    "animalExplorerImages",
+                    JSON.stringify(customImages)
+                );
+            } catch (error) {
+                stored = false;
+            }
+
+            if (Number($("imageAnimal").value) === id) {
+                $("imagePreview").replaceChildren(
+                    art(id)
+                );
+
+                $("imageStatus").textContent =
+                    stored
+                        ? "✅ Imagen guardada en este navegador."
+                        : "✅ Imagen aplicada por esta sesión. No hay espacio para guardarla.";
+            }
+
+            showBook();
+        };
+
+        image.src = reader.result;
+    };
+
+    reader.readAsDataURL(file);
+}
+
+function removeImage() {
+    const id = Number($("imageAnimal").value);
+
+    // Un valor vacío fuerza el emoji incluso si hay
+    // una ruta configurada en ANIMAL_IMAGES.
+    customImages[animals[id][0]] = "";
+
+    let stored = true;
+
+    try {
+        localStorage.setItem(
+            "animalExplorerImages",
+            JSON.stringify(customImages)
+        );
+    } catch (error) {
+        stored = false;
+    }
+
+    previewImage();
+
+    $("imageStatus").textContent =
+        stored
+            ? "↺ Emoji restaurado."
+            : "↺ Emoji restaurado por esta sesión.";
+
+    showBook();
+}
+
+// =====================================================
+// INICIAR
+// =====================================================
+
+showMap();
+setupParticles();
 </script>
+
 </body>
 </html>
