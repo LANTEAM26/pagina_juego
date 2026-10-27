@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Trigo-Strike: Defensor Neón 📐</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { 
+            --bg-color: #050210;
+            --panel-bg: rgba(15, 5, 30, 0.9);
+            --border-main: #b026ff;
+            --highlight: #00e5ff;
+            --accent: #ff2a6d;
+            --danger: #ff003c;
+            --warning: #fffa65;
+            --text-main: #f8fafc;
+            
+            --rank-s: #fffa65;
+            --rank-a: #00e5ff;
+            --rank-b: #b026ff;
+            --rank-c: #ff003c;
+        }
+
+        body, html { 
+            font-family: 'Rajdhani', sans-serif; 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            margin: 0; padding: 0; width: 100vw; height: 100vh; 
+            color: var(--text-main); background-color: var(--bg-color); 
+            overflow: hidden; box-sizing: border-box; user-select: none;
+        }
+
+        /* FONDO SYNTHWAVE / RETRO */
+        .decorations { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; background: linear-gradient(to bottom, #11052C 0%, #3D087B 50%, #050210 50%, #050210 100%); }
+        
+        .sun { position: absolute; width: 400px; height: 400px; background: linear-gradient(to bottom, #fffa65 0%, #ff2a6d 100%); border-radius: 50%; left: 50%; top: 50%; transform: translate(-50%, -100%); box-shadow: 0 0 50px #ff2a6d; clip-path: polygon(0 0, 100% 0, 100% 65%, 0 65%, 0 70%, 100% 70%, 100% 75%, 0 75%, 0 80%, 100% 80%, 100% 85%, 0 85%, 0 90%, 100% 90%, 100% 100%, 0 100%); opacity: 0.8;}
+        
+        .grid-bg { position: absolute; top: 50%; left: -50%; width: 200%; height: 100%; background-image: linear-gradient(rgba(176, 38, 255, 0.3) 2px, transparent 2px), linear-gradient(90deg, rgba(0, 229, 255, 0.3) 2px, transparent 2px); background-size: 60px 40px; transform: perspective(300px) rotateX(60deg); transform-origin: top center; animation: gridScroll 2s linear infinite; box-shadow: inset 0 50px 100px #050210;}
+        
+        @keyframes gridScroll { from { background-position: 0 0; } to { background-position: 0 40px; } }
+
+        .sound-toggle { position: absolute; top: 15px; right: 15px; background: rgba(15,5,30,0.8); border: 2px solid var(--highlight); border-radius: 8px; width: 45px; height: 45px; font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 1000; box-shadow: 0 0 15px rgba(0,229,255,0.3); transition: all 0.2s; color: var(--highlight);}
+        .sound-toggle:active { transform: scale(0.9); }
+
+        /* PANTALLA DE INSTRUCCIONES */
+        #instructions-screen { position: absolute; inset: 0; z-index: 600; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(5,2,16,0.95); backdrop-filter: blur(8px); }
+        .instructions-card { background: var(--panel-bg); padding: 40px; border-radius: 12px; border: 2px solid var(--accent); max-width: 90%; width: 750px; display: flex; flex-direction: column; gap: 20px; box-shadow: 0 0 50px rgba(255,42,109,0.3); }
+        .instructions-card h1 { font-family: 'Share Tech Mono', monospace; font-size: 40px; color: var(--accent); margin: 0; text-align: center; text-shadow: 0 0 15px rgba(255,42,109,0.5);}
+        .instruction-step { display: flex; gap: 15px; align-items: flex-start; font-size: 18px; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,42,109,0.3);}
+        .instruction-icon { font-size: 30px; flex-shrink: 0; }
+        .instruction-text b { color: var(--highlight); }
+        .instruction-text .warn { color: var(--warning); font-weight: bold;}
+        
+        .start-btn { background: var(--accent); border: none; padding: 15px 40px; font-size: 22px; color: #fff; border-radius: 6px; text-transform: uppercase; font-weight: bold; font-family: 'Share Tech Mono', monospace; cursor:pointer; transition: all 0.2s; align-self: center; box-shadow: 0 5px 0 #b3003a, 0 10px 20px rgba(255,42,109,0.4); letter-spacing: 2px;}
+        .start-btn:active { transform: translateY(5px); box-shadow: 0 0 0 #b3003a; }
+
+        /* HEADER DEL JUEGO */
+        .game-header { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1200px; padding: 15px 2vw; z-index: 10; box-sizing: border-box;}
+        .title-display { font-family: 'Share Tech Mono', monospace; font-size: 26px; color: var(--highlight); text-shadow: 0 0 10px var(--highlight); letter-spacing: 1px;}
+        .hud-stats { display: flex; gap: 20px;}
+        .hud-box { background: var(--panel-bg); padding: 8px 20px; border-radius: 6px; border: 1px solid var(--border-main); font-size: 20px; color: #fff; box-shadow: 0 0 15px rgba(176,38,255,0.3); font-family: 'Share Tech Mono', monospace;}
+        .hud-box span { color: var(--border-main); font-weight: bold;}
+        
+        .health-bar { display: flex; gap: 5px; align-items: center; background: var(--panel-bg); padding: 8px 20px; border-radius: 6px; border: 1px solid var(--danger); box-shadow: 0 0 15px rgba(255,0,60,0.3); font-family: 'Share Tech Mono', monospace;}
+        .heart { color: var(--danger); font-size: 24px; filter: drop-shadow(0 0 5px var(--danger)); transition: all 0.3s;}
+        .heart.lost { color: #334155; filter: none; transform: scale(0.8); opacity: 0.5;}
+
+        /* LAYOUT PRINCIPAL */
+        .main-layout { display: flex; gap: 20px; width: 100%; max-width: 1200px; flex: 1; padding: 0 2vw 2vh 2vw; box-sizing: border-box;}
+        @media (max-width: 900px) { .main-layout { flex-direction: column; overflow-y: auto; } }
+
+        /* =========================================================
+           RADAR (IZQUIERDA - VISUALIZACIÓN DEL TRIÁNGULO)
+           ========================================================= */
+        .radar-panel { flex: 1.2; background: rgba(0, 10, 20, 0.85); border: 2px solid var(--highlight); border-radius: 12px; position: relative; box-shadow: 0 0 30px rgba(0,229,255,0.1), inset 0 0 50px rgba(0,0,0,0.8); overflow: hidden; display: flex; justify-content: center; align-items: center;}
+        
+        /* Grid del radar */
+        .radar-grid { position: absolute; inset: 0; background-image: 
+            linear-gradient(rgba(0, 229, 255, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 229, 255, 0.1) 1px, transparent 1px);
+            background-size: 40px 40px; background-position: center bottom;}
+        
+        /* SVG del Triángulo */
+        #radar-svg { position: absolute; width: 100%; height: 100%; z-index: 5; pointer-events: none;}
+        
+        .tri-line { stroke: var(--highlight); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; fill: rgba(0,229,255,0.05); filter: drop-shadow(0 0 5px var(--highlight)); transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);}
+        .tri-line.hypotenuse { stroke: var(--border-main); stroke-dasharray: 8 4; filter: drop-shadow(0 0 5px var(--border-main));}
+        
+        /* Animación del láser */
+        .laser-beam { stroke: var(--accent); stroke-width: 8; stroke-linecap: round; filter: drop-shadow(0 0 10px var(--accent)); opacity: 0; transition: opacity 0.2s;}
+        
+        /* Etiquetas de los lados (HTML sobre el SVG) */
+        #labels-layer { position: absolute; inset: 0; z-index: 6; pointer-events: none;}
+        .side-label { position: absolute; font-family: 'Share Tech Mono', monospace; font-size: 22px; font-weight: bold; color: #fff; background: rgba(0,0,0,0.7); padding: 4px 8px; border-radius: 4px; border: 1px solid; transform: translate(-50%, -50%); transition: all 0.5s; text-shadow: 0 0 5px #000;}
+        
+        .lbl-opp { border-color: var(--highlight); color: var(--highlight); box-shadow: 0 0 10px rgba(0,229,255,0.3);}
+        .lbl-adj { border-color: var(--highlight); color: var(--highlight); box-shadow: 0 0 10px rgba(0,229,255,0.3);}
+        .lbl-hyp { border-color: var(--border-main); color: var(--border-main); box-shadow: 0 0 10px rgba(176,38,255,0.3);}
+        
+        .lbl-hidden { color: var(--warning); border-color: var(--warning); box-shadow: 0 0 10px rgba(255,250,101,0.3); animation: pulseWarn 1s infinite alternate;}
+        @keyframes pulseWarn { 0% { filter: brightness(1); } 100% { filter: brightness(1.5); } }
+
+        /* Elementos del juego (Torreta y Enemigo) */
+        .turret { position: absolute; bottom: 10%; left: 10%; font-size: 40px; transform: translate(-50%, 50%); z-index: 10; filter: drop-shadow(0 0 10px var(--highlight)); transition: all 0.5s;}
+        .enemy { position: absolute; font-size: 40px; transform: translate(-50%, -50%); z-index: 10; filter: drop-shadow(0 0 10px var(--accent)); transition: all 0.5s;}
+        .angle-arc { stroke: var(--warning); stroke-width: 2; fill: rgba(255,250,101,0.2); transition: all 0.5s;}
+        .angle-text { fill: var(--warning); font-family: 'Share Tech Mono', monospace; font-size: 20px; font-weight: bold; transition: all 0.5s;}
+
+        .explosion { position: absolute; font-size: 60px; transform: translate(-50%, -50%); z-index: 20; opacity: 0; pointer-events: none;}
+        @keyframes explode { 0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5); } 50% { transform: translate(-50%, -50%) scale(1.5); filter: brightness(2); } 100% { opacity: 0; transform: translate(-50%, -50%) scale(2); } }
+
+        /* =========================================================
+           CONSOLA DE MANDO (DERECHA)
+           ========================================================= */
+        .console-panel { flex: 0.8; display: flex; flex-direction: column; gap: 15px;}
+        
+        /* Pitágoras Override (Si falta un lado) */
+        .pythagoras-box { background: rgba(255,250,101,0.1); border: 2px solid var(--warning); border-radius: 8px; padding: 15px; display: flex; flex-direction: column; gap: 10px; box-shadow: inset 0 0 20px rgba(255,250,101,0.1); transition: all 0.3s; opacity: 0.5; pointer-events: none;}
+        .pythagoras-box.active { opacity: 1; pointer-events: auto; box-shadow: inset 0 0 20px rgba(255,250,101,0.2), 0 0 15px rgba(255,250,101,0.2);}
+        
+        .p-title { font-family: 'Share Tech Mono', monospace; color: var(--warning); font-size: 16px; text-transform: uppercase; font-weight: bold; border-bottom: 1px dashed var(--warning); padding-bottom: 5px;}
+        .p-formula { font-family: 'Share Tech Mono', monospace; font-size: 18px; color: #fff; text-align: center; letter-spacing: 2px;}
+        .p-input-group { display: flex; gap: 10px;}
+        .p-input { flex: 1; background: #000; border: 1px solid var(--warning); color: var(--warning); font-family: 'Share Tech Mono', monospace; font-size: 20px; font-weight: bold; text-align: center; padding: 8px; border-radius: 4px; outline: none;}
+        .p-btn { background: var(--warning); border: none; color: #000; font-family: 'Share Tech Mono', monospace; font-size: 16px; font-weight: bold; padding: 0 15px; border-radius: 4px; cursor: pointer; transition: all 0.2s;}
+        .p-btn:hover { filter: brightness(1.2); }
+
+        /* Moduladores Trigonométricos */
+        .trig-box { flex: 1; background: var(--panel-bg); border: 2px solid #1e293b; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; gap: 15px; box-shadow: inset 0 0 30px rgba(0,0,0,0.8);}
+        .t-title { font-family: 'Share Tech Mono', monospace; color: var(--highlight); font-size: 16px; text-transform: uppercase; font-weight: bold; border-bottom: 1px dashed #334155; padding-bottom: 5px;}
+        
+        .modulator { background: rgba(0,0,0,0.5); border: 1px solid #334155; padding: 10px 15px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;}
+        .m-label { font-family: 'Share Tech Mono', monospace; font-size: 22px; font-weight: bold; color: #cbd5e1; width: 80px;}
+        .m-formula { font-family: 'Rajdhani', sans-serif; font-size: 14px; color: #64748b;}
+        
+        select { background: #0f172a; color: #fff; border: 2px solid var(--highlight); padding: 8px 15px; font-family: 'Share Tech Mono', monospace; font-size: 22px; font-weight: bold; border-radius: 6px; cursor: pointer; outline: none; transition: all 0.2s; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); appearance: none; text-align: center; min-width: 100px;}
+        select:focus { border-color: var(--accent); box-shadow: 0 0 15px rgba(255,42,109,0.4);}
+        select:disabled { border-color: #334155; color: #64748b; cursor: not-allowed; opacity: 0.7;}
+
+        .reactor-actions { margin-top: auto;}
+        .r-btn-verify { width: 100%; background: var(--accent); border: none; color: #fff; padding: 15px; border-radius: 6px; cursor: pointer; font-family: 'Share Tech Mono', monospace; font-size: 24px; transition: all 0.2s; font-weight: bold; box-shadow: 0 5px 0 #b3003a; text-transform: uppercase; letter-spacing: 2px;}
+        .r-btn-verify:active { transform: translateY(5px); box-shadow: none;}
+        .r-btn-verify:disabled { background: #334155; color: #94a3b8; box-shadow: none; cursor: not-allowed;}
+
+        /* MODAL RANGO */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 1000; visibility: hidden; opacity: 0; transition: all 0.3s; backdrop-filter: blur(8px);}
+        .modal-overlay.active { visibility: visible; opacity: 1; }
+        .modal-box { background: var(--panel-bg); padding: 40px; border-radius: 12px; text-align: center; max-width: 85%; width: 500px; transform: scale(0.9); transition: transform 0.3s; border: 2px solid var(--highlight); box-shadow: 0 0 50px rgba(0,229,255,0.3);}
+        .modal-overlay.active .modal-box { transform: scale(1); }
+        
+        .rank-display { font-family: 'Share Tech Mono', monospace; font-size: 80px; font-weight: bold; margin: 10px 0; text-shadow: 0 0 20px currentColor;}
+        .rank-S { color: var(--rank-s); }
+        .rank-A { color: var(--rank-a); }
+        .rank-B { color: var(--rank-b); }
+        .rank-C { color: var(--rank-c); }
+
+        .modal-title { font-family: 'Share Tech Mono', monospace; font-size: 32px; margin-top: 0; margin-bottom: 10px; color: var(--highlight);}
+        .modal-msg { font-size: 18px; margin-bottom: 10px; color: #e2e8f0; white-space: pre-line; line-height: 1.5;}
+        .modal-stats { font-family: 'Share Tech Mono', monospace; color: #94a3b8; font-size: 16px; margin-bottom: 25px;}
+        
+        .modal-btn { background: transparent; border: 2px solid var(--highlight); color: var(--highlight); padding: 12px 30px; font-size: 18px; border-radius: 6px; text-transform: uppercase; font-weight: bold; cursor:pointer; font-family: 'Share Tech Mono', monospace; transition: all 0.2s;}
+        .modal-btn:hover { background: var(--highlight); color: #000; box-shadow: 0 0 20px var(--highlight);}
+
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+        .shake-screen { animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both; }
+
+    </style>
+</head>
+<body>
+
+    <audio id="bgm" loop><source src="../assets/musicaFondo/cancion1.mp3" type="audio/mpeg"></audio>
+    <div class="decorations"><div class="sun"></div><div class="grid-bg"></div></div>
+    <button id="soundToggle" class="sound-toggle" aria-label="Activar sonido">🔇</button>
+
+    <!-- INSTRUCCIONES -->
+    <div id="instructions-screen">
+        <div class="instructions-card">
+            <h1>TRIGO-STRIKE 📐</h1>
+            <div class="instruction-step">
+                <span class="instruction-icon">🎯</span>
+                <span class="instruction-text"><b>LA MISIÓN:</b> Eres el artillero de la Base Prisma. Debes destruir los Drones Enemigos calibrando los láseres mediante funciones trigonométricas.</span>
+            </div>
+            <div class="instruction-step">
+                <span class="instruction-icon">📐</span>
+                <span class="instruction-text"><b>SOH-CAH-TOA:</b> El radar forma un Triángulo Rectángulo con el enemigo. Para apuntar, debes seleccionar la fracción correcta para el <b>SENO (O/H)</b>, <b>COSENO (A/H)</b> y <b>TANGENTE (O/A)</b> desde el ángulo $\theta$ de tu torreta.</span>
+            </div>
+            <div class="instruction-step">
+                <span class="instruction-icon">⚠️</span>
+                <span class="instruction-text"><b>INTERFERENCIA:</b> En niveles avanzados, el radar no mostrará un lado. ¡Deberás usar el <span class="warn">Teorema de Pitágoras ($c^2 = a^2 + b^2$)</span> para hallarlo y desbloquear los controles!</span>
+            </div>
+            <button class="start-btn" onclick="startGame()">INICIAR SISTEMAS</button>
+        </div>
+    </div>
+
+    <!-- JUEGO -->
+    <div class="game-header">
+        <div class="title-display">TRIGO-STRIKE [RADAR_ACTIVO]</div>
+        <div class="hud-stats">
+            <div class="health-bar">
+                INTEGRIDAD: 
+                <span class="heart" id="h1">❤️</span>
+                <span class="heart" id="h2">❤️</span>
+                <span class="heart" id="h3">❤️</span>
+            </div>
+            <div class="hud-box">OLEADA: <span id="level-display">0/6</span></div>
+        </div>
+    </div>
+
+    <div class="main-layout">
+        
+        <!-- RADAR (IZQUIERDA) -->
+        <div class="radar-panel" id="radar-container">
+            <div class="radar-grid"></div>
+            
+            <svg id="radar-svg">
+                <!-- Triangle -->
+                <polygon id="tri-poly" class="tri-line" points="0,0 0,0 0,0" />
+                <line id="laser-line" class="laser-beam" x1="0" y1="0" x2="0" y2="0" />
+                <!-- Angle Arc -->
+                <path id="angle-arc" class="angle-arc" d="" />
+                <text id="angle-text" class="angle-text" x="0" y="0">θ</text>
+            </svg>
+
+            <div id="labels-layer">
+                <div class="side-label lbl-adj" id="lbl-adj">A = 4</div>
+                <div class="side-label lbl-opp" id="lbl-opp">O = 3</div>
+                <div class="side-label lbl-hyp" id="lbl-hyp">H = 5</div>
+            </div>
+
+            <div class="turret" id="turret">🗼</div>
+            <div class="enemy" id="enemy">🛸</div>
+            <div class="explosion" id="explosion">💥</div>
+        </div>
+
+        <!-- CONSOLA DE MANDO (DERECHA) -->
+        <div class="console-panel">
+            
+            <!-- Pitágoras (Oculto/Deshabilitado por defecto) -->
+            <div class="pythagoras-box" id="pyth-box">
+                <div class="p-title">⚠️ Falla en Radar: Datos Incompletos</div>
+                <div class="p-formula">a² + b² = c²</div>
+                <div class="p-input-group">
+                    <input type="number" class="p-input" id="pyth-input" placeholder="Lado faltante?">
+                    <button class="p-btn" onclick="verifyPythagoras()">RESTAURAR</button>
+                </div>
+            </div>
+
+            <!-- Moduladores -->
+            <div class="trig-box" id="trig-box">
+                <div class="t-title">// CALIBRACIÓN SOH-CAH-TOA</div>
+                
+                <div class="modulator">
+                    <div class="m-info">
+                        <div class="m-label">SENO</div>
+                        <div class="m-formula">Opuesto / Hipotenusa</div>
+                    </div>
+                    <select id="sel-sin"><option value="">--/--</option></select>
+                </div>
+
+                <div class="modulator">
+                    <div class="m-info">
+                        <div class="m-label">COSENO</div>
+                        <div class="m-formula">Adyacente / Hipotenusa</div>
+                    </div>
+                    <select id="sel-cos"><option value="">--/--</option></select>
+                </div>
+
+                <div class="modulator">
+                    <div class="m-info">
+                        <div class="m-label">TANGENTE</div>
+                        <div class="m-formula">Opuesto / Adyacente</div>
+                    </div>
+                    <select id="sel-tan"><option value="">--/--</option></select>
+                </div>
+            </div>
+            
+            <div class="reactor-actions">
+                <button class="r-btn-verify" id="btn-fire" onclick="fireLaser()">[ DISPARAR LÁSER ]</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MODAL RANGO -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal-box">
+            <h2 class="modal-title" id="m-title">Título</h2>
+            <div class="rank-display" id="m-rank">S</div>
+            <p class="modal-msg" id="m-msg">Mensaje</p>
+            <div class="modal-stats" id="m-stats">Errores: 0</div>
+            <button class="modal-btn" id="m-btn" onclick="closeModal()">SIGUIENTE OLEADA</button>
+        </div>
+    </div>
+
+    <script>
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx; let isMuted = true;
+        const bgAudio = document.getElementById('bgm');
+        const soundToggle = document.getElementById('soundToggle');
+
+        soundToggle.addEventListener('click', () => {
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            isMuted = !isMuted;
+            if(isMuted) { bgAudio.pause(); soundToggle.innerText = '🔇'; } 
+            else { bgAudio.volume = 0.25; bgAudio.play().catch(e=>e); soundToggle.innerText = '🔊'; }
+        });
+
+        function playTone(freq, type, duration, vol = 0.1) {
+            if (!audioCtx || isMuted) return;
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + duration);
+        }
+        function playNoise(duration, vol) {
+            if (!audioCtx || isMuted) return;
+            const bufferSize = audioCtx.sampleRate * duration; const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate); const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+            const noise = audioCtx.createBufferSource(); noise.buffer = buffer;
+            const gain = audioCtx.createGain(); gain.gain.setValueAtTime(vol, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            const filter = audioCtx.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 800;
+            noise.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination); noise.start();
+        }
+
+        function sfxClick() { playTone(800, 'sine', 0.05, 0.05); }
+        function sfxSelect() { playTone(1200, 'square', 0.1, 0.05); }
+        function sfxError() { playTone(200, 'sawtooth', 0.3, 0.2); }
+        function sfxDamage() { playNoise(0.5, 0.3); playTone(100, 'sawtooth', 0.5, 0.3); }
+        function sfxLaser() { playTone(800, 'sawtooth', 0.1, 0.2); setTimeout(()=>playTone(600, 'sawtooth', 0.2, 0.2), 50); }
+        function sfxExplode() { playNoise(0.6, 0.3); playTone(150, 'square', 0.5, 0.2); }
+        function sfxRankS() { [523.25, 659.25, 783.99, 1046.50, 1318.51].forEach((f, i) => setTimeout(() => playTone(f, 'square', 0.15, 0.1), i * 100)); }
+        function sfxRankA() { [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => setTimeout(() => playTone(f, 'square', 0.15, 0.1), i * 150)); }
+        function sfxRankLow() { [400, 300].forEach((f, i) => setTimeout(() => playTone(f, 'square', 0.3, 0.1), i * 300)); }
+
+        // MÚSICA PARA SELECTS
+        document.querySelectorAll('select').forEach(s => s.addEventListener('change', sfxSelect));
+
+        // TERNOS PITAGÓRICOS [A, O, H] (Adyacente, Opuesto, Hipotenusa)
+        const TRIPLES = [
+            [3, 4, 5], [4, 3, 5], 
+            [6, 8, 10], [8, 6, 10],
+            [5, 12, 13], [12, 5, 13],
+            [9, 12, 15], [12, 9, 15],
+            [8, 15, 17], [15, 8, 17],
+            [7, 24, 25], [24, 7, 25]
+        ];
+
+        let currentLevel = 0;
+        let totalLevels = 6;
+        let hp = 3;
+        let mistakes = 0;
+        let currentTriangle = { adj: 0, opp: 0, hyp: 0, hidden: null };
+        let isSystemLocked = false;
+
+        function startGame() {
+            if (!audioCtx && !isMuted) { audioCtx = new AudioContext(); bgAudio.play().catch(e=>e); }
+            sfxClick();
+            document.getElementById('instructions-screen').style.display = 'none';
+            currentLevel = 1;
+            hp = 3;
+            updateHearts();
+            generateLevel();
+        }
+
+        function generateLevel() {
+            if(currentLevel > totalLevels) {
+                document.getElementById('m-title').style.color = "var(--rank-s)";
+                document.getElementById('m-rank').style.display = "none";
+                showModal("¡DEFENSA EXITOSA! 🏆", "Has protegido la Base Prisma.\nDominas las relaciones trigonométricas a la perfección.", () => {
+                    currentLevel = 1;
+                    hp = 3;
+                    updateHearts();
+                    generateLevel();
+                }, "JUGAR DE NUEVO");
+                return;
+            }
+
+            document.getElementById('level-display').innerText = `${currentLevel}/${totalLevels}`;
+            mistakes = 0;
+            
+            // Reset UI
+            document.getElementById('sel-sin').value = "";
+            document.getElementById('sel-cos').value = "";
+            document.getElementById('sel-tan').value = "";
+            document.getElementById('pyth-input').value = "";
+            document.getElementById('laser-line').style.opacity = '0';
+            
+            // Elegir triángulo
+            let triple = TRIPLES[Math.floor(Math.random() * TRIPLES.length)];
+            currentTriangle = { adj: triple[0], opp: triple[1], hyp: triple[2], hidden: null };
+
+            // Dificultad: Ocultar un lado en niveles altos
+            let pythBox = document.getElementById('pyth-box');
+            let selects = document.querySelectorAll('select');
+            
+            if (currentLevel >= 3) {
+                let hideOptions = ['adj', 'opp', 'hyp'];
+                currentTriangle.hidden = hideOptions[Math.floor(Math.random() * hideOptions.length)];
+                
+                pythBox.classList.add('active');
+                selects.forEach(s => s.disabled = true);
+                document.getElementById('btn-fire').disabled = true;
+                isSystemLocked = true;
+            } else {
+                pythBox.classList.remove('active');
+                selects.forEach(s => s.disabled = false);
+                document.getElementById('btn-fire').disabled = false;
+                isSystemLocked = false;
+            }
+
+            // Poblar Selects con distractores lógicos (fracciones usando los 3 números)
+            let nums = [currentTriangle.adj, currentTriangle.opp, currentTriangle.hyp];
+            let options = [];
+            for(let i=0; i<3; i++) {
+                for(let j=0; j<3; j++) {
+                    if(i !== j) options.push(`${nums[i]}/${nums[j]}`);
+                }
+            }
+            options = [...new Set(options)]; // Remove duplicates
+            options.sort(() => Math.random() - 0.5); // Shuffle
+
+            let optsHtml = '<option value="" disabled selected>--/--</option>';
+            options.forEach(o => optsHtml += `<option value="${o}">${o}</option>`);
+            
+            document.getElementById('sel-sin').innerHTML = optsHtml;
+            document.getElementById('sel-cos').innerHTML = optsHtml;
+            document.getElementById('sel-tan').innerHTML = optsHtml;
+
+            drawRadar();
+        }
+
+        function drawRadar() {
+            let svg = document.getElementById('radar-svg');
+            let rect = document.getElementById('radar-container').getBoundingClientRect();
+            
+            // Margins and scale
+            // Turret is at bottom-left corner of the grid area
+            let padX = rect.width * 0.1;
+            let padY = rect.height * 0.1;
+            
+            let tX = padX;
+            let tY = rect.height - padY; // Origen (0,0) visual
+
+            // Encontrar el maximo valor entre adj y opp para escalar
+            let maxVal = Math.max(currentTriangle.adj, currentTriangle.opp);
+            
+            // Available space
+            let availW = rect.width - padX*2 - 40;
+            let availH = rect.height - padY*2 - 40;
+            
+            let scale = Math.min(availW / currentTriangle.adj, availH / currentTriangle.opp);
+            
+            let eX = tX + (currentTriangle.adj * scale);
+            let eY = tY - (currentTriangle.opp * scale);
+
+            // Draw Triangle
+            let poly = document.getElementById('tri-poly');
+            // Points: Turret -> Enemy -> Base of enemy (Right angle)
+            poly.setAttribute('points', `${tX},${tY} ${eX},${eY} ${eX},${tY}`);
+
+            // Draw Arc for angle
+            let arcLen = 40;
+            let aX = tX + arcLen;
+            let aY = tY;
+            // Calculate intersection on hypotenuse
+            let angle = Math.atan2(currentTriangle.opp, currentTriangle.adj);
+            let hX = tX + arcLen * Math.cos(angle);
+            let hY = tY - arcLen * Math.sin(angle);
+            
+            let arc = document.getElementById('angle-arc');
+            arc.setAttribute('d', `M ${tX},${tY} L ${aX},${aY} A ${arcLen} ${arcLen} 0 0 0 ${hX} ${hY} Z`);
+            
+            let txt = document.getElementById('angle-text');
+            txt.setAttribute('x', tX + arcLen + 15);
+            txt.setAttribute('y', tY - 15);
+
+            // Set Laser pos
+            let laser = document.getElementById('laser-line');
+            laser.setAttribute('x1', tX); laser.setAttribute('y1', tY);
+            laser.setAttribute('x2', eX); laser.setAttribute('y2', eY);
+
+            // Move Entities
+            document.getElementById('turret').style.left = `${tX}px`;
+            document.getElementById('turret').style.top = `${tY}px`;
+            
+            document.getElementById('enemy').style.left = `${eX}px`;
+            document.getElementById('enemy').style.top = `${eY}px`;
+            
+            document.getElementById('explosion').style.left = `${eX}px`;
+            document.getElementById('explosion').style.top = `${eY}px`;
+
+            // Position Labels
+            updateLabels(tX, tY, eX, eY);
+        }
+
+        function updateLabels(tX, tY, eX, eY) {
+            let lAdj = document.getElementById('lbl-adj');
+            let lOpp = document.getElementById('lbl-opp');
+            let lHyp = document.getElementById('lbl-hyp');
+            
+            lAdj.style.left = `${tX + (eX - tX)/2}px`;
+            lAdj.style.top = `${tY + 20}px`;
+            
+            lOpp.style.left = `${eX + 40}px`;
+            lOpp.style.top = `${eY + (tY - eY)/2}px`;
+
+            lHyp.style.left = `${tX + (eX - tX)/2 - 30}px`;
+            lHyp.style.top = `${eY + (tY - eY)/2 - 30}px`;
+
+            // Set Text and Classes (Hide if needed)
+            lAdj.className = "side-label lbl-adj"; lOpp.className = "side-label lbl-opp"; lHyp.className = "side-label lbl-hyp";
+            
+            if (currentTriangle.hidden === 'adj') {
+                lAdj.innerText = "A = ?";
+                lAdj.classList.add('lbl-hidden');
+            } else { lAdj.innerText = `A = ${currentTriangle.adj}`; }
+
+            if (currentTriangle.hidden === 'opp') {
+                lOpp.innerText = "O = ?";
+                lOpp.classList.add('lbl-hidden');
+            } else { lOpp.innerText = `O = ${currentTriangle.opp}`; }
+
+            if (currentTriangle.hidden === 'hyp') {
+                lHyp.innerText = "H = ?";
+                lHyp.classList.add('lbl-hidden');
+            } else { lHyp.innerText = `H = ${currentTriangle.hyp}`; }
+        }
+
+        window.addEventListener('resize', () => { drawRadar(); });
+
+        function verifyPythagoras() {
+            if(!isSystemLocked) return;
+            
+            let input = parseInt(document.getElementById('pyth-input').value);
+            let correctVal = currentTriangle[currentTriangle.hidden];
+
+            if (input === correctVal) {
+                sfxSelect();
+                currentTriangle.hidden = null;
+                isSystemLocked = false;
+                
+                document.getElementById('pyth-box').classList.remove('active');
+                document.querySelectorAll('select').forEach(s => s.disabled = false);
+                document.getElementById('btn-fire').disabled = false;
+                
+                drawRadar(); // Update labels
+            } else {
+                sfxError();
+                document.getElementById('pyth-input').value = "";
+                document.getElementById('pyth-box').classList.add('shake-screen');
+                setTimeout(()=> document.getElementById('pyth-box').classList.remove('shake-screen'), 300);
+                
+                hp--;
+                mistakes++;
+                updateHearts();
+                checkDeath("Error de cálculo. El radar no pudo ser calibrado.");
+            }
+        }
+
+        function fireLaser() {
+            if (isSystemLocked) return;
+            
+            let sinV = document.getElementById('sel-sin').value;
+            let cosV = document.getElementById('sel-cos').value;
+            let tanV = document.getElementById('sel-tan').value;
+
+            if(!sinV || !cosV || !tanV) {
+                sfxError();
+                document.getElementById('trig-box').classList.add('shake-screen');
+                setTimeout(()=> document.getElementById('trig-box').classList.remove('shake-screen'), 300);
+                return;
+            }
+
+            // Valores correctos
+            let cSin = `${currentTriangle.opp}/${currentTriangle.hyp}`;
+            let cCos = `${currentTriangle.adj}/${currentTriangle.hyp}`;
+            let cTan = `${currentTriangle.opp}/${currentTriangle.adj}`;
+
+            if (sinV === cSin && cosV === cCos && tanV === cTan) {
+                // EXITO
+                sfxLaser();
+                document.getElementById('laser-line').style.opacity = '1';
+                
+                setTimeout(() => {
+                    sfxExplode();
+                    document.getElementById('enemy').style.opacity = '0';
+                    
+                    let expl = document.getElementById('explosion');
+                    expl.style.animation = 'none';
+                    void expl.offsetWidth; // trigger reflow
+                    expl.style.animation = 'explode 0.6s ease-out forwards';
+                    
+                    setTimeout(() => {
+                        showWinScreen();
+                    }, 1000);
+                }, 300);
+
+            } else {
+                // FALLO
+                sfxDamage();
+                document.getElementById('trig-box').classList.add('shake-screen');
+                document.body.classList.add('shake-screen');
+                setTimeout(()=> {
+                    document.getElementById('trig-box').classList.remove('shake-screen');
+                    document.body.classList.remove('shake-screen');
+                }, 300);
+
+                hp--;
+                mistakes++;
+                updateHearts();
+                
+                // Reset selects
+                document.getElementById('sel-sin').value = "";
+                document.getElementById('sel-cos').value = "";
+                document.getElementById('sel-tan').value = "";
+
+                checkDeath("¡Láser desviado! Recuerda: SOH (Sen=O/H), CAH (Cos=A/H), TOA (Tan=O/A).");
+            }
+        }
+
+        function updateHearts() {
+            for(let i=1; i<=3; i++) {
+                let h = document.getElementById(`h${i}`);
+                if(i <= hp) h.classList.remove('lost');
+                else h.classList.add('lost');
+            }
+        }
+
+        function checkDeath(msg) {
+            if (hp <= 0) {
+                document.getElementById('m-title').style.color = "var(--danger)";
+                document.getElementById('m-rank').style.display = "none";
+                showModal("BASE DESTRUIDA 💥", msg + "\n\nLa ciudad ha caído. Debes reiniciar el simulador.", () => {
+                    currentLevel = 1;
+                    hp = 3;
+                    updateHearts();
+                    generateLevel(); // Restart
+                }, "REINICIAR CURSO");
+            }
+        }
+
+        function showWinScreen() {
+            let rank = 'C';
+            let rankClass = 'rank-C';
+            let sfx = sfxRankLow;
+
+            if (mistakes === 0) { rank = 'S'; rankClass = 'rank-S'; sfx = sfxRankS; }
+            else if (mistakes === 1) { rank = 'A'; rankClass = 'rank-A'; sfx = sfxRankA; }
+            else if (mistakes === 2) { rank = 'B'; rankClass = 'rank-B'; sfx = sfxRankLow; }
+
+            sfx();
+            document.getElementById('enemy').style.opacity = '1'; // reset for next
+            
+            document.getElementById('m-title').style.color = "var(--highlight)";
+            document.getElementById('m-rank').style.display = "block";
+            document.getElementById('m-rank').innerText = rank;
+            document.getElementById('m-rank').className = `rank-display ${rankClass}`;
+            
+            document.getElementById('m-stats').innerText = `Errores cometidos: ${mistakes}`;
+
+            showModal("¡BLANCO DESTRUIDO! 🎯", "Has calculado las fracciones trigonométricas correctamente.", () => {
+                currentLevel++;
+                generateLevel();
+            }, "SIGUIENTE OLEADA");
+        }
+
+        let modalCallback = null;
+        function showModal(title, msg, callback = null, btnText = "CONTINUAR") { 
+            document.getElementById('m-title').innerText = title; 
+            document.getElementById('m-msg').innerText = msg; 
+            document.getElementById('m-btn').innerText = btnText;
+            document.getElementById('modal').classList.add('active'); 
+            modalCallback = callback; 
+        }
+        function closeModal() { 
+            sfxClick(); 
+            document.getElementById('modal').classList.remove('active'); 
+            if(modalCallback) { modalCallback(); modalCallback = null; } 
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Geo-Strike: Artillería Orbital 📐</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { 
+            --bg-color: #020617;
+            --panel-bg: rgba(15, 23, 42, 0.85);
+            --highlight: #0ea5e9;
+            --accent: #22d3ee;
+            --danger: #f43f5e;
+            --warning: #fbbf24;
+            --laser: #34d399;
+        }
+
+        body, html { 
+            font-family: 'Rajdhani', sans-serif; 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            margin: 0; padding: 0; width: 100vw; height: 100vh; 
+            color: #fff; background-color: var(--bg-color); 
+            overflow: hidden; box-sizing: border-box; user-select: none;
+        }
+
+        /* FONDO CYBER-CITY */
+        .decorations { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; background: linear-gradient(to bottom, #020617 0%, #1e1b4b 70%, #000 100%); }
+        .stars { position: absolute; inset: 0; background-image: radial-gradient(2px 2px at 20px 30px, #fff, rgba(0,0,0,0)), radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)), radial-gradient(2px 2px at 50px 160px, #fff, rgba(0,0,0,0)), radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0)); background-repeat: repeat; background-size: 200px 200px; animation: starScroll 20s linear infinite;}
+        
+        .cityscape { position: absolute; bottom: 0; left: 0; width: 100%; height: 150px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 150' preserveAspectRatio='none'%3E%3Cpath d='M0,150 L0,50 L50,50 L50,30 L100,30 L100,70 L150,70 L150,10 L200,10 L200,60 L250,60 L250,40 L350,40 L350,90 L400,90 L400,20 L480,20 L480,80 L550,80 L550,40 L600,40 L600,70 L700,70 L700,30 L750,30 L750,50 L850,50 L850,15 L920,15 L920,60 L1000,60 L1000,150 Z' fill='%230f172a' stroke='%230ea5e9' stroke-width='2'/%3E%3C/svg%3E") repeat-x; background-size: auto 100%; filter: drop-shadow(0 -5px 15px rgba(14,165,233,0.3)); z-index: 5;}
+
+        @keyframes starScroll { from { transform: translateY(0); } to { transform: translateY(200px); } }
+
+        .sound-toggle { position: absolute; top: 15px; right: 15px; background: rgba(15,23,42,0.8); border: 2px solid var(--highlight); border-radius: 8px; width: 45px; height: 45px; font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 1000; box-shadow: 0 0 15px rgba(14,165,233,0.3); transition: all 0.2s; color: var(--highlight);}
+        .sound-toggle:active { transform: scale(0.9); }
+
+        /* PANTALLA DE INSTRUCCIONES */
+        #instructions-screen { position: absolute; inset: 0; z-index: 600; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(2,6,23,0.95); backdrop-filter: blur(8px); }
+        .instructions-card { background: var(--panel-bg); padding: 40px; border-radius: 12px; border: 2px solid var(--highlight); max-width: 90%; width: 750px; display: flex; flex-direction: column; gap: 20px; box-shadow: 0 0 50px rgba(14,165,233,0.3); }
+        .instructions-card h1 { font-family: 'Share Tech Mono', monospace; font-size: 45px; color: var(--highlight); margin: 0; text-align: center; text-shadow: 0 0 15px rgba(14,165,233,0.5);}
+        .instruction-step { display: flex; gap: 15px; align-items: flex-start; font-size: 18px; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; border: 1px solid rgba(14,165,233,0.3);}
+        .instruction-icon { font-size: 30px; flex-shrink: 0; }
+        .instruction-text b { color: var(--accent); }
+        .instruction-text .warn { color: var(--warning); font-weight: bold;}
+        
+        .start-btn { background: var(--highlight); border: none; padding: 15px 40px; font-size: 22px; color: #000; border-radius: 6px; text-transform: uppercase; font-weight: bold; font-family: 'Share Tech Mono', monospace; cursor:pointer; transition: all 0.2s; align-self: center; box-shadow: 0 5px 0 #0284c7, 0 10px 20px rgba(14,165,233,0.4); letter-spacing: 2px; margin-top: 10px;}
+        .start-btn:active { transform: translateY(5px); box-shadow: 0 0 0 #0284c7; }
+
+        /* HEADER DEL JUEGO */
+        .game-header { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1200px; padding: 15px 2vw; z-index: 10; box-sizing: border-box;}
+        .title-display { font-family: 'Share Tech Mono', monospace; font-size: 26px; color: var(--highlight); text-shadow: 0 0 10px var(--highlight); letter-spacing: 1px;}
+        
+        .hud-stats { display: flex; gap: 15px; align-items: center;}
+        .score-box { background: var(--panel-bg); padding: 8px 20px; border-radius: 6px; border: 1px solid var(--accent); font-size: 22px; color: #fff; box-shadow: 0 0 15px rgba(34,211,238,0.3); font-family: 'Share Tech Mono', monospace;}
+        .score-box span { color: var(--accent); font-weight: bold;}
+        
+        .health-bar { display: flex; gap: 5px; align-items: center; background: var(--panel-bg); padding: 8px 20px; border-radius: 6px; border: 1px solid var(--danger); box-shadow: 0 0 15px rgba(244,63,94,0.3); font-family: 'Share Tech Mono', monospace;}
+        .heart { color: var(--danger); font-size: 22px; filter: drop-shadow(0 0 5px var(--danger)); transition: all 0.3s;}
+        .heart.lost { color: #334155; filter: none; transform: scale(0.8); opacity: 0.5;}
+
+        /* LAYOUT PRINCIPAL (ZONA DE ACCIÓN Y CONTROLES) */
+        .main-layout { display: flex; gap: 20px; width: 100%; max-width: 1200px; flex: 1; padding: 0 2vw 2vh 2vw; box-sizing: border-box; overflow: hidden;}
+        @media (max-width: 900px) { .main-layout { flex-direction: column; } }
+
+        /* =========================================================
+           CIELO / ZONA DE JUEGO (IZQUIERDA)
+           ========================================================= */
+        .game-canvas { flex: 1.5; background: rgba(2, 6, 23, 0.4); border: 2px solid var(--highlight); border-radius: 12px; position: relative; box-shadow: inset 0 0 50px rgba(0,0,0,0.8); overflow: hidden;}
+        
+        .turret { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 60px; height: 60px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M20,100 L40,40 L60,40 L80,100 Z' fill='%231e293b' stroke='%2334d399' stroke-width='4'/%3E%3Ccircle cx='50' cy='40' r='15' fill='%2334d399'/%3E%3C/svg%3E") no-repeat center; z-index: 10;}
+
+        /* ASTEROIDES (ENEMIGOS) */
+        .asteroid { position: absolute; width: 140px; height: 140px; transform: translate(-50%, -50%); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 8; transition: top 0.1s linear;}
+        
+        .a-svg-container { width: 100px; height: 100px; position: relative; display: flex; justify-content: center; align-items: center;}
+        .a-svg-container svg { width: 100%; height: 100%; overflow: visible;}
+        
+        .a-shape { fill: rgba(15,23,42,0.8); stroke: var(--highlight); stroke-width: 3; filter: drop-shadow(0 0 5px var(--highlight)); transition: all 0.2s;}
+        
+        /* Etiquetas del asteroide */
+        .a-task { position: absolute; top: -20px; font-family: 'Share Tech Mono', monospace; font-size: 14px; font-weight: bold; padding: 2px 8px; border-radius: 4px; background: var(--accent); color: #000; text-transform: uppercase; box-shadow: 0 0 10px var(--accent);}
+        .a-task.perim { background: var(--warning); box-shadow: 0 0 10px var(--warning);}
+        
+        .a-dims { font-family: 'Share Tech Mono', monospace; font-size: 14px; font-weight: bold; color: #fff; background: rgba(0,0,0,0.7); padding: 2px 6px; border-radius: 4px; border: 1px solid #334155; margin-top: 5px; text-shadow: 0 0 5px #000; white-space: nowrap;}
+
+        /* Estado Lock-On (Objetivo Actual) */
+        .asteroid.locked .a-shape { stroke: var(--danger); filter: drop-shadow(0 0 10px var(--danger)); stroke-width: 4;}
+        .asteroid.locked::before { content: ''; position: absolute; inset: -10px; border: 2px dashed var(--danger); border-radius: 50%; animation: spinLock 2s linear infinite; pointer-events: none;}
+        @keyframes spinLock { 100% { transform: rotate(360deg); } }
+
+        /* Efectos Visuales */
+        #laser-beam { position: absolute; bottom: 40px; left: 50%; transform-origin: bottom center; width: 6px; height: 0; background: var(--laser); box-shadow: 0 0 15px var(--laser), 0 0 30px var(--laser); z-index: 9; opacity: 0; pointer-events: none;}
+        
+        .explosion { position: absolute; font-size: 80px; transform: translate(-50%, -50%); z-index: 20; opacity: 0; pointer-events: none;}
+        @keyframes explode { 0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5); } 50% { transform: translate(-50%, -50%) scale(1.5); filter: brightness(2); } 100% { opacity: 0; transform: translate(-50%, -50%) scale(2); } }
+
+        /* =========================================================
+           CONSOLA DE DISPARO (DERECHA)
+           ========================================================= */
+        .console-panel { flex: 0.8; display: flex; flex-direction: column; gap: 15px;}
+        
+        .target-box { background: var(--panel-bg); border: 2px solid var(--danger); border-radius: 8px; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; box-shadow: inset 0 0 20px rgba(244,63,94,0.2); transition: all 0.2s;}
+        .task-status { font-family: 'Share Tech Mono', monospace; font-size: 16px; color: var(--danger); animation: pulseWarn 1s infinite alternate;}
+        @keyframes pulseWarn { 100% { opacity: 0.5; } }
+        
+        .t-shape-name { font-size: 24px; font-weight: bold; color: #fff; margin: 10px 0 5px 0;}
+        .t-formula { font-family: 'Share Tech Mono', monospace; font-size: 16px; color: var(--accent);}
+
+        /* Numpad Hacker */
+        .numpad-container { flex: 1; background: #0f172a; border: 2px solid #1e293b; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; gap: 15px;}
+        
+        .calc-display { background: #020617; border: 1px solid var(--highlight); border-radius: 6px; padding: 15px; font-family: 'Share Tech Mono', monospace; font-size: 40px; color: var(--highlight); text-align: right; min-height: 50px; box-shadow: inset 0 0 15px rgba(14,165,233,0.2); word-break: break-all; transition: all 0.1s;}
+        .calc-display.empty { color: #334155; }
+        .calc-display.error { border-color: var(--danger); color: var(--danger); background: rgba(244,63,94,0.1); animation: shake 0.3s;}
+
+        .numpad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; flex: 1;}
+        .num-btn { background: #1e293b; border: 1px solid #334155; color: #fff; font-family: 'Share Tech Mono', monospace; font-size: 28px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: all 0.1s; display: flex; justify-content: center; align-items: center; padding: 15px 0;}
+        .num-btn:hover { background: #334155; border-color: var(--highlight);}
+        .num-btn:active { transform: scale(0.95); background: var(--highlight); color: #000;}
+        
+        .btn-del { background: rgba(244,63,94,0.1); color: var(--danger); border-color: rgba(244,63,94,0.3); font-size: 20px;}
+        .btn-del:hover { background: rgba(244,63,94,0.3); border-color: var(--danger);}
+
+        .reactor-actions { margin-top: auto;}
+        .r-btn-verify { width: 100%; background: var(--laser); border: none; color: #000; padding: 20px; border-radius: 6px; cursor: pointer; font-family: 'Share Tech Mono', monospace; font-size: 26px; transition: all 0.2s; font-weight: bold; box-shadow: 0 6px 0 #059669; text-transform: uppercase; letter-spacing: 2px;}
+        .r-btn-verify:active { transform: translateY(6px); box-shadow: none;}
+
+        /* MODAL GAME OVER */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 1000; visibility: hidden; opacity: 0; transition: all 0.3s; backdrop-filter: blur(8px);}
+        .modal-overlay.active { visibility: visible; opacity: 1; }
+        .modal-box { background: var(--panel-bg); padding: 40px; border-radius: 12px; text-align: center; max-width: 85%; width: 450px; transform: scale(0.9); transition: transform 0.3s; border: 2px solid var(--danger); box-shadow: 0 0 50px rgba(244,63,94,0.3);}
+        .modal-overlay.active .modal-box { transform: scale(1); }
+        
+        .modal-title { font-family: 'Share Tech Mono', monospace; font-size: 40px; margin-top: 0; margin-bottom: 10px; color: var(--danger); text-shadow: 0 0 15px rgba(244,63,94,0.5);}
+        .modal-score { font-family: 'Share Tech Mono', monospace; font-size: 50px; color: #fff; font-weight: bold; margin: 20px 0;}
+        
+        .modal-btn { background: transparent; border: 2px solid var(--highlight); color: var(--highlight); padding: 15px 30px; font-size: 20px; border-radius: 6px; text-transform: uppercase; font-weight: bold; cursor:pointer; font-family: 'Share Tech Mono', monospace; transition: all 0.2s; width: 100%;}
+        .modal-btn:hover { background: var(--highlight); color: #000; box-shadow: 0 0 20px var(--highlight);}
+
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+        .shake-screen { animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both; }
+
+    </style>
+</head>
+<body>
+
+    <audio id="bgm" loop><source src="../assets/musicaFondo/cancion1.mp3" type="audio/mpeg"></audio>
+    <div class="decorations"><div class="stars"></div><div class="cityscape"></div></div>
+    <button id="soundToggle" class="sound-toggle" aria-label="Activar sonido">🔇</button>
+
+    <!-- INSTRUCCIONES -->
+    <div id="instructions-screen">
+        <div class="instructions-card">
+            <h1>GEO-STRIKE 🚀</h1>
+            <div class="instruction-step">
+                <span class="instruction-icon">☄️</span>
+                <span class="instruction-text"><b>ATAQUE ORBITAL:</b> Asteroides con escudos geométricos caen hacia la ciudad. Tienes que destruirlos antes de que impacten.</span>
+            </div>
+            <div class="instruction-step">
+                <span class="instruction-icon">📐</span>
+                <span class="instruction-text"><b>CALCULAR PARA DISPARAR:</b> El sistema fijará la mira en el asteroide más bajo. Observa si te pide <b style="color:var(--accent);">ÁREA</b> o <b style="color:var(--warning);">PERÍMETRO</b>, realiza el cálculo mentalmente y escribe la respuesta.</span>
+            </div>
+            <div class="instruction-step">
+                <span class="instruction-icon">⚡</span>
+                <span class="instruction-text"><b>FÓRMULAS BÁSICAS:</b>
+                <br>• <b>Cuadrado:</b> Área = L×L | Perímetro = 4×L
+                <br>• <b>Rectángulo:</b> Área = b×h | Perímetro = 2b+2h
+                <br>• <b>Triángulo:</b> Área = (b×h)/2</span>
+            </div>
+            <div class="instruction-step">
+                <span class="instruction-icon">⌨️</span>
+                <span class="instruction-text"><b>CONSEJO:</b> ¡Puedes usar el <b>teclado numérico de tu PC</b> y presionar <b>ENTER</b> para disparar más rápido!</span>
+            </div>
+            <button class="start-btn" onclick="startGame()">INICIAR DEFENSA</button>
+        </div>
+    </div>
+
+    <!-- JUEGO -->
+    <div class="game-header">
+        <div class="title-display">GEO-STRIKE [DEFENSA ACTIVA]</div>
+        <div class="hud-stats">
+            <div class="health-bar">
+                INTEGRIDAD: 
+                <span class="heart" id="h1">❤️</span>
+                <span class="heart" id="h2">❤️</span>
+                <span class="heart" id="h3">❤️</span>
+            </div>
+            <div class="score-box">PUNTOS: <span id="score-display">0</span></div>
+        </div>
+    </div>
+
+    <div class="main-layout">
+        
+        <!-- CANVAS DE JUEGO (IZQUIERDA) -->
+        <div class="game-canvas" id="canvas">
+            <div class="turret"></div>
+            <div id="laser-beam"></div>
+            <div id="enemies-layer"></div>
+        </div>
+
+        <!-- CONSOLA DE MANDO (DERECHA) -->
+        <div class="console-panel">
+            
+            <div class="target-box" id="target-ui">
+                <div class="task-status">» OBJETIVO FIJADO «</div>
+                <div class="t-shape-name" id="t-name">Buscando...</div>
+                <div class="t-formula" id="t-formula">--</div>
+            </div>
+
+            <div class="numpad-container">
+                <div class="calc-display empty" id="calc-display">_</div>
+                
+                <div class="numpad-grid">
+                    <button class="num-btn" onclick="inputNum('7')">7</button>
+                    <button class="num-btn" onclick="inputNum('8')">8</button>
+                    <button class="num-btn" onclick="inputNum('9')">9</button>
+                    
+                    <button class="num-btn" onclick="inputNum('4')">4</button>
+                    <button class="num-btn" onclick="inputNum('5')">5</button>
+                    <button class="num-btn" onclick="inputNum('6')">6</button>
+                    
+                    <button class="num-btn" onclick="inputNum('1')">1</button>
+                    <button class="num-btn" onclick="inputNum('2')">2</button>
+                    <button class="num-btn" onclick="inputNum('3')">3</button>
+                    
+                    <button class="num-btn btn-del" style="grid-column: span 2;" onclick="deleteNum()">BORRAR (DEL)</button>
+                    <button class="num-btn" onclick="inputNum('0')">0</button>
+                </div>
+            </div>
+            
+            <div class="reactor-actions">
+                <button class="r-btn-verify" id="btn-fire" onclick="fireLaser()">[ DISPARAR (ENTER) ]</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MODAL GAME OVER -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal-box">
+            <h2 class="modal-title">SISTEMA CAÍDO</h2>
+            <p style="color:#94a3b8; font-size:18px; margin:0;">Puntuación Final:</p>
+            <div class="modal-score" id="m-score">0</div>
+            <button class="modal-btn" onclick="resetGame()">NUEVA PARTIDA</button>
+        </div>
+    </div>
+
+    <script>
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx; let isMuted = true;
+        const bgAudio = document.getElementById('bgm');
+        const soundToggle = document.getElementById('soundToggle');
+
+        soundToggle.addEventListener('click', () => {
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            isMuted = !isMuted;
+            if(isMuted) { bgAudio.pause(); soundToggle.innerText = '🔇'; } 
+            else { bgAudio.volume = 0.25; bgAudio.play().catch(e=>e); soundToggle.innerText = '🔊'; }
+        });
+
+        function playTone(freq, type, duration, vol = 0.1) {
+            if (!audioCtx || isMuted) return;
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + duration);
+        }
+        function playNoise(duration, vol) {
+            if (!audioCtx || isMuted) return;
+            const bufferSize = audioCtx.sampleRate * duration; const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate); const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+            const noise = audioCtx.createBufferSource(); noise.buffer = buffer;
+            const gain = audioCtx.createGain(); gain.gain.setValueAtTime(vol, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            const filter = audioCtx.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 800;
+            noise.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination); noise.start();
+        }
+
+        function sfxClick() { playTone(900, 'square', 0.05, 0.05); }
+        function sfxInput() { playTone(1200, 'sine', 0.03, 0.05); }
+        function sfxDelete() { playTone(600, 'triangle', 0.05, 0.05); }
+        function sfxError() { playTone(200, 'sawtooth', 0.2, 0.2); }
+        function sfxDamage() { playNoise(0.6, 0.3); playTone(100, 'sawtooth', 0.6, 0.3); }
+        function sfxLaser() { playTone(1500, 'sawtooth', 0.1, 0.1); setTimeout(()=>playTone(1200, 'sawtooth', 0.2, 0.1), 50); }
+        function sfxExplode() { playNoise(0.4, 0.2); playTone(200, 'square', 0.3, 0.1); }
+        function sfxGameOver() { [300, 250, 200, 150].forEach((f, i) => setTimeout(() => playTone(f, 'sawtooth', 0.4, 0.2), i * 300)); }
+
+        // GENERADOR DE FORMAS
+        const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+        const SHAPES = [
+            {
+                id: 'square', name: "Cuadrado",
+                gen: () => {
+                    let l = rand(3, 12);
+                    let isArea = Math.random() > 0.5;
+                    return {
+                        taskType: isArea ? 'ÁREA' : 'PERÍMETRO',
+                        ans: isArea ? l*l : l*4,
+                        formulaHint: isArea ? "L × L" : "L × 4",
+                        dimsText: `L = ${l}`,
+                        svg: `<rect x="20" y="20" width="60" height="60" class="a-shape"/>`
+                    };
+                }
+            },
+            {
+                id: 'rect', name: "Rectángulo",
+                gen: () => {
+                    let b = rand(4, 12); let h = rand(2, 9);
+                    while(b===h) b = rand(4,12);
+                    let isArea = Math.random() > 0.5;
+                    return {
+                        taskType: isArea ? 'ÁREA' : 'PERÍMETRO',
+                        ans: isArea ? b*h : (2*b + 2*h),
+                        formulaHint: isArea ? "b × h" : "2b + 2h",
+                        dimsText: `b=${b} h=${h}`,
+                        svg: `<rect x="10" y="30" width="80" height="40" class="a-shape"/>`
+                    };
+                }
+            },
+            {
+                id: 'tri', name: "Triángulo",
+                gen: () => {
+                    let b = rand(4, 14) * 2; // always even base for easy division
+                    let h = rand(3, 10);
+                    // Only ask area for triangle in fast mode
+                    return {
+                        taskType: 'ÁREA',
+                        ans: (b*h)/2,
+                        formulaHint: "(b × h) / 2",
+                        dimsText: `b=${b} h=${h}`,
+                        svg: `<polygon points="10,80 90,80 50,20" class="a-shape"/>`
+                    };
+                }
+            }
+        ];
+
+        // VARIABLES DE JUEGO
+        let isPlaying = false;
+        let hp = 3;
+        let score = 0;
+        let currentInput = "";
+        let enemies = [];
+        let enemyIdCounter = 0;
+        
+        let spawnRate = 3500; // ms
+        let fallSpeed = 30; // pixels per second
+        let lastTime = 0;
+        let spawnTimer = 0;
+        let animationFrameId;
+
+        // Support for physical keyboard
+        document.addEventListener('keydown', (e) => {
+            if(!isPlaying) return;
+            if(e.key >= '0' && e.key <= '9') inputNum(e.key);
+            if(e.key === 'Backspace') deleteNum();
+            if(e.key === 'Enter') fireLaser();
+        });
+
+        function startGame() {
+            if (!audioCtx && !isMuted) { audioCtx = new AudioContext(); bgAudio.play().catch(e=>e); }
+            sfxClick();
+            document.getElementById('instructions-screen').style.display = 'none';
+            resetGame();
+        }
+
+        function resetGame() {
+            document.getElementById('modal').classList.remove('active');
+            
+            hp = 3;
+            score = 0;
+            spawnRate = 3500;
+            fallSpeed = 30;
+            enemies = [];
+            currentInput = "";
+            document.getElementById('enemies-layer').innerHTML = '';
+            
+            updateHearts();
+            updateScore();
+            updateDisplay();
+            updateTargetUI(null);
+
+            isPlaying = true;
+            lastTime = performance.now();
+            spawnTimer = 0;
+            
+            cancelAnimationFrame(animationFrameId);
+            gameLoop(lastTime);
+        }
+
+        function spawnEnemy() {
+            let shapeDef = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+            let data = shapeDef.gen();
+            
+            // Random X between 15% and 85%
+            let xPos = 15 + Math.random() * 70;
+            
+            let enemy = {
+                id: `e-${enemyIdCounter++}`,
+                name: shapeDef.name,
+                type: data.taskType,
+                ans: data.ans,
+                hint: data.formulaHint,
+                x: xPos,
+                y: -10, // starts above canvas (percentage)
+                el: null
+            };
+
+            // Create DOM element
+            let div = document.createElement('div');
+            div.className = 'asteroid';
+            div.id = enemy.id;
+            div.style.left = `${xPos}%`;
+            div.style.top = `${enemy.y}%`;
+            
+            let typeClass = data.taskType === 'ÁREA' ? '' : 'perim';
+            
+            div.innerHTML = `
+                <div class="a-task ${typeClass}">${data.taskType}</div>
+                <div class="a-svg-container"><svg viewBox="0 0 100 100">${data.svg}</svg></div>
+                <div class="a-dims">${data.dimsText}</div>
+            `;
+            
+            document.getElementById('enemies-layer').appendChild(div);
+            enemy.el = div;
+            
+            enemies.push(enemy);
+            updateLockOn();
+        }
+
+        function gameLoop(timestamp) {
+            if(!isPlaying) return;
+            
+            let dt = (timestamp - lastTime) / 1000; // seconds
+            lastTime = timestamp;
+
+            // Spawn Logic
+            spawnTimer += dt * 1000;
+            if (spawnTimer >= spawnRate) {
+                spawnEnemy();
+                spawnTimer = 0;
+            }
+
+            // Move Logic
+            // Convert px/s to percentage/s roughly (assuming canvas height ~ 600px)
+            let canvasH = document.getElementById('canvas').clientHeight || 600;
+            let percentSpeed = (fallSpeed / canvasH) * 100;
+
+            for (let i = enemies.length - 1; i >= 0; i--) {
+                let e = enemies[i];
+                e.y += percentSpeed * dt;
+                e.el.style.top = `${e.y}%`;
+
+                // Check impact (bottom is 100%)
+                if (e.y > 95) {
+                    takeDamage();
+                    e.el.remove();
+                    enemies.splice(i, 1);
+                    updateLockOn();
+                }
+            }
+
+            animationFrameId = requestAnimationFrame(gameLoop);
+        }
+
+        function updateLockOn() {
+            // Remove lock from all
+            enemies.forEach(e => e.el.classList.remove('locked'));
+            
+            if (enemies.length === 0) {
+                updateTargetUI(null);
+                return;
+            }
+            
+            // Find lowest enemy (max Y)
+            let target = enemies.reduce((prev, curr) => (prev.y > curr.y) ? prev : curr);
+            target.el.classList.add('locked');
+            
+            updateTargetUI(target);
+        }
+
+        function updateTargetUI(target) {
+            let box = document.getElementById('target-ui');
+            let nameEl = document.getElementById('t-name');
+            let formEl = document.getElementById('t-formula');
+
+            if (!target) {
+                box.style.borderColor = "#334155";
+                box.style.boxShadow = "none";
+                nameEl.innerText = "Escaneando Radar...";
+                nameEl.style.color = "#64748b";
+                formEl.innerText = "--";
+            } else {
+                let isArea = target.type === 'ÁREA';
+                let color = isArea ? 'var(--accent)' : 'var(--warning)';
+                
+                box.style.borderColor = color;
+                box.style.boxShadow = `inset 0 0 20px ${isArea ? 'rgba(34,211,238,0.2)' : 'rgba(251,191,36,0.2)'}`;
+                
+                nameEl.innerText = `${target.type} del ${target.name}`;
+                nameEl.style.color = "#fff";
+                
+                formEl.innerText = `Fórmula: ${target.hint}`;
+                formEl.style.color = color;
+            }
+        }
+
+        // --- INPUTS ---
+        function inputNum(char) {
+            if(!isPlaying) return;
+            if(currentInput.length >= 4) return;
+            sfxInput();
+            currentInput += char;
+            updateDisplay();
+        }
+
+        function deleteNum() {
+            if(!isPlaying || currentInput.length === 0) return;
+            sfxDelete();
+            currentInput = currentInput.slice(0, -1);
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            let d = document.getElementById('calc-display');
+            if (currentInput === "") {
+                d.innerText = "_";
+                d.classList.add('empty');
+            } else {
+                d.innerText = currentInput;
+                d.classList.remove('empty');
+            }
+        }
+
+        function updateHearts() {
+            for(let i=1; i<=3; i++) {
+                let h = document.getElementById(`h${i}`);
+                if(i <= hp) h.classList.remove('lost');
+                else h.classList.add('lost');
+            }
+        }
+
+        function updateScore() {
+            document.getElementById('score-display').innerText = score;
+        }
+
+        // --- COMBAT LOGIC ---
+        function fireLaser() {
+            if(!isPlaying || enemies.length === 0) return;
+            
+            if (currentInput === "") {
+                triggerError(); return;
+            }
+
+            let playerAns = parseInt(currentInput);
+            let targetIndex = -1;
+            let target = enemies.reduce((prev, curr, idx) => {
+                if (curr.y > prev.y) { targetIndex = idx; return curr; }
+                return prev;
+            }, Object.assign(enemies[0], {targetIndex: 0})); 
+            // the reduce above doesn't correctly track index if 0 is max. Manual loop is better:
+            
+            let maxIdx = 0;
+            for(let i=1; i<enemies.length; i++){
+                if(enemies[i].y > enemies[maxIdx].y) maxIdx = i;
+            }
+            target = enemies[maxIdx];
+
+            if (playerAns === target.ans) {
+                // EXITO
+                sfxLaser();
+                
+                // Visual Laser
+                let laser = document.getElementById('laser-beam');
+                let rectCanvas = document.getElementById('canvas').getBoundingClientRect();
+                
+                // Tricky math for laser rotation from bottom center to target
+                let tX = target.x; // percentage
+                let tY = target.y; // percentage
+                
+                let startPxX = rectCanvas.width / 2;
+                let startPxY = rectCanvas.height;
+                let targetPxX = (tX / 100) * rectCanvas.width;
+                let targetPxY = (tY / 100) * rectCanvas.height;
+                
+                let dx = targetPxX - startPxX;
+                let dy = targetPxY - startPxY; // negative usually
+                let length = Math.sqrt(dx*dx + dy*dy);
+                let angle = Math.atan2(dy, dx) * 180 / Math.PI;
+
+                laser.style.height = `${length}px`;
+                laser.style.transform = `rotate(${angle + 90}deg)`; // +90 because element is vertical
+                laser.style.opacity = '1';
+                
+                // Explosion
+                setTimeout(() => {
+                    laser.style.opacity = '0';
+                    sfxExplode();
+                    
+                    let expl = document.createElement('div');
+                    expl.className = 'explosion';
+                    expl.innerText = '💥';
+                    expl.style.left = `${target.x}%`;
+                    expl.style.top = `${target.y}%`;
+                    expl.style.animation = 'explode 0.6s ease-out forwards';
+                    document.getElementById('canvas').appendChild(expl);
+                    setTimeout(()=>expl.remove(), 600);
+                    
+                    // Remove enemy
+                    target.el.remove();
+                    enemies.splice(maxIdx, 1);
+                    
+                    // Progress Game
+                    score += 100;
+                    updateScore();
+                    
+                    // Difficulty Curve
+                    if(score % 500 === 0) {
+                        fallSpeed += 5;
+                        spawnRate = Math.max(1000, spawnRate - 300);
+                    }
+
+                    currentInput = "";
+                    updateDisplay();
+                    updateLockOn();
+
+                }, 100);
+
+            } else {
+                // FALLO - Respuesa incorrecta
+                triggerError();
+            }
+        }
+
+        function triggerError() {
+            sfxError();
+            let d = document.getElementById('calc-display');
+            d.classList.add('error');
+            setTimeout(()=> d.classList.remove('error'), 300);
+            
+            currentInput = "";
+            updateDisplay();
+        }
+
+        function takeDamage() {
+            sfxDamage();
+            hp--;
+            updateHearts();
+            
+            document.getElementById('canvas').classList.add('shake-screen');
+            setTimeout(()=> document.getElementById('canvas').classList.remove('shake-screen'), 300);
+
+            if (hp <= 0) {
+                isPlaying = false;
+                sfxGameOver();
+                document.getElementById('m-score').innerText = score;
+                document.getElementById('modal').classList.add('active');
+            }
+        }
+
+    </script>
+</body>
+</html>

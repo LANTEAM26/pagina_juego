@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Genoma-X: Secuenciación Avanzada 🧬</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { 
+            --bg-color: #020a05;
+            --panel-bg: rgba(6, 20, 12, 0.95);
+            --border-main: #10b981;
+            --highlight: #34d399;
+            --accent: #0ea5e9;
+            --danger: #ef4444;
+            --warning: #fbbf24;
+            --text-main: #f8fafc;
+            
+            --rank-s: #fbbf24;
+            --rank-a: #34d399;
+            --rank-b: #3b82f6;
+            --rank-c: #ef4444;
+        }
+
+        body, html { 
+            font-family: 'Rajdhani', sans-serif; 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            margin: 0; padding: 0; width: 100vw; height: 100vh; 
+            color: var(--text-main); background-color: var(--bg-color); 
+            overflow: hidden; box-sizing: border-box; user-select: none;
+        }
+
+        /* FONDO BIO-CYBER */
+        .decorations { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; background: radial-gradient(circle at center, #022c22 0%, #020a05 100%); }
+        .dna-bg { position: absolute; inset: -50%; background-image: 
+            linear-gradient(rgba(16, 185, 129, 0.05) 2px, transparent 2px),
+            linear-gradient(90deg, rgba(16, 185, 129, 0.05) 2px, transparent 2px);
+            background-size: 60px 60px; transform: perspective(800px) rotateX(60deg) translateY(-100px); animation: gridScroll 15s linear infinite; }
+        
+        @keyframes gridScroll { from { transform: perspective(800px) rotateX(60deg) translateY(0); } to { transform: perspective(800px) rotateX(60deg) translateY(60px); } }
+
+        .sound-toggle { position: absolute; top: 15px; right: 15px; background: rgba(6, 20, 12, 0.8); border: 2px solid var(--highlight); border-radius: 8px; width: 45px; height: 45px; font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 1000; box-shadow: 0 0 15px rgba(52,211,153,0.3); transition: all 0.2s; color: var(--highlight);}
+        .sound-toggle:active { transform: scale(0.9); }
+
+        /* PANTALLA DE INSTRUCCIONES */
+        #instructions-screen { position: absolute; inset: 0; z-index: 600; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(2,10,5,0.95); backdrop-filter: blur(8px); }
+        .instructions-card { background: var(--panel-bg); padding: 40px; border-radius: 12px; border: 2px solid var(--highlight); max-width: 90%; width: 800px; display: flex; flex-direction: column; gap: 20px; box-shadow: 0 0 50px rgba(52,211,153,0.3); }
+        .instructions-card h1 { font-family: 'Share Tech Mono', monospace; font-size: 40px; color: var(--highlight); margin: 0; text-align: center; text-shadow: 0 0 15px rgba(52,211,153,0.5);}
+        .instruction-step { display: flex; gap: 15px; align-items: flex-start; font-size: 18px; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; border: 1px solid rgba(52,211,153,0.3);}
+        .instruction-icon { font-size: 30px; flex-shrink: 0; }
+        .instruction-text b { color: var(--accent); }
+        .instruction-text .warn { color: var(--danger); font-weight: bold;}
+        
+        .start-btn { background: var(--highlight); border: none; padding: 15px 40px; font-size: 22px; color: #000; border-radius: 6px; text-transform: uppercase; font-weight: bold; font-family: 'Share Tech Mono', monospace; cursor:pointer; transition: all 0.2s; align-self: center; box-shadow: 0 5px 0 #059669, 0 10px 20px rgba(52,211,153,0.4); letter-spacing: 2px;}
+        .start-btn:active { transform: translateY(5px); box-shadow: 0 0 0 #059669; }
+
+        /* HEADER DEL JUEGO */
+        .game-header { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1200px; padding: 15px 2vw; z-index: 10; box-sizing: border-box;}
+        .title-display { font-family: 'Share Tech Mono', monospace; font-size: 26px; color: var(--highlight); text-shadow: 0 0 10px var(--highlight); letter-spacing: 1px;}
+        .hud-stats { display: flex; gap: 20px;}
+        .hud-box { background: var(--panel-bg); padding: 8px 20px; border-radius: 6px; border: 1px solid var(--accent); font-size: 20px; color: #fff; box-shadow: 0 0 15px rgba(14,165,233,0.3); font-family: 'Share Tech Mono', monospace;}
+        .hud-box span { color: var(--accent); font-weight: bold;}
+        
+        .health-bar { display: flex; gap: 5px; align-items: center; background: var(--panel-bg); padding: 8px 20px; border-radius: 6px; border: 1px solid var(--danger); box-shadow: 0 0 15px rgba(239,68,68,0.3); font-family: 'Share Tech Mono', monospace;}
+        .heart { color: var(--danger); font-size: 24px; filter: drop-shadow(0 0 5px var(--danger)); transition: all 0.3s;}
+        .heart.lost { color: #1e293b; filter: none; transform: scale(0.8);}
+
+        /* LAYOUT PRINCIPAL */
+        .main-layout { display: flex; gap: 20px; width: 100%; max-width: 1200px; flex: 1; padding: 0 2vw 2vh 2vw; box-sizing: border-box;}
+        @media (max-width: 1000px) { .main-layout { flex-direction: column; overflow-y: auto; } }
+
+        /* =========================================================
+           PANEL DE INFORMACIÓN (IZQUIERDA)
+           ========================================================= */
+        .info-panel { flex: 0.45; background: var(--panel-bg); border: 2px solid #064e3b; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 15px; box-shadow: inset 0 0 30px rgba(0,0,0,0.8); overflow-y: auto;}
+        
+        .target-box { background: rgba(52,211,153,0.05); border: 1px solid var(--highlight); padding: 20px; border-radius: 8px; position: relative; box-shadow: inset 0 0 20px rgba(52,211,153,0.1);}
+        .target-label { font-family: 'Share Tech Mono', monospace; font-size: 14px; color: var(--highlight); text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px;}
+        .target-name { font-size: 24px; font-weight: bold; color: #fff; margin: 0 0 10px 0; line-height: 1.2; text-shadow: 0 0 5px var(--highlight);}
+        .target-desc { font-size: 15px; color: #94a3b8; margin-bottom: 15px; font-style: italic;}
+        
+        .pheno-list { display: flex; flex-direction: column; gap: 8px; background: #022c22; padding: 15px; border-radius: 6px; border: 1px solid #065f46;}
+        .pheno-item { display: flex; justify-content: space-between; align-items: center; font-size: 16px;}
+        .pheno-title { color: #cbd5e1; font-family: 'Share Tech Mono', monospace;}
+        .pheno-val { color: var(--accent); font-weight: bold;}
+        .diff-badge { position: absolute; top: -10px; right: -10px; background: var(--danger); color: #fff; font-family: 'Share Tech Mono', monospace; padding: 4px 10px; border-radius: 4px; font-size: 12px; box-shadow: 0 0 10px var(--danger);}
+
+        .rules-box { flex: 1; background: #022c22; border: 1px solid #065f46; border-radius: 8px; padding: 15px;}
+        .rules-title { font-family: 'Share Tech Mono', monospace; font-size: 15px; color: var(--highlight); border-bottom: 1px dashed #065f46; padding-bottom: 5px; margin-bottom: 10px;}
+        
+        .gene-dictionary { display: flex; flex-direction: column; gap: 10px;}
+        .gene-entry { background: #064e3b; padding: 10px; border-radius: 6px; font-size: 15px; border-left: 4px solid var(--highlight);}
+        .gene-trait-name { font-weight: bold; color: #fff; margin-bottom: 5px; display: block;}
+        .gene-alleles { display: flex; flex-direction: column; gap: 4px;}
+        .gene-alelo { display: flex; justify-content: space-between;}
+        .gene-alelo span.allele-char { font-family: 'Share Tech Mono', monospace; font-weight: bold; font-size: 18px; color: var(--highlight);}
+        .gene-alelo span.allele-desc { color: #cbd5e1; }
+
+        /* =========================================================
+           ÁREA DE SÍNTESIS (CUADRO DE PUNNETT 4x4 - DERECHA)
+           ========================================================= */
+        .synthesis-area { flex: 1; background: #021008; border: 2px solid var(--border-main); border-radius: 12px; position: relative; box-shadow: 0 0 30px rgba(16,185,129,0.1), inset 0 0 50px #000; display: flex; flex-direction: column; padding: 20px;}
+        
+        .punnett-container { flex: 1; display: flex; justify-content: center; align-items: center; overflow-y: auto;}
+
+        /* Cuadro de Punnett Estilos */
+        .punnett-wrapper { background: rgba(6,78,59,0.3); border: 2px solid #065f46; border-radius: 12px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: flex; flex-direction: column; align-items: center; gap: 15px;}
+        .punnett-title { font-family: 'Share Tech Mono', monospace; font-size: 18px; color: var(--highlight); text-transform: uppercase;}
+        
+        .punnett-grid { display: grid; grid-template-columns: 50px repeat(4, 75px); grid-template-rows: 50px repeat(4, 75px); gap: 4px; }
+        
+        /* Headers del Grid */
+        .p-head { display: flex; justify-content: center; align-items: center; font-family: 'Share Tech Mono', monospace; font-size: 20px; font-weight: bold; color: var(--accent); background: rgba(14,165,233,0.1); border-radius: 6px;}
+        .p-head.empty { background: transparent; }
+        .p-head.top { border-bottom: 2px solid var(--accent); }
+        .p-head.left { border-right: 2px solid var(--accent); }
+
+        /* Celdas interactivas (Probabilidades) */
+        .p-cell { background: #064e3b; border: 2px solid #047857; border-radius: 6px; display: flex; justify-content: center; align-items: center; font-family: 'Share Tech Mono', monospace; font-size: 22px; font-weight: bold; color: #fff; cursor: pointer; transition: all 0.2s; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); position: relative; overflow: hidden;}
+        
+        .p-cell:hover { background: #047857; transform: scale(1.05); z-index: 10; border-color: var(--highlight);}
+        .p-cell.selected { background: rgba(52,211,153,0.25); border-color: var(--highlight); box-shadow: 0 0 15px var(--highlight), inset 0 0 15px rgba(52,211,153,0.4); transform: scale(1.05); z-index: 10;}
+        .p-cell.selected::after { content: '✓'; position: absolute; top: 2px; right: 4px; font-size: 14px; color: var(--highlight);}
+
+        .p-cell.error-show { background: rgba(239,68,68,0.3); border-color: var(--danger); animation: shakeCell 0.4s; }
+        @keyframes shakeCell { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+
+        /* Botones de acción */
+        .reactor-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 20px;}
+        .timer-display { font-family: 'Share Tech Mono', monospace; font-size: 24px; color: #94a3b8; display: flex; align-items: center; gap: 10px;}
+        .timer-display span { color: var(--warning); }
+        
+        .r-btn-verify { background: var(--highlight); border: none; color: #000; padding: 15px 30px; border-radius: 6px; cursor: pointer; font-family: 'Share Tech Mono', monospace; font-size: 20px; transition: all 0.2s; font-weight: bold; box-shadow: 0 5px 0 #059669; text-transform: uppercase; letter-spacing: 1px;}
+        .r-btn-verify:active { transform: translateY(5px); box-shadow: none;}
+        .r-btn-verify:disabled { background: #334155; color: #94a3b8; box-shadow: none; cursor: not-allowed;}
+
+        /* ANIMACIÓN DE INCUBACIÓN */
+        .incubation-overlay { position: absolute; inset: 0; background: rgba(2,10,5,0.95); z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; visibility: hidden; opacity: 0; transition: opacity 0.3s;}
+        .incubation-overlay.active { visibility: visible; opacity: 1;}
+        .dna-loader { font-size: 80px; animation: spin 2s linear infinite, glow 1s ease-in-out infinite alternate; filter: drop-shadow(0 0 20px var(--highlight)); margin-bottom: 20px;}
+        .loader-text { font-family: 'Share Tech Mono', monospace; font-size: 24px; color: var(--highlight); text-transform: uppercase; letter-spacing: 4px; animation: pulse 1s infinite;}
+        
+        @keyframes spin { 100% { transform: rotateY(360deg); } }
+        @keyframes glow { 0% { filter: drop-shadow(0 0 10px var(--highlight)); } 100% { filter: drop-shadow(0 0 40px var(--highlight)); } }
+        @keyframes pulse { 50% { opacity: 0.5; } }
+
+        /* MODAL RANGO */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 1000; visibility: hidden; opacity: 0; transition: all 0.3s; backdrop-filter: blur(8px);}
+        .modal-overlay.active { visibility: visible; opacity: 1; }
+        .modal-box { background: var(--panel-bg); padding: 40px; border-radius: 12px; text-align: center; max-width: 85%; width: 500px; transform: scale(0.9); transition: transform 0.3s; border: 2px solid var(--highlight); box-shadow: 0 0 50px rgba(52,211,153,0.3);}
+        .modal-overlay.active .modal-box { transform: scale(1); }
+        
+        .rank-display { font-family: 'Share Tech Mono', monospace; font-size: 80px; font-weight: bold; margin: 10px 0; text-shadow: 0 0 20px currentColor;}
+        .rank-S { color: var(--rank-s); }
+        .rank-A { color: var(--rank-a); }
+        .rank-B { color: var(--rank-b); }
+        .rank-C { color: var(--rank-c); }
+
+        .modal-title { font-family: 'Share Tech Mono', monospace; font-size: 32px; margin-top: 0; margin-bottom: 10px; color: var(--highlight);}
+        .modal-msg { font-size: 18px; margin-bottom: 10px; color: #e2e8f0; white-space: pre-line; line-height: 1.5;}
+        .modal-stats { font-family: 'Share Tech Mono', monospace; color: #94a3b8; font-size: 16px; margin-bottom: 25px;}
+        
+        .modal-btn { background: transparent; border: 2px solid var(--highlight); color: var(--highlight); padding: 12px 30px; font-size: 18px; border-radius: 6px; text-transform: uppercase; font-weight: bold; cursor:pointer; font-family: 'Share Tech Mono', monospace; transition: all 0.2s;}
+        .modal-btn:hover { background: var(--highlight); color: #000; box-shadow: 0 0 20px var(--highlight);}
+
+    </style>
+</head>
+<body>
+
+    <audio id="bgm" loop><source src="../assets/musicaFondo/cancion1.mp3" type="audio/mpeg"></audio>
+    <div class="decorations"><div class="dna-bg"></div></div>
+    <button id="soundToggle" class="sound-toggle" aria-label="Activar sonido">🔇</button>
+
+    <!-- INSTRUCCIONES -->
+    <div id="instructions-screen">
+        <div class="instructions-card">
+            <h1>LABORATORIO DE ESPECIES 🧬</h1>
+            <div class="instruction-step">
+                <span class="instruction-icon">🔬</span>
+                <span class="instruction-text"><b>NIVEL PREUNIVERSITARIO:</b> Te enfrentarás a herencia ligada al sexo, epistasis y cruces dihíbridos (cuadros de 16 espacios).</span>
+            </div>
+            <div class="instruction-step">
+                <span class="instruction-icon">📊</span>
+                <span class="instruction-text"><b>SELECCIÓN MÚLTIPLE:</b> Lee el Fenotipo Objetivo. Debes marcar <b>TODAS las probabilidades</b> (cuadrantes) que manifiesten ese rasgo. Si marcas una incorrecta o te falta una, la muestra se contamina.</span>
+            </div>
+            <div class="instruction-step">
+                <span class="instruction-icon">⚠️</span>
+                <span class="instruction-text"><b>PELIGROS DEL GENOMA:</b>
+                <br>• Tienes <b>3 Intentos (❤️)</b>.
+                <br>• El tiempo afecta tu <b>Rango (S, A, B, C)</b>.
+                <br>• ¡Lee atentamente el diccionario genético para descubrir genes inhibidores o dominancias incompletas!</span>
+            </div>
+            <button class="start-btn" onclick="startGame()">INICIAR SINTETIZADOR 4x4</button>
+        </div>
+    </div>
+
+    <!-- JUEGO -->
+    <div class="game-header">
+        <div class="title-display">GENOMA-X [SEC_AVANZADA]</div>
+        <div class="hud-stats">
+            <div class="health-bar">
+                INTEGRIDAD: 
+                <span class="heart" id="h1">❤️</span>
+                <span class="heart" id="h2">❤️</span>
+                <span class="heart" id="h3">❤️</span>
+            </div>
+            <div class="hud-box">MISIÓN: <span id="level-display">0/0</span></div>
+        </div>
+    </div>
+
+    <div class="main-layout">
+        
+        <!-- PANEL DE INFORMACIÓN -->
+        <div class="info-panel">
+            <div class="target-box">
+                <div class="diff-badge">MODO EXPERTO</div>
+                <div class="target-label">Requisito del Entorno</div>
+                <h2 class="target-name" id="t-name">Cargando...</h2>
+                <div class="target-desc" id="t-desc">--</div>
+                <div class="pheno-list" id="t-phenos"></div>
+            </div>
+
+            <div class="rules-box">
+                <div class="rules-title">// DICCIONARIO GENÉTICO</div>
+                <div class="gene-dictionary" id="gene-dict"></div>
+            </div>
+        </div>
+
+        <!-- ÁREA DE SÍNTESIS -->
+        <div class="synthesis-area">
+            
+            <div class="incubation-overlay" id="incubator">
+                <div class="dna-loader">🧬</div>
+                <div class="loader-text">Procesando Cuadrantes...</div>
+            </div>
+
+            <div class="punnett-container" id="punnett-area"></div>
+            
+            <div class="reactor-actions">
+                <div class="timer-display">TIEMPO: <span id="timer-val">00:00</span></div>
+                <button class="r-btn-verify" id="btn-verify" onclick="verifySynthesis()">ESTABILIZAR MUESTRA ➔</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL RANGO -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal-box">
+            <h2 class="modal-title" id="m-title">Título</h2>
+            <div class="rank-display" id="m-rank">S</div>
+            <p class="modal-msg" id="m-msg">Mensaje</p>
+            <div class="modal-stats" id="m-stats">Tiempo: 12s | Errores: 0</div>
+            <button class="modal-btn" id="m-btn" onclick="closeModal()">SIGUIENTE MUESTRA</button>
+        </div>
+    </div>
+
+    <script>
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx; let isMuted = true;
+        const bgAudio = document.getElementById('bgm');
+        const soundToggle = document.getElementById('soundToggle');
+
+        soundToggle.addEventListener('click', () => {
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            isMuted = !isMuted;
+            if(isMuted) { bgAudio.pause(); soundToggle.innerText = '🔇'; } 
+            else { bgAudio.volume = 0.25; bgAudio.play().catch(e=>e); soundToggle.innerText = '🔊'; }
+        });
+
+        function playTone(freq, type, duration, vol = 0.1) {
+            if (!audioCtx || isMuted) return;
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + duration);
+        }
+
+        function sfxClick() { playTone(800, 'sine', 0.05, 0.05); }
+        function sfxSelect() { playTone(1200, 'square', 0.1, 0.05); }
+        function sfxDeselect() { playTone(1000, 'square', 0.1, 0.05); }
+        function sfxDamage() { playTone(150, 'sawtooth', 0.4, 0.2); setTimeout(()=>playTone(100, 'sawtooth', 0.4, 0.2), 100); }
+        function sfxIncubate() { playTone(400, 'sine', 1.5, 0.1); playTone(600, 'sine', 1.5, 0.1); }
+        function sfxRankS() { [523.25, 659.25, 783.99, 1046.50, 1318.51].forEach((f, i) => setTimeout(() => playTone(f, 'square', 0.15, 0.1), i * 100)); }
+        function sfxRankA() { [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => setTimeout(() => playTone(f, 'square', 0.15, 0.1), i * 150)); }
+        function sfxRankLow() { [400, 300].forEach((f, i) => setTimeout(() => playTone(f, 'square', 0.3, 0.1), i * 300)); }
+
+        /* MOTORES PROCEDURALES Y TEMPLATES */
+        const SCENARIOS = [
+            {
+                type: "Dihíbrido Mendeliano",
+                name: "Toxina Nocturna",
+                desc: "Necesitamos un espécimen que combine dos rasgos clave para sobrevivir a los depredadores nocturnos.",
+                genes: [
+                    { dom: 'V', rec: 'v', domDesc: 'Visión Infrarroja (V)', recDesc: 'Visión Normal (v)' },
+                    { dom: 'T', rec: 't', domDesc: 'Sangre Tóxica (T)', recDesc: 'Sangre Pura (t)' }
+                ],
+                evalPheno: function(g1, g2) {
+                    let p1 = g1.includes('V') ? "Visión Infrarroja" : "Visión Normal";
+                    let p2 = g2.includes('T') ? "Sangre Tóxica" : "Sangre Pura";
+                    return `${p1} y ${p2}`;
+                }
+            },
+            {
+                type: "Epistasis Recesiva",
+                name: "Camuflaje Albino",
+                desc: "El gen inhibidor (e) en homocigosis recesiva bloquea la producción de cualquier pigmento, sin importar el otro gen.",
+                genes: [
+                    { dom: 'E', rec: 'e', domDesc: 'Produce Pigmento (E)', recDesc: 'Inhibido/Albino (e)' },
+                    { dom: 'N', rec: 'n', domDesc: 'Pigmento Negro (N)', recDesc: 'Pigmento Marrón (n)' }
+                ],
+                evalPheno: function(g1, g2) {
+                    if(g1.filter(a => a === 'e').length === 2) return "Albino (Epistasis)";
+                    return g2.includes('N') ? "Color Negro" : "Color Marrón";
+                }
+            },
+            {
+                type: "Sistema Sanguíneo ABO",
+                name: "Donante Universal",
+                desc: "Sintetiza un espécimen capaz de donar sangre a cualquier tribu (Grupo O) con factor Rh negativo.",
+                genes: [
+                    { dom: 'I<sup>A</sup>, I<sup>B</sup>', rec: 'i', domDesc: 'Antígenos A/B (Codominantes)', recDesc: 'Sin Antígenos (Grupo O)' },
+                    { dom: 'R', rec: 'r', domDesc: 'Rh Positivo (R)', recDesc: 'Rh Negativo (r)' }
+                ],
+                evalPheno: function(g1, g2) {
+                    let blood = "Grupo O";
+                    if(g1.includes('IA') && g1.includes('IB')) blood = "Grupo AB";
+                    else if(g1.includes('IA')) blood = "Grupo A";
+                    else if(g1.includes('IB')) blood = "Grupo B";
+
+                    let rh = g2.includes('R') ? "Rh+" : "Rh-";
+                    return `${blood} ${rh}`;
+                },
+                // Custom gamete mapping for display
+                gameteMap: { 'IA': 'I<sup>A</sup>', 'IB': 'I<sup>B</sup>', 'i': 'i', 'R': 'R', 'r': 'r' },
+                customGenotypesL1: [['IA','i'], ['IB','i'], ['IA','IB'], ['i','i']] // Force specific parent combos
+            }
+        ];
+
+        let currentLevel = 0;
+        let totalLevels = 5;
+        let activeScenario = null;
+        let gridData = []; // Store cell data to verify
+        
+        let hp = 3;
+        let mistakes = 0;
+        
+        let timerInterval;
+        let secondsElapsed = 0;
+
+        function startGame() {
+            if (!audioCtx && !isMuted) { audioCtx = new AudioContext(); bgAudio.play().catch(e=>e); }
+            sfxClick();
+            document.getElementById('instructions-screen').style.display = 'none';
+            currentLevel = 1;
+            hp = 3;
+            updateHearts();
+            generateProceduralLevel();
+        }
+
+        // Helper to generate FOIL gametes
+        function getGametes(l1, l2) {
+            return [
+                l1[0] + ',' + l2[0],
+                l1[0] + ',' + l2[1],
+                l1[1] + ',' + l2[0],
+                l1[1] + ',' + l2[1]
+            ];
+        }
+
+        function formatDisplay(allele, map) {
+            if(map && map[allele]) return map[allele];
+            return allele;
+        }
+
+        function generateProceduralLevel() {
+            if(currentLevel > totalLevels) {
+                document.getElementById('m-title').style.color = "var(--highlight)";
+                document.getElementById('m-rank').style.display = "none";
+                showModal("¡LABORATORIO SUPERADO! 🎓", "Has demostrado un intelecto preuniversitario impecable.\nDominas los cruces dihíbridos, la epistasis y la codominancia.", () => {
+                    currentLevel = 1;
+                    hp = 3;
+                    updateHearts();
+                    generateProceduralLevel();
+                }, "REINICIAR CURSO");
+                return;
+            }
+
+            // Seleccionar escenario aleatorio
+            let sTemplate = SCENARIOS[Math.floor(Math.random() * SCENARIOS.length)];
+            activeScenario = sTemplate;
+
+            document.getElementById('level-display').innerText = `${currentLevel}/${totalLevels}`;
+            mistakes = 0;
+            gridData = [];
+
+            clearInterval(timerInterval);
+            secondsElapsed = 0;
+            updateTimerDisplay();
+            timerInterval = setInterval(() => { secondsElapsed++; updateTimerDisplay(); }, 1000);
+
+            // Generar Genotipos de los Padres (P1 y P2)
+            let p1L1, p1L2, p2L1, p2L2;
+
+            if(sTemplate.customGenotypesL1) {
+                p1L1 = sTemplate.customGenotypesL1[Math.floor(Math.random() * sTemplate.customGenotypesL1.length)];
+                p2L1 = sTemplate.customGenotypesL1[Math.floor(Math.random() * sTemplate.customGenotypesL1.length)];
+                let l2Opts = [['R','r'], ['r','r'], ['R','R']];
+                p1L2 = l2Opts[Math.floor(Math.random() * l2Opts.length)];
+                p2L2 = l2Opts[Math.floor(Math.random() * l2Opts.length)];
+            } else {
+                let g1 = sTemplate.genes[0];
+                let g2 = sTemplate.genes[1];
+                let opts1 = [[g1.dom, g1.rec], [g1.rec, g1.rec], [g1.dom, g1.dom]];
+                let opts2 = [[g2.dom, g2.rec], [g2.rec, g2.rec], [g2.dom, g2.dom]];
+                
+                // Forzar al menos un heterocigoto para que haya variedad
+                p1L1 = opts1[0]; p2L1 = opts1[Math.floor(Math.random() * opts1.length)];
+                p1L2 = opts2[Math.floor(Math.random() * opts2.length)]; p2L2 = opts2[0];
+            }
+
+            let gametesP1 = getGametes(p1L1, p1L2); // Top
+            let gametesP2 = getGametes(p2L1, p2L2); // Left
+
+            // Calcular las 16 celdas
+            let allPhenos = [];
+            for(let r=0; r<4; r++) { // Row (P2 gametes)
+                for(let c=0; c<4; c++) { // Col (P1 gametes)
+                    let g1 = gametesP1[c].split(',');
+                    let g2 = gametesP2[r].split(',');
+                    
+                    let locus1 = [g1[0], g2[0]].sort();
+                    let locus2 = [g1[1], g2[1]].sort();
+                    // Custom sort for dominant first if normal letters
+                    if(locus1[0].length === 1 && locus1[0] !== locus1[0].toUpperCase() && locus1[1] === locus1[1].toUpperCase()) locus1.reverse();
+                    if(locus2[0].length === 1 && locus2[0] !== locus2[0].toUpperCase() && locus2[1] === locus2[1].toUpperCase()) locus2.reverse();
+
+                    let pheno = sTemplate.evalPheno(locus1, locus2);
+                    
+                    gridData.push({
+                        row: r, col: c,
+                        locus1: locus1, locus2: locus2,
+                        pheno: pheno,
+                        selected: false
+                    });
+                    
+                    if(!allPhenos.includes(pheno)) allPhenos.push(pheno);
+                }
+            }
+
+            // Seleccionar un fenotipo objetivo al azar (que exista en la tabla)
+            let targetPheno = allPhenos[Math.floor(Math.random() * allPhenos.length)];
+            activeScenario.target = targetPheno;
+
+            // Render Info Panel
+            document.getElementById('t-name').innerText = sTemplate.name;
+            document.getElementById('t-desc').innerText = sTemplate.desc;
+            document.getElementById('t-phenos').innerHTML = `<div class="pheno-item"><span class="pheno-title">Fenotipo Esperado:</span> <span class="pheno-val">${targetPheno}</span></div>`;
+
+            let dictHtml = '';
+            sTemplate.genes.forEach(g => {
+                dictHtml += `
+                    <div class="gene-entry">
+                        <span class="gene-trait-name">Locus</span>
+                        <div class="gene-alleles">
+                            <div class="gene-alelo"><span class="allele-char">${g.dom}</span> <span class="allele-desc">${g.domDesc}</span></div>
+                            <div class="gene-alelo"><span class="allele-char" style="color:var(--text-main);">${g.rec}</span> <span class="allele-desc">${g.recDesc}</span></div>
+                        </div>
+                    </div>`;
+            });
+            document.getElementById('gene-dict').innerHTML = dictHtml;
+
+            // Render Punnett 4x4
+            let map = sTemplate.gameteMap || null;
+            let area = document.getElementById('punnett-area');
+            
+            let gridHtml = `
+            <div class="punnett-wrapper" style="width: 100%; max-width: 500px;">
+                <div class="punnett-title">CRUCE DIHÍBRIDO 4x4</div>
+                <div class="punnett-grid">
+                    <div class="p-head empty"></div>
+                    <div class="p-head top">${formatDisplay(gametesP1[0].split(',')[0], map)}${formatDisplay(gametesP1[0].split(',')[1], map)}</div>
+                    <div class="p-head top">${formatDisplay(gametesP1[1].split(',')[0], map)}${formatDisplay(gametesP1[1].split(',')[1], map)}</div>
+                    <div class="p-head top">${formatDisplay(gametesP1[2].split(',')[0], map)}${formatDisplay(gametesP1[2].split(',')[1], map)}</div>
+                    <div class="p-head top">${formatDisplay(gametesP1[3].split(',')[0], map)}${formatDisplay(gametesP1[3].split(',')[1], map)}</div>
+            `;
+
+            for(let r=0; r<4; r++) {
+                gridHtml += `<div class="p-head left">${formatDisplay(gametesP2[r].split(',')[0], map)}${formatDisplay(gametesP2[r].split(',')[1], map)}</div>`;
+                for(let c=0; c<4; c++) {
+                    let cellData = gridData.find(d => d.row === r && d.col === c);
+                    let displayString = formatDisplay(cellData.locus1[0], map) + formatDisplay(cellData.locus1[1], map) + 
+                                        formatDisplay(cellData.locus2[0], map) + formatDisplay(cellData.locus2[1], map);
+                    
+                    gridHtml += `<div class="p-cell" id="cell-${r}-${c}" onclick="toggleCell(${r}, ${c})">${displayString}</div>`;
+                }
+            }
+
+            gridHtml += `</div></div>`;
+            area.innerHTML = gridHtml;
+        }
+
+        function updateTimerDisplay() {
+            let m = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
+            let s = (secondsElapsed % 60).toString().padStart(2, '0');
+            document.getElementById('timer-val').innerText = `${m}:${s}`;
+        }
+
+        function toggleCell(r, c) {
+            let cell = document.getElementById(`cell-${r}-${c}`);
+            let data = gridData.find(d => d.row === r && d.col === c);
+            
+            if(data.selected) {
+                sfxDeselect();
+                data.selected = false;
+                cell.classList.remove('selected');
+            } else {
+                sfxSelect();
+                data.selected = true;
+                cell.classList.add('selected');
+            }
+        }
+
+        function updateHearts() {
+            for(let i=1; i<=3; i++) {
+                let h = document.getElementById(`h${i}`);
+                if(i <= hp) h.classList.remove('lost');
+                else h.classList.add('lost');
+            }
+        }
+
+        function verifySynthesis() {
+            let selectedCount = gridData.filter(d => d.selected).length;
+            
+            if(selectedCount === 0) {
+                sfxError();
+                document.getElementById('m-title').style.color = "var(--warning)";
+                document.getElementById('m-rank').style.display = "none";
+                showModal("FALTAN DATOS ⚠️", "Debes seleccionar al menos un cuadrante en el cruce de Punnett antes de sintetizar.", null, "VOLVER");
+                return;
+            }
+
+            clearInterval(timerInterval);
+            sfxIncubate();
+            document.getElementById('incubator').classList.add('active');
+
+            setTimeout(() => {
+                document.getElementById('incubator').classList.remove('active');
+                
+                let allCorrect = true;
+                let errorMsg = "";
+
+                // Verificar que todas las celdas correctas esten seleccionadas y ninguna incorrecta
+                let correctCellsCount = 0;
+                for(let cell of gridData) {
+                    let isTarget = (cell.pheno === activeScenario.target);
+                    if (isTarget) correctCellsCount++;
+
+                    if (cell.selected && !isTarget) {
+                        allCorrect = false;
+                        errorMsg = "Seleccionaste probabilidades que NO manifiestan el fenotipo objetivo. Recuerda revisar la dominancia.";
+                        cell.elementClass = "error-show";
+                    }
+                    if (!cell.selected && isTarget) {
+                        allCorrect = false;
+                        errorMsg = "Te faltó seleccionar algunas probabilidades correctas. Debes marcar TODAS las opciones viables.";
+                    }
+                }
+
+                if(allCorrect) {
+                    // CÁLCULO DE RANGO
+                    let rank = 'C';
+                    let rankClass = 'rank-C';
+                    let sfx = sfxRankLow;
+                    
+                    let targetTime = 60; // 60 segundos para 4x4 es buen tiempo
+
+                    if (mistakes === 0 && secondsElapsed <= targetTime) { rank = 'S'; rankClass = 'rank-S'; sfx = sfxRankS; }
+                    else if (mistakes === 0 && secondsElapsed <= targetTime + 30) { rank = 'A'; rankClass = 'rank-A'; sfx = sfxRankA; }
+                    else if (mistakes <= 1) { rank = 'B'; rankClass = 'rank-B'; sfx = sfxRankS; }
+
+                    sfx();
+                    document.getElementById('m-title').style.color = "var(--highlight)";
+                    document.getElementById('m-rank').style.display = "block";
+                    document.getElementById('m-rank').innerText = rank;
+                    document.getElementById('m-rank').className = `rank-display ${rankClass}`;
+                    
+                    document.getElementById('m-stats').innerText = `Tiempo: ${secondsElapsed}s | Errores: ${mistakes} | Probabilidad: ${correctCellsCount}/16`;
+
+                    showModal("¡SÍNTESIS EXITOSA! 🧬", "El espécimen desarrollado manifiesta el fenotipo exacto para este bioma.", () => {
+                        currentLevel++;
+                        generateProceduralLevel();
+                    }, "SIGUIENTE NIVEL");
+
+                } else {
+                    hp--;
+                    mistakes++;
+                    updateHearts();
+                    sfxDamage();
+                    
+                    // Mostrar animacion de error en celdas
+                    gridData.forEach(d => {
+                        if(d.selected && d.pheno !== activeScenario.target) {
+                            let el = document.getElementById(`cell-${d.row}-${d.col}`);
+                            el.classList.add('error-show');
+                            setTimeout(() => el.classList.remove('error-show'), 500);
+                        }
+                    });
+
+                    if (hp <= 0) {
+                        document.getElementById('m-title').style.color = "var(--danger)";
+                        document.getElementById('m-rank').style.display = "none";
+                        showModal("MUESTRA DESTRUIDA ❌", errorMsg + "\n\nLa integridad de la investigación llegó a 0. Debes reiniciar el simulador.", () => {
+                            currentLevel = 1;
+                            hp = 3;
+                            updateHearts();
+                            generateProceduralLevel();
+                        }, "REINICIAR CURSO");
+                    } else {
+                        document.getElementById('m-title').style.color = "var(--warning)";
+                        document.getElementById('m-rank').style.display = "none";
+                        showModal("MUTACIÓN FALLIDA ⚠️", errorMsg + `\n\nIntegridad perdida. Te quedan ${hp} intentos.`, () => {
+                            // Resume timer
+                            timerInterval = setInterval(() => { secondsElapsed++; updateTimerDisplay(); }, 1000);
+                        }, "REINTENTAR");
+                    }
+                }
+
+            }, 2000); // 2s de animación de incubadora
+        }
+
+        let modalCallback = null;
+        function showModal(title, msg, callback = null, btnText = "CONTINUAR") { 
+            document.getElementById('m-title').innerText = title; 
+            document.getElementById('m-msg').innerText = msg; 
+            document.getElementById('m-btn').innerText = btnText;
+            document.getElementById('modal').classList.add('active'); 
+            modalCallback = callback; 
+        }
+        function closeModal() { 
+            sfxClick(); 
+            document.getElementById('modal').classList.remove('active'); 
+            if(modalCallback) { modalCallback(); modalCallback = null; } 
+        }
+    </script>
+</body>
+</html>

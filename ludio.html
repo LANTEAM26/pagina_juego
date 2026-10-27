@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="description" content="Aventuras de Ludio — Portal de 23 misiones educativas para el nivel Secundaria">
+    <meta name="description" content="Aventuras de Ludio — Portal de 19 misiones educativas para el nivel Secundaria">
     <meta name="theme-color" content="#0b1024">
     <title>🤖 Aventuras de Ludio | Secundaria</title>
 
@@ -46,47 +46,6 @@
         /* Aseguramos que los adornos de UI queden flotando ENCIMA del iframe */
         .game-thumb-bg { z-index: 2; }
         .game-number, .game-difficulty, .game-badge-new, .game-badge-featured { z-index: 3; }
-
-        /* ============================================================
-           NUEVO ESTADO "PRÓXIMAMENTE"
-           ============================================================ */
-        .placeholder-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(44, 62, 80, 0.85); /* Azul oscuro semi transparente */
-            z-index: 5;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-        }
-
-        .placeholder-text {
-            color: #ffaa00;
-            font-family: 'Fredoka', sans-serif;
-            font-weight: 900;
-            font-size: 1.5rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            text-shadow: 2px 2px 0px rgba(0,0,0,0.5);
-            transform: rotate(-10deg);
-            border: 4px solid #ffaa00;
-            padding: 8px 15px;
-            border-radius: 12px;
-            background: rgba(0,0,0,0.4);
-        }
-
-        /* Tarjeta deshabilitada */
-        .game-card.disabled {
-            cursor: not-allowed;
-            opacity: 0.85;
-            filter: grayscale(40%);
-        }
-        
-        .game-card.disabled .game-card-link {
-            pointer-events: none; /* Desactiva el clic por completo */
-        }
 
         /* ============================================================
            CORRECCIONES ESTRUCTURALES Y TEXTOS FLOTANTES
@@ -288,22 +247,27 @@
             <span class="section-title-txt">Elige tu siguiente desafío</span>
         </h2>
         <p class="section-subtitle">
-            15 juegos disponibles en el entorno de aprendizaje avanzado.
+            19 juegos disponibles en el entorno de aprendizaje avanzado.
         </p>
     </div>
 
-    <div class="mission-dashboard"><div><b>15</b><span>JUEGOS DISPONIBLES</span></div><div><b>05</b><span>ÁREAS PARA EXPLORAR</span></div><div><b>08</b><span>PRÓXIMAS MISIONES</span></div><p><span class="mission-status-dot"></span> El futuro se construye<br><strong>una idea a la vez.</strong></p></div>
+    <div class="mission-dashboard">
+        <div><b>19</b><span>JUEGOS DISPONIBLES</span></div>
+        <div><b>04</b><span>ÁREAS PARA EXPLORAR</span></div>
+        <p><span class="mission-status-dot"></span> El futuro se construye<br><strong>una idea a la vez.</strong></p>
+    </div>
+    
     <div class="filters filters-secundaria reveal-child" data-reveal="2" role="group" aria-label="Filtrar juegos por categoría">
         <button class="filter-btn is-active" data-filter="all" type="button" aria-pressed="true">
             <span class="filter-ico">🌐</span>
             <span class="filter-txt">Todos</span>
-            <span class="filter-count" data-count="all">23</span>
+            <span class="filter-count" data-count="all">19</span>
         </button>
 
         <button class="filter-btn" data-filter="matematicas" type="button" aria-pressed="false">
             <span class="filter-ico">📐</span>
             <span class="filter-txt">Matemáticas</span>
-            <span class="filter-count" data-count="matematicas">4</span>
+            <span class="filter-count" data-count="matematicas">5</span>
         </button>
 
         <button class="filter-btn" data-filter="programacion" type="button" aria-pressed="false">
@@ -315,19 +279,13 @@
         <button class="filter-btn" data-filter="ciencias" type="button" aria-pressed="false">
             <span class="filter-ico">🧪</span>
             <span class="filter-txt">Ciencias</span>
-            <span class="filter-count" data-count="ciencias">6</span>
+            <span class="filter-count" data-count="ciencias">5</span>
         </button>
 
         <button class="filter-btn" data-filter="historia" type="button" aria-pressed="false">
             <span class="filter-ico">📜</span>
             <span class="filter-txt">Humanidades</span>
-            <span class="filter-count" data-count="historia">4</span>
-        </button>
-
-        <button class="filter-btn" data-filter="retos" type="button" aria-pressed="false">
-            <span class="filter-ico">🏆</span>
-            <span class="filter-txt">Retos</span>
-            <span class="filter-count" data-count="retos">3</span>
+            <span class="filter-count" data-count="historia">3</span>
         </button>
     </div>
 
@@ -344,7 +302,7 @@
                 <p class="games-section-desc">Álgebra, geometría, estadística y cálculo a nivel preuniversitario</p>
             </div>
             <span class="games-section-count">
-                <span class="games-section-count-num">4</span>
+                <span class="games-section-count-num">5</span>
                 <span class="games-section-count-txt">juegos</span>
             </span>
         </header>
@@ -456,13 +414,14 @@
                 </a>
             </article>
 
-            <!-- 04 · Funciones y Gráficas (Placeholder) -->
-            <article class="game-card disabled" data-category="matematicas" data-difficulty="dificil">
-                <a href="#" class="game-card-link" aria-label="Juego no disponible">
-                    <div class="game-card-thumb thumb-matematicas">
-                        <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
+            <!-- 04 · Geo-Strike (ACTIVO) -->
+            <article class="game-card game-card-new" data-category="matematicas" data-difficulty="dificil">
+                <a href="Juegos/geometria.html" class="game-card-link" aria-label="Abrir juego Geo-Strike">
+                    <div class="game-card-thumb thumb-matematicas has-image">
+                        <iframe src="Juegos/geometria.html" title="Geo-Strike" allow="autoplay 'none'" aria-hidden="true" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">04</span>
+                        <span class="game-badge-new">NUEVO</span>
                         <div class="game-difficulty difficulty-dificil">
                             <span class="diff-dot"></span>
                             <span class="diff-txt">Difícil</span>
@@ -471,15 +430,54 @@
                     <div class="game-card-body">
                         <div class="game-card-top">
                             <span class="game-category-tag tag-matematicas">📐 Matemáticas</span>
-                            <span class="game-age">15-17 años</span>
+                            <span class="game-age">14-17 años</span>
                         </div>
-                        <h3 class="game-title">Funciones y Gráficas</h3>
-                        <p class="game-desc">Identifica funciones lineales, cuadráticas y sus gráficas en el plano.</p>
+                        <h3 class="game-title">Geo-Strike</h3>
+                        <p class="game-desc">Calcula mentalmente el Área o Perímetro de los asteroides geométricos antes de que impacten la ciudad.</p>
                         <div class="game-card-bottom">
                             <span class="game-rating" aria-label="Dificultad 3 de 3">
                                 <span class="star is-filled">★</span>
                                 <span class="star is-filled">★</span>
                                 <span class="star is-filled">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+            <!-- 05 · Trigo-Strike (ACTIVO) -->
+            <article class="game-card game-card-new" data-category="matematicas" data-difficulty="dificil">
+                <a href="Juegos/trigo.html" class="game-card-link" aria-label="Abrir juego Trigo-Strike">
+                    <div class="game-card-thumb thumb-matematicas has-image">
+                        <iframe src="Juegos/trigo.html" title="Trigo-Strike" allow="autoplay 'none'" aria-hidden="true" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
+                        <span class="game-thumb-bg"></span>
+                        <span class="game-number">05</span>
+                        <span class="game-badge-new">NUEVO</span>
+                        <div class="game-difficulty difficulty-dificil">
+                            <span class="diff-dot"></span>
+                            <span class="diff-txt">Difícil</span>
+                        </div>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-card-top">
+                            <span class="game-category-tag tag-matematicas">📐 Matemáticas</span>
+                            <span class="game-age">14-17 años</span>
+                        </div>
+                        <h3 class="game-title">Trigo-Strike</h3>
+                        <p class="game-desc">Calibra el cañón láser aplicando razones trigonométricas (SOH-CAH-TOA) y el Teorema de Pitágoras.</p>
+                        <div class="game-card-bottom">
+                            <span class="game-rating" aria-label="Dificultad 3 de 3">
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                                <span class="star is-filled">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
                             </span>
                         </div>
                     </div>
@@ -509,14 +507,13 @@
 
         <div class="games-grid" aria-live="polite">
 
-            <!-- 05 · Algoritmos Básicos (ACTIVO) -->
+            <!-- 06 · Algoritmos Básicos (ACTIVO) -->
             <article class="game-card game-card-new" data-category="programacion" data-difficulty="medio">
                 <a href="Juegos/algoritmos.html" class="game-card-link" aria-label="Abrir juego Algoritmos Básicos">
                     <div class="game-card-thumb thumb-programacion has-image">
                         <iframe src="Juegos/algoritmos.html" title="Neon Coder" allow="autoplay 'none'" aria-hidden="true" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
-                        <span class="game-number">05</span>
-                        <span class="game-badge-new">NUEVO</span>
+                        <span class="game-number">06</span>
                         <div class="game-difficulty difficulty-medio">
                             <span class="diff-dot"></span>
                             <span class="diff-txt">Medio</span>
@@ -544,14 +541,13 @@
                 </a>
             </article>
 
-            <!-- 06 · Bucles y Condicionales (ACTIVO) -->
+            <!-- 07 · Bucles y Condicionales (ACTIVO) -->
             <article class="game-card game-card-new" data-category="programacion" data-difficulty="medio">
                 <a href="Juegos/condicionales.html" class="game-card-link" aria-label="Abrir juego Bucles y Condicionales">
                     <div class="game-card-thumb thumb-programacion has-image">
                         <iframe src="Juegos/condicionales.html" title="Steam-Logic" allow="autoplay 'none'" aria-hidden="true" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
-                        <span class="game-number">06</span>
-                        <span class="game-badge-new">NUEVO</span>
+                        <span class="game-number">07</span>
                         <div class="game-difficulty difficulty-medio">
                             <span class="diff-dot"></span>
                             <span class="diff-txt">Medio</span>
@@ -579,14 +575,13 @@
                 </a>
             </article>
 
-            <!-- 07 · Flujo y Lógica (ACTIVO) -->
+            <!-- 08 · Flujo y Lógica (ACTIVO) -->
             <article class="game-card game-card-new" data-category="programacion" data-difficulty="dificil">
                 <a href="Juegos/automata.html" class="game-card-link" aria-label="Abrir juego Flujo y Lógica">
                     <div class="game-card-thumb thumb-programacion has-image">
                         <iframe src="Juegos/automata.html" title="Cerebro Autómata" allow="autoplay 'none'" aria-hidden="true" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
-                        <span class="game-number">07</span>
-                        <span class="game-badge-new">NUEVO</span>
+                        <span class="game-number">08</span>
                         <div class="game-difficulty difficulty-dificil">
                             <span class="diff-dot"></span>
                             <span class="diff-txt">Difícil</span>
@@ -614,14 +609,13 @@
                 </a>
             </article>
 
-            <!-- 08 · Astro-Bot: Minería Autónoma (ACTIVO) -->
+            <!-- 09 · Astro-Bot: Minería Autónoma (ACTIVO) -->
             <article class="game-card game-card-new" data-category="programacion" data-difficulty="dificil">
                 <a href="Juegos/bucles.html" class="game-card-link" aria-label="Abrir juego Astro-Bot">
                     <div class="game-card-thumb thumb-programacion has-image">
                         <iframe src="Juegos/bucles.html" title="Astro-Bot" allow="autoplay 'none'" aria-hidden="true" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
-                        <span class="game-number">08</span>
-                        <span class="game-badge-new">NUEVO</span>
+                        <span class="game-number">09</span>
                         <div class="game-difficulty difficulty-dificil">
                             <span class="diff-dot"></span>
                             <span class="diff-txt">Difícil</span>
@@ -649,14 +643,13 @@
                 </a>
             </article>
 
-            <!-- 09 · Grimorio.js (ACTIVO) -->
+            <!-- 10 · Grimorio.js (ACTIVO) -->
             <article class="game-card game-card-new" data-category="programacion" data-difficulty="dificil">
                 <a href="Juegos/magia.html" class="game-card-link" aria-label="Abrir juego Grimorio.js">
                     <div class="game-card-thumb thumb-programacion has-image">
                         <iframe src="Juegos/magia.html" title="Grimorio.js" allow="autoplay 'none'" aria-hidden="true" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
-                        <span class="game-number">09</span>
-                        <span class="game-badge-new">NUEVO</span>
+                        <span class="game-number">10</span>
                         <div class="game-difficulty difficulty-dificil">
                             <span class="diff-dot"></span>
                             <span class="diff-txt">Difícil</span>
@@ -684,14 +677,13 @@
                 </a>
             </article>
 
-            <!-- 10 · Vector Drive (ACTIVO) -->
+            <!-- 11 · Vector Drive (ACTIVO) -->
             <article class="game-card game-card-new" data-category="programacion" data-difficulty="dificil">
                 <a href="Juegos/arrays.html" class="game-card-link" aria-label="Abrir juego Vector Drive">
                     <div class="game-card-thumb thumb-programacion has-image">
                         <iframe src="Juegos/arrays.html" title="Vector Drive" allow="autoplay 'none'" aria-hidden="true" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
-                        <span class="game-number">10</span>
-                        <span class="game-badge-new">NUEVO</span>
+                        <span class="game-number">11</span>
                         <div class="game-difficulty difficulty-dificil">
                             <span class="diff-dot"></span>
                             <span class="diff-txt">Difícil</span>
@@ -732,23 +724,23 @@
             <div class="games-section-ico games-section-ico-ciencias">🧪</div>
             <div class="games-section-info">
                 <h3 class="games-section-title" id="sec-ciencias-title">Ciencias</h3>
-                <p class="games-section-desc">Física, química, biología y astronomía a nivel avanzado</p>
+                <p class="games-section-desc">Física, química, biología y genética a nivel avanzado</p>
             </div>
             <span class="games-section-count">
-                <span class="games-section-count-num">6</span>
+                <span class="games-section-count-num">5</span>
                 <span class="games-section-count-txt">juegos</span>
             </span>
         </header>
 
         <div class="games-grid" aria-live="polite">
 
-            <!-- 11 · Ranger Cuántico (ACTIVO) -->
+            <!-- 12 · Ranger Cuántico (ACTIVO) -->
             <article class="game-card" data-category="ciencias" data-difficulty="medio">
                 <a href="Juegos/chemicalranger.html" class="game-card-link" aria-label="Abrir juego Ranger Cuántico">
                     <div class="game-card-thumb thumb-ciencias has-image">
                         <iframe src="Juegos/chemicalranger.html" title="Ranger Cuántico" allow="autoplay 'none'" aria-hidden="true" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
-                        <span class="game-number">11</span>
+                        <span class="game-number">12</span>
                         <div class="game-difficulty difficulty-medio">
                             <span class="diff-dot"></span>
                             <span class="diff-txt">Medio</span>
@@ -776,13 +768,13 @@
                 </a>
             </article>
 
-            <!-- 12 · Laboratorio Atómico-->
+            <!-- 13 · Laboratorio Atómico-->
              <article class="game-card" data-category="ciencias" data-difficulty="medio">
                 <a href="Juegos/LaboratorioAtómico.html" class="game-card-link" aria-label="Abrir juego Laboratorio Atómico">
                     <div class="game-card-thumb thumb-ciencias has-image">
                         <iframe src="Juegos/LaboratorioAtómico.html" title="Laboratorio Atómico" allow="autoplay 'none'" aria-hidden="true" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
-                        <span class="game-number">12</span>
+                        <span class="game-number">13</span>
                         <div class="game-difficulty difficulty-medio">
                             <span class="diff-dot"></span>
                             <span class="diff-txt">Medio</span>
@@ -810,13 +802,13 @@
                 </a>
             </article>
 
-            <!-- 13 · Reactor Químico: Valencias (NUEVO) -->
+            <!-- 14 · Reactor Químico: Valencias (ACTIVO) -->
             <article class="game-card game-card-new" data-category="ciencias" data-difficulty="dificil">
                 <a href="Juegos/valencias.html" class="game-card-link" aria-label="Abrir juego Reactor Químico">
                     <div class="game-card-thumb thumb-ciencias has-image">
                         <iframe src="Juegos/valencias.html" title="Reactor Químico" allow="autoplay 'none'" aria-hidden="true" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
-                        <span class="game-number">13</span>
+                        <span class="game-number">14</span>
                         <span class="game-badge-new">NUEVO</span>
                         <div class="game-difficulty difficulty-dificil">
                             <span class="diff-dot"></span>
@@ -825,7 +817,7 @@
                     </div>
                     <div class="game-card-body">
                         <div class="game-card-top">
-                            <span class="game-category-tag tag-ciencias">🧪 Ciencias</span>
+                            <span class="game-category-tag tag-ciencias">🧪 Química</span>
                             <span class="game-age">14-17 años</span>
                         </div>
                         <h3 class="game-title">Reactor Químico</h3>
@@ -845,60 +837,35 @@
                 </a>
             </article>
 
-            <!-- 14 · Genética y ADN (Placeholder) -->
-            <article class="game-card disabled" data-category="ciencias" data-difficulty="medio">
-                <a href="#" class="game-card-link" aria-label="Juego no disponible">
-                    <div class="game-card-thumb thumb-ciencias">
-                        <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
-                        <span class="game-thumb-bg"></span>
-                        <span class="game-number">14</span>
-                        <div class="game-difficulty difficulty-medio">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Medio</span>
-                        </div>
-                    </div>
-                    <div class="game-card-body">
-                        <div class="game-card-top">
-                            <span class="game-category-tag tag-ciencias">🧪 Ciencias</span>
-                            <span class="game-age">14-17 años</span>
-                        </div>
-                        <h3 class="game-title">Genética y ADN</h3>
-                        <p class="game-desc">Aprende sobre herencia, cruces genéticos y estructura del ADN.</p>
-                        <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 2 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                            </span>
-                        </div>
-                    </div>
-                </a>
-            </article>
-
-            <!-- 15 · Astronomía (Placeholder) -->
-            <article class="game-card disabled" data-category="ciencias" data-difficulty="medio">
-                <a href="#" class="game-card-link" aria-label="Juego no disponible">
-                    <div class="game-card-thumb thumb-ciencias">
-                        <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
+            <!-- 15 · Genoma-X (ACTIVO) -->
+            <article class="game-card game-card-new" data-category="ciencias" data-difficulty="dificil">
+                <a href="Juegos/genetics.html" class="game-card-link" aria-label="Abrir juego Genoma-X">
+                    <div class="game-card-thumb thumb-ciencias has-image">
+                        <iframe src="Juegos/genetics.html" title="Genoma-X" allow="autoplay 'none'" aria-hidden="true" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">15</span>
-                        <div class="game-difficulty difficulty-medio">
+                        <span class="game-badge-new">NUEVO</span>
+                        <div class="game-difficulty difficulty-dificil">
                             <span class="diff-dot"></span>
-                            <span class="diff-txt">Medio</span>
+                            <span class="diff-txt">Difícil</span>
                         </div>
                     </div>
                     <div class="game-card-body">
                         <div class="game-card-top">
-                            <span class="game-category-tag tag-ciencias">🧪 Ciencias</span>
-                            <span class="game-age">13-16 años</span>
+                            <span class="game-category-tag tag-ciencias">🧪 Genética</span>
+                            <span class="game-age">15-17 años</span>
                         </div>
-                        <h3 class="game-title">Astronomía</h3>
-                        <p class="game-desc">Explora galaxias, estrellas y fenómenos del universo observable.</p>
+                        <h3 class="game-title">Genoma-X</h3>
+                        <p class="game-desc">Resuelve cuadros de Punnett avanzados, epistasis y codominancia para sintetizar especies.</p>
                         <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 2 de 3">
+                            <span class="game-rating" aria-label="Dificultad 3 de 3">
                                 <span class="star is-filled">★</span>
                                 <span class="star is-filled">★</span>
-                                <span class="star">★</span>
+                                <span class="star is-filled">★</span>
+                            </span>
+                            <span class="game-play">
+                                <span class="game-play-ico">▶</span>
+                                <span class="game-play-txt">Jugar</span>
                             </span>
                         </div>
                     </div>
@@ -955,7 +922,7 @@
                 <p class="games-section-desc">Eventos históricos, geografía, cultura universal y lenguaje</p>
             </div>
             <span class="games-section-count">
-                <span class="games-section-count-num">4</span>
+                <span class="games-section-count-num">3</span>
                 <span class="games-section-count-txt">juegos</span>
             </span>
         </header>
@@ -969,7 +936,6 @@
                         <iframe src="Juegos/historiaperu.html" title="Línea de Fuego: Perú" allow="autoplay 'none'" aria-hidden="true" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">17</span>
-                        <span class="game-badge-new">NUEVO</span>
                         <div class="game-difficulty difficulty-medio">
                             <span class="diff-dot"></span>
                             <span class="diff-txt">Medio</span>
@@ -1004,7 +970,6 @@
                         <iframe src="Juegos/historiadelmundo.html" title="Ruta Global" allow="autoplay 'none'" aria-hidden="true" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">18</span>
-                        <span class="game-badge-new">NUEVO</span>
                         <div class="game-difficulty difficulty-medio">
                             <span class="diff-dot"></span>
                             <span class="diff-txt">Medio</span>
@@ -1039,7 +1004,6 @@
                         <iframe src="Juegos/ortografia.html" title="Control de Calidad" allow="autoplay 'none'" aria-hidden="true" class="dynamic-thumb" loading="lazy" scrolling="no" tabindex="-1" sandbox="allow-same-origin allow-scripts"></iframe>
                         <span class="game-thumb-bg"></span>
                         <span class="game-number">19</span>
-                        <span class="game-badge-new">NUEVO</span>
                         <div class="game-difficulty difficulty-facil">
                             <span class="diff-dot"></span>
                             <span class="diff-txt">Fácil</span>
@@ -1067,153 +1031,8 @@
                 </a>
             </article>
 
-            <!-- 20 · Civilizaciones Antiguas (Placeholder) -->
-            <article class="game-card disabled" data-category="historia" data-difficulty="facil">
-                <a href="#" class="game-card-link" aria-label="Juego no disponible">
-                    <div class="game-card-thumb thumb-historia">
-                        <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
-                        <span class="game-thumb-bg"></span>
-                        <span class="game-number">20</span>
-                        <div class="game-difficulty difficulty-facil">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Fácil</span>
-                        </div>
-                    </div>
-                    <div class="game-card-body">
-                        <div class="game-card-top">
-                            <span class="game-category-tag tag-historia">📜 Historia</span>
-                            <span class="game-age">13-15 años</span>
-                        </div>
-                        <h3 class="game-title">Civilizaciones Antiguas</h3>
-                        <p class="game-desc">Descubre Egipto, Roma, Grecia y Mesopotamia con sus aportes culturales.</p>
-                        <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 1 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </span>
-                        </div>
-                    </div>
-                </a>
-            </article>
-
         </div>
     </section>
-
-
-    <!-- ══════════════════════════════════════════════════════════════
-         SECCIÓN 5 · RETOS FINALES
-         ══════════════════════════════════════════════════════════════ -->
-    <section class="games-section games-section-retos" data-section="retos" aria-labelledby="sec-retos-title">
-
-        <header class="games-section-head">
-            <div class="games-section-ico games-section-ico-retos">🏆</div>
-            <div class="games-section-info">
-                <h3 class="games-section-title" id="sec-retos-title">Retos Finales</h3>
-                <p class="games-section-desc">Desafíos que combinan todas las materias — solo para expertos</p>
-            </div>
-            <span class="games-section-count">
-                <span class="games-section-count-num">3</span>
-                <span class="games-section-count-txt">juegos</span>
-            </span>
-        </header>
-
-        <div class="games-grid" aria-live="polite">
-
-            <!-- 21 · Hackathon Educativo (Placeholder) -->
-            <article class="game-card disabled" data-category="retos" data-difficulty="dificil">
-                <a href="#" class="game-card-link" aria-label="Juego no disponible">
-                    <div class="game-card-thumb thumb-retos">
-                        <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
-                        <span class="game-thumb-bg"></span>
-                        <span class="game-number">21</span>
-                        <div class="game-difficulty difficulty-dificil">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Difícil</span>
-                        </div>
-                    </div>
-                    <div class="game-card-body">
-                        <div class="game-card-top">
-                            <span class="game-category-tag tag-retos">🏆 Retos</span>
-                            <span class="game-age">15-17 años</span>
-                        </div>
-                        <h3 class="game-title">Hackathon Educativo</h3>
-                        <p class="game-desc">Resuelve problemas complejos de programación en tiempo limitado.</p>
-                        <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 3 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                            </span>
-                        </div>
-                    </div>
-                </a>
-            </article>
-
-            <!-- 22 · Olimpiada del Saber (Placeholder) -->
-            <article class="game-card disabled" data-category="retos" data-difficulty="dificil">
-                <a href="#" class="game-card-link" aria-label="Juego no disponible">
-                    <div class="game-card-thumb thumb-retos">
-                        <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
-                        <span class="game-thumb-bg"></span>
-                        <span class="game-number">22</span>
-                        <div class="game-difficulty difficulty-dificil">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Difícil</span>
-                        </div>
-                    </div>
-                    <div class="game-card-body">
-                        <div class="game-card-top">
-                            <span class="game-category-tag tag-retos">🏆 Retos</span>
-                            <span class="game-age">15-17 años</span>
-                        </div>
-                        <h3 class="game-title">Olimpiada del Saber</h3>
-                        <p class="game-desc">Preguntas de matemáticas, ciencias y programación en una sola competencia.</p>
-                        <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 3 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                            </span>
-                        </div>
-                    </div>
-                </a>
-            </article>
-
-            <!-- 23 · Torneo Final (Placeholder) -->
-            <article class="game-card disabled game-card-featured" data-category="retos" data-difficulty="dificil">
-                <a href="#" class="game-card-link" aria-label="Juego no disponible">
-                    <div class="game-card-thumb thumb-retos">
-                        <div class="placeholder-overlay"><span class="placeholder-text">Próximamente</span></div>
-                        <span class="game-thumb-bg"></span>
-                        <span class="game-number">23</span>
-                        <div class="game-badge-featured">👑 TORNEO FINAL</div>
-                        <div class="game-difficulty difficulty-dificil">
-                            <span class="diff-dot"></span>
-                            <span class="diff-txt">Difícil</span>
-                        </div>
-                    </div>
-                    <div class="game-card-body">
-                        <div class="game-card-top">
-                            <span class="game-category-tag tag-retos">🏆 Retos</span>
-                            <span class="game-age">16+ años</span>
-                        </div>
-                        <h3 class="game-title">Torneo Final</h3>
-                        <p class="game-desc">El desafío definitivo: 7 minijuegos seguidos. ¡Demuestra que eres un maestro!</p>
-                        <div class="game-card-bottom">
-                            <span class="game-rating" aria-label="Dificultad 3 de 3">
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                                <span class="star is-filled">★</span>
-                            </span>
-                        </div>
-                    </div>
-                </a>
-            </article>
-
-        </div>
-    </section>
-
 
     <!-- ============================================
          MENSAJE CUANDO NO HAY RESULTADOS
@@ -1255,7 +1074,7 @@
                 <div class="help-card-ico">🎓</div>
                 <h3 class="help-card-title">Áreas avanzadas</h3>
                 <p class="help-card-desc">
-                    Filtra por matemáticas, programación, ciencias, humanidades o retos finales.
+                    Filtra por matemáticas, programación, ciencias o humanidades.
                 </p>
             </div>
 
