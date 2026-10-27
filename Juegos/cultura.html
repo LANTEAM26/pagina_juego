@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Expedición Ancestral: Arqueología 📜</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { 
+            /* Paleta Indiana Jones (Aventura Arqueológica) */
+            --bg-dark: #1c1511;     /* Cuero oscuro */
+            --bg-paper: #f4e8d1;    /* Pergamino claro */
+            --bg-map: #e6d3a8;      /* Mapa sepia */
+            --text-dark: #2c1d11;   /* Tinta marrón oscuro */
+            --text-light: #f4e8d1;  /* Texto claro sobre cuero */
+            
+            --accent-red: #a12312;  /* Rojo mapa de viaje */
+            --accent-gold: #c59b27; /* Oro antiguo */
+            --accent-green: #2d4a22;/* Verde selva oscuro */
+            
+            --danger: #8b0000;
+            --success: #2e5320;
+            --warning: #b87a00;
+        }
+
+        body, html { 
+            font-family: 'Courier Prime', monospace; 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            margin: 0; padding: 0; width: 100vw; height: 100vh; 
+            color: var(--text-dark); background-color: var(--bg-dark); 
+            overflow: hidden; box-sizing: border-box; user-select: none;
+        }
+
+        /* FONDO MAPA ANTIGUO */
+        .decorations { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; background: radial-gradient(circle at center, #3b2818 0%, #1c1511 100%); }
+        .map-grid { position: absolute; inset: 0; background-image: 
+            linear-gradient(rgba(0, 0, 0, 0.2) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 0, 0, 0.2) 1px, transparent 1px);
+            background-size: 80px 80px; opacity: 0.3;}
+        
+        .compass { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 400px; height: 400px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,10 60,40 90,50 60,60 50,90 40,60 10,50 40,40' fill='none' stroke='%23000' stroke-width='1' opacity='0.2'/%3E%3Ccircle cx='50' cy='50' r='30' fill='none' stroke='%23000' stroke-width='0.5' opacity='0.2'/%3E%3C/svg%3E") no-repeat center; opacity: 0.5; animation: spinCompass 60s linear infinite;}
+        
+        @keyframes spinCompass { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+
+        .sound-toggle { position: absolute; top: 15px; right: 15px; background: var(--bg-paper); border: 2px solid var(--accent-gold); border-radius: 5px; width: 45px; height: 45px; font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 1000; box-shadow: 2px 2px 5px rgba(0,0,0,0.5); transition: all 0.2s; color: var(--text-dark);}
+        .sound-toggle:active { transform: scale(0.9) translateY(2px); box-shadow: 0 0 0 rgba(0,0,0,0.5); }
+
+        /* PANTALLA DE INSTRUCCIONES (Dossier Antiguo) */
+        #instructions-screen { position: absolute; inset: 0; z-index: 600; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); }
+        .instructions-card { background: var(--bg-paper); padding: 40px; border-radius: 4px; border: 1px solid #d1bfae; max-width: 90%; width: 750px; display: flex; flex-direction: column; gap: 20px; box-shadow: 10px 10px 30px rgba(0,0,0,0.8), inset 0 0 50px rgba(139,69,19,0.2); position: relative;}
+        
+        /* Cintas de máquina de escribir o sellos */
+        .instructions-card::before { content: 'TOP SECRET'; position: absolute; top: 20px; left: -20px; font-family: 'Cinzel', serif; font-size: 24px; color: rgba(161,35,18,0.3); transform: rotate(-15deg); border: 3px solid rgba(161,35,18,0.3); padding: 5px 10px; border-radius: 4px;}
+
+        .instructions-card h1 { font-family: 'Cinzel', serif; font-size: 42px; color: var(--text-dark); margin: 0; text-align: center; border-bottom: 2px solid var(--text-dark); padding-bottom: 10px;}
+        .instruction-step { display: flex; gap: 15px; align-items: flex-start; font-size: 18px; line-height: 1.4; padding: 10px 0;}
+        .instruction-icon { font-size: 30px; flex-shrink: 0; filter: sepia(1); }
+        .instruction-text b { color: var(--accent-red); font-family: 'Cinzel', serif; font-weight: bold;}
+        .instruction-text .warn { color: var(--accent-red); font-weight: bold; text-decoration: underline;}
+        
+        .start-btn { background: var(--accent-red); border: 2px solid #5a1107; padding: 15px 40px; font-size: 22px; color: #fff; border-radius: 4px; text-transform: uppercase; font-weight: bold; font-family: 'Cinzel', serif; cursor:pointer; transition: all 0.2s; align-self: center; box-shadow: 4px 4px 0 #5a1107; margin-top: 10px;}
+        .start-btn:active { transform: translate(4px, 4px); box-shadow: 0 0 0 #5a1107; }
+
+        /* HEADER DEL JUEGO */
+        .game-header { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1200px; padding: 15px 2vw; z-index: 10; box-sizing: border-box; background: rgba(28,21,17,0.9); border-bottom: 3px solid var(--accent-gold); margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.5);}
+        .title-display { font-family: 'Cinzel', serif; font-size: 26px; color: var(--accent-gold); font-weight: bold; letter-spacing: 1px;}
+        
+        .hud-stats { display: flex; gap: 15px; align-items: center;}
+        .hud-box { background: var(--bg-paper); padding: 8px 15px; border: 1px solid var(--text-dark); font-size: 18px; color: var(--text-dark); box-shadow: inset 0 0 10px rgba(0,0,0,0.1); font-weight: bold; border-radius: 2px;}
+        .hud-box span { color: var(--accent-red); font-family: 'Cinzel', serif; font-size: 22px;}
+        
+        .health-bar { display: flex; gap: 5px; align-items: center; background: var(--bg-paper); padding: 8px 15px; border: 1px solid var(--text-dark); font-weight: bold;}
+        .heart { color: var(--accent-red); font-size: 20px; transition: all 0.3s;}
+        .heart.lost { color: #ccc; filter: grayscale(1); opacity: 0.5;}
+
+        /* LAYOUT PRINCIPAL */
+        .main-layout { display: flex; flex-direction: column; width: 100%; max-width: 1200px; flex: 1; padding: 0 2vw 2vh 2vw; box-sizing: border-box; overflow: hidden; position: relative;}
+
+        /* =========================================================
+           ÁREA DEL MAPA (NODOS Y NÚCLEOS)
+           ========================================================= */
+        .routing-area { flex: 1; background: var(--bg-map); border: 15px solid #4a3320; border-radius: 8px; position: relative; box-shadow: inset 0 0 50px rgba(139,69,19,0.5), 0 10px 30px rgba(0,0,0,0.8); overflow: hidden;}
+        
+        /* Viñeta de mapa antiguo */
+        .routing-area::after { content: ''; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 80px rgba(90,40,10,0.8); }
+
+        /* Capa SVG para el "Hilo de Viaje" */
+        #link-layer { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5;}
+        .data-link { stroke: var(--accent-red); stroke-width: 5; stroke-dasharray: 12, 8; opacity: 0; transition: opacity 0.2s; stroke-linecap: round;}
+        .data-link.active { opacity: 1; animation: travelRoute 0.6s linear infinite;}
+        .data-link.success { stroke: var(--success); }
+        .data-link.error { stroke: var(--danger); stroke-dasharray: none; animation: none;}
+        
+        @keyframes travelRoute { to { stroke-dashoffset: -20; } }
+
+        /* Nodos Flotantes (Notas / Pistas) */
+        #nodes-container { position: absolute; inset: 0; bottom: 140px; pointer-events: none;}
+        
+        .data-node { position: absolute; background: #fffdf5; border: 1px solid #c2b59b; color: var(--text-dark); font-family: 'Cinzel', serif; font-size: 16px; font-weight: bold; padding: 12px 18px; transform: translate(-50%, -50%); pointer-events: auto; cursor: pointer; transition: transform 0.1s; box-shadow: 4px 4px 10px rgba(0,0,0,0.3); text-align: center; white-space: nowrap; z-index: 10;}
+        
+        /* Efecto de papel viejo/roto */
+        .data-node::before { content:''; position:absolute; top:-2px; left:-2px; right:-2px; bottom:-2px; border: 1px dashed #d1bfae; pointer-events: none;}
+
+        .data-node:hover { transform: translate(-50%, -50%) scale(1.05); background: #fff; z-index: 12;}
+        .data-node.selected { border: 2px solid var(--accent-red); box-shadow: 6px 6px 15px rgba(161,35,18,0.4); z-index: 15; background: #fff;}
+        .data-node.selected::after { content: '📌'; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); font-size: 20px;}
+        .data-node.captured { opacity: 0; transform: translate(-50%, -50%) scale(0) rotate(15deg); transition: all 0.4s ease-in;}
+
+        /* Exhibiciones (Cores) */
+        #cores-container { position: absolute; bottom: 0; left: 0; width: 100%; height: 140px; display: flex; justify-content: space-around; align-items: center; border-top: 5px solid #3b2818; background: #5c4033; z-index: 6; box-shadow: 0 -5px 20px rgba(0,0,0,0.6);}
+        
+        .core { position: relative; width: 240px; background: var(--bg-paper); border: 4px solid var(--accent-gold); border-radius: 4px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 15px; cursor: pointer; transition: all 0.2s; box-shadow: 5px 5px 15px rgba(0,0,0,0.6); position: relative;}
+        
+        /* Placa de metal/oro */
+        .core::before { content:''; position: absolute; inset: 4px; border: 1px solid rgba(197, 155, 39, 0.4); pointer-events: none;}
+        
+        .core:hover { transform: translateY(-5px); background: #fff;}
+        
+        .core-name { font-family: 'Cinzel', serif; font-size: 20px; font-weight: bold; color: var(--text-dark); margin-bottom: 12px; text-transform: uppercase; text-align: center; line-height: 1.1;}
+        .core-progress { width: 90%; height: 12px; background: #d1bfae; border: 1px solid inset rgba(0,0,0,0.2); position: relative; overflow: hidden; border-radius: 2px;}
+        .core-fill { height: 100%; width: 0%; transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: var(--accent-gold); box-shadow: inset 0 2px 5px rgba(255,255,255,0.5);}
+        
+        .core.complete { border-color: var(--success); background: #eef5eb;}
+        .core.complete .core-fill { background: var(--success); }
+
+        /* MODAL RANGO */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 1000; visibility: hidden; opacity: 0; transition: all 0.3s; backdrop-filter: blur(4px);}
+        .modal-overlay.active { visibility: visible; opacity: 1; }
+        .modal-box { background: var(--bg-paper); padding: 40px; border-radius: 4px; text-align: center; max-width: 85%; width: 500px; transform: scale(0.9); transition: transform 0.3s; border: 4px solid var(--accent-gold); box-shadow: 10px 10px 40px rgba(0,0,0,0.8);}
+        .modal-overlay.active .modal-box { transform: scale(1); }
+        
+        .rank-display { font-family: 'Cinzel', serif; font-size: 80px; font-weight: bold; margin: 10px 0; color: var(--accent-gold); text-shadow: 2px 2px 0px rgba(0,0,0,0.2);}
+
+        .modal-title { font-family: 'Cinzel', serif; font-size: 32px; margin-top: 0; margin-bottom: 10px; color: var(--text-dark); border-bottom: 2px solid var(--text-dark); padding-bottom: 10px;}
+        .modal-msg { font-size: 18px; margin-bottom: 10px; color: var(--text-dark); white-space: pre-line; line-height: 1.5; font-weight: bold;}
+        .modal-stats { font-family: 'Courier Prime', monospace; color: #5a3d2b; font-size: 16px; margin-bottom: 25px;}
+        
+        .modal-btn { background: var(--text-dark); border: none; color: var(--bg-paper); padding: 15px 30px; font-size: 18px; border-radius: 2px; text-transform: uppercase; font-weight: bold; cursor:pointer; font-family: 'Cinzel', serif; transition: all 0.2s; box-shadow: 3px 3px 0 rgba(0,0,0,0.3);}
+        .modal-btn:hover { background: var(--accent-red); transform: translate(-2px, -2px); box-shadow: 5px 5px 0 rgba(0,0,0,0.3);}
+
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+        .shake-screen { animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both; }
+
+    </style>
+</head>
+<body>
+
+    <audio id="bgm" loop><source src="../assets/musicaFondo/cancion1.mp3" type="audio/mpeg"></audio>
+    <div class="decorations"><div class="map-grid"></div><div class="compass"></div></div>
+    <button id="soundToggle" class="sound-toggle" aria-label="Activar sonido">🔇</button>
+
+    <!-- INSTRUCCIONES -->
+    <div id="instructions-screen">
+        <div class="instructions-card">
+            <h1>EXPEDICIÓN ANCESTRAL 📜</h1>
+            <div class="instruction-step">
+                <span class="instruction-icon">🗺️</span>
+                <span class="instruction-text"><b>LA MISIÓN:</b> Saqueadores han desorganizado el archivo del Museo de Historia. Debes reasignar las reliquias, personajes y documentos a su civilización o época correcta.</span>
+            </div>
+            <div class="instruction-step">
+                <span class="instruction-icon">🧭</span>
+                <span class="instruction-text"><b>TRAZAR LA RUTA:</b> 
+                <br>1. Haz <b>clic en una nota</b> flotante en el mapa para seleccionarla.
+                <br>2. Haz <b>clic en la exhibición inferior</b> que le corresponde para archivar la información.</span>
+            </div>
+            <div class="instruction-step">
+                <span class="instruction-icon">⚠️</span>
+                <span class="instruction-text"><b>PELIGRO:</b> El viento mueve los documentos. Si clasificas una reliquia en el museo incorrecto (Ej. enviar "Pirámides" a "Grecia"), el museo retirará su apoyo y <span class="warn">perderás fondos (❤️)</span>.</span>
+            </div>
+            <button class="start-btn" onclick="startGame()">INICIAR EXPEDICIÓN</button>
+        </div>
+    </div>
+
+    <!-- JUEGO -->
+    <div class="game-header">
+        <div class="title-display">MUSEO MUNDIAL [SALA DE CLASIFICACIÓN]</div>
+        <div class="hud-stats">
+            <div class="health-bar">
+                REPUTACIÓN: 
+                <span class="heart" id="h1">❤️</span>
+                <span class="heart" id="h2">❤️</span>
+                <span class="heart" id="h3">❤️</span>
+            </div>
+            <div class="hud-box">EXPEDICIÓN: <span id="level-display">1/4</span></div>
+        </div>
+    </div>
+
+    <div class="main-layout">
+        
+        <div class="routing-area" id="routing-area">
+            
+            <!-- SVG LÍNEA DE MAPA -->
+            <svg id="link-layer">
+                <line id="laser-beam" class="data-link" x1="0" y1="0" x2="0" y2="0" />
+            </svg>
+
+            <!-- NODOS FLOTANTES -->
+            <div id="nodes-container"></div>
+
+            <!-- NÚCLEOS / EXHIBICIONES -->
+            <div id="cores-container">
+                <div class="core" id="core-1" onclick="routeToCore(1)">
+                    <div class="core-name" id="c1-name">Cultura 1</div>
+                    <div class="core-progress"><div class="core-fill" id="c1-fill"></div></div>
+                </div>
+                <div class="core" id="core-2" onclick="routeToCore(2)">
+                    <div class="core-name" id="c2-name">Cultura 2</div>
+                    <div class="core-progress"><div class="core-fill" id="c2-fill"></div></div>
+                </div>
+                <div class="core" id="core-3" onclick="routeToCore(3)">
+                    <div class="core-name" id="c3-name">Cultura 3</div>
+                    <div class="core-progress"><div class="core-fill" id="c3-fill"></div></div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- MODAL GAME OVER / RANGO -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal-box">
+            <h2 class="modal-title" id="m-title">SALA COMPLETADA</h2>
+            <div class="rank-display" id="m-rank">S</div>
+            <p class="modal-msg" id="m-msg">Artefactos clasificados con éxito.</p>
+            <div class="modal-stats" id="m-stats">Errores: 0 | Tiempo: 45s</div>
+            <button class="modal-btn" id="m-btn" onclick="closeModal()">SIGUIENTE SALA</button>
+        </div>
+    </div>
+
+    <script>
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx; let isMuted = true;
+        const bgAudio = document.getElementById('bgm');
+        const soundToggle = document.getElementById('soundToggle');
+
+        soundToggle.addEventListener('click', () => {
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            isMuted = !isMuted;
+            if(isMuted) { bgAudio.pause(); soundToggle.innerText = '🔇'; } 
+            else { bgAudio.volume = 0.25; bgAudio.play().catch(e=>e); soundToggle.innerText = '🔊'; }
+        });
+
+        function playTone(freq, type, duration, vol = 0.1) {
+            if (!audioCtx || isMuted) return;
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + duration);
+        }
+        function playNoise(duration, vol) {
+            if (!audioCtx || isMuted) return;
+            const bufferSize = audioCtx.sampleRate * duration; const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate); const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+            const noise = audioCtx.createBufferSource(); noise.buffer = buffer;
+            const gain = audioCtx.createGain(); gain.gain.setValueAtTime(vol, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            const filter = audioCtx.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 800;
+            noise.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination); noise.start();
+        }
+
+        /* SFX adaptados a un estilo menos digital, tonos más cálidos o crujientes */
+        function sfxClick() { playTone(600, 'triangle', 0.05, 0.05); }
+        function sfxSelect() { playTone(800, 'sine', 0.1, 0.05); playNoise(0.05, 0.1); }
+        function sfxError() { playTone(200, 'sawtooth', 0.3, 0.2); playNoise(0.3, 0.2); }
+        function sfxTransfer() { playTone(500, 'sine', 0.1, 0.1); setTimeout(()=>playTone(700, 'sine', 0.2, 0.1), 100); }
+        function sfxCoreComplete() { [440, 554.37, 659.25].forEach((f, i) => setTimeout(() => playTone(f, 'triangle', 0.2, 0.1), i * 150)); }
+        function sfxGameOver() { [300, 250, 200, 150].forEach((f, i) => setTimeout(() => playTone(f, 'sawtooth', 0.4, 0.2), i * 300)); }
+        
+        function sfxRankS() { [523.25, 659.25, 783.99, 1046.50, 1318.51].forEach((f, i) => setTimeout(() => playTone(f, 'sine', 0.15, 0.1), i * 100)); }
+        function sfxRankA() { [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => setTimeout(() => playTone(f, 'sine', 0.15, 0.1), i * 150)); }
+        function sfxRankLow() { [400, 300].forEach((f, i) => setTimeout(() => playTone(f, 'square', 0.3, 0.1), i * 300)); }
+
+        // DATOS DE LOS NIVELES
+        const ITEMS_PER_CORE = 3;
+        
+        const LEVELS = [
+            {
+                title: "Cunas de la Civilización",
+                cores: [
+                    { id: 1, name: "Antiguo Egipto" },
+                    { id: 2, name: "Antigua Grecia" },
+                    { id: 3, name: "Imperio Romano" }
+                ],
+                nodes: [
+                    { text: "Río Nilo", cId: 1 }, { text: "Faraones", cId: 1 }, { text: "Jeroglíficos", cId: 1 },
+                    { text: "Acrópolis", cId: 2 }, { text: "Democracia", cId: 2 }, { text: "Juegos Olímpicos", cId: 2 },
+                    { text: "Coliseo", cId: 3 }, { text: "Julio César", cId: 3 }, { text: "Acueductos", cId: 3 }
+                ]
+            },
+            {
+                title: "Transición y Renacimiento",
+                cores: [
+                    { id: 1, name: "Edad Media" },
+                    { id: 2, name: "Renacimiento" },
+                    { id: 3, name: "Rev. Industrial" }
+                ],
+                nodes: [
+                    { text: "Feudalismo", cId: 1 }, { text: "Cruzadas", cId: 1 }, { text: "Peste Negra", cId: 1 },
+                    { text: "Da Vinci", cId: 2 }, { text: "Humanismo", cId: 2 }, { text: "Imprenta", cId: 2 },
+                    { text: "Máquina de Vapor", cId: 3 }, { text: "Fábricas Textiles", cId: 3 }, { text: "Carbón", cId: 3 }
+                ]
+            },
+            {
+                title: "Conflictos y Revoluciones",
+                cores: [
+                    { id: 1, name: "Rev. Francesa" },
+                    { id: 2, name: "Primera Guerra" },
+                    { id: 3, name: "Guerra Fría" }
+                ],
+                nodes: [
+                    { text: "La Bastilla", cId: 1 }, { text: "Robespierre", cId: 1 }, { text: "Guillotina", cId: 1 },
+                    { text: "Trincheras", cId: 2 }, { text: "Tratado de Versalles", cId: 2 }, { text: "Archiduque Fernando", cId: 2 },
+                    { text: "Muro de Berlín", cId: 3 }, { text: "Carrera Espacial", cId: 3 }, { text: "OTAN vs Varsovia", cId: 3 }
+                ]
+            },
+            {
+                title: "América Precolombina",
+                cores: [
+                    { id: 1, name: "Cultura Maya" },
+                    { id: 2, name: "Imperio Azteca" },
+                    { id: 3, name: "Imperio Inca" }
+                ],
+                nodes: [
+                    { text: "Cenotes", cId: 1 }, { text: "Chichén Itzá", cId: 1 }, { text: "Concepto del Cero", cId: 1 },
+                    { text: "Tenochtitlán", cId: 2 }, { text: "Chinampas", cId: 2 }, { text: "Moctezuma", cId: 2 },
+                    { text: "Machu Picchu", cId: 3 }, { text: "Quipus", cId: 3 }, { text: "Tahuantinsuyo", cId: 3 }
+                ]
+            }
+        ];
+
+        // VARIABLES DE JUEGO
+        let currentLevel = 0;
+        let hp = 3;
+        let mistakes = 0;
+        let isPlaying = false;
+        
+        let nodesData = []; // { id, text, cId, x, y, vx, vy, rot, el, captured }
+        let coresProgress = { 1: 0, 2: 0, 3: 0 };
+        
+        let selectedNodeId = null;
+        let isTransferring = false;
+        
+        let lastTime = 0;
+        let animationFrameId;
+        let startTime = 0;
+
+        function startGame() {
+            if (!audioCtx && !isMuted) { audioCtx = new AudioContext(); bgAudio.play().catch(e=>e); }
+            sfxClick();
+            document.getElementById('instructions-screen').style.display = 'none';
+            currentLevel = 0;
+            hp = 3;
+            updateHearts();
+            loadLevel();
+        }
+
+        function loadLevel() {
+            if(currentLevel >= LEVELS.length) {
+                document.getElementById('m-title').style.color = "var(--accent-gold)";
+                document.getElementById('m-rank').style.display = "none";
+                showModal("¡MUSEO RESTAURADO! 🎓", "Has clasificado toda la base de datos de Cultura Universal.\nEres un Arqueólogo Maestro.", () => {
+                    currentLevel = 0;
+                    hp = 3;
+                    updateHearts();
+                    loadLevel();
+                }, "REINICIAR EXPEDICIÓN");
+                return;
+            }
+
+            let data = LEVELS[currentLevel];
+            document.getElementById('level-display').innerText = `${currentLevel + 1}/${LEVELS.length}`;
+            mistakes = 0;
+            startTime = Date.now();
+            
+            // Set Cores
+            coresProgress = { 1: 0, 2: 0, 3: 0 };
+            for(let i=1; i<=3; i++) {
+                document.getElementById(`c${i}-name`).innerText = data.cores[i-1].name;
+                document.getElementById(`c${i}-fill`).style.width = "0%";
+                document.getElementById(`core-${i}`).classList.remove('complete');
+            }
+
+            // Set Nodes
+            let container = document.getElementById('nodes-container');
+            container.innerHTML = '';
+            nodesData = [];
+
+            let shuffledNodes = [...data.nodes].sort(() => Math.random() - 0.5);
+            
+            shuffledNodes.forEach((n, idx) => {
+                let nodeObj = {
+                    id: `n-${idx}`,
+                    text: n.text,
+                    cId: n.cId,
+                    x: 15 + Math.random() * 70, 
+                    y: 10 + Math.random() * 60, 
+                    vx: (Math.random() - 0.5) * 6, // Un poco más lento para que parezcan papeles en el viento
+                    vy: (Math.random() - 0.5) * 6,
+                    rot: (Math.random() - 0.5) * 20, // Rotación inicial
+                    el: null,
+                    captured: false
+                };
+
+                let div = document.createElement('div');
+                div.className = 'data-node';
+                div.id = nodeObj.id;
+                div.innerText = nodeObj.text;
+                div.style.left = `${nodeObj.x}%`;
+                div.style.top = `${nodeObj.y}%`;
+                div.style.transform = `translate(-50%, -50%) rotate(${nodeObj.rot}deg)`;
+                
+                div.onclick = (e) => { e.stopPropagation(); selectNode(nodeObj.id); };
+                
+                container.appendChild(div);
+                nodeObj.el = div;
+                nodesData.push(nodeObj);
+            });
+
+            selectedNodeId = null;
+            isTransferring = false;
+            document.getElementById('laser-beam').classList.remove('active', 'success', 'error');
+
+            isPlaying = true;
+            lastTime = performance.now();
+            cancelAnimationFrame(animationFrameId);
+            gameLoop(lastTime);
+        }
+
+        // Bucle de físicas
+        function gameLoop(timestamp) {
+            if(!isPlaying) return;
+            
+            let dt = (timestamp - lastTime) / 1000;
+            lastTime = timestamp;
+            
+            if(dt > 0.1) dt = 0.016; 
+
+            let baseSpeed = 2.5; // Velocidad suave
+
+            nodesData.forEach(n => {
+                if(n.captured) return;
+                
+                if(selectedNodeId === n.id) {
+                    n.el.style.transform = `translate(-50%, -50%) scale(1.1) rotate(0deg)`; // Endereza al seleccionar
+                    return;
+                }
+
+                n.x += n.vx * baseSpeed * dt;
+                n.y += n.vy * baseSpeed * dt;
+                // Add slight rotation sway based on velocity
+                n.rot += (n.vx) * dt * 5;
+
+                if (n.x < 5) { n.x = 5; n.vx *= -1; }
+                if (n.x > 95) { n.x = 95; n.vx *= -1; }
+                if (n.y < 5) { n.y = 5; n.vy *= -1; }
+                if (n.y > 85) { n.y = 85; n.vy *= -1; }
+
+                n.el.style.left = `${n.x}%`;
+                n.el.style.top = `${n.y}%`;
+                n.el.style.transform = `translate(-50%, -50%) rotate(${n.rot}deg)`;
+            });
+
+            animationFrameId = requestAnimationFrame(gameLoop);
+        }
+
+        function selectNode(id) {
+            if(!isPlaying || isTransferring) return;
+            
+            sfxSelect();
+            selectedNodeId = id;
+            
+            nodesData.forEach(n => { if(!n.captured) n.el.classList.remove('selected'); });
+            document.getElementById(id).classList.add('selected');
+        }
+
+        document.getElementById('routing-area').onclick = (e) => {
+            if(e.target.id === 'routing-area' || e.target.id === 'nodes-container') {
+                if(selectedNodeId && !isTransferring) {
+                    sfxClick();
+                    selectedNodeId = null;
+                    nodesData.forEach(n => { if(!n.captured) n.el.classList.remove('selected'); });
+                }
+            }
+        };
+
+        function routeToCore(coreId) {
+            if(!isPlaying || isTransferring || !selectedNodeId) return;
+
+            let node = nodesData.find(n => n.id === selectedNodeId);
+            if(!node || node.captured) return;
+
+            isTransferring = true;
+            
+            // Trazar línea de mapa
+            let nEl = node.el.getBoundingClientRect();
+            let cEl = document.getElementById(`core-${coreId}`).getBoundingClientRect();
+            let rEl = document.getElementById('routing-area').getBoundingClientRect();
+            
+            let x1 = nEl.left + nEl.width/2 - rEl.left;
+            let y1 = nEl.top + nEl.height/2 - rEl.top;
+            let x2 = cEl.left + cEl.width/2 - rEl.left;
+            let y2 = cEl.top - rEl.top;
+
+            let laser = document.getElementById('laser-beam');
+            laser.setAttribute('x1', x1); laser.setAttribute('y1', y1);
+            laser.setAttribute('x2', x2); laser.setAttribute('y2', y2);
+            
+            let isCorrect = (node.cId === coreId);
+
+            if(isCorrect) {
+                // EXITO
+                sfxTransfer();
+                laser.className.baseVal = "data-link active success";
+                
+                setTimeout(() => {
+                    node.captured = true;
+                    node.el.classList.add('captured');
+                    laser.className.baseVal = "data-link"; 
+                    
+                    coresProgress[coreId]++;
+                    document.getElementById(`c${coreId}-fill`).style.width = `${(coresProgress[coreId]/ITEMS_PER_CORE)*100}%`;
+                    
+                    if(coresProgress[coreId] >= ITEMS_PER_CORE) {
+                        sfxCoreComplete();
+                        document.getElementById(`core-${coreId}`).classList.add('complete');
+                    }
+                    
+                    selectedNodeId = null;
+                    isTransferring = false;
+                    
+                    checkWin();
+                }, 500);
+
+            } else {
+                // ERROR
+                sfxError();
+                document.getElementById('routing-area').classList.add('shake-screen');
+                laser.className.baseVal = "data-link active error";
+                
+                setTimeout(() => {
+                    document.getElementById('routing-area').classList.remove('shake-screen');
+                    laser.className.baseVal = "data-link"; 
+                    
+                    node.el.classList.remove('selected');
+                    selectedNodeId = null;
+                    isTransferring = false;
+                    
+                    mistakes++;
+                    hp--;
+                    updateHearts();
+                    checkDeath();
+                }, 500);
+            }
+        }
+
+        function updateHearts() {
+            for(let i=1; i<=3; i++) {
+                let h = document.getElementById(`h${i}`);
+                if(i <= hp) h.classList.remove('lost');
+                else h.classList.add('lost');
+            }
+        }
+
+        function checkDeath() {
+            if (hp <= 0) {
+                isPlaying = false;
+                sfxGameOver();
+                document.getElementById('m-title').style.color = "var(--danger)";
+                document.getElementById('m-rank').style.display = "none";
+                showModal("FONDOS AGOTADOS 💥", "Has clasificado mal demasiados artefactos.\nEl museo ha cancelado la expedición.", () => {
+                    currentLevel = 0; 
+                    hp = 3;
+                    updateHearts();
+                    loadLevel(); 
+                }, "REINICIAR EXPEDICIÓN");
+            }
+        }
+
+        function checkWin() {
+            let total = coresProgress[1] + coresProgress[2] + coresProgress[3];
+            if(total >= ITEMS_PER_CORE * 3) {
+                // LEVEL COMPLETE
+                isPlaying = false;
+                let timeTaken = Math.floor((Date.now() - startTime) / 1000);
+                
+                let rank = 'C';
+                let rankClass = 'rank-C';
+                let sfx = sfxRankLow;
+
+                let targetTime = 40; 
+
+                if (mistakes === 0 && timeTaken <= targetTime) { rank = 'S'; rankClass = 'rank-S'; sfx = sfxRankS; }
+                else if (mistakes === 0 && timeTaken <= targetTime + 20) { rank = 'A'; rankClass = 'rank-A'; sfx = sfxRankA; }
+                else if (mistakes <= 1) { rank = 'B'; rankClass = 'rank-B'; sfx = sfxRankS; }
+
+                sfx();
+                document.getElementById('m-title').style.color = "var(--accent-gold)";
+                document.getElementById('m-rank').style.display = "block";
+                document.getElementById('m-rank').innerText = rank;
+                document.getElementById('m-rank').style.color = `var(--rank-${rank.toLowerCase()})`;
+                
+                document.getElementById('m-stats').innerText = `Errores: ${mistakes} | Tiempo: ${timeTaken}s`;
+
+                showModal("¡SALA ORGANIZADA! 🏛️", "Has clasificado todos los artefactos históricos en la exhibición correcta.", () => {
+                    currentLevel++;
+                    loadLevel();
+                }, "SIGUIENTE SALA");
+            }
+        }
+
+        let modalCallback = null;
+        function showModal(title, msg, callback = null, btnText = "CONTINUAR") { 
+            document.getElementById('m-title').innerText = title; 
+            document.getElementById('m-msg').innerText = msg; 
+            document.getElementById('m-btn').innerText = btnText;
+            document.getElementById('modal').classList.add('active'); 
+            modalCallback = callback; 
+        }
+        function closeModal() { 
+            sfxClick(); 
+            document.getElementById('modal').classList.remove('active'); 
+            if(modalCallback) { modalCallback(); modalCallback = null; } 
+        }
+    </script>
+</body>
+</html>

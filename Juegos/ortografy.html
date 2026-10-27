@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lexico-Tron: Control de Calidad 🔤</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { 
+            --bg-color: #0f172a;
+            --panel-bg: rgba(15, 23, 42, 0.95);
+            
+            /* Colores Industriales / Cyberpunk */
+            --accent-orange: #f97316;
+            --accent-yellow: #eab308;
+            --accent-cyan: #06b6d4;
+            --danger: #ef4444;
+            --success: #10b981;
+            
+            --belt-color: #334155;
+            --text-main: #f8fafc;
+        }
+
+        body, html { 
+            font-family: 'Rajdhani', sans-serif; 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            margin: 0; padding: 0; width: 100vw; height: 100vh; 
+            color: var(--text-main); background-color: var(--bg-color); 
+            overflow: hidden; box-sizing: border-box; user-select: none;
+        }
+
+        /* FONDO FÁBRICA */
+        .decorations { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; background: radial-gradient(circle at top, #1e293b 0%, #020617 100%); }
+        
+        .factory-grid { position: absolute; inset: 0; background-image: 
+            linear-gradient(rgba(249, 115, 22, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(249, 115, 22, 0.05) 1px, transparent 1px);
+            background-size: 60px 60px; opacity: 0.8;}
+            
+        .gears { position: absolute; top: 10%; right: 5%; width: 300px; height: 300px; opacity: 0.05; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23f97316' d='M50 20c-16.5 0-30 13.5-30 30s13.5 30 30 30 30-13.5 30-30-13.5-30-30-30zm0 45c-8.3 0-15-6.7-15-15s6.7-15 15-15 15 6.7 15 15-6.7 15-15 15z'/%3E%3Cpath fill='%23f97316' d='M50 5L55 15H45zM50 95L45 85H55zM95 50L85 45V55zM5 50L15 55V45zM81.8 18.2l-3.5 9.2-6.5-6.5 9.2-3.5zM18.2 81.8l3.5-9.2 6.5 6.5-9.2 3.5zM81.8 81.8l-9.2-3.5 6.5-6.5 3.5 9.2zM18.2 18.2l9.2 3.5-6.5 6.5-3.5-9.2z'/%3E%3C/svg%3E") no-repeat center; animation: spin 20s linear infinite;}
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        .sound-toggle { position: absolute; top: 15px; right: 15px; background: rgba(15,23,42,0.8); border: 2px solid var(--accent-orange); border-radius: 8px; width: 45px; height: 45px; font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 1000; box-shadow: 0 0 10px rgba(249,115,22,0.3); transition: all 0.2s; color: var(--accent-orange);}
+        .sound-toggle:active { transform: scale(0.9); }
+
+        /* PANTALLA DE INSTRUCCIONES */
+        #instructions-screen { position: absolute; inset: 0; z-index: 600; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(2,6,23,0.95); backdrop-filter: blur(8px); }
+        .instructions-card { background: var(--panel-bg); padding: 40px; border-radius: 12px; border: 2px solid var(--accent-orange); max-width: 90%; width: 750px; display: flex; flex-direction: column; gap: 20px; box-shadow: 0 0 50px rgba(249,115,22,0.3); }
+        .instructions-card h1 { font-family: 'Share Tech Mono', monospace; font-size: 45px; color: var(--accent-orange); margin: 0; text-align: center; text-shadow: 0 0 15px rgba(249,115,22,0.5);}
+        .instruction-step { display: flex; gap: 15px; align-items: flex-start; font-size: 18px; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; border: 1px solid rgba(249,115,22,0.3);}
+        .instruction-icon { font-size: 30px; flex-shrink: 0; }
+        .instruction-text b { color: var(--accent-yellow); }
+        .instruction-text .warn { color: var(--danger); font-weight: bold;}
+        
+        .start-btn { background: var(--accent-orange); border: none; padding: 15px 40px; font-size: 22px; color: #000; border-radius: 6px; text-transform: uppercase; font-weight: bold; font-family: 'Share Tech Mono', monospace; cursor:pointer; transition: all 0.2s; align-self: center; box-shadow: 0 5px 0 #c2410c, 0 10px 20px rgba(249,115,22,0.4); letter-spacing: 2px; margin-top: 10px;}
+        .start-btn:active { transform: translateY(5px); box-shadow: 0 0 0 #c2410c; }
+
+        /* HEADER DEL JUEGO */
+        .game-header { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1200px; padding: 15px 2vw; z-index: 10; box-sizing: border-box;}
+        .title-display { font-family: 'Share Tech Mono', monospace; font-size: 26px; color: var(--accent-orange); text-shadow: 0 0 10px var(--accent-orange); letter-spacing: 1px;}
+        
+        .hud-stats { display: flex; gap: 15px; align-items: center;}
+        .score-box { background: var(--panel-bg); padding: 8px 20px; border-radius: 6px; border: 1px solid var(--accent-yellow); font-size: 22px; color: #fff; box-shadow: 0 0 15px rgba(234,179,8,0.3); font-family: 'Share Tech Mono', monospace;}
+        .score-box span { color: var(--accent-yellow); font-weight: bold;}
+        
+        .health-bar { display: flex; gap: 5px; align-items: center; background: var(--panel-bg); padding: 8px 20px; border-radius: 6px; border: 1px solid var(--danger); box-shadow: 0 0 15px rgba(239,68,68,0.3); font-family: 'Share Tech Mono', monospace;}
+        .heart { color: var(--danger); font-size: 22px; filter: drop-shadow(0 0 5px var(--danger)); transition: all 0.3s;}
+        .heart.lost { color: #334155; filter: none; transform: scale(0.8); opacity: 0.5;}
+
+        /* LAYOUT PRINCIPAL */
+        .main-layout { display: flex; flex-direction: column; width: 100%; max-width: 1200px; flex: 1; padding: 0 2vw 2vh 2vw; box-sizing: border-box; overflow: hidden; position: relative;}
+
+        /* =========================================================
+           ZONA DE LA CINTA TRANSPORTADORA
+           ========================================================= */
+        .factory-area { flex: 1; position: relative; display: flex; flex-direction: column; justify-content: center;}
+
+        /* El escáner (Zona de validación) */
+        .scanner-zone { position: absolute; left: 10%; width: 220px; height: 180px; top: 50%; transform: translateY(-50%); border: 4px dashed var(--accent-cyan); border-radius: 12px; background: rgba(6,182,212,0.1); z-index: 5; box-shadow: inset 0 0 30px rgba(6,182,212,0.3), 0 0 20px rgba(6,182,212,0.2); transition: all 0.2s;}
+        .scanner-zone::before { content: 'ESCÁNER ÓPTICO'; position: absolute; top: -30px; left: 50%; transform: translateX(-50%); font-family: 'Share Tech Mono', monospace; color: var(--accent-cyan); font-size: 16px; font-weight: bold; white-space: nowrap; text-shadow: 0 0 10px var(--accent-cyan);}
+        
+        .scanner-zone.scan-success { background: rgba(16,185,129,0.3); border-color: var(--success); box-shadow: inset 0 0 50px rgba(16,185,129,0.5);}
+        .scanner-zone.scan-error { background: rgba(239,68,68,0.3); border-color: var(--danger); box-shadow: inset 0 0 50px rgba(239,68,68,0.5);}
+
+        /* Incinerador (Destrucción si se pasa) */
+        .incinerator { position: absolute; left: -2%; width: 8%; height: 200px; top: 50%; transform: translateY(-50%); background: linear-gradient(90deg, var(--danger), transparent); opacity: 0.5; z-index: 4; border-right: 4px solid var(--danger); filter: drop-shadow(5px 0 15px var(--danger));}
+
+        /* La Cinta de Movimiento */
+        .conveyor-belt { position: absolute; top: 50%; left: -5%; width: 110%; height: 40px; transform: translateY(50px); background: #1e293b; border-top: 4px solid #475569; border-bottom: 6px solid #0f172a; z-index: 1;}
+        .conveyor-belt::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(-45deg, transparent, transparent 20px, rgba(0,0,0,0.5) 20px, rgba(0,0,0,0.5) 40px); animation: beltMove 1s linear infinite;}
+        
+        @keyframes beltMove { from { background-position: 0 0; } to { background-position: -56px 0; } }
+
+        /* Contenedor de palabras */
+        .word-layer { position: absolute; inset: 0; z-index: 10; pointer-events: none;}
+        
+        /* Caja de Palabra */
+        .crate { position: absolute; top: 50%; left: 100%; transform: translate(-50%, -50px); background: #334155; border: 3px solid #64748b; border-radius: 8px; padding: 15px 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.8), inset 0 0 15px rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; transition: top 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s, transform 0.3s;}
+        
+        /* Patrón industrial en la caja */
+        .crate::before { content: ''; position: absolute; inset: 2px; border: 1px dashed #94a3b8; pointer-events: none;}
+
+        .crate-text { font-family: 'Rajdhani', sans-serif; font-size: 32px; font-weight: 900; color: #fff; letter-spacing: 2px; text-transform: uppercase; text-shadow: 2px 2px 0px #000;}
+
+        /* Estados de la caja */
+        .crate.approved { border-color: var(--success); background: #064e3b; top: 20%; opacity: 0; transform: translate(-50%, -50%) scale(1.2);}
+        .crate.approved .crate-text { color: var(--success); text-shadow: 0 0 10px var(--success);}
+        
+        .crate.rejected { border-color: var(--danger); background: #450a0a; transform: translate(-50%, -50%) scale(0.5); opacity: 0;}
+        .crate.rejected .crate-text { color: var(--danger); text-shadow: 0 0 10px var(--danger);}
+
+        /* =========================================================
+           PANEL DE CONTROL (BOTONES INFERIORES)
+           ========================================================= */
+        .control-panel { height: 180px; display: flex; justify-content: center; align-items: center; gap: 30px; background: rgba(0,0,0,0.5); border-top: 2px solid var(--accent-orange); z-index: 20; padding: 20px;}
+        
+        .control-btn { flex: 1; max-width: 300px; height: 100px; background: var(--panel-bg); border: 4px solid #475569; border-radius: 12px; font-family: 'Share Tech Mono', monospace; font-size: 30px; font-weight: bold; color: #cbd5e1; cursor: pointer; transition: all 0.1s; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 10px 0 #1e293b, 0 15px 20px rgba(0,0,0,0.5); position: relative;}
+        
+        .control-btn .key-hint { position: absolute; top: 5px; right: 10px; font-size: 14px; color: #64748b; background: #0f172a; padding: 2px 8px; border-radius: 4px; border: 1px solid #334155;}
+        
+        .btn-aguda:hover { border-color: var(--accent-cyan); color: #fff;}
+        .btn-aguda:active, .btn-aguda.active-key { transform: translateY(10px); box-shadow: 0 0 0 #1e293b, 0 0 30px rgba(6,182,212,0.5); border-color: var(--accent-cyan); background: rgba(6,182,212,0.2); color: var(--accent-cyan);}
+
+        .btn-grave:hover { border-color: var(--accent-orange); color: #fff;}
+        .btn-grave:active, .btn-grave.active-key { transform: translateY(10px); box-shadow: 0 0 0 #1e293b, 0 0 30px rgba(249,115,22,0.5); border-color: var(--accent-orange); background: rgba(249,115,22,0.2); color: var(--accent-orange);}
+
+        .btn-esdrujula:hover { border-color: var(--accent-yellow); color: #fff;}
+        .btn-esdrujula:active, .btn-esdrujula.active-key { transform: translateY(10px); box-shadow: 0 0 0 #1e293b, 0 0 30px rgba(234,179,8,0.5); border-color: var(--accent-yellow); background: rgba(234,179,8,0.2); color: var(--accent-yellow);}
+
+
+        /* MODAL GAME OVER */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 1000; visibility: hidden; opacity: 0; transition: all 0.3s; backdrop-filter: blur(8px);}
+        .modal-overlay.active { visibility: visible; opacity: 1; }
+        .modal-box { background: var(--panel-bg); padding: 40px; border-radius: 12px; text-align: center; max-width: 85%; width: 450px; transform: scale(0.9); transition: transform 0.3s; border: 2px solid var(--danger); box-shadow: 0 0 50px rgba(239,68,68,0.3);}
+        .modal-overlay.active .modal-box { transform: scale(1); }
+        
+        .modal-title { font-family: 'Share Tech Mono', monospace; font-size: 40px; margin-top: 0; margin-bottom: 10px; color: var(--danger); text-shadow: 0 0 15px rgba(239,68,68,0.5);}
+        .modal-score { font-family: 'Share Tech Mono', monospace; font-size: 50px; color: #fff; font-weight: bold; margin: 20px 0;}
+        
+        .modal-btn { background: transparent; border: 2px solid var(--accent-orange); color: var(--accent-orange); padding: 15px 30px; font-size: 20px; border-radius: 6px; text-transform: uppercase; font-weight: bold; cursor:pointer; font-family: 'Share Tech Mono', monospace; transition: all 0.2s; width: 100%;}
+        .modal-btn:hover { background: var(--accent-orange); color: #000; box-shadow: 0 0 20px var(--accent-orange);}
+
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+        .shake-screen { animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both; }
+
+    </style>
+</head>
+<body>
+
+    <audio id="bgm" loop><source src="../assets/musicaFondo/cancion1.mp3" type="audio/mpeg"></audio>
+    <div class="decorations"><div class="factory-grid"></div><div class="gears"></div></div>
+    <button id="soundToggle" class="sound-toggle" aria-label="Activar sonido">🔇</button>
+
+    <!-- INSTRUCCIONES -->
+    <div id="instructions-screen">
+        <div class="instructions-card">
+            <h1>LEXICO-TRON 🔤</h1>
+            <div class="instruction-step">
+                <span class="instruction-icon">🏭</span>
+                <span class="instruction-text"><b>CONTROL DE CALIDAD:</b> Eres el inspector del escáner ortográfico. Palabras recién ensambladas pasarán velozmente por la cinta.</span>
+            </div>
+            <div class="instruction-step">
+                <span class="instruction-icon">🎯</span>
+                <span class="instruction-text"><b>CLASIFICACIÓN:</b> Cuando una caja entre en la <b>Zona de Escáner (Celeste)</b>, debes presionar su tipo correspondiente según su sílaba tónica: <b style="color:var(--accent-cyan);">AGUDA</b>, <b style="color:var(--accent-orange);">GRAVE</b> o <b style="color:var(--accent-yellow);">ESDRÚJULA</b>.</span>
+            </div>
+            <div class="instruction-step">
+                <span class="instruction-icon">⌨️</span>
+                <span class="instruction-text"><b>CONTROLES RÁPIDOS:</b> Puedes tocar los botones en pantalla o usar tu teclado: <br>Tecla <b>[1] = Aguda</b> | Tecla <b>[2] = Grave</b> | Tecla <b>[3] = Esdrújula</b></span>
+            </div>
+            <div class="instruction-step">
+                <span class="instruction-icon">⚠️</span>
+                <span class="instruction-text"><b>PELIGRO:</b> Si te equivocas o dejas que una palabra caiga al incinerador, perderás integridad (❤️). ¡La velocidad aumentará progresivamente!</span>
+            </div>
+            <button class="start-btn" onclick="startGame()">ENCENDER CINTA</button>
+        </div>
+    </div>
+
+    <!-- JUEGO -->
+    <div class="game-header">
+        <div class="title-display">LEXICO-TRON [SINTAXIS]</div>
+        <div class="hud-stats">
+            <div class="health-bar">
+                SISTEMA: 
+                <span class="heart" id="h1">❤️</span>
+                <span class="heart" id="h2">❤️</span>
+                <span class="heart" id="h3">❤️</span>
+            </div>
+            <div class="score-box">CAJAS: <span id="score-display">0</span></div>
+        </div>
+    </div>
+
+    <div class="main-layout">
+        
+        <!-- ZONA DE LA CINTA -->
+        <div class="factory-area" id="canvas">
+            
+            <div class="incinerator"></div>
+            
+            <div class="conveyor-belt" id="belt"></div>
+            
+            <div class="scanner-zone" id="scanner"></div>
+
+            <div class="word-layer" id="word-layer"></div>
+
+        </div>
+
+        <!-- PANEL DE CONTROL -->
+        <div class="control-panel">
+            <button class="control-btn btn-aguda" id="btn-1" onmousedown="stampWord('AGUDA')">
+                AGUDA
+                <div class="key-hint">Tecla 1</div>
+            </button>
+            <button class="control-btn btn-grave" id="btn-2" onmousedown="stampWord('GRAVE')">
+                GRAVE
+                <div class="key-hint">Tecla 2</div>
+            </button>
+            <button class="control-btn btn-esdrujula" id="btn-3" onmousedown="stampWord('ESDRÚJULA')">
+                ESDRÚJULA
+                <div class="key-hint">Tecla 3</div>
+            </button>
+        </div>
+
+    </div>
+
+    <!-- MODAL GAME OVER -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal-box">
+            <h2 class="modal-title">SISTEMA APAGADO</h2>
+            <p style="color:#94a3b8; font-size:18px; margin:0;">Palabras Procesadas:</p>
+            <div class="modal-score" id="m-score">0</div>
+            <button class="modal-btn" onclick="resetGame()">REINICIAR TURNO</button>
+        </div>
+    </div>
+
+    <script>
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx; let isMuted = true;
+        const bgAudio = document.getElementById('bgm');
+        const soundToggle = document.getElementById('soundToggle');
+
+        soundToggle.addEventListener('click', () => {
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            isMuted = !isMuted;
+            if(isMuted) { bgAudio.pause(); soundToggle.innerText = '🔇'; } 
+            else { bgAudio.volume = 0.25; bgAudio.play().catch(e=>e); soundToggle.innerText = '🔊'; }
+        });
+
+        function playTone(freq, type, duration, vol = 0.1) {
+            if (!audioCtx || isMuted) return;
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + duration);
+        }
+        function playNoise(duration, vol) {
+            if (!audioCtx || isMuted) return;
+            const bufferSize = audioCtx.sampleRate * duration; const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate); const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+            const noise = audioCtx.createBufferSource(); noise.buffer = buffer;
+            const gain = audioCtx.createGain(); gain.gain.setValueAtTime(vol, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            const filter = audioCtx.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 800;
+            noise.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination); noise.start();
+        }
+
+        function sfxClick() { playTone(900, 'square', 0.05, 0.05); }
+        function sfxSuccess() { playTone(1200, 'sine', 0.1, 0.1); setTimeout(()=>playTone(1600, 'sine', 0.1, 0.1), 100); }
+        function sfxError() { playTone(200, 'sawtooth', 0.2, 0.2); }
+        function sfxDamage() { playNoise(0.4, 0.3); playTone(100, 'sawtooth', 0.4, 0.3); }
+        function sfxGameOver() { [300, 250, 200, 150].forEach((f, i) => setTimeout(() => playTone(f, 'sawtooth', 0.4, 0.2), i * 300)); }
+
+        // DICCIONARIO ORTOGRÁFICO
+        const DICT = [
+            // AGUDAS (Con y sin tilde)
+            { w: "CANCIÓN", t: "AGUDA" }, { w: "PARED", t: "AGUDA" }, { w: "CAFÉ", t: "AGUDA" }, 
+            { w: "RELOJ", t: "AGUDA" }, { w: "AMOR", t: "AGUDA" }, { w: "PAÍS", t: "AGUDA" },
+            { w: "CORAZÓN", t: "AGUDA" }, { w: "FELIZ", t: "AGUDA" }, { w: "MADRID", t: "AGUDA" },
+            { w: "MAMÁ", t: "AGUDA" }, { w: "COMPÁS", t: "AGUDA" }, { w: "RAÍZ", t: "AGUDA" },
+            
+            // GRAVES (Con y sin tilde)
+            { w: "ÁRBOL", t: "GRAVE" }, { w: "MESA", t: "GRAVE" }, { w: "LÁPIZ", t: "GRAVE" }, 
+            { w: "JOVEN", t: "GRAVE" }, { w: "EXAMEN", t: "GRAVE" }, { w: "FÁCIL", t: "GRAVE" }, 
+            { w: "AZÚCAR", t: "GRAVE" }, { w: "CÁRCEL", t: "GRAVE" }, { w: "PERRO", t: "GRAVE" },
+            { w: "VOLUMEN", t: "GRAVE" }, { w: "CÓNDOR", t: "GRAVE" }, { w: "LUNA", t: "GRAVE" },
+
+            // ESDRÚJULAS (Siempre llevan tilde)
+            { w: "MÚSICA", t: "ESDRÚJULA" }, { w: "PÁJARO", t: "ESDRÚJULA" }, { w: "MÁQUINA", t: "ESDRÚJULA" }, 
+            { w: "HÉROE", t: "ESDRÚJULA" }, { w: "LÁGRIMA", t: "ESDRÚJULA" }, { w: "OCÉANO", t: "ESDRÚJULA" },
+            { w: "CÍRCULO", t: "ESDRÚJULA" }, { w: "MIÉRCOLES", t: "ESDRÚJULA" }, { w: "MÉDICO", t: "ESDRÚJULA" },
+            { w: "PLÁTANO", t: "ESDRÚJULA" }, { w: "LÓGICO", t: "ESDRÚJULA" }, { w: "SÁBADO", t: "ESDRÚJULA" }
+        ];
+
+        // VARIABLES DE JUEGO
+        let isPlaying = false;
+        let hp = 3;
+        let score = 0;
+        let crates = [];
+        let crateIdCounter = 0;
+        
+        let spawnRate = 2500; // ms between words
+        let baseSpeed = 20; // percent per second (travels 100% in 5 seconds)
+        
+        let lastTime = 0;
+        let spawnTimer = 0;
+        let animationFrameId;
+
+        // Config del escáner (porcentajes de posición left)
+        const SCANNER_LEFT = 10;
+        const SCANNER_RIGHT = 35; // 10% + 25% width approx
+
+        // Controles de teclado
+        document.addEventListener('keydown', (e) => {
+            if(!isPlaying) return;
+            if(e.key === '1') { highlightBtn('btn-1'); stampWord('AGUDA'); }
+            if(e.key === '2') { highlightBtn('btn-2'); stampWord('GRAVE'); }
+            if(e.key === '3') { highlightBtn('btn-3'); stampWord('ESDRÚJULA'); }
+        });
+        document.addEventListener('keyup', (e) => {
+            if(e.key === '1') unhighlightBtn('btn-1');
+            if(e.key === '2') unhighlightBtn('btn-2');
+            if(e.key === '3') unhighlightBtn('btn-3');
+        });
+
+        function highlightBtn(id) { document.getElementById(id).classList.add('active-key'); }
+        function unhighlightBtn(id) { document.getElementById(id).classList.remove('active-key'); }
+
+        function startGame() {
+            if (!audioCtx && !isMuted) { audioCtx = new AudioContext(); bgAudio.play().catch(e=>e); }
+            sfxClick();
+            document.getElementById('instructions-screen').style.display = 'none';
+            resetGame();
+        }
+
+        function resetGame() {
+            document.getElementById('modal').classList.remove('active');
+            
+            hp = 3;
+            score = 0;
+            spawnRate = 2800; // inicial más lento
+            baseSpeed = 18;   // velocidad inicial
+            
+            crates = [];
+            document.getElementById('word-layer').innerHTML = '';
+            
+            updateHearts();
+            updateScore();
+            
+            // Reset animations
+            document.getElementById('belt').style.animationDuration = '1.5s';
+
+            isPlaying = true;
+            lastTime = performance.now();
+            spawnTimer = 2000; // Spawn first word quickly
+            
+            cancelAnimationFrame(animationFrameId);
+            gameLoop(lastTime);
+        }
+
+        function spawnCrate() {
+            let data = DICT[Math.floor(Math.random() * DICT.length)];
+            
+            let crate = {
+                id: `c-${crateIdCounter++}`,
+                word: data.w,
+                type: data.t,
+                x: 110, // Start off-screen right
+                el: null,
+                processed: false
+            };
+
+            let div = document.createElement('div');
+            div.className = 'crate';
+            div.id = crate.id;
+            div.style.left = `${crate.x}%`;
+            
+            div.innerHTML = `<div class="crate-text">${crate.word}</div>`;
+            
+            document.getElementById('word-layer').appendChild(div);
+            crate.el = div;
+            
+            crates.push(crate);
+        }
+
+        function gameLoop(timestamp) {
+            if(!isPlaying) return;
+            
+            let dt = (timestamp - lastTime) / 1000;
+            lastTime = timestamp;
+            if(dt > 0.1) dt = 0.016;
+
+            // Spawn Logic
+            spawnTimer += dt * 1000;
+            if (spawnTimer >= spawnRate) {
+                spawnCrate();
+                spawnTimer = 0;
+            }
+
+            // Move Crates
+            for (let i = crates.length - 1; i >= 0; i--) {
+                let c = crates[i];
+                if (c.processed) continue; // Si ya fue validada o destruida, ignorar fisicas
+
+                c.x -= baseSpeed * dt;
+                c.el.style.left = `${c.x}%`;
+
+                // Verificar si se pasó del escáner (cayó al incinerador)
+                if (c.x < SCANNER_LEFT - 5) {
+                    // Falló por no hacer nada
+                    c.processed = true;
+                    c.el.classList.add('rejected');
+                    
+                    triggerScannerVisual('error');
+                    takeDamage("¡PALABRA INCINERADA! Se te pasó por alto.");
+                    
+                    setTimeout(() => {
+                        if(c.el.parentNode) c.el.remove();
+                    }, 300);
+                    
+                    crates.splice(i, 1);
+                }
+            }
+
+            animationFrameId = requestAnimationFrame(gameLoop);
+        }
+
+        function stampWord(selectedType) {
+            if(!isPlaying) return;
+
+            // Encontrar la caja activa que esté DENTRO de la zona del escáner
+            // Prioridad a la que esté más a la izquierda (menor x)
+            let activeCrateIndex = -1;
+            let minX = 999;
+
+            for (let i = 0; i < crates.length; i++) {
+                let c = crates[i];
+                if (!c.processed && c.x >= SCANNER_LEFT && c.x <= SCANNER_RIGHT) {
+                    if (c.x < minX) {
+                        minX = c.x;
+                        activeCrateIndex = i;
+                    }
+                }
+            }
+
+            if (activeCrateIndex !== -1) {
+                let c = crates[activeCrateIndex];
+                c.processed = true;
+
+                if (c.type === selectedType) {
+                    // ACIERTO
+                    sfxSuccess();
+                    c.el.classList.add('approved');
+                    triggerScannerVisual('success');
+                    
+                    score += 1;
+                    updateScore();
+                    
+                    // Curva de dificultad (Acelerar ligeramente cada 5 puntos)
+                    if(score % 5 === 0) {
+                        baseSpeed += 2; // Más rápido
+                        spawnRate = Math.max(1000, spawnRate - 150); // Spawnea más frecuente
+                        
+                        // Acelerar animación de la cinta visualmente
+                        let currentBeltSpeed = parseFloat(document.getElementById('belt').style.animationDuration || '1.5');
+                        document.getElementById('belt').style.animationDuration = `${Math.max(0.3, currentBeltSpeed - 0.1)}s`;
+                    }
+
+                    setTimeout(() => {
+                        if(c.el.parentNode) c.el.remove();
+                    }, 300);
+                    
+                    crates.splice(activeCrateIndex, 1);
+
+                } else {
+                    // ERROR DE CLASIFICACIÓN
+                    c.el.classList.add('rejected');
+                    triggerScannerVisual('error');
+                    takeDamage(`Error de Sintaxis. ${c.word} es ${c.type}.`);
+                    
+                    setTimeout(() => {
+                        if(c.el.parentNode) c.el.remove();
+                    }, 300);
+                    
+                    crates.splice(activeCrateIndex, 1);
+                }
+            } else {
+                // Presionó botón pero no había palabra en el escáner (Opcional: penalizar o solo error sound)
+                sfxError();
+            }
+        }
+
+        function triggerScannerVisual(type) {
+            let scan = document.getElementById('scanner');
+            scan.className = `scanner-zone scan-${type}`;
+            setTimeout(() => {
+                scan.className = 'scanner-zone';
+            }, 200);
+        }
+
+        function takeDamage(msg) {
+            sfxDamage();
+            hp--;
+            updateHearts();
+            
+            document.getElementById('canvas').classList.add('shake-screen');
+            setTimeout(()=> document.getElementById('canvas').classList.remove('shake-screen'), 300);
+
+            if (hp <= 0) {
+                isPlaying = false;
+                sfxGameOver();
+                document.getElementById('m-score').innerText = score;
+                document.getElementById('modal').classList.add('active');
+            }
+        }
+
+        function updateHearts() {
+            for(let i=1; i<=3; i++) {
+                let h = document.getElementById(`h${i}`);
+                if(i <= hp) h.classList.remove('lost');
+                else h.classList.add('lost');
+            }
+        }
+
+        function updateScore() {
+            document.getElementById('score-display').innerText = score;
+        }
+
+    </script>
+</body>
+</html>

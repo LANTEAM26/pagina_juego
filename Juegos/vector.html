@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Vector-Drive: Navegación Inercial 🚀</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { 
+            --bg-color: #020617;
+            --panel-bg: rgba(15, 23, 42, 0.9);
+            
+            --axis-color: #475569;
+            --grid-color: #1e293b;
+            
+            --vector-wind: #f43f5e;   /* Rojo - Gravedad/Viento */
+            --vector-prop: #0ea5e9;   /* Cian - Propulsión del Jugador */
+            --vector-res: #fbbf24;    /* Amarillo - Resultante */
+            --target: #10b981;        /* Verde - Base/Destino */
+            
+            --text-main: #f8fafc;
+        }
+
+        body, html { 
+            font-family: 'Rajdhani', sans-serif; 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            margin: 0; padding: 0; width: 100vw; height: 100vh; 
+            color: var(--text-main); background-color: var(--bg-color); 
+            overflow: hidden; box-sizing: border-box; user-select: none;
+        }
+
+        /* FONDO ESTELAR */
+        .decorations { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; background: radial-gradient(circle at center, #0f172a 0%, #020617 100%); }
+        .stars { position: absolute; inset: 0; background-image: radial-gradient(1px 1px at 20px 30px, #fff, rgba(0,0,0,0)), radial-gradient(1px 1px at 40px 70px, #fff, rgba(0,0,0,0)), radial-gradient(1px 1px at 50px 160px, #fff, rgba(0,0,0,0)), radial-gradient(1px 1px at 90px 40px, #fff, rgba(0,0,0,0)); background-repeat: repeat; background-size: 200px 200px; opacity: 0.3; animation: starTwinkle 5s infinite alternate;}
+        
+        @keyframes starTwinkle { 0% { opacity: 0.2; } 100% { opacity: 0.5; } }
+
+        .sound-toggle { position: absolute; top: 15px; right: 15px; background: rgba(15,23,42,0.8); border: 2px solid var(--vector-prop); border-radius: 8px; width: 45px; height: 45px; font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 1000; box-shadow: 0 0 15px rgba(14,165,233,0.3); transition: all 0.2s; color: var(--vector-prop);}
+        .sound-toggle:active { transform: scale(0.9); }
+
+        /* PANTALLA DE INSTRUCCIONES */
+        #instructions-screen { position: absolute; inset: 0; z-index: 600; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(2,6,23,0.95); backdrop-filter: blur(8px); }
+        .instructions-card { background: var(--panel-bg); padding: 40px; border-radius: 12px; border: 2px solid var(--vector-prop); max-width: 90%; width: 750px; display: flex; flex-direction: column; gap: 20px; box-shadow: 0 0 50px rgba(14,165,233,0.3); }
+        .instructions-card h1 { font-family: 'Share Tech Mono', monospace; font-size: 45px; color: var(--vector-prop); margin: 0; text-align: center; text-shadow: 0 0 15px rgba(14,165,233,0.5);}
+        .instruction-step { display: flex; gap: 15px; align-items: flex-start; font-size: 18px; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; border: 1px solid rgba(14,165,233,0.3);}
+        .instruction-icon { font-size: 30px; flex-shrink: 0; }
+        .instruction-text b { color: var(--vector-res); }
+        .instruction-text .warn { color: var(--vector-wind); font-weight: bold;}
+        
+        .start-btn { background: var(--vector-prop); border: none; padding: 15px 40px; font-size: 22px; color: #000; border-radius: 6px; text-transform: uppercase; font-weight: bold; font-family: 'Share Tech Mono', monospace; cursor:pointer; transition: all 0.2s; align-self: center; box-shadow: 0 5px 0 #0369a1, 0 10px 20px rgba(14,165,233,0.4); letter-spacing: 2px; margin-top: 10px;}
+        .start-btn:active { transform: translateY(5px); box-shadow: 0 0 0 #0369a1; }
+
+        /* HEADER DEL JUEGO */
+        .game-header { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1200px; padding: 15px 2vw; z-index: 10; box-sizing: border-box;}
+        .title-display { font-family: 'Share Tech Mono', monospace; font-size: 26px; color: var(--vector-prop); text-shadow: 0 0 10px var(--vector-prop); letter-spacing: 1px;}
+        
+        .hud-stats { display: flex; gap: 15px; align-items: center;}
+        .hud-box { background: var(--panel-bg); padding: 8px 20px; border-radius: 6px; border: 1px solid var(--vector-res); font-size: 20px; color: #fff; box-shadow: 0 0 15px rgba(251,191,36,0.3); font-family: 'Share Tech Mono', monospace;}
+        .hud-box span { color: var(--vector-res); font-weight: bold;}
+        
+        .health-bar { display: flex; gap: 5px; align-items: center; background: var(--panel-bg); padding: 8px 20px; border-radius: 6px; border: 1px solid var(--vector-wind); box-shadow: 0 0 15px rgba(244,63,94,0.3); font-family: 'Share Tech Mono', monospace;}
+        .heart { color: var(--vector-wind); font-size: 22px; filter: drop-shadow(0 0 5px var(--vector-wind)); transition: all 0.3s;}
+        .heart.lost { color: #334155; filter: none; transform: scale(0.8); opacity: 0.5;}
+
+        /* LAYOUT PRINCIPAL */
+        .main-layout { display: flex; gap: 20px; width: 100%; max-width: 1200px; flex: 1; padding: 0 2vw 2vh 2vw; box-sizing: border-box; overflow: hidden;}
+        @media (max-width: 900px) { .main-layout { flex-direction: column; overflow-y: auto; } }
+
+        /* =========================================================
+           RADAR CARTESIANO (SVG) - IZQUIERDA
+           ========================================================= */
+        .radar-panel { flex: 1.5; background: rgba(2, 6, 23, 0.85); border: 2px solid var(--vector-prop); border-radius: 12px; position: relative; box-shadow: inset 0 0 50px rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; padding: 10px; overflow: hidden;}
+        
+        .svg-container { width: 100%; height: 100%; max-height: 600px; position: relative; background: #020617; border-radius: 8px; border: 1px solid #1e293b;}
+        svg { width: 100%; height: 100%; overflow: visible;}
+        
+        /* Grid Lines (Escalado para viewbox de 24x24) */
+        .grid-line { stroke: var(--grid-color); stroke-width: 0.05px; }
+        .grid-axis { stroke: var(--axis-color); stroke-width: 0.15px; }
+        .grid-label { fill: #64748b; font-family: 'Share Tech Mono', monospace; font-size: 0.8px; user-select: none;}
+
+        /* Vectors & Shapes (Escalado) */
+        .vec-wind { stroke: var(--vector-wind); stroke-width: 0.2px; fill: none; stroke-linecap: round;}
+        .vec-prop { stroke: var(--vector-prop); stroke-width: 0.2px; fill: none; stroke-linecap: round;}
+        .vec-res { stroke: var(--vector-res); stroke-width: 0.25px; fill: none; stroke-linecap: round; filter: drop-shadow(0 0 0.5px var(--vector-res));}
+        .vec-guide { stroke: #64748b; stroke-width: 0.1px; stroke-dasharray: 0.3, 0.3; fill: none;}
+        
+        .arrow-head-wind { fill: var(--vector-wind); }
+        .arrow-head-prop { fill: var(--vector-prop); }
+        .arrow-head-res { fill: var(--vector-res); }
+
+        /* Ship and Target (Escalado) */
+        .target-base { fill: rgba(16,185,129,0.2); stroke: var(--target); stroke-width: 0.1px; filter: drop-shadow(0 0 0.5px var(--target)); animation: pulseBase 2s infinite alternate;}
+        @keyframes pulseBase { 0% { filter: drop-shadow(0 0 0.2px var(--target)); } 100% { filter: drop-shadow(0 0 1px var(--target)); } }
+        
+        .ship { fill: #fff; stroke: var(--vector-prop); stroke-width: 0.1px; filter: drop-shadow(0 0 0.5px #fff); transition: transform 0.5s ease-out;}
+
+        .explosion-circle { fill: var(--vector-wind); opacity: 0; pointer-events: none;}
+        @keyframes explodeSvg { 0% { r: 0; opacity: 1; } 100% { r: 5; opacity: 0; } }
+
+        /* =========================================================
+           CONSOLA DE MANDO (DERECHA)
+           ========================================================= */
+        .console-panel { flex: 0.8; display: flex; flex-direction: column; gap: 15px;}
+        
+        .data-box { background: var(--panel-bg); border: 2px solid #1e293b; border-radius: 8px; padding: 20px; display: flex; flex-direction: column; gap: 15px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5);}
+        
+        .d-header { font-family: 'Share Tech Mono', monospace; font-size: 16px; color: #94a3b8; text-transform: uppercase; border-bottom: 1px dashed #334155; padding-bottom: 5px; margin-bottom: 5px;}
+        
+        .vector-readout { display: flex; justify-content: space-between; align-items: center; background: #0f172a; padding: 10px 15px; border-radius: 6px; border: 1px solid #1e293b;}
+        .vr-label { font-family: 'Share Tech Mono', monospace; font-size: 16px; font-weight: bold;}
+        .vr-val { font-family: 'Share Tech Mono', monospace; font-size: 20px; font-weight: bold; letter-spacing: 1px;}
+        
+        .vr-target { color: var(--target); }
+        .vr-wind { color: var(--vector-wind); }
+
+        /* Controles de Propulsión */
+        .controls-box { flex: 1; background: #0f172a; border: 2px solid var(--vector-prop); border-radius: 8px; padding: 20px; display: flex; flex-direction: column; gap: 20px; box-shadow: inset 0 0 30px rgba(14,165,233,0.1);}
+        .c-title { font-family: 'Share Tech Mono', monospace; font-size: 18px; color: var(--vector-prop); font-weight: bold; text-align: center; margin-bottom: 10px;}
+        
+        .axis-control { display: flex; align-items: center; justify-content: space-between; background: #020617; border: 1px solid #334155; padding: 10px; border-radius: 8px;}
+        .axis-label { font-family: 'Share Tech Mono', monospace; font-size: 24px; font-weight: bold; color: #94a3b8; width: 40px; text-align: center;}
+        
+        .adj-btn { background: #1e293b; border: 1px solid #475569; color: #fff; width: 45px; height: 45px; border-radius: 6px; font-size: 24px; font-weight: bold; font-family: monospace; cursor: pointer; transition: all 0.1s; display: flex; justify-content: center; align-items: center;}
+        .adj-btn:hover { background: #334155; border-color: var(--vector-prop);}
+        .adj-btn:active { transform: scale(0.9); background: var(--vector-prop); color: #000;}
+        
+        .val-display { font-family: 'Share Tech Mono', monospace; font-size: 32px; font-weight: bold; color: var(--vector-prop); width: 60px; text-align: center;}
+
+        .reactor-actions { margin-top: auto;}
+        .r-btn-verify { width: 100%; background: var(--vector-prop); border: none; color: #000; padding: 18px; border-radius: 6px; cursor: pointer; font-family: 'Share Tech Mono', monospace; font-size: 22px; transition: all 0.2s; font-weight: bold; box-shadow: 0 6px 0 #0369a1; text-transform: uppercase; letter-spacing: 2px;}
+        .r-btn-verify:active { transform: translateY(6px); box-shadow: none;}
+        .r-btn-verify:disabled { background: #334155; color: #94a3b8; box-shadow: none; cursor: not-allowed;}
+
+        /* MODAL */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 1000; visibility: hidden; opacity: 0; transition: all 0.3s; backdrop-filter: blur(8px);}
+        .modal-overlay.active { visibility: visible; opacity: 1; }
+        .modal-box { background: var(--panel-bg); padding: 40px; border-radius: 12px; text-align: center; max-width: 85%; width: 450px; transform: scale(0.9); transition: transform 0.3s; border: 2px solid var(--target); box-shadow: 0 0 50px rgba(16,185,129,0.3);}
+        .modal-overlay.active .modal-box { transform: scale(1); }
+        
+        .modal-title { font-family: 'Share Tech Mono', monospace; font-size: 36px; margin-top: 0; margin-bottom: 15px; color: var(--target); text-shadow: 0 0 15px rgba(16,185,129,0.5);}
+        .modal-msg { font-size: 18px; margin-bottom: 30px; color: #e2e8f0; white-space: pre-line; line-height: 1.5;}
+        
+        .modal-btn { background: transparent; border: 2px solid var(--target); color: var(--target); padding: 12px 30px; font-size: 18px; border-radius: 6px; text-transform: uppercase; font-weight: bold; cursor:pointer; font-family: 'Share Tech Mono', monospace; transition: all 0.2s;}
+        .modal-btn:hover { background: var(--target); color: #000; box-shadow: 0 0 20px var(--target);}
+
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+        .shake-screen { animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both; }
+
+    </style>
+</head>
+<body>
+
+    <audio id="bgm" loop><source src="../assets/musicaFondo/cancion1.mp3" type="audio/mpeg"></audio>
+    <div class="decorations"><div class="stars"></div></div>
+    <button id="soundToggle" class="sound-toggle" aria-label="Activar sonido">🔇</button>
+
+    <!-- INSTRUCCIONES -->
+    <div id="instructions-screen">
+        <div class="instructions-card">
+            <h1>VECTOR-DRIVE 🚀</h1>
+            <div class="instruction-step">
+                <span class="instruction-icon">🛰️</span>
+                <span class="instruction-text"><b>NAVEGACIÓN INERCIAL:</b> Eres una sonda espacial en las coordenadas (0,0). Debes alcanzar la Base Destino <b style="color:var(--target);">[D]</b>.</span>
+            </div>
+            <div class="instruction-step">
+                <span class="instruction-icon">☄️</span>
+                <span class="instruction-text"><b>ANOMALÍAS (Vectores):</b> El espacio te empuja con una Fuerza Ambiental <b class="warn">[W]</b> roja. Para llegar a la base, tu Vector de Propulsión <b style="color:var(--vector-prop);">[P]</b> sumado a la Fuerza Ambiental debe ser igual a la posición de la base.</span>
+            </div>
+            <div class="instruction-step">
+                <span class="instruction-icon">🧮</span>
+                <span class="instruction-text"><b>FÓRMULA:</b> $\vec{Resultante} = \vec{Propulsión} + \vec{Viento}$<br>Calcula mentalmente: <b>Propulsión = Destino - Viento</b>. Ajusta los valores de X e Y en tu consola.</span>
+            </div>
+            <button class="start-btn" onclick="startGame()">INICIAR SISTEMAS</button>
+        </div>
+    </div>
+
+    <!-- JUEGO -->
+    <div class="game-header">
+        <div class="title-display">VECTOR-DRIVE [RADAR_ACTIVO]</div>
+        <div class="hud-stats">
+            <div class="health-bar">
+                INTEGRIDAD: 
+                <span class="heart" id="h1">❤️</span>
+                <span class="heart" id="h2">❤️</span>
+                <span class="heart" id="h3">❤️</span>
+            </div>
+            <div class="hud-box">SECTOR: <span id="level-display">1/5</span></div>
+        </div>
+    </div>
+
+    <div class="main-layout">
+        
+        <!-- RADAR (IZQUIERDA) -->
+        <div class="radar-panel">
+            <div class="svg-container">
+                <!-- El viewbox va de -12 a 12 en X y Y. Centro en (0,0) -->
+                <svg viewBox="-12 -12 24 24" id="radar-svg">
+                    <defs>
+                        <!-- Markers adaptados para escalas pequeñas -->
+                        <marker id="arrow-wind" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                            <polygon points="0,0 10,5 0,10" class="arrow-head-wind" />
+                        </marker>
+                        <marker id="arrow-prop" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                            <polygon points="0,0 10,5 0,10" class="arrow-head-prop" />
+                        </marker>
+                        <marker id="arrow-res" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                            <polygon points="0,0 10,5 0,10" class="arrow-head-res" />
+                        </marker>
+                    </defs>
+
+                    <!-- Grid Dinámico Inyectado por JS -->
+                    <g id="grid-layer"></g>
+
+                    <!-- Vectores y Guías (Animados) -->
+                    <g id="vectors-layer">
+                        <line id="guide-p" class="vec-guide" x1="0" y1="0" x2="0" y2="0" />
+                        <line id="guide-w" class="vec-guide" x1="0" y1="0" x2="0" y2="0" />
+                        
+                        <line id="vec-w" class="vec-wind" x1="0" y1="0" x2="0" y2="0" marker-end="url(#arrow-wind)" />
+                        <line id="vec-p" class="vec-prop" x1="0" y1="0" x2="0" y2="0" marker-end="url(#arrow-prop)" opacity="0"/>
+                        <line id="vec-r" class="vec-res" x1="0" y1="0" x2="0" y2="0" marker-end="url(#arrow-res)" opacity="0"/>
+                    </g>
+
+                    <!-- Entidades -->
+                    <g id="entities-layer">
+                        <!-- Destino -->
+                        <circle id="base-halo" class="target-base" cx="0" cy="0" r="0.8" />
+                        <rect id="base-core" class="target-base" x="-0.3" y="-0.3" width="0.6" height="0.6" style="fill:var(--target);" />
+                        
+                        <!-- Sonda (Jugador) -->
+                        <path id="player-ship" class="ship" d="M -0.4,0.4 L 0,-0.6 L 0.4,0.4 Z" />
+                        
+                        <!-- Explosion -->
+                        <circle id="fx-explosion" class="explosion-circle" cx="0" cy="0" r="0" />
+                    </g>
+
+                </svg>
+            </div>
+        </div>
+
+        <!-- CONSOLA DE MANDO (DERECHA) -->
+        <div class="console-panel">
+            
+            <div class="data-box">
+                <div class="d-header">DATOS TELEMÉTRICOS</div>
+                
+                <div class="vector-readout">
+                    <span class="vr-label vr-target">DESTINO [D]:</span>
+                    <span class="vr-val vr-target" id="val-target">(0, 0)</span>
+                </div>
+                
+                <div class="vector-readout">
+                    <span class="vr-label vr-wind">ANOMALÍA [W]:</span>
+                    <span class="vr-val vr-wind" id="val-wind">(0, 0)</span>
+                </div>
+            </div>
+
+            <div class="controls-box">
+                <div class="c-title">VECTOR PROPULSIÓN [P]</div>
+                
+                <div class="axis-control">
+                    <span class="axis-label">X:</span>
+                    <button class="adj-btn" onclick="adjust('x', -1)">-</button>
+                    <span class="val-display" id="disp-x">0</span>
+                    <button class="adj-btn" onclick="adjust('x', 1)">+</button>
+                </div>
+
+                <div class="axis-control">
+                    <span class="axis-label">Y:</span>
+                    <button class="adj-btn" onclick="adjust('y', -1)">-</button>
+                    <span class="val-display" id="disp-y">0</span>
+                    <button class="adj-btn" onclick="adjust('y', 1)">+</button>
+                </div>
+            </div>
+            
+            <div class="reactor-actions">
+                <button class="r-btn-verify" id="btn-fire" onclick="launchProbe()">[ LANZAR SONDA ]</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MODAL GAME OVER -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal-box">
+            <h2 class="modal-title" id="m-title">TÍTULO</h2>
+            <p class="modal-msg" id="m-msg">Mensaje</p>
+            <button class="modal-btn" id="m-btn" onclick="closeModal()">CONTINUAR</button>
+        </div>
+    </div>
+
+    <script>
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx; let isMuted = true;
+        const bgAudio = document.getElementById('bgm');
+        const soundToggle = document.getElementById('soundToggle');
+
+        soundToggle.addEventListener('click', () => {
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            isMuted = !isMuted;
+            if(isMuted) { bgAudio.pause(); soundToggle.innerText = '🔇'; } 
+            else { bgAudio.volume = 0.25; bgAudio.play().catch(e=>e); soundToggle.innerText = '🔊'; }
+        });
+
+        function playTone(freq, type, duration, vol = 0.1) {
+            if (!audioCtx || isMuted) return;
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + duration);
+        }
+        function playNoise(duration, vol) {
+            if (!audioCtx || isMuted) return;
+            const bufferSize = audioCtx.sampleRate * duration; const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate); const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+            const noise = audioCtx.createBufferSource(); noise.buffer = buffer;
+            const gain = audioCtx.createGain(); gain.gain.setValueAtTime(vol, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            const filter = audioCtx.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 800;
+            noise.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination); noise.start();
+        }
+
+        function sfxClick() { playTone(900, 'square', 0.05, 0.05); }
+        function sfxInput() { playTone(1200, 'sine', 0.05, 0.05); }
+        function sfxLaunch() { playTone(400, 'sawtooth', 0.8, 0.1); setTimeout(()=>playTone(600, 'sawtooth', 0.8, 0.1), 100); }
+        function sfxError() { playTone(200, 'sawtooth', 0.3, 0.2); }
+        function sfxDamage() { playNoise(0.5, 0.3); playTone(100, 'sawtooth', 0.5, 0.3); }
+        function sfxSuccess() { [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => setTimeout(() => playTone(f, 'square', 0.15, 0.1), i * 100)); }
+        function sfxGameOver() { [300, 250, 200, 150].forEach((f, i) => setTimeout(() => playTone(f, 'sawtooth', 0.4, 0.2), i * 300)); }
+
+        // VARIABLES DE JUEGO
+        let currentLevel = 0;
+        let totalLevels = 5;
+        let hp = 3;
+        
+        let vTarget = { x: 0, y: 0 };
+        let vWind = { x: 0, y: 0 };
+        let vProp = { x: 0, y: 0 }; 
+        let isSystemLocked = false;
+
+        function drawGrid() {
+            let layer = document.getElementById('grid-layer');
+            let html = '';
+            
+            for(let i = -10; i <= 10; i++) {
+                html += `<line x1="${i}" y1="-12" x2="${i}" y2="12" class="${i===0?'grid-axis':'grid-line'}" />`;
+                html += `<line x1="-12" y1="${i}" x2="12" y2="${i}" class="${i===0?'grid-axis':'grid-line'}" />`;
+                
+                if(i !== 0 && i % 2 === 0) {
+                    html += `<text x="${i}" y="0.8" class="grid-label" text-anchor="middle">${i}</text>`;
+                    html += `<text x="0.3" y="${-i + 0.25}" class="grid-label" text-anchor="start">${i}</text>`;
+                }
+            }
+            layer.innerHTML = html;
+        }
+
+        function startGame() {
+            if (!audioCtx && !isMuted) { audioCtx = new AudioContext(); bgAudio.play().catch(e=>e); }
+            sfxClick();
+            document.getElementById('instructions-screen').style.display = 'none';
+            drawGrid();
+            currentLevel = 1;
+            hp = 3;
+            updateHearts();
+            generateLevel();
+        }
+
+        function getRandomInt(min, max, excludeZero = false) {
+            let val = Math.floor(Math.random() * (max - min + 1)) + min;
+            if(excludeZero && val === 0) val = 1;
+            return val;
+        }
+
+        function generateLevel() {
+            if(currentLevel > totalLevels) {
+                document.getElementById('m-title').style.color = "var(--target)";
+                showModal("¡SECTOR DESPEJADO! 🏆", "Has dominado la suma de vectores en el plano cartesiano.\nEres un piloto de clase S.", () => {
+                    currentLevel = 1;
+                    hp = 3;
+                    updateHearts();
+                    generateLevel();
+                }, "REINICIAR NAVEGACIÓN");
+                return;
+            }
+
+            document.getElementById('level-display').innerText = `${currentLevel}/${totalLevels}`;
+            isSystemLocked = false;
+            
+            vProp = { x: 0, y: 0 };
+            document.getElementById('disp-x').innerText = '0';
+            document.getElementById('disp-y').innerText = '0';
+            
+            document.getElementById('player-ship').setAttribute('transform', `translate(0, 0) rotate(0)`);
+            document.getElementById('vec-p').setAttribute('opacity', '0');
+            document.getElementById('vec-r').setAttribute('opacity', '0');
+            document.getElementById('guide-p').setAttribute('opacity', '0');
+            document.getElementById('guide-w').setAttribute('opacity', '0');
+            document.getElementById('btn-fire').disabled = false;
+
+            let maxCoord = 8;
+            
+            vTarget.x = getRandomInt(-maxCoord, maxCoord, true);
+            vTarget.y = getRandomInt(-maxCoord, maxCoord, true);
+
+            do {
+                if (currentLevel === 1) {
+                    vWind.x = getRandomInt(0, 5);
+                    vWind.y = getRandomInt(0, 5);
+                    vTarget.x = getRandomInt(3, maxCoord);
+                    vTarget.y = getRandomInt(3, maxCoord);
+                } else if (currentLevel === 2) {
+                    vWind.x = getRandomInt(-4, 4);
+                    vWind.y = getRandomInt(-4, 4);
+                } else {
+                    vWind.x = getRandomInt(-maxCoord+2, maxCoord-2, true);
+                    vWind.y = getRandomInt(-maxCoord+2, maxCoord-2, true);
+                }
+            } while (vWind.x === vTarget.x && vWind.y === vTarget.y); 
+
+            let px = vTarget.x - vWind.x;
+            let py = vTarget.y - vWind.y;
+            if(Math.abs(px) > 10 || Math.abs(py) > 10) {
+                generateLevel(); return;
+            }
+
+            document.getElementById('val-target').innerText = `(${vTarget.x}, ${vTarget.y})`;
+            document.getElementById('val-wind').innerText = `(${vWind.x}, ${vWind.y})`;
+
+            document.getElementById('base-halo').setAttribute('cx', vTarget.x);
+            document.getElementById('base-halo').setAttribute('cy', -vTarget.y);
+            document.getElementById('base-core').setAttribute('x', vTarget.x - 0.3);
+            document.getElementById('base-core').setAttribute('y', -vTarget.y - 0.3);
+
+            let vwLine = document.getElementById('vec-w');
+            vwLine.setAttribute('x1', 0);
+            vwLine.setAttribute('y1', 0);
+            vwLine.setAttribute('x2', vWind.x);
+            vwLine.setAttribute('y2', -vWind.y);
+        }
+
+        function adjust(axis, delta) {
+            if(isSystemLocked) return;
+            sfxInput();
+            vProp[axis] += delta;
+            
+            if(vProp[axis] > 10) vProp[axis] = 10;
+            if(vProp[axis] < -10) vProp[axis] = -10;
+            
+            document.getElementById(`disp-${axis}`).innerText = vProp[axis];
+        }
+
+        function launchProbe() {
+            if (isSystemLocked) return;
+            isSystemLocked = true;
+            document.getElementById('btn-fire').disabled = true;
+
+            sfxLaunch();
+
+            let resX = vProp.x + vWind.x;
+            let resY = vProp.y + vWind.y;
+
+            let vP = document.getElementById('vec-p');
+            vP.setAttribute('x1', 0); vP.setAttribute('y1', 0);
+            vP.setAttribute('x2', vProp.x); vP.setAttribute('y2', -vProp.y);
+            vP.setAttribute('opacity', '1');
+
+            let vR = document.getElementById('vec-r');
+            vR.setAttribute('x1', 0); vR.setAttribute('y1', 0);
+            vR.setAttribute('x2', resX); vR.setAttribute('y2', -resY);
+            vR.setAttribute('opacity', '1');
+
+            let gP = document.getElementById('guide-p');
+            gP.setAttribute('x1', vWind.x); gP.setAttribute('y1', -vWind.y);
+            gP.setAttribute('x2', resX); gP.setAttribute('y2', -resY);
+            gP.setAttribute('opacity', '1');
+
+            let gW = document.getElementById('guide-w');
+            gW.setAttribute('x1', vProp.x); gW.setAttribute('y1', -vProp.y);
+            gW.setAttribute('x2', resX); gW.setAttribute('y2', -resY);
+            gW.setAttribute('opacity', '1');
+
+            let ship = document.getElementById('player-ship');
+            let angle = Math.atan2(resY, resX) * 180 / Math.PI;
+            let displayAngle = -(angle - 90); 
+            
+            ship.setAttribute('transform', `translate(${resX}, ${-resY}) rotate(${displayAngle})`);
+
+            setTimeout(() => {
+                if (resX === vTarget.x && resY === vTarget.y) {
+                    sfxSuccess();
+                    showModal("¡ATRAQUE EXITOSO! 🛰️", "Suma vectorial perfecta.\nCalculaste la ruta exacta considerando la anomalía.", () => {
+                        currentLevel++;
+                        generateLevel();
+                    }, "SIGUIENTE SECTOR");
+                } else {
+                    sfxDamage();
+                    let expl = document.getElementById('fx-explosion');
+                    expl.setAttribute('cx', resX);
+                    expl.setAttribute('cy', -resY);
+                    expl.style.animation = 'none';
+                    void expl.offsetWidth;
+                    expl.style.animation = 'explodeSvg 0.6s ease-out forwards';
+                    
+                    document.querySelector('.radar-panel').classList.add('shake-screen');
+                    setTimeout(()=> document.querySelector('.radar-panel').classList.remove('shake-screen'), 300);
+
+                    hp--;
+                    updateHearts();
+                    
+                    if (hp <= 0) {
+                        document.getElementById('m-title').style.color = "var(--danger)";
+                        showModal("NAVE PERDIDA 💥", `Calculaste R=(${resX}, ${resY}) pero la base estaba en (${vTarget.x}, ${vTarget.y}).\nSin escudos, la nave colapsó.`, () => {
+                            currentLevel = 1;
+                            hp = 3;
+                            updateHearts();
+                            generateLevel(); 
+                        }, "REINICIAR SISTEMA");
+                    } else {
+                        document.getElementById('m-title').style.color = "var(--warning)";
+                        showModal("RUTEO FALLIDO ⚠️", `Llegaste a (${resX}, ${resY}).\nRecuerda: Propulsión = Destino - Viento.\nTe quedan ${hp} intentos.`, () => {
+                            vProp = { x: 0, y: 0 };
+                            document.getElementById('disp-x').innerText = '0';
+                            document.getElementById('disp-y').innerText = '0';
+                            document.getElementById('player-ship').setAttribute('transform', `translate(0, 0) rotate(0)`);
+                            document.getElementById('vec-p').setAttribute('opacity', '0');
+                            document.getElementById('vec-r').setAttribute('opacity', '0');
+                            document.getElementById('guide-p').setAttribute('opacity', '0');
+                            document.getElementById('guide-w').setAttribute('opacity', '0');
+                            isSystemLocked = false;
+                            document.getElementById('btn-fire').disabled = false;
+                        }, "RECALCULAR");
+                    }
+                }
+            }, 600); 
+        }
+
+        function updateHearts() {
+            for(let i=1; i<=3; i++) {
+                let h = document.getElementById(`h${i}`);
+                if(i <= hp) h.classList.remove('lost');
+                else h.classList.add('lost');
+            }
+        }
+
+        let modalCallback = null;
+        function showModal(title, msg, callback = null, btnText = "CONTINUAR") { 
+            document.getElementById('m-title').innerText = title; 
+            document.getElementById('m-msg').innerText = msg; 
+            document.getElementById('m-btn').innerText = btnText;
+            document.getElementById('modal').classList.add('active'); 
+            modalCallback = callback; 
+        }
+        function closeModal() { 
+            sfxClick(); 
+            document.getElementById('modal').classList.remove('active'); 
+            if(modalCallback) { modalCallback(); modalCallback = null; } 
+        }
+
+    </script>
+</body>
+</html>
