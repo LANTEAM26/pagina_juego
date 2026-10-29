@@ -8,12 +8,12 @@
     
     <style>
         :root { 
-            --bg-color: #050510;
+            --bg-color: #02040a;
             --cyber-cyan: #00f3ff;
             --cyber-pink: #ff0055;
             --cyber-yellow: #f1c40f;
             --cyber-green: #39ff14;
-            --panel-bg: #111827;
+            --panel-bg: rgba(17, 24, 39, 0.85);
             --card-bg: #1f2937;
         }
 
@@ -26,167 +26,211 @@
             user-select: none;
         }
 
-        /* EFECTOS DE FONDO CRT */
-        .decorations { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; background: radial-gradient(circle at center, #0a0f24 0%, #000 100%); }
+        /* EFECTOS DE FONDO CIBERNÉTICO */
+        .decorations { position: fixed; inset: 0; z-index: -2; pointer-events: none; overflow: hidden; background: radial-gradient(circle at center, #0a0f24 0%, #000 100%); }
+        
         .grid {
             position: absolute; inset: -50%;
-            background-image: linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
-            background-size: 40px 40px; transform: perspective(600px) rotateX(60deg) translateY(-100px); animation: gridMove 10s linear infinite;
+            background-image: linear-gradient(rgba(0, 243, 255, 0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 243, 255, 0.08) 1px, transparent 1px);
+            background-size: 50px 50px; transform: perspective(600px) rotateX(60deg) translateY(-100px); animation: gridMove 8s linear infinite;
         }
-        @keyframes gridMove { 0% { transform: perspective(600px) rotateX(60deg) translateY(0); } 100% { transform: perspective(600px) rotateX(60deg) translateY(40px); } }
+        @keyframes gridMove { 0% { transform: perspective(600px) rotateX(60deg) translateY(0); } 100% { transform: perspective(600px) rotateX(60deg) translateY(50px); } }
+
+        /* Lluvia Binaria estilo Matrix de fondo */
+        .binary-rain {
+            position: absolute; inset: 0; z-index: -1; opacity: 0.15;
+            background-image: repeating-linear-gradient(0deg, transparent, transparent 20px, rgba(0,243,255,1) 21px, transparent 22px);
+            background-size: 100% 40px; animation: scanDescend 4s linear infinite;
+        }
+        @keyframes scanDescend { 0% { background-position: 0 -40px; } 100% { background-position: 0 0; } }
 
         .scanlines {
             position: fixed; inset: 0; z-index: 999; pointer-events: none;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%);
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
             background-size: 100% 4px; box-shadow: inset 0 0 100px rgba(0,0,0,0.9);
         }
 
-        .sound-toggle { position: absolute; top: 15px; right: 15px; background: rgba(0, 0, 0, 0.8); border: 2px solid var(--cyber-cyan); border-radius: 8px; width: 45px; height: 45px; font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 1000; box-shadow: 0 0 10px rgba(0,243,255,0.3); transition: all 0.2s; color: var(--cyber-cyan);}
+        .sound-toggle { position: absolute; top: 15px; right: 15px; background: rgba(0, 0, 0, 0.8); border: 1px solid var(--cyber-cyan); border-radius: 4px; width: 45px; height: 45px; font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 1000; box-shadow: 0 0 10px rgba(0,243,255,0.3); transition: all 0.2s; color: var(--cyber-cyan); backdrop-filter: blur(5px);}
         .sound-toggle:active { transform: scale(0.9); box-shadow: none; }
 
         /* LOBBY */
         #setup-screen {
             position: absolute; inset: 0; z-index: 500; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
         }
 
         .setup-card {
-            background: rgba(10, 15, 30, 0.95); padding: 35px; border-radius: 12px;
-            box-shadow: 0 0 40px rgba(0,243,255,0.2), inset 0 0 20px rgba(0,243,255,0.1); border: 2px solid var(--cyber-cyan);
-            text-align: center; max-width: 90%; width: 500px; display: flex; flex-direction: column; gap: 15px;
+            background: var(--panel-bg); padding: 40px; border-radius: 8px;
+            box-shadow: 0 0 40px rgba(0,243,255,0.1), inset 0 0 20px rgba(0,243,255,0.05); border: 1px solid rgba(0,243,255,0.3); border-top: 4px solid var(--cyber-cyan);
+            text-align: center; max-width: 90%; width: 500px; display: flex; flex-direction: column; gap: 20px;
+            position: relative; overflow: hidden;
         }
-
-        .setup-card h1 { font-size: 40px; color: var(--cyber-cyan); margin: 0; text-shadow: 0 0 15px var(--cyber-cyan);}
         
-        .setup-section { background: rgba(0,243,255,0.03); padding: 15px; border-radius: 8px; border: 1px dashed rgba(0,243,255,0.3); display: flex; flex-direction: column; gap: 8px; align-items: center; }
-        .setup-section h3 { margin: 0; color: #888; font-size: 16px; text-transform: uppercase; letter-spacing: 2px;}
+        /* Adorno esquina */
+        .setup-card::after { content: ''; position: absolute; bottom: 0; right: 0; width: 30px; height: 30px; background: linear-gradient(135deg, transparent 50%, rgba(0,243,255,0.5) 50%);}
+
+        .setup-card h1 { font-size: 50px; color: #fff; margin: 0; text-shadow: 0 0 10px var(--cyber-cyan), 0 0 20px var(--cyber-cyan); letter-spacing: 4px;}
+        
+        .setup-section { background: rgba(0,243,255,0.05); padding: 20px; border-radius: 4px; border-left: 3px solid var(--cyber-cyan); display: flex; flex-direction: column; gap: 12px; align-items: center; box-shadow: inset 5px 0 15px rgba(0,243,255,0.1);}
+        .setup-section h3 { margin: 0; color: var(--cyber-cyan); font-size: 16px; text-transform: uppercase; letter-spacing: 2px;}
         
         .setup-row { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; width: 100%;}
         
-        .setup-btn { background: rgba(0,0,0,0.8); border: 1px solid #444; padding: 10px 18px; border-radius: 5px; font-size: 16px; font-weight: bold; color: #aaa; cursor: pointer; transition: all 0.2s; font-family: 'Rajdhani', sans-serif; text-transform: uppercase;}
-        .setup-btn.active.diff { background: rgba(0,243,255,0.15); border-color: var(--cyber-cyan); color: #fff; box-shadow: 0 0 10px rgba(0,243,255,0.4); text-shadow: 0 0 5px var(--cyber-cyan);}
+        .setup-btn { background: #000; border: 1px solid #333; padding: 12px 20px; border-radius: 4px; font-size: 16px; font-weight: bold; color: #888; cursor: pointer; transition: all 0.2s; font-family: 'Rajdhani', sans-serif; text-transform: uppercase; flex: 1; min-width: 120px;}
+        .setup-btn:hover { border-color: #555; color: #ccc;}
+        .setup-btn.active.diff { background: rgba(0,243,255,0.15); border-color: var(--cyber-cyan); color: #fff; box-shadow: 0 0 15px rgba(0,243,255,0.3); text-shadow: 0 0 5px var(--cyber-cyan);}
 
         .start-btn {
-            background: var(--cyber-cyan); border: none; box-shadow: 0 0 20px rgba(0,243,255,0.4); padding: 15px 40px; font-size: 24px; color: #000; border-radius: 8px; text-transform: uppercase; font-weight: bold; font-family: 'Share Tech Mono', monospace; cursor:pointer; margin-top: 10px; transition: all 0.1s; letter-spacing: 2px;
+            background: var(--cyber-cyan); border: none; box-shadow: 0 0 20px rgba(0,243,255,0.4); padding: 15px 40px; font-size: 24px; color: #000; border-radius: 4px; text-transform: uppercase; font-weight: bold; font-family: 'Share Tech Mono', monospace; cursor:pointer; margin-top: 10px; transition: all 0.2s; letter-spacing: 3px; position: relative; overflow: hidden;
         }
+        .start-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent); transform: skewX(-20deg); transition: 0.5s; }
+        .start-btn:hover::before { left: 150%; }
         .start-btn:active { transform: scale(0.95); box-shadow: 0 0 10px rgba(0,243,255,0.3); }
 
         /* PANTALLA DE JUEGO */
         #game-screen {
-            display: none; flex-direction: column; align-items: center; justify-content: flex-start;
-            width: 100vw; height: 100vh; padding: 1.5vh 2vw; box-sizing: border-box; overflow: hidden;
+            display: none; flex-direction: column; align-items: center; justify-content: space-between;
+            width: 100vw; height: 100vh; padding: 15px 2vw; box-sizing: border-box; overflow: hidden;
             position: relative;
         }
 
-        .game-header { flex: 0 0 auto; display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 900px; margin-bottom: 1vh; z-index: 10; }
+        .game-header { flex: 0 0 auto; display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 900px; z-index: 10; border-bottom: 1px solid rgba(0,243,255,0.3); padding-bottom: 10px;}
         
-        .back-menu-btn { background: transparent; border: 1px solid var(--cyber-cyan); padding: 6px 15px; border-radius: 5px; font-size: 14px; color: var(--cyber-cyan); cursor: pointer; transition: all 0.2s; }
-        .back-menu-btn:active { background: var(--cyber-cyan); color: #000; }
+        .back-menu-btn { background: rgba(0,0,0,0.5); border: 1px solid var(--cyber-pink); padding: 6px 15px; border-radius: 4px; font-size: 14px; color: var(--cyber-pink); cursor: pointer; transition: all 0.2s; font-family: 'Share Tech Mono', monospace; text-transform: uppercase; box-shadow: inset 0 0 10px rgba(255,0,85,0.2);}
+        .back-menu-btn:hover { background: rgba(255,0,85,0.2); }
+        .back-menu-btn:active { background: var(--cyber-pink); color: #000; }
 
         .hud-group { display: flex; gap: 15px; align-items: center; }
         .hud-box {
-            background: rgba(0,0,0,0.8); padding: 8px 15px; border-radius: 5px;
-            border: 1px solid var(--cyber-cyan); font-size: 16px; color: #fff; display: flex; align-items: center; gap: 8px;
-            box-shadow: 0 0 10px rgba(0,243,255,0.2);
+            background: rgba(0,0,0,0.6); padding: 8px 15px; border-radius: 4px;
+            border-left: 3px solid var(--cyber-cyan); font-size: 16px; color: #fff; display: flex; align-items: center; gap: 8px;
+            box-shadow: inset 5px 0 10px rgba(0,243,255,0.1); backdrop-filter: blur(4px);
         }
-        .lives-box { border-color: var(--cyber-green); color: var(--cyber-green); box-shadow: 0 0 10px rgba(57,255,20,0.2); }
+        .lives-box { border-color: var(--cyber-green); color: #fff; box-shadow: inset 5px 0 10px rgba(57,255,20,0.1); }
+        .lives-box span { color: var(--cyber-green); font-weight: bold;}
 
         /* ZONA DEL ENEMIGO (TOP) */
         .enemy-zone {
             flex: 1; width: 100%; max-width: 900px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background: rgba(0,0,0,0.4); border: 2px solid rgba(255,0,85,0.3); border-radius: 15px; margin-bottom: 2vh;
-            position: relative; z-index: 10; box-shadow: inset 0 0 50px rgba(255,0,85,0.1);
+            background: rgba(0,0,0,0.4); border: 1px solid rgba(255,0,85,0.3); border-radius: 8px; margin: 15px 0;
+            position: relative; z-index: 10; box-shadow: inset 0 0 50px rgba(255,0,85,0.05); backdrop-filter: blur(2px);
         }
 
-        .enemy-sprite { font-size: 80px; filter: drop-shadow(0 0 15px var(--cyber-pink)); margin-bottom: 10px; animation: float 3s ease-in-out infinite;}
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        /* SVG Enemigos */
+        .enemy-sprite { width: 120px; height: 120px; margin-bottom: 20px; filter: drop-shadow(0 0 15px var(--cyber-pink)); animation: float 3s ease-in-out infinite; color: var(--cyber-pink);}
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
-        .enemy-hp-bar { width: 80%; max-width: 400px; height: 10px; background: #333; border-radius: 5px; overflow: hidden; margin-bottom: 15px; border: 1px solid #555;}
+        .enemy-hp-bar { width: 80%; max-width: 400px; height: 8px; background: #111; border-radius: 4px; overflow: hidden; margin-bottom: 20px; border: 1px solid #333;}
         .enemy-hp-fill { height: 100%; width: 100%; background: var(--cyber-pink); transition: width 0.3s; box-shadow: 0 0 10px var(--cyber-pink);}
 
         .target-node {
-            background: rgba(255,0,85,0.1); border: 3px solid var(--cyber-pink); padding: 15px 40px; border-radius: 10px;
-            font-size: 40px; font-weight: bold; color: #fff; box-shadow: 0 0 20px rgba(255,0,85,0.4);
-            text-shadow: 0 0 10px var(--cyber-pink); display: flex; flex-direction: column; align-items: center;
+            background: rgba(0,0,0,0.8); border: 2px solid var(--cyber-pink); padding: 15px 50px; border-radius: 4px;
+            font-size: 45px; font-weight: bold; color: #fff; box-shadow: 0 0 30px rgba(255,0,85,0.3), inset 0 0 20px rgba(255,0,85,0.2);
+            text-shadow: 0 0 10px var(--cyber-pink); display: flex; flex-direction: column; align-items: center; position: relative;
         }
-        .target-label { font-size: 14px; color: var(--cyber-pink); text-transform: uppercase; margin-bottom: 5px; text-shadow: none;}
+        /* Corner details */
+        .target-node::before, .target-node::after { content: ''; position: absolute; width: 10px; height: 10px; border: 2px solid var(--cyber-pink); }
+        .target-node::before { top: -2px; left: -2px; border-right: none; border-bottom: none;}
+        .target-node::after { bottom: -2px; right: -2px; border-left: none; border-top: none;}
+
+        .target-label { font-size: 14px; color: #aaa; text-transform: uppercase; margin-bottom: 5px; text-shadow: none; letter-spacing: 2px;}
 
         .attack-timer-bar {
-            position: absolute; bottom: 0; left: 0; height: 5px; background: var(--cyber-yellow); width: 100%;
-            box-shadow: 0 0 10px var(--cyber-yellow); border-radius: 0 0 15px 15px;
+            position: absolute; bottom: 0; left: 0; height: 4px; background: var(--cyber-cyan); width: 100%;
+            box-shadow: 0 0 10px var(--cyber-cyan); border-radius: 0 0 8px 8px; transition: background 0.3s;
         }
+        .attack-timer-bar.critical { background: var(--cyber-red); box-shadow: 0 0 15px var(--cyber-red); animation: pulseDanger 0.5s infinite;}
+        @keyframes pulseDanger { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
         /* ZONA DEL JUGADOR (BOTTOM) */
         .player-zone {
-            flex: 0 0 auto; width: 100%; max-width: 900px; display: flex; flex-direction: column; gap: 15px;
-            z-index: 10;
+            flex: 0 0 auto; width: 100%; max-width: 900px; display: flex; flex-direction: column; gap: 20px;
+            z-index: 10; background: rgba(0,0,0,0.6); padding: 20px; border-radius: 8px; border: 1px solid #334155; box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
         }
 
         .cards-container {
-            display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; min-height: 100px;
+            display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; min-height: 100px; perspective: 1000px;
         }
 
+        /* DATA CARDS (CHIPS) */
         .data-card {
             width: clamp(70px, 12vh, 90px); height: clamp(90px, 16vh, 120px);
-            background: var(--card-bg); border: 2px solid var(--cyber-cyan); border-radius: 10px;
-            display: flex; justify-content: center; align-items: center; font-size: clamp(28px, 4vh, 36px); font-weight: bold; color: #fff;
-            cursor: pointer; box-shadow: 0 6px 0 #0f1621, 0 10px 15px rgba(0,0,0,0.5); transition: all 0.15s;
-            text-shadow: 0 0 8px rgba(255,255,255,0.5);
+            background: #0f172a; border: 2px solid #334155; border-radius: 6px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: clamp(28px, 4vh, 36px); font-weight: bold; color: #fff;
+            cursor: pointer; box-shadow: 0 8px 0 #020617, 0 15px 20px rgba(0,0,0,0.5); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative; overflow: hidden;
         }
-        .data-card:active { transform: translateY(6px); box-shadow: 0 0 0 transparent; }
-        .data-card.selected { border-color: var(--cyber-yellow); background: #2c3e50; box-shadow: 0 6px 0 #1a252f, 0 0 20px rgba(241,196,15,0.4); color: var(--cyber-yellow); transform: translateY(-10px);}
+        /* Card circuit lines */
+        .data-card::before { content: '||||||'; position: absolute; top: 5px; font-size: 8px; color: #334155; letter-spacing: 2px;}
+        .data-card::after { content: '||||||'; position: absolute; bottom: 5px; font-size: 8px; color: #334155; letter-spacing: 2px;}
 
+        .data-card:active { transform: translateY(8px); box-shadow: 0 0 0 transparent; }
+        
+        .data-card.selected { 
+            border-color: var(--cyber-cyan); background: #082f49; 
+            box-shadow: 0 8px 0 #031a2b, 0 20px 30px rgba(0,243,255,0.3), inset 0 0 20px rgba(0,243,255,0.2); 
+            color: var(--cyber-cyan); transform: translateY(-15px) rotateX(10deg);
+            text-shadow: 0 0 10px var(--cyber-cyan);
+        }
+        .data-card.selected::before, .data-card.selected::after { color: var(--cyber-cyan); text-shadow: 0 0 5px var(--cyber-cyan);}
+
+        /* OPERATORS */
         .operators-container {
-            display: flex; justify-content: center; gap: 10px;
+            display: flex; justify-content: center; gap: 15px;
         }
         .op-btn {
-            background: var(--panel-bg); border: 2px solid #555; border-radius: 8px;
-            width: clamp(50px, 8vh, 70px); height: clamp(50px, 8vh, 70px); font-size: clamp(24px, 4vh, 32px); color: #aaa;
+            background: #111; border: 2px solid #444; border-radius: 8px;
+            width: clamp(50px, 8vh, 60px); height: clamp(50px, 8vh, 60px); font-size: clamp(24px, 4vh, 32px); color: #888;
             cursor: pointer; display: flex; justify-content: center; align-items: center; transition: all 0.1s;
-            font-family: 'Share Tech Mono', monospace; box-shadow: 0 4px 0 #0a0f18;
+            font-family: 'Share Tech Mono', monospace; box-shadow: 0 6px 0 #000;
         }
-        .op-btn:active { transform: translateY(4px); box-shadow: none; }
-        .op-btn.selected { border-color: var(--cyber-green); color: var(--cyber-green); box-shadow: 0 4px 0 #185a08, 0 0 15px rgba(57,255,20,0.3); background: rgba(57,255,20,0.1);}
+        .op-btn:active { transform: translateY(6px); box-shadow: none; }
+        .op-btn.selected { 
+            border-color: var(--cyber-yellow); color: #fff; 
+            box-shadow: 0 6px 0 #785a00, 0 0 20px rgba(241,196,15,0.4); 
+            background: rgba(241,196,15,0.15); text-shadow: 0 0 10px var(--cyber-yellow);
+        }
 
         .actions-container {
-            display: flex; justify-content: space-between; gap: 15px; margin-top: 5px;
+            display: flex; justify-content: space-between; gap: 15px;
         }
         .action-btn {
-            flex: 1; background: transparent; border: 1px solid #777; color: #aaa; padding: 10px; border-radius: 5px;
-            font-family: 'Share Tech Mono', monospace; font-size: 14px; cursor: pointer; transition: all 0.2s;
+            flex: 1; background: #000; border: 1px solid #334155; color: #94a3b8; padding: 12px; border-radius: 4px;
+            font-family: 'Share Tech Mono', monospace; font-size: 14px; cursor: pointer; transition: all 0.2s; text-transform: uppercase; font-weight: bold;
         }
-        .action-btn:active { background: #333; }
-        .btn-undo:hover { border-color: var(--cyber-yellow); color: var(--cyber-yellow); }
-        .btn-reset:hover { border-color: var(--cyber-red); color: var(--cyber-red); }
+        .action-btn:active { transform: scale(0.98); }
+        .btn-undo:hover { border-color: var(--cyber-yellow); color: var(--cyber-yellow); background: rgba(241,196,15,0.1);}
+        .btn-reset:hover { border-color: var(--cyber-pink); color: var(--cyber-pink); background: rgba(255,0,85,0.1);}
 
         /* CANVAS PARA ANIMACIONES DE ATAQUE (LASERS, EXPLOSIONES) */
         #fxCanvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 20; mix-blend-mode: screen;}
 
         @keyframes damageShake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-15px); } 40%, 80% { transform: translateX(15px); } }
-        .damage-shake { animation: damageShake 0.4s cubic-bezier(.36,.07,.19,.97) both; border-color: var(--cyber-red) !important; box-shadow: inset 0 0 50px rgba(255,0,85,0.4) !important;}
+        .damage-shake { animation: damageShake 0.4s cubic-bezier(.36,.07,.19,.97) both; border-color: var(--cyber-pink) !important; box-shadow: inset 0 0 80px rgba(255,0,85,0.3) !important;}
 
         /* MODAL */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 1000; visibility: hidden; opacity: 0; transition: all 0.3s; backdrop-filter: blur(5px);}
         .modal-overlay.active { visibility: visible; opacity: 1; }
-        .modal-box { background: #050510; padding: 40px; border-radius: 10px; text-align: center; max-width: 85%; width: 450px; transform: scale(0.9); transition: transform 0.3s; border: 2px solid var(--cyber-cyan); box-shadow: 0 0 40px rgba(0,243,255,0.3);}
+        .modal-box { background: var(--panel-bg); padding: 40px; border-radius: 8px; text-align: center; max-width: 85%; width: 450px; transform: scale(0.9); transition: transform 0.3s; border: 1px solid var(--cyber-cyan); box-shadow: 0 0 50px rgba(0,243,255,0.2); border-top: 4px solid var(--cyber-cyan);}
         .modal-overlay.active .modal-box { transform: scale(1); }
-        .modal-title { font-size: 32px; margin-top: 0; margin-bottom: 15px; color: var(--cyber-cyan); text-shadow: 0 0 10px var(--cyber-cyan);}
-        .modal-msg { font-size: 18px; margin-bottom: 25px; color: #ddd; white-space: pre-line; line-height: 1.5; font-family: 'Rajdhani', sans-serif;}
-        .modal-btn { background: transparent; border: 2px solid var(--cyber-cyan); color: var(--cyber-cyan); padding: 12px 30px; font-size: 18px; border-radius: 5px; text-transform: uppercase; font-weight: bold; cursor:pointer; transition: all 0.2s; font-family: 'Share Tech Mono', monospace;}
-        .modal-btn:hover { background: var(--cyber-cyan); color: #000; }
+        .modal-title { font-size: 32px; margin-top: 0; margin-bottom: 15px; color: #fff; text-shadow: 0 0 10px var(--cyber-cyan);}
+        .modal-msg { font-size: 18px; margin-bottom: 25px; color: #cbd5e1; white-space: pre-line; line-height: 1.5; font-family: 'Rajdhani', sans-serif;}
+        .modal-btn { background: var(--cyber-cyan); border: none; color: #000; padding: 12px 30px; font-size: 18px; border-radius: 4px; text-transform: uppercase; font-weight: bold; cursor:pointer; transition: all 0.2s; font-family: 'Share Tech Mono', monospace; box-shadow: 0 0 15px rgba(0,243,255,0.4);}
+        .modal-btn:hover { filter: brightness(1.2); }
+        .modal-btn:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
 
     <audio id="bgm" loop><source src="../assets/musicaFondo/cancion1.mp3" type="audio/mpeg"></audio>
-    <div class="decorations"><div class="grid"></div><div class="scanlines"></div></div>
+    <div class="decorations"><div class="grid"></div><div class="binary-rain"></div><div class="scanlines"></div></div>
     <button id="soundToggle" class="sound-toggle" aria-label="Activar sonido">🔇</button>
 
     <!-- LOBBY -->
     <div id="setup-screen">
         <div class="setup-card">
             <h1>DATA HACK</h1>
-            <p style="margin:0; color:#888; font-size:14px;">> PROTOCOLO DE FUSIÓN MATEMÁTICA_</p>
+            <p style="margin:0; color:#94a3b8; font-size:14px; font-weight:bold;">> PROTOCOLO DE FUSIÓN MATEMÁTICA_</p>
             
             <div class="setup-section">
                 <h3>Nivel de Seguridad</h3>
@@ -206,8 +250,8 @@
         <div class="game-header">
             <button class="back-menu-btn" onclick="backToMenu()">[ ABORTAR ]</button>
             <div class="hud-group">
-                <div class="hud-box lives-box">HP JUGADOR: <span id="player-hp-display">100</span>%</div>
-                <div class="hud-box">NÚCLEOS: <span id="score-display">0</span>/5</div>
+                <div class="hud-box lives-box">HP: <span id="player-hp-display">100</span>%</div>
+                <div class="hud-box">NÚCLEOS: <span id="score-display" style="color:var(--cyber-cyan); font-weight:bold;">0</span>/5</div>
             </div>
         </div>
 
@@ -215,7 +259,9 @@
 
         <div class="enemy-zone" id="enemy-zone">
             <div class="enemy-hp-bar"><div class="enemy-hp-fill" id="enemy-hp-fill"></div></div>
-            <div class="enemy-sprite" id="enemy-sprite">👾</div>
+            
+            <!-- Contenedor SVG para enemigos generados dinámicamente -->
+            <div class="enemy-sprite" id="enemy-sprite"></div>
             
             <div class="target-node">
                 <span class="target-label">Código de Ruptura</span>
@@ -283,7 +329,7 @@
         function sfxError() { playTone(200, 'sawtooth', 0.2, 0.2); }
         function sfxVictory() { let notes = [523.25, 659.25, 783.99, 1046.50]; notes.forEach((f, i) => setTimeout(() => playTone(f, 'square', 0.3, 0.1), i * 150)); }
 
-        let currentDifficulty = 3; // Number of starting cards
+        let currentDifficulty = 3; 
         let score = 0; let maxScore = 5;
         let playerHp = 100;
         let enemyHp = 100;
@@ -291,20 +337,28 @@
         
         let initialHand = [];
         let currentHand = [];
-        let historyStates = []; // For Undo functionality
+        let historyStates = []; 
         let targetNumber = 0;
 
         let selectedIndex = -1;
         let selectedOp = null;
 
-        // Timer variables
-        let turnTimeMax = 30; // Seconds per enemy attack
+        let turnTimeMax = 30; 
         let timeLeft = 30;
         let lastTime = 0;
         let animFrameId = null;
 
         const fxCanvas = document.getElementById('fxCanvas'); const ctx = fxCanvas.getContext('2d');
-        const enemySprites = ['👾', '🤖', '👁️‍🗨️', '💠', '☢️'];
+        
+        // SPRITES SVG PARA LOS ENEMIGOS
+        const enemySVGs = [
+            // Fuego de Datos
+            `<svg viewBox="0 0 100 100" fill="currentColor"><path d="M50 0 C60 20 80 40 80 60 C80 80 60 100 50 100 C40 100 20 80 20 60 C20 40 40 20 50 0 Z" opacity="0.8"/><circle cx="50" cy="70" r="15" fill="#000"/></svg>`,
+            // Escudo Cuántico
+            `<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="6"><polygon points="50,5 95,25 95,75 50,95 5,75 5,25" fill="rgba(255,0,85,0.2)"/><circle cx="50" cy="50" r="20" fill="currentColor"/></svg>`,
+            // Ojo Cibernético
+            `<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="8"><path d="M5 50 Q50 5 95 50 Q50 95 5 50" fill="rgba(255,0,85,0.2)"/><circle cx="50" cy="50" r="15" fill="currentColor"/></svg>`
+        ];
 
         function resizeCanvas() { fxCanvas.width = fxCanvas.offsetWidth; fxCanvas.height = fxCanvas.offsetHeight; }
         window.addEventListener('resize', resizeCanvas);
@@ -337,7 +391,6 @@
             document.getElementById('setup-screen').style.display = 'flex';
         }
 
-        // GENERADOR DE PUZZLE SOLUCIONABLE
         function generatePuzzle(numCards) {
             let maxVal = numCards === 3 ? 10 : (numCards === 4 ? 15 : 20);
             let cards = [];
@@ -357,7 +410,6 @@
                 let op = ops[Math.floor(Math.random() * ops.length)];
                 let res = 0;
                 
-                // Asegurar que no de negativos para no frustrar
                 if (op === '+') res = val1 + val2;
                 else if (op === '-') res = Math.abs(val1 - val2); 
                 else if (op === '*') res = val1 * val2;
@@ -376,7 +428,7 @@
             currentHand = [...puzzle.hand];
             historyStates = [];
             
-            document.getElementById('enemy-sprite').innerText = enemySprites[score % enemySprites.length];
+            document.getElementById('enemy-sprite').innerHTML = enemySVGs[score % enemySVGs.length];
             document.getElementById('target-display').innerText = targetNumber;
             
             turnTimeMax = currentDifficulty === 3 ? 30 : (currentDifficulty === 4 ? 45 : 60);
@@ -406,7 +458,6 @@
             });
         }
 
-        // LÓGICA DE SELECCIÓN Y FUSIÓN
         document.querySelectorAll('.op-btn').forEach(btn => {
             btn.onclick = () => {
                 if (!isGameActive) return;
@@ -415,7 +466,7 @@
                     selectedOp = btn.dataset.op;
                     renderHand();
                 } else {
-                    sfxError(); // Must select card first
+                    sfxError(); 
                 }
             };
         });
@@ -425,19 +476,15 @@
             sfxSelect();
             
             if (selectedIndex === -1) {
-                // Primer carta seleccionada
                 selectedIndex = index;
                 renderHand();
             } else if (selectedIndex === index) {
-                // Deseleccionar
                 clearSelection();
                 renderHand();
             } else {
-                // Segunda carta seleccionada
                 if (selectedOp) {
                     executeMerge(selectedIndex, index, selectedOp);
                 } else {
-                    // Cambió de carta base sin elegir operador
                     selectedIndex = index;
                     renderHand();
                 }
@@ -469,11 +516,8 @@
             }
 
             sfxMerge();
-            
-            // Guardar estado para Undo
             historyStates.push([...currentHand]);
 
-            // Remover viejos y añadir nuevo
             let newHand = [];
             for(let i=0; i<currentHand.length; i++) {
                 if (i !== i1 && i !== i2) newHand.push(currentHand[i]);
@@ -483,7 +527,6 @@
 
             clearSelection();
             renderHand();
-
             checkCombat();
         }
 
@@ -504,15 +547,12 @@
             renderHand();
         }
 
-        // LÓGICA DE COMBATE
         function checkCombat() {
-            // Revisa si hay una carta que iguala el objetivo
             if (currentHand.includes(targetNumber)) {
-                isGameActive = false; // Pausa para animación
+                isGameActive = false; 
                 sfxShoot();
                 shootLaser();
                 
-                // Daño brutal al enemigo
                 enemyHp -= 100; 
                 updateHpBars();
 
@@ -528,7 +568,6 @@
                     }
                 }, 1000);
             } else if (currentHand.length === 1 && currentHand[0] !== targetNumber) {
-                // Te quedaste con una sola carta y no es el objetivo
                 sfxError();
                 createFloatingText("Secuencia Errónea", '#ff0055');
                 setTimeout(() => resetHand(), 800);
@@ -551,7 +590,7 @@
                 document.getElementById('m-title').style.color = "var(--cyber-pink)";
                 showModal("¡CONEXIÓN CORTADA! 💥", `Tus defensas colapsaron. El firewall te ha expulsado.`, backToMenu);
             } else {
-                timeLeft = turnTimeMax; // Reset enemy timer
+                timeLeft = turnTimeMax; 
             }
         }
 
@@ -565,22 +604,21 @@
         let lasers = [];
 
         class Particle {
-            constructor(x,y,c) { this.x=x; this.y=y; this.c=c; this.life=1; this.vx=(Math.random()-0.5)*15; this.vy=(Math.random()-0.5)*15; this.size=Math.random()*8+4;}
-            update() { this.x+=this.vx; this.y+=this.vy; this.life-=0.05; this.size*=0.9;}
-            draw(ctx) { ctx.globalAlpha=Math.max(0,this.life); ctx.fillStyle=this.c; ctx.fillRect(this.x, this.y, this.size, this.size); ctx.globalAlpha=1;}
+            constructor(x,y,c) { this.x=x; this.y=y; this.c=c; this.life=1; this.vx=(Math.random()-0.5)*20; this.vy=(Math.random()-0.5)*20; this.size=Math.random()*6+3;}
+            update() { this.x+=this.vx; this.y+=this.vy; this.life-=0.03; this.size*=0.95;}
+            draw(ctx) { ctx.globalAlpha=Math.max(0,this.life); ctx.fillStyle=this.c; ctx.fillRect(this.x, this.y, this.size, this.size); ctx.globalAlpha=1; ctx.shadowBlur=10; ctx.shadowColor=this.c;}
         }
 
         class FloatingText {
             constructor(txt, c) { this.x=fxCanvas.width/2; this.y=fxCanvas.height/2; this.txt=txt; this.c=c; this.life=1; this.vy=-2; }
             update() { this.y+=this.vy; this.life-=0.02; }
-            draw(ctx) { ctx.globalAlpha=Math.max(0,this.life); ctx.fillStyle=this.c; ctx.font="bold 30px 'Share Tech Mono'"; ctx.textAlign="center"; ctx.shadowBlur=10; ctx.shadowColor=this.c; ctx.fillText(this.txt,this.x,this.y); ctx.shadowBlur=0; ctx.globalAlpha=1; }
+            draw(ctx) { ctx.globalAlpha=Math.max(0,this.life); ctx.fillStyle=this.c; ctx.font="bold 30px 'Share Tech Mono'"; ctx.textAlign="center"; ctx.shadowBlur=15; ctx.shadowColor=this.c; ctx.fillText(this.txt,this.x,this.y); ctx.shadowBlur=0; ctx.globalAlpha=1; }
         }
 
-        function createBurst(x,y,c) { for(let i=0; i<20; i++) particles.push(new Particle(x,y,c)); }
+        function createBurst(x,y,c) { for(let i=0; i<30; i++) particles.push(new Particle(x,y,c)); }
         function createFloatingText(txt,c) { particles.push(new FloatingText(txt,c)); }
 
         function shootLaser() {
-            // Desde abajo centro hacia arriba centro (enemigo)
             lasers.push({ x1: fxCanvas.width/2, y1: fxCanvas.height, x2: fxCanvas.width/2, y2: fxCanvas.height * 0.25, life: 1.0 });
             createBurst(fxCanvas.width/2, fxCanvas.height * 0.25, '#00f3ff');
         }
@@ -592,35 +630,41 @@
             let dt = (ts - lastTime) / 1000;
             lastTime = ts;
 
-            // Timer del Enemigo
             timeLeft -= dt;
             if (timeLeft <= 0) {
                 takeDamage();
             }
-            // Update UI timer bar
+            
             let timerPercent = Math.max(0, (timeLeft / turnTimeMax) * 100);
-            document.getElementById('attack-timer-bar').style.width = timerPercent + '%';
-            if (timerPercent < 25) document.getElementById('attack-timer-bar').style.background = 'var(--cyber-pink)';
-            else document.getElementById('attack-timer-bar').style.background = 'var(--cyber-yellow)';
+            let bar = document.getElementById('attack-timer-bar');
+            bar.style.width = timerPercent + '%';
+            
+            if (timeLeft < 5) {
+                bar.classList.add('critical');
+            } else {
+                bar.classList.remove('critical');
+                bar.style.background = 'var(--cyber-cyan)';
+            }
 
             ctx.clearRect(0, 0, fxCanvas.width, fxCanvas.height);
 
-            // Dibujar Lasers
             for(let i = lasers.length - 1; i >= 0; i--) {
                 let l = lasers[i];
+                
+                // Glow exterior
                 ctx.strokeStyle = `rgba(0, 243, 255, ${l.life})`;
-                ctx.lineWidth = 15 * l.life;
+                ctx.lineWidth = 25 * l.life;
                 ctx.beginPath(); ctx.moveTo(l.x1, l.y1); ctx.lineTo(l.x2, l.y2); ctx.stroke();
                 
+                // Núcleo interior
                 ctx.strokeStyle = `rgba(255, 255, 255, ${l.life})`;
-                ctx.lineWidth = 5 * l.life;
+                ctx.lineWidth = 8 * l.life;
                 ctx.stroke();
 
-                l.life -= 0.1;
+                l.life -= 0.08; // Vida láser
                 if(l.life <= 0) lasers.splice(i, 1);
             }
 
-            // Dibujar Partículas
             for(let i=particles.length-1; i>=0; i--) { 
                 particles[i].update(); 
                 particles[i].draw(ctx); 

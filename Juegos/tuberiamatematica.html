@@ -8,8 +8,8 @@
     
     <style>
         :root { 
-            --bg-color: #050a15;
-            --tile-bg: #0d1326;
+            --bg-color: #030612;
+            --tile-bg: #090e1f;
             --tile-border: #1e3a8a;
             --pipe-cyan: #00f3ff;
             --neon-green: #39ff14;
@@ -27,156 +27,218 @@
             user-select: none;
         }
 
-        .decorations { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+        /* EFECTOS DE FONDO CIBERNÉTICO */
+        .decorations { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; background: radial-gradient(circle at center, #0a1128 0%, #030612 100%);}
+        
+        .hex-bg {
+            position: absolute; inset: 0; opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='49' viewBox='0 0 28 49'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='hexagons' fill='%2300f3ff' fill-opacity='1' fill-rule='nonzero'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.98-7.5V0h-2v6.35L0 12.69v2.3zm0 18.5L12.98 41v8h-2v-6.85L0 35.81v-2.3zM15 0v7.5L27.99 15H28v-2.31h-.01L17 6.35V0h-2zm0 49v-8l12.99-7.5H28v2.31h-.01L17 42.15V49h-2z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            animation: panHex 30s linear infinite;
+        }
+        @keyframes panHex { 0% { background-position: 0 0; } 100% { background-position: 56px -98px; } }
+
         .scanlines {
             position: fixed; inset: 0; z-index: 999; pointer-events: none;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
             background-size: 100% 4px; box-shadow: inset 0 0 100px rgba(0,0,0,0.9);
         }
 
-        .sound-toggle { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.8); border: 2px solid var(--pipe-cyan); border-radius: 8px; width: 45px; height: 45px; font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 1000; box-shadow: 0 0 10px rgba(0,243,255,0.3); transition: all 0.2s; color: var(--pipe-cyan);}
+        .sound-toggle { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.8); border: 1px solid var(--pipe-cyan); border-radius: 4px; width: 45px; height: 45px; font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 1000; box-shadow: 0 0 15px rgba(0,243,255,0.2); transition: all 0.2s; color: var(--pipe-cyan); backdrop-filter: blur(5px);}
         .sound-toggle:active { transform: scale(0.9); }
+
+        /* FIX: CONTENEDOR PRINCIPAL FLEX */
+        #game-screen {
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            width: 100%; height: 100%;
+        }
 
         /* HEADER */
         .game-header { 
-            display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 800px; margin-top: 2vh; margin-bottom: 1vh; z-index: 10; 
+            display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 900px; margin-top: 2vh; margin-bottom: 2vh; z-index: 10; border-bottom: 1px solid rgba(0,243,255,0.2); padding-bottom: 15px;
         }
         
         .back-menu-btn { 
-            background: transparent; border: 1px solid var(--text-gray); padding: 8px 20px; border-radius: 6px; font-size: 16px; color: var(--text-gray); cursor: pointer; font-family: 'Share Tech Mono', monospace; 
-            transition: all 0.2s;
+            background: rgba(0,0,0,0.5); border: 1px solid var(--text-gray); padding: 8px 20px; border-radius: 4px; font-size: 16px; color: var(--text-gray); cursor: pointer; font-family: 'Share Tech Mono', monospace; 
+            transition: all 0.2s; text-transform: uppercase;
         }
+        .back-menu-btn:hover { background: rgba(255,255,255,0.05); color: #fff; border-color: #fff;}
         .back-menu-btn:active { background: var(--text-gray); color: #000; }
 
         .hud-group { display: flex; gap: 20px; align-items: center; }
 
         .hud-box {
-            background: transparent; padding: 8px 20px; border-radius: 6px;
-            border: 1px solid var(--neon-green); font-size: 18px; color: #fff; display: flex; align-items: center; gap: 10px;
+            background: rgba(0,0,0,0.6); padding: 8px 20px; border-radius: 4px;
+            border-left: 3px solid var(--neon-green); font-size: 16px; color: #fff; display: flex; align-items: center; gap: 10px;
+            box-shadow: inset 5px 0 10px rgba(57,255,20,0.1); backdrop-filter: blur(5px);
         }
-        .hud-box span { color: var(--neon-green); font-weight: bold; font-size: 22px;}
+        .hud-box span { color: var(--neon-green); font-weight: bold; font-size: 24px; text-shadow: 0 0 10px var(--neon-green);}
         
-        .target-box { border-color: var(--neon-yellow); }
-        .target-box span { color: var(--neon-yellow); }
+        .target-box { border-left-color: var(--neon-yellow); box-shadow: inset 5px 0 10px rgba(241,196,15,0.1);}
+        .target-box span { color: var(--neon-yellow); text-shadow: 0 0 10px var(--neon-yellow);}
 
         /* INSTRUCCIONES */
         .task-panel { 
-            text-align: center; background: transparent; padding: 15px 20px; 
-            border-radius: 10px; font-size: clamp(14px, 2.5vh, 18px); font-weight: 500; 
-            width: 100%; max-width: 800px; border: 1px solid var(--pipe-cyan); color: var(--text-gray);
-            box-sizing: border-box; margin-bottom: 4vh; z-index: 10; box-shadow: inset 0 0 20px rgba(0,243,255,0.05);
+            text-align: center; background: rgba(0,0,0,0.6); padding: 15px 30px; 
+            border-radius: 6px; font-size: clamp(14px, 2.5vh, 18px); font-weight: 500; 
+            width: 100%; max-width: 900px; border: 1px solid rgba(0,243,255,0.3); color: var(--text-gray);
+            box-sizing: border-box; margin-bottom: 4vh; z-index: 10; box-shadow: 0 0 30px rgba(0,243,255,0.05);
+            letter-spacing: 1px; backdrop-filter: blur(4px);
         }
-        .task-panel b.in { color: var(--neon-green); }
-        .task-panel b.out { color: var(--neon-red); }
+        .task-panel b.in { color: var(--neon-green); text-shadow: 0 0 5px var(--neon-green);}
+        .task-panel b.out { color: var(--neon-yellow); text-shadow: 0 0 5px var(--neon-yellow);}
 
-        /* CONTENEDOR MAESTRO */
+        /* CONTENEDOR MAESTRO (FIX DE ALINEACIÓN: gap 0) */
         .grid-master-container {
             flex: 1 1 auto; display: flex; align-items: center; justify-content: center; gap: 0px; 
             width: 100%; max-width: 1000px; margin-bottom: 4vh; z-index: 10; min-height: 0;
+            position: relative;
         }
 
-        /* COLUMNAS LATERALES (PUERTOS) */
-        .ports-col {
-            display: grid; grid-template-rows: repeat(3, 1fr); gap: 12px; height: 100%; width: 160px;
-        }
-        
-        .port-slot {
-            display: flex; align-items: center; justify-content: flex-end; width: 100%; height: 100%;
-        }
-        .port-slot.out { justify-content: flex-start; }
-
-        /* TEXTOS LATERALES (Energía Inicial / Final) */
-        .side-info {
-            display: flex; flex-direction: column; align-items: flex-end; justify-content: center;
-            font-size: 18px; color: var(--text-gray); padding: 0 15px; text-align: right; line-height: 1.2;
-        }
-        .side-info.out { align-items: flex-start; text-align: left; }
-        .side-info span { font-size: 32px; color: #fff; margin-top: 5px; font-weight: bold;}
-
-        /* CONECTORES VERDES (IN / OUT) */
-        .port-visual {
-            width: 35px; height: 60%; border: 3px solid var(--neon-green);
-            display: flex; align-items: center; justify-content: flex-end; position: relative;
-            background: rgba(57,255,20,0.05); border-radius: 10px 0 0 10px; border-right: none;
-            box-shadow: inset 0 0 15px rgba(57,255,20,0.2);
-        }
-        .port-visual.out {
-            border-color: var(--neon-yellow); border-radius: 0 10px 10px 0; border-left: none;
-            background: rgba(241,196,15,0.05); box-shadow: inset 0 0 15px rgba(241,196,15,0.2);
-            justify-content: flex-start;
-        }
-        
-        .port-pipe {
-            position: absolute; right: -4px; width: 25px; height: 16px; background: var(--neon-green); z-index: 20;
-            box-shadow: 0 0 10px var(--neon-green); border-radius: 2px;
-        }
-        .port-visual.out .port-pipe {
-            left: -4px; right: auto; background: var(--neon-yellow); box-shadow: 0 0 10px var(--neon-yellow);
+        .grid-master-container::before {
+            content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: clamp(300px, 50vh, 550px); height: clamp(300px, 50vh, 550px);
+            background: radial-gradient(circle, rgba(0,243,255,0.15) 0%, transparent 70%); pointer-events: none; z-index: 0;
         }
 
         /* GRILLA PRINCIPAL 3x3 */
         .grid-container {
-            width: clamp(250px, 45vh, 450px);
-            height: clamp(250px, 45vh, 450px);
+            width: clamp(280px, 48vh, 500px);
+            height: clamp(280px, 48vh, 500px);
             display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr);
-            gap: 12px; background: transparent; position: relative; z-index: 15;
+            gap: 15px; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 12px; border: 1px solid #1e293b;
+            position: relative; z-index: 15; box-shadow: inset 0 0 40px rgba(0,0,0,0.9), 0 10px 30px rgba(0,0,0,0.5);
+            backdrop-filter: blur(8px); box-sizing: border-box;
         }
 
+        /* COLUMNAS LATERALES (PUERTOS) - ALTURA PERFECTAMENTE SINCRONIZADA */
+        .ports-col {
+            display: grid; grid-template-rows: repeat(3, 1fr); gap: 15px; 
+            height: clamp(280px, 48vh, 500px); width: 160px; z-index: 20;
+            padding: 16px 0; box-sizing: border-box; /* 16px empareja con los 15px de padding + 1px de border de la grilla */
+        }
+        
+        .port-slot { display: flex; align-items: center; justify-content: flex-end; width: 100%; height: 100%; position: relative; }
+        .port-slot.out { justify-content: flex-start; }
+
+        /* TEXTOS LATERALES */
+        .side-info {
+            display: flex; flex-direction: column; align-items: flex-end; justify-content: center;
+            font-size: 14px; color: var(--text-gray); padding: 0 15px; text-align: right; line-height: 1.2; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .side-info.out { align-items: flex-start; text-align: left; }
+        .side-info span { font-size: 36px; color: #fff; margin-top: 2px; font-weight: bold; text-shadow: 0 0 10px rgba(255,255,255,0.5);}
+
+        /* CONECTORES (SOCKETS FÍSICOS) */
+        .port-visual {
+            width: 45px; height: 65%; border: 2px solid #334155; border-right: 4px solid var(--neon-green);
+            display: flex; align-items: center; justify-content: flex-end; position: relative;
+            background: #020617; border-radius: 8px 0 0 8px; box-shadow: inset 10px 0 20px rgba(0,0,0,0.9), 0 0 15px rgba(57,255,20,0.3);
+            margin-right: -1px; /* Solapa el borde de la grilla */
+        }
+        .port-visual::before { content:''; position:absolute; left:4px; top:10%; bottom:10%; width:4px; background:rgba(255,255,255,0.1); border-radius:2px;}
+        
+        .port-visual.out {
+            border-left: 4px solid var(--neon-yellow); border-right: 2px solid #334155; border-radius: 0 8px 8px 0;
+            background: #020617; box-shadow: inset -10px 0 20px rgba(0,0,0,0.9), 0 0 15px rgba(241,196,15,0.3);
+            justify-content: flex-start; margin-left: -1px; margin-right: 0;
+        }
+        .port-visual.out::before { left:auto; right:4px;}
+        
+        /* PIPES DE CONEXIÓN EXACTA */
+        .port-pipe {
+            position: absolute; right: -18px; width: 24px; height: 18px; background: #0f172a; border: 2px solid var(--neon-green); z-index: 25;
+            border-radius: 2px; box-shadow: inset 0 0 10px rgba(57,255,20,0.5);
+        }
+        .port-pipe::after { content:''; position:absolute; inset:2px; background: var(--neon-green); border-radius: 1px; filter: blur(2px);}
+
+        .port-visual.out .port-pipe {
+            left: -18px; right: auto; border-color: var(--neon-yellow); box-shadow: inset 0 0 10px rgba(241,196,15,0.5);
+        }
+        .port-visual.out .port-pipe::after { background: var(--neon-yellow); }
+
+        /* TILES DE LA GRILLA */
         .pipe-tile {
-            background: var(--tile-bg); border: 2px solid var(--tile-border); border-radius: 16px;
-            position: relative; cursor: pointer; transition: transform 0.15s ease, border-color 0.2s;
+            background: var(--tile-bg); border: 2px solid var(--tile-border); border-radius: 8px;
+            position: relative; cursor: pointer; transition: transform 0.1s ease, border-color 0.2s, box-shadow 0.2s;
             user-select: none; display: flex; justify-content: center; align-items: center;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 5px 10px rgba(0,0,0,0.5); overflow: hidden;
         }
+        .pipe-tile::before { content:''; position:absolute; inset:0; background-image: radial-gradient(circle at 10px 10px, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 15px 15px; pointer-events: none;}
+        
+        .pipe-tile:hover { border-color: rgba(0,243,255,0.5); box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 5px 15px rgba(0,243,255,0.2);}
         .pipe-tile:active { transform: scale(0.92); }
-        .pipe-tile.connected .pipe-line, .pipe-tile.connected .pipe-center { background: var(--neon-green); box-shadow: 0 0 15px var(--neon-green); }
-        .pipe-tile.connected { border-color: var(--neon-green); box-shadow: 0 0 20px rgba(57,255,20,0.1); }
-        .pipe-tile.error { border-color: var(--neon-red); }
 
-        /* DIBUJO DE TUBERÍAS FÍSICAS GRUESAS */
+        /* ESTADOS DE CONEXIÓN */
+        .pipe-tile.connected .pipe-line { background: var(--neon-green); box-shadow: 0 0 15px var(--neon-green); animation: pulseFlow 1s infinite alternate;}
+        .pipe-tile.connected .pipe-center { background: #fff; box-shadow: 0 0 20px var(--neon-green), inset 0 0 5px var(--neon-green); border-color: var(--neon-green);}
+        .pipe-tile.connected { border-color: var(--neon-green); box-shadow: 0 0 20px rgba(57,255,20,0.15), inset 0 0 20px rgba(57,255,20,0.15); }
+        .pipe-tile.error { border-color: var(--neon-red); box-shadow: inset 0 0 20px rgba(255,0,85,0.2); animation: errorShake 0.4s;}
+        
+        @keyframes pulseFlow { 0% { filter: brightness(1); } 100% { filter: brightness(1.5); } }
+        @keyframes errorShake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
+
+        /* TUBERÍAS FÍSICAS */
         .pipe-wrapper {
-            position: absolute; inset: 0; transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: absolute; inset: 0; transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+        
         .pipe-center {
-            position: absolute; top: calc(50% - 8px); left: calc(50% - 8px);
-            width: 16px; height: 16px; background: var(--pipe-cyan); border-radius: 2px;
-            box-shadow: 0 0 10px var(--pipe-cyan); transition: all 0.2s;
+            position: absolute; top: calc(50% - 12px); left: calc(50% - 12px);
+            width: 24px; height: 24px; background: #020617; border: 3px solid var(--pipe-cyan); border-radius: 50%;
+            box-shadow: 0 0 15px rgba(0,243,255,0.5), inset 0 0 5px rgba(0,243,255,0.5); transition: all 0.2s; z-index: 3;
         }
+        .pipe-center::after { content:''; position:absolute; inset: 4px; background: var(--pipe-cyan); border-radius: 50%; opacity: 0.6;}
+
         .pipe-line {
-            position: absolute; background: var(--pipe-cyan); box-shadow: 0 0 10px var(--pipe-cyan); transition: all 0.2s;
+            position: absolute; background: var(--pipe-cyan); box-shadow: 0 0 10px rgba(0,243,255,0.5); transition: all 0.2s; z-index: 2; border-radius: 2px;
         }
-        .pipe-line.top { top: 0; left: calc(50% - 8px); width: 16px; height: 50%; }
-        .pipe-line.right { top: calc(50% - 8px); right: 0; width: 50%; height: 16px; }
-        .pipe-line.bottom { bottom: 0; left: calc(50% - 8px); width: 16px; height: 50%; }
-        .pipe-line.left { top: calc(50% - 8px); left: 0; width: 50%; height: 16px; }
+        .pipe-line::after { content:''; position:absolute; inset: 3px; background: rgba(0,0,0,0.4); border-radius: 1px;}
+        
+        .pipe-line.top { top: -2px; left: calc(50% - 8px); width: 16px; height: 50%; }
+        .pipe-line.right { top: calc(50% - 8px); right: -2px; width: 50%; height: 16px; }
+        .pipe-line.bottom { bottom: -2px; left: calc(50% - 8px); width: 16px; height: 50%; }
+        .pipe-line.left { top: calc(50% - 8px); left: -2px; width: 50%; height: 16px; }
 
         /* OPERACIÓN MATEMÁTICA */
         .pipe-math { 
-            position: absolute; bottom: 12px; 
-            font-family: 'Share Tech Mono', monospace; font-size: clamp(16px, 3vh, 22px); font-weight: bold; 
-            color: var(--neon-yellow); background: rgba(0,0,0,0.85); padding: 4px 10px; border-radius: 6px;
-            pointer-events: none; z-index: 2; border: 1px solid rgba(241,196,15,0.3);
+            position: absolute; bottom: 8px; right: 8px;
+            font-family: 'Share Tech Mono', monospace; font-size: clamp(14px, 2.5vh, 20px); font-weight: bold; 
+            color: var(--neon-yellow); background: rgba(0,0,0,0.9); padding: 2px 8px; border-radius: 4px;
+            pointer-events: none; z-index: 10; border: 1px solid rgba(241,196,15,0.5);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.8);
         }
+        .pipe-math::before { content:''; position:absolute; top: -10px; left: -10px; width: 15px; height: 1px; background: rgba(241,196,15,0.5); transform: rotate(45deg);}
 
+        /* BOTÓN DE INICIO DE FLUJO (FIX ALINEACIÓN CENTRADA) */
         .start-flow-btn {
-            background: var(--neon-green); border: none; color: #000; padding: 18px 50px;
-            font-size: 24px; font-weight: bold; font-family: 'Share Tech Mono', monospace; border-radius: 10px;
-            cursor: pointer; box-shadow: 0 0 30px rgba(57, 255, 20, 0.5); margin-bottom: 2vh; z-index: 10; flex: 0 0 auto;
+            margin: 0 auto 2vh auto; align-self: center; /* Esto fuerza el centrado absoluto */
+            background: transparent; border: 2px solid var(--neon-green); color: var(--neon-green); padding: 18px 50px;
+            font-size: 24px; font-weight: bold; font-family: 'Share Tech Mono', monospace; border-radius: 6px;
+            cursor: pointer; box-shadow: 0 0 20px rgba(57, 255, 20, 0.2), inset 0 0 10px rgba(57, 255, 20, 0.1); z-index: 10; flex: 0 0 auto;
+            text-transform: uppercase; letter-spacing: 2px; transition: all 0.2s; position: relative; overflow: hidden; display: block;
         }
-        .start-flow-btn:active { transform: scale(0.95); }
+        .start-flow-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(57,255,20,0.4), transparent); transform: skewX(-20deg); transition: 0.5s; }
+        .start-flow-btn:hover::before { left: 150%; }
+        .start-flow-btn:hover { background: rgba(57,255,20,0.1); box-shadow: 0 0 30px rgba(57, 255, 20, 0.4), inset 0 0 20px rgba(57, 255, 20, 0.2);}
+        .start-flow-btn:active { transform: scale(0.95); box-shadow: 0 0 10px rgba(57,255,20,0.3);}
 
         /* MODAL */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 1000; visibility: hidden; opacity: 0; transition: all 0.3s; backdrop-filter: blur(4px);}
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: flex; justify-content: center; align-items: center; z-index: 1000; visibility: hidden; opacity: 0; transition: all 0.3s; backdrop-filter: blur(5px);}
         .modal-overlay.active { visibility: visible; opacity: 1; }
-        .modal-box { background: #050510; padding: 40px; border-radius: 12px; text-align: center; max-width: 85%; width: 500px; transform: scale(0.9); transition: transform 0.3s; border: 2px solid var(--pipe-cyan); box-shadow: 0 0 50px rgba(0,243,255,0.4);}
+        .modal-box { background: #050a15; padding: 40px; border-radius: 8px; text-align: center; max-width: 85%; width: 500px; transform: scale(0.9); transition: transform 0.3s; border: 1px solid var(--pipe-cyan); border-top: 4px solid var(--pipe-cyan); box-shadow: 0 0 60px rgba(0,243,255,0.2);}
         .modal-overlay.active .modal-box { transform: scale(1); }
-        .modal-title { font-family: 'Share Tech Mono', monospace; font-size: 36px; margin-top: 0; margin-bottom: 15px; color: var(--pipe-cyan); text-shadow: 0 0 15px var(--pipe-cyan);}
-        .modal-msg { font-size: 20px; margin-bottom: 30px; color: #ddd; white-space: pre-line; line-height: 1.5; font-family: 'Rajdhani', sans-serif; font-weight: 600;}
-        .modal-btn { background: transparent; border: 2px solid var(--pipe-cyan); color: var(--pipe-cyan); padding: 15px 35px; font-size: 20px; border-radius: 6px; text-transform: uppercase; font-family: 'Share Tech Mono', monospace; font-weight: bold; cursor:pointer; transition: all 0.2s;}
-        .modal-btn:hover { background: var(--pipe-cyan); color: #000; }
+        .modal-title { font-family: 'Share Tech Mono', monospace; font-size: 36px; margin-top: 0; margin-bottom: 15px; color: #fff; text-shadow: 0 0 15px var(--pipe-cyan);}
+        .modal-msg { font-size: 20px; margin-bottom: 30px; color: #cbd5e1; white-space: pre-line; line-height: 1.5; font-family: 'Rajdhani', sans-serif; font-weight: 600;}
+        .modal-btn { background: var(--pipe-cyan); border: none; color: #000; padding: 15px 35px; font-size: 20px; border-radius: 4px; text-transform: uppercase; font-family: 'Share Tech Mono', monospace; font-weight: bold; cursor:pointer; transition: all 0.2s; box-shadow: 0 0 15px rgba(0,243,255,0.3);}
+        .modal-btn:hover { filter: brightness(1.2); transform: scale(1.05);}
+        .modal-btn:active { transform: scale(0.95); }
 
         @media (max-width: 800px) {
             .side-info { display: none; }
             .ports-col { width: 40px; }
+            .grid-container { gap: 10px; padding: 10px; border-radius: 8px;}
+            .pipe-tile { border-radius: 6px; }
+            .port-visual { width: 35px; }
         }
     </style>
 </head>
@@ -185,7 +247,7 @@
     <audio id="bgm" loop><source src="../assets/musicaFondo/cancion1.mp3" type="audio/mpeg"></audio>
     <button id="soundToggle" class="sound-toggle" aria-label="Activar sonido">🔇</button>
 
-    <div class="decorations"><div class="scanlines"></div></div>
+    <div class="decorations"><div class="hex-bg"></div><div class="scanlines"></div></div>
 
     <div id="game-screen">
         <div class="game-header">
@@ -203,13 +265,15 @@
         <div class="grid-master-container">
             <!-- COLUMNA IZQUIERDA -->
             <div class="ports-col" id="ports-in-col"></div>
+            
             <!-- GRILLA CENTRAL -->
             <div class="grid-container" id="grid-container"></div>
+            
             <!-- COLUMNA DERECHA -->
             <div class="ports-col out" id="ports-out-col"></div>
         </div>
 
-        <button class="start-flow-btn" onclick="validateFlow()">⚡ INICIAR FLUJO</button>
+        <button class="start-flow-btn" onclick="validateFlow()">⚡ INICIAR TRANSMISIÓN</button>
     </div>
 
     <div class="modal-overlay" id="modal">
@@ -433,7 +497,7 @@
                 if(i === startRow) {
                     inCol.innerHTML += `
                         <div class="port-slot">
-                            <div class="side-info">energía inicial<br><span>${startVal}</span></div>
+                            <div class="side-info">flujo inicial<br><span>${startVal}</span></div>
                             <div class="port-visual port-in"><div class="port-pipe"></div></div>
                         </div>`;
                 } else {
@@ -444,7 +508,7 @@
                     outCol.innerHTML += `
                         <div class="port-slot out">
                             <div class="port-visual port-out out"><div class="port-pipe"></div></div>
-                            <div class="side-info out">energía final<br><span>${targetVal}</span></div>
+                            <div class="side-info out">objetivo<br><span>${targetVal}</span></div>
                         </div>`;
                 } else {
                     outCol.innerHTML += `<div class="port-slot"></div>`;
@@ -468,7 +532,6 @@
 
                     let cssRot = tile.rotation * 90;
                     
-                    // Solo usamos las salidas BASE para generar el dibujo HTML. El CSS rotará la imagen visualmente completa.
                     let bExits = pipeTypes[tile.type].exits; 
                     
                     let htmlLines = '';
@@ -546,27 +609,27 @@
             if (reachedValues.includes(targetVal)) {
                 sfxSuccess();
                 document.getElementById('m-title').style.color = "var(--neon-green)";
-                document.getElementById('m-title').style.textShadow = "0 0 10px var(--neon-green)";
-                showModal("¡Circuito Optimizado! ⚡", `¡El flujo llegó a ${targetVal} exactos a través de las operaciones!\nGenerando nueva ruta...`, () => {
+                document.getElementById('m-title').style.textShadow = "0 0 15px var(--neon-green)";
+                showModal("¡CIRCUITO OPTIMIZADO! ⚡", `¡El flujo de datos llegó a ${targetVal} exactos a través de la red!\nIniciando siguiente nivel...`, () => {
                     document.getElementById('m-title').style.color = "var(--pipe-cyan)"; 
-                    document.getElementById('m-title').style.textShadow = "0 0 10px var(--pipe-cyan)";
+                    document.getElementById('m-title').style.textShadow = "0 0 15px var(--pipe-cyan)";
                     initLevel();
                 });
             } else if (reachedValues.length > 0) {
                 sfxError();
                 document.getElementById('m-title').style.color = "var(--neon-yellow)";
-                document.getElementById('m-title').style.textShadow = "0 0 10px var(--neon-yellow)";
-                showModal("¡Desfase de Energía! ⚠️", `El circuito está conectado a OUT, pero el cálculo resultó en ${reachedValues[0]}.\n¡Necesitamos exactamente ${targetVal}!`, () => {
+                document.getElementById('m-title').style.textShadow = "0 0 15px var(--neon-yellow)";
+                showModal("¡DESFASE DE ENERGÍA! ⚠️", `El circuito está conectado al colector OUT, pero el cálculo matemático resultó en ${reachedValues[0]}.\n¡El sistema necesita exactamente ${targetVal}!`, () => {
                     document.getElementById('m-title').style.color = "var(--pipe-cyan)"; 
-                    document.getElementById('m-title').style.textShadow = "0 0 10px var(--pipe-cyan)";
+                    document.getElementById('m-title').style.textShadow = "0 0 15px var(--pipe-cyan)";
                 });
             } else {
                 sfxError();
                 document.getElementById('m-title').style.color = "var(--neon-red)";
-                document.getElementById('m-title').style.textShadow = "0 0 10px var(--neon-red)";
-                showModal("¡Fuga Cuántica! ❌", "La energía se filtró o no llegó al colector OUT. Cierra los tubos sueltos.", () => {
+                document.getElementById('m-title').style.textShadow = "0 0 15px var(--neon-red)";
+                showModal("¡FUGA CUÁNTICA! ❌", "La información se filtró o nunca llegó al colector OUT.\nCierra los tubos sueltos marcados en rojo girándolos.", () => {
                     document.getElementById('m-title').style.color = "var(--pipe-cyan)"; 
-                    document.getElementById('m-title').style.textShadow = "0 0 10px var(--pipe-cyan)";
+                    document.getElementById('m-title').style.textShadow = "0 0 15px var(--pipe-cyan)";
                 });
             }
         }

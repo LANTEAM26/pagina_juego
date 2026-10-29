@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Astro-Graph: Osciloscopio Cuántico 📈</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { 
+            --bg-color: #020617;
+            --panel-bg: rgba(15, 23, 42, 0.9);
+            --axis-color: #334155;
+            --grid-color: #0f172a;
+            --signal-target: #f43f5e; 
+            --signal-player: #0ea5e9; 
+            --accent: #10b981; 
+            --warning: #fbbf24; 
+            --text-main: #f8fafc;
+        }
+
+        body, html { 
+            font-family: 'Rajdhani', sans-serif; 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            margin: 0; padding: 0; width: 100vw; height: 100vh; 
+            color: var(--text-main); background-color: var(--bg-color); 
+            overflow: hidden; box-sizing: border-box; user-select: none;
+        }
+
+        .decorations { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; background: radial-gradient(circle at center, #0f172a 0%, #020617 100%); }
+        .tech-lines { position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(14,165,233,0.03) 2px, rgba(14,165,233,0.03) 4px); pointer-events: none;}
+        
+        .sound-toggle { position: absolute; top: 15px; right: 15px; background: rgba(15,23,42,0.8); border: 2px solid var(--signal-player); border-radius: 8px; width: 45px; height: 45px; font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 1000; box-shadow: 0 0 15px rgba(14,165,233,0.3); transition: all 0.2s; color: var(--signal-player);}
+        .sound-toggle:active { transform: scale(0.9); }
+
+        #instructions-screen { position: absolute; inset: 0; z-index: 600; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(2,6,23,0.95); backdrop-filter: blur(8px); }
+        .instructions-card { background: var(--panel-bg); padding: 40px; border-radius: 12px; border: 2px solid var(--signal-player); max-width: 90%; width: 750px; display: flex; flex-direction: column; gap: 20px; box-shadow: 0 0 50px rgba(14,165,233,0.3); }
+        .instructions-card h1 { font-family: 'Share Tech Mono', monospace; font-size: 45px; color: var(--signal-player); margin: 0; text-align: center; text-shadow: 0 0 15px rgba(14,165,233,0.5);}
+        .instruction-step { display: flex; gap: 15px; align-items: flex-start; font-size: 18px; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; border: 1px solid rgba(14,165,233,0.3);}
+        .instruction-icon { font-size: 30px; flex-shrink: 0; }
+        .instruction-text b { color: var(--warning); }
+        
+        .start-btn { background: var(--signal-player); border: none; padding: 15px 40px; font-size: 22px; color: #000; border-radius: 6px; text-transform: uppercase; font-weight: bold; font-family: 'Share Tech Mono', monospace; cursor:pointer; transition: all 0.2s; align-self: center; box-shadow: 0 5px 0 #0369a1, 0 10px 20px rgba(14,165,233,0.4); letter-spacing: 2px; margin-top: 10px;}
+        .start-btn:active { transform: translateY(5px); box-shadow: 0 0 0 #0369a1; }
+
+        .game-header { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1200px; padding: 15px 2vw; z-index: 10; box-sizing: border-box;}
+        .title-display { font-family: 'Share Tech Mono', monospace; font-size: 26px; color: var(--signal-player); text-shadow: 0 0 10px var(--signal-player); letter-spacing: 1px;}
+        
+        .hud-stats { display: flex; gap: 15px; align-items: center;}
+        .hud-box { background: var(--panel-bg); padding: 8px 20px; border-radius: 6px; border: 1px solid var(--accent); font-size: 20px; color: #fff; box-shadow: 0 0 15px rgba(16,185,129,0.3); font-family: 'Share Tech Mono', monospace;}
+        .hud-box span { color: var(--accent); font-weight: bold; font-size: 24px;}
+        
+        .health-bar { display: flex; gap: 5px; align-items: center; background: var(--panel-bg); padding: 8px 20px; border-radius: 6px; border: 1px solid var(--signal-target); box-shadow: 0 0 15px rgba(244,63,94,0.3); font-family: 'Share Tech Mono', monospace;}
+        .heart { color: var(--signal-target); font-size: 22px; filter: drop-shadow(0 0 5px var(--signal-target)); transition: all 0.3s;}
+        .heart.lost { color: #334155; filter: none; transform: scale(0.8); opacity: 0.5;}
+
+        .main-layout { display: flex; gap: 20px; width: 100%; max-width: 1200px; flex: 1; padding: 0 2vw 2vh 2vw; box-sizing: border-box; overflow: hidden;}
+        @media (max-width: 900px) { .main-layout { flex-direction: column; overflow-y: auto; } }
+
+        .oscilloscope-panel { flex: 1.5; background: rgba(2, 6, 23, 0.9); border: 2px solid var(--signal-player); border-radius: 12px; position: relative; box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 0 30px rgba(14,165,233,0.1); display: flex; justify-content: center; align-items: center; padding: 15px; overflow: hidden;}
+        .oscilloscope-panel::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent, rgba(14,165,233,0.1) 50%, transparent); height: 10px; width: 100%; animation: scanline 4s linear infinite; pointer-events: none;}
+        @keyframes scanline { 0% { top: -10%; } 100% { top: 110%; } }
+
+        .svg-container { width: 100%; height: 100%; max-height: 600px; position: relative; background: #020617; border-radius: 8px;}
+        svg { width: 100%; height: 100%; overflow: visible;}
+        
+        .grid-line { stroke: var(--grid-color); stroke-width: 0.1px; }
+        .grid-axis { stroke: var(--axis-color); stroke-width: 0.2px; }
+        .grid-label { fill: #475569; font-family: 'Share Tech Mono', monospace; font-size: 0.6px; user-select: none;}
+
+        .path-target { stroke: var(--signal-target); stroke-width: 0.3px; fill: none; stroke-linecap: round; filter: drop-shadow(0 0 1px var(--signal-target)); opacity: 0.8; stroke-dasharray: 0.5, 0.5; animation: dashMove 2s linear infinite;}
+        
+        /* Ejecución a Ciegas: El trazo del jugador empieza oculto y se dibuja con animación */
+        .path-player { stroke: var(--signal-player); stroke-width: 0.4px; fill: none; stroke-linecap: round; filter: drop-shadow(0 0 2px var(--signal-player)); opacity: 0; stroke-dasharray: 100; stroke-dashoffset: 100;}
+        .path-player.drawing { opacity: 1; animation: drawWave 0.6s ease-out forwards; }
+        .path-player.error { stroke: var(--warning); filter: drop-shadow(0 0 2px var(--warning)); }
+        
+        @keyframes dashMove { to { stroke-dashoffset: -1; } }
+        @keyframes drawWave { to { stroke-dashoffset: 0; } }
+
+        .sync-flash { position: absolute; inset: 0; background: rgba(16,185,129,0.3); z-index: 20; opacity: 0; pointer-events: none;}
+        .sync-flash.active { animation: flashScreen 0.5s ease-out; }
+        @keyframes flashScreen { 0% { opacity: 1; } 100% { opacity: 0; } }
+
+        .console-panel { flex: 0.8; display: flex; flex-direction: column; gap: 15px;}
+        
+        .data-box { background: var(--panel-bg); border: 2px solid #1e293b; border-radius: 8px; padding: 20px; display: flex; flex-direction: column; gap: 15px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5);}
+        
+        .d-header { font-family: 'Share Tech Mono', monospace; font-size: 16px; color: var(--warning); text-transform: uppercase; border-bottom: 1px dashed #334155; padding-bottom: 5px; margin-bottom: 5px; display: flex; justify-content: space-between;}
+        
+        .formula-display { display: flex; justify-content: center; align-items: center; background: #020617; padding: 20px 10px; border-radius: 6px; border: 1px solid var(--signal-player); font-family: 'Share Tech Mono', monospace; font-size: 26px; font-weight: bold; color: var(--signal-player); text-shadow: 0 0 10px rgba(14,165,233,0.5); min-height: 40px; text-align: center; letter-spacing: 1px;}
+        .formula-hint { font-size: 14px; color: #94a3b8; text-align: center; font-style: italic; margin-top: -5px;}
+
+        .controls-box { flex: 1; background: #0f172a; border: 2px solid #1e293b; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; gap: 15px; box-shadow: inset 0 0 20px rgba(0,0,0,0.3);}
+        
+        .param-control { display: flex; align-items: center; justify-content: space-between; background: #020617; border: 1px solid #334155; padding: 10px; border-radius: 8px;}
+        .param-info { display: flex; flex-direction: column; width: 60px;}
+        .param-label { font-family: 'Share Tech Mono', monospace; font-size: 22px; font-weight: bold; color: var(--warning);}
+        .param-desc { font-size: 10px; color: #64748b; text-transform: uppercase; line-height: 1;}
+        
+        .adj-btn { background: #1e293b; border: 1px solid #475569; color: #fff; width: 45px; height: 45px; border-radius: 6px; font-size: 24px; font-weight: bold; font-family: monospace; cursor: pointer; transition: all 0.1s; display: flex; justify-content: center; align-items: center;}
+        .adj-btn:hover { background: #334155; border-color: var(--signal-player);}
+        .adj-btn:active { transform: scale(0.9); background: var(--signal-player); color: #000;}
+        
+        .val-display { font-family: 'Share Tech Mono', monospace; font-size: 28px; font-weight: bold; color: var(--text-main); width: 60px; text-align: center;}
+
+        .reactor-actions { margin-top: auto;}
+        .r-btn-verify { width: 100%; background: var(--accent); border: none; color: #000; padding: 18px; border-radius: 6px; cursor: pointer; font-family: 'Share Tech Mono', monospace; font-size: 22px; transition: all 0.2s; font-weight: bold; box-shadow: 0 6px 0 #059669; text-transform: uppercase; letter-spacing: 2px;}
+        .r-btn-verify:active { transform: translateY(6px); box-shadow: none;}
+        .r-btn-verify:disabled { background: #334155; color: #94a3b8; box-shadow: none; cursor: not-allowed;}
+
+        /* MODAL */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 1000; visibility: hidden; opacity: 0; transition: all 0.3s; backdrop-filter: blur(8px);}
+        .modal-overlay.active { visibility: visible; opacity: 1; }
+        .modal-box { background: var(--panel-bg); padding: 40px; border-radius: 12px; text-align: center; max-width: 85%; width: 450px; transform: scale(0.9); transition: transform 0.3s; border: 2px solid var(--accent); box-shadow: 0 0 50px rgba(16,185,129,0.3);}
+        .modal-overlay.active .modal-box { transform: scale(1); }
+        
+        .modal-title { font-family: 'Share Tech Mono', monospace; font-size: 36px; margin-top: 0; margin-bottom: 15px; color: var(--accent); text-shadow: 0 0 15px rgba(16,185,129,0.5);}
+        .modal-msg { font-size: 18px; margin-bottom: 30px; color: #e2e8f0; white-space: pre-line; line-height: 1.5;}
+        .modal-score-disp { font-family: 'Share Tech Mono', monospace; font-size: 50px; color: #fff; font-weight: bold; margin: 15px 0;}
+
+        .modal-btn { background: transparent; border: 2px solid var(--accent); color: var(--accent); padding: 12px 30px; font-size: 18px; border-radius: 6px; text-transform: uppercase; font-weight: bold; cursor:pointer; font-family: 'Share Tech Mono', monospace; transition: all 0.2s;}
+        .modal-btn:hover { background: var(--accent); color: #000; box-shadow: 0 0 20px var(--accent);}
+
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+        .shake-screen { animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both; }
+
+    </style>
+</head>
+<body>
+
+    <audio id="bgm" loop><source src="../assets/musicaFondo/cancion1.mp3" type="audio/mpeg"></audio>
+    <div class="decorations"><div class="tech-lines"></div></div>
+    <button id="soundToggle" class="sound-toggle" aria-label="Activar sonido">🔇</button>
+
+    <!-- INSTRUCCIONES -->
+    <div id="instructions-screen">
+        <div class="instructions-card">
+            <h1>ASTRO-GRAPH 📈</h1>
+            <div class="instruction-step">
+                <span class="instruction-icon">📡</span>
+                <span class="instruction-text"><b>SEÑAL INFINITA:</b> Estás recibiendo ondas alienígenas cifradas (línea <b style="color:var(--signal-target);">Roja Punteada</b>).</span>
+            </div>
+            <div class="instruction-step">
+                <span class="instruction-icon">🧠</span>
+                <span class="instruction-text"><b>CÁLCULO A CIEGAS:</b> Configura los parámetros A, H y K. ¡Cuidado! <b>Tu onda no se dibujará</b> hasta que presiones SINCRONIZAR. Debes encontrar el Vértice y la Amplitud mentalmente mirando la cuadrícula.</span>
+            </div>
+            <div class="instruction-step">
+                <span class="instruction-icon">🧮</span>
+                <span class="instruction-text"><b>TRANSFORMACIONES:</b><br>
+                <b>A:</b> Amplitud / Pendiente / Reflexión<br>
+                <b>H:</b> Desplazamiento Horizontal (X)<br>
+                <b>K:</b> Desplazamiento Vertical (Y)</span>
+            </div>
+            <button class="start-btn" onclick="startGame()">INICIAR MODO SUPERVIVENCIA</button>
+        </div>
+    </div>
+
+    <!-- JUEGO -->
+    <div class="game-header">
+        <div class="title-display">ASTRO-GRAPH [SUPERVIVENCIA]</div>
+        <div class="hud-stats">
+            <div class="health-bar">
+                SISTEMA: 
+                <span class="heart" id="h1">❤️</span>
+                <span class="heart" id="h2">❤️</span>
+                <span class="heart" id="h3">❤️</span>
+            </div>
+            <div class="hud-box">SINTONIZADAS: <span id="score-display">0</span></div>
+        </div>
+    </div>
+
+    <div class="main-layout">
+        
+        <!-- OSCILOSCOPIO -->
+        <div class="oscilloscope-panel">
+            <div class="sync-flash" id="sync-flash"></div>
+            <div class="svg-container">
+                <svg viewBox="-10 -10 20 20" id="radar-svg" preserveAspectRatio="none">
+                    <g id="grid-layer"></g>
+                    <!-- Trazados -->
+                    <path id="path-target" class="path-target" d=""></path>
+                    <path id="path-player" class="path-player" d=""></path>
+                </svg>
+            </div>
+        </div>
+
+        <!-- CONSOLA DE MANDO -->
+        <div class="console-panel">
+            
+            <div class="data-box">
+                <div class="d-header"><span>CÓDIGO DE ONDA GENERADA</span> <span style="color:var(--danger); font-size:12px;">[MODO A CIEGAS]</span></div>
+                <div class="formula-display" id="f-display">f(x) = x</div>
+                <div class="formula-hint" id="f-hint">y = A * f(x - H) + K</div>
+            </div>
+
+            <div class="controls-box">
+                <div class="param-control">
+                    <div class="param-info">
+                        <span class="param-label">A:</span>
+                        <span class="param-desc">Amplitud</span>
+                    </div>
+                    <button class="adj-btn" onclick="adjust('a', -1)">-</button>
+                    <span class="val-display" id="disp-a">1</span>
+                    <button class="adj-btn" onclick="adjust('a', 1)">+</button>
+                </div>
+
+                <div class="param-control">
+                    <div class="param-info">
+                        <span class="param-label">H:</span>
+                        <span class="param-desc">Eje X</span>
+                    </div>
+                    <button class="adj-btn" onclick="adjust('h', -1)">-</button>
+                    <span class="val-display" id="disp-h">0</span>
+                    <button class="adj-btn" onclick="adjust('h', 1)">+</button>
+                </div>
+
+                <div class="param-control">
+                    <div class="param-info">
+                        <span class="param-label">K:</span>
+                        <span class="param-desc">Eje Y</span>
+                    </div>
+                    <button class="adj-btn" onclick="adjust('k', -1)">-</button>
+                    <span class="val-display" id="disp-k">0</span>
+                    <button class="adj-btn" onclick="adjust('k', 1)">+</button>
+                </div>
+            </div>
+            
+            <div class="reactor-actions">
+                <button class="r-btn-verify" id="btn-fire" onclick="syncSignal()">[ SINCRONIZAR ONDA ]</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MODAL GAME OVER -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal-box">
+            <h2 class="modal-title" id="m-title">TÍTULO</h2>
+            <div class="modal-score-disp" id="m-score" style="display:none;">0</div>
+            <p class="modal-msg" id="m-msg">Mensaje</p>
+            <button class="modal-btn" id="m-btn" onclick="closeModal()">CONTINUAR</button>
+        </div>
+    </div>
+
+    <script>
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx; let isMuted = true;
+        const bgAudio = document.getElementById('bgm');
+        const soundToggle = document.getElementById('soundToggle');
+
+        soundToggle.addEventListener('click', () => {
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            isMuted = !isMuted;
+            if(isMuted) { bgAudio.pause(); soundToggle.innerText = '🔇'; } 
+            else { bgAudio.volume = 0.25; bgAudio.play().catch(e=>e); soundToggle.innerText = '🔊'; }
+        });
+
+        function playTone(freq, type, duration, vol = 0.1) {
+            if (!audioCtx || isMuted) return;
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + duration);
+        }
+        function playNoise(duration, vol) {
+            if (!audioCtx || isMuted) return;
+            const bufferSize = audioCtx.sampleRate * duration; const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate); const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+            const noise = audioCtx.createBufferSource(); noise.buffer = buffer;
+            const gain = audioCtx.createGain(); gain.gain.setValueAtTime(vol, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            const filter = audioCtx.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 800;
+            noise.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination); noise.start();
+        }
+
+        function sfxClick() { playTone(900, 'square', 0.05, 0.05); }
+        function sfxInput() { playTone(1200, 'sine', 0.05, 0.05); }
+        function sfxScan() { playTone(400, 'triangle', 0.6, 0.1); setTimeout(()=>playTone(600, 'triangle', 0.6, 0.1), 100); }
+        function sfxSync() { playTone(600, 'sine', 0.2, 0.1); setTimeout(()=>playTone(800, 'sine', 0.4, 0.1), 150); }
+        function sfxError() { playTone(200, 'sawtooth', 0.3, 0.2); }
+        function sfxGameOver() { [300, 250, 200, 150].forEach((f, i) => setTimeout(() => playTone(f, 'sawtooth', 0.4, 0.2), i * 300)); }
+
+        // DIBUJADO DE GRID
+        function drawGrid() {
+            let layer = document.getElementById('grid-layer');
+            let html = '';
+            
+            for(let i = -10; i <= 10; i++) {
+                html += `<line x1="${i}" y1="-10" x2="${i}" y2="10" class="${i===0?'grid-axis':'grid-line'}" />`;
+                html += `<line x1="-10" y1="${i}" x2="10" y2="${i}" class="${i===0?'grid-axis':'grid-line'}" />`;
+                
+                if(i !== 0 && i % 2 === 0) {
+                    html += `<text x="${i}" y="0.5" class="grid-label" text-anchor="middle">${i}</text>`;
+                    html += `<text x="0.2" y="${-i + 0.2}" class="grid-label" text-anchor="start">${i}</text>`;
+                }
+            }
+            layer.innerHTML = html;
+        }
+
+        // MOTOR MATEMÁTICO AVANZADO
+        const FUNC_TYPES = {
+            'lineal': {
+                name: "Función Lineal",
+                calc: (x, a, h, k) => a * (x - h) + k,
+                format: (a, h, k) => {
+                    let aStr = a === 1 ? "" : (a === -1 ? "-" : a);
+                    let hStr = h > 0 ? ` - ${h}` : (h < 0 ? ` + ${Math.abs(h)}` : "");
+                    let varStr = h === 0 ? "x" : `(x${hStr})`;
+                    let kStr = k > 0 ? ` + ${k}` : (k < 0 ? ` - ${Math.abs(k)}` : "");
+                    return `y = ${aStr}${varStr}${kStr}`;
+                }
+            },
+            'cuadratica': {
+                name: "Función Cuadrática",
+                calc: (x, a, h, k) => a * Math.pow(x - h, 2) + k,
+                format: (a, h, k) => {
+                    let aStr = a === 1 ? "" : (a === -1 ? "-" : a);
+                    let hStr = h > 0 ? ` - ${h}` : (h < 0 ? ` + ${Math.abs(h)}` : "");
+                    let varStr = h === 0 ? "x²" : `(x${hStr})²`;
+                    let kStr = k > 0 ? ` + ${k}` : (k < 0 ? ` - ${Math.abs(k)}` : "");
+                    return `y = ${aStr}${varStr}${kStr}`;
+                }
+            },
+            'cubica': {
+                name: "Función Cúbica",
+                calc: (x, a, h, k) => a * Math.pow(x - h, 3) + k,
+                format: (a, h, k) => {
+                    let aStr = a === 1 ? "" : (a === -1 ? "-" : a);
+                    let hStr = h > 0 ? ` - ${h}` : (h < 0 ? ` + ${Math.abs(h)}` : "");
+                    let varStr = h === 0 ? "x³" : `(x${hStr})³`;
+                    let kStr = k > 0 ? ` + ${k}` : (k < 0 ? ` - ${Math.abs(k)}` : "");
+                    return `y = ${aStr}${varStr}${kStr}`;
+                }
+            },
+            'absoluto': {
+                name: "Valor Absoluto",
+                calc: (x, a, h, k) => a * Math.abs(x - h) + k,
+                format: (a, h, k) => {
+                    let aStr = a === 1 ? "" : (a === -1 ? "-" : a);
+                    let hStr = h > 0 ? ` - ${h}` : (h < 0 ? ` + ${Math.abs(h)}` : "");
+                    let varStr = `|x${hStr}|`;
+                    let kStr = k > 0 ? ` + ${k}` : (k < 0 ? ` - ${Math.abs(k)}` : "");
+                    return `y = ${aStr}${varStr}${kStr}`;
+                }
+            },
+            'seno': {
+                name: "Onda Senoidal",
+                calc: (x, a, h, k) => a * Math.sin((Math.PI/2) * (x - h)) + k,
+                format: (a, h, k) => {
+                    let aStr = a === 1 ? "" : (a === -1 ? "-" : a);
+                    let hStr = h > 0 ? ` - ${h}` : (h < 0 ? ` + ${Math.abs(h)}` : "");
+                    let varStr = h === 0 ? "x" : `(x${hStr})`;
+                    let kStr = k > 0 ? ` + ${k}` : (k < 0 ? ` - ${Math.abs(k)}` : "");
+                    return `y = ${aStr}sin(π/2${varStr})${kStr}`;
+                }
+            }
+        };
+
+        // ESTADO DEL JUEGO
+        let score = 0;
+        let hp = 3;
+        
+        let pA = 1, pH = 0, pK = 0;
+        let activeLevelData = null;
+        let isSystemLocked = false;
+
+        function startGame() {
+            if (!audioCtx && !isMuted) { audioCtx = new AudioContext(); bgAudio.play().catch(e=>e); }
+            sfxClick();
+            document.getElementById('instructions-screen').style.display = 'none';
+            drawGrid();
+            score = 0;
+            hp = 3;
+            updateScore();
+            updateHearts();
+            generateProceduralLevel();
+        }
+
+        // GENERADOR INFINITO
+        function generateProceduralLevel() {
+            isSystemLocked = false;
+            
+            // Ocultar onda del jugador
+            let pEl = document.getElementById('path-player');
+            pEl.classList.remove('drawing', 'error');
+            pEl.style.opacity = '0';
+            
+            const types = Object.keys(FUNC_TYPES);
+            let type = types[Math.floor(Math.random() * types.length)];
+            
+            let tA, tH, tK;
+            do {
+                tA = Math.floor(Math.random() * 9) - 4; // -4 a 4
+            } while(tA === 0 || tA === 1); 
+            
+            tH = Math.floor(Math.random() * 15) - 7; 
+            tK = Math.floor(Math.random() * 15) - 7; 
+            
+            if(tH === 0 && tK === 0) tK = 3; 
+
+            activeLevelData = { type, tA, tH, tK };
+            
+            pA = 1; pH = 0; pK = 0;
+            updateUI();
+
+            let tPath = getSVGPath(activeLevelData.type, activeLevelData.tA, activeLevelData.tH, activeLevelData.tK);
+            document.getElementById('path-target').setAttribute('d', tPath);
+        }
+
+        function getSVGPath(type, a, h, k) {
+            let path = "";
+            let func = FUNC_TYPES[type].calc;
+            let step = 0.2; 
+
+            for (let x = -10.2; x <= 10.2; x += step) {
+                let y = func(x, a, h, k);
+                let drawY = -y; // SVG Y is inverted
+                
+                if (x === -10.2) path += `M ${x},${drawY} `;
+                else path += `L ${x},${drawY} `;
+            }
+            return path;
+        }
+
+        // Ejecución a ciegas: Solo actualizamos las variables de la UI, NO el SVG
+        function adjust(param, delta) {
+            if(isSystemLocked) return;
+            sfxInput();
+            
+            if(param === 'a') {
+                pA += delta;
+                if(pA > 10) pA = 10; if(pA < -10) pA = -10;
+                if(pA === 0) pA = delta > 0 ? 1 : -1; 
+            }
+            if(param === 'h') {
+                pH += delta;
+                if(pH > 10) pH = 10; if(pH < -10) pH = -10;
+            }
+            if(param === 'k') {
+                pK += delta;
+                if(pK > 10) pK = 10; if(pK < -10) pK = -10;
+            }
+            
+            updateUI();
+        }
+
+        function updateUI() {
+            document.getElementById('disp-a').innerText = pA;
+            document.getElementById('disp-h').innerText = pH;
+            document.getElementById('disp-k').innerText = pK;
+
+            let fStr = FUNC_TYPES[activeLevelData.type].format(pA, pH, pK);
+            document.getElementById('f-display').innerText = fStr;
+            document.getElementById('f-hint').innerText = FUNC_TYPES[activeLevelData.type].name;
+        }
+
+        // VALIDACIÓN MATEMÁTICA CON MUESTREO
+        function checkMatch() {
+            let func = FUNC_TYPES[activeLevelData.type].calc;
+            let testPoints = [-7.1, -3.4, 0, 1.2, 5.8, 8.5];
+            
+            for(let x of testPoints) {
+                let yT = func(x, activeLevelData.tA, activeLevelData.tH, activeLevelData.tK);
+                let yP = func(x, pA, pH, pK);
+                
+                if (Math.abs(yT - yP) > 0.01) return false;
+            }
+            return true;
+        }
+
+        function syncSignal() {
+            if (isSystemLocked) return;
+            isSystemLocked = true;
+            sfxScan();
+
+            // Dibujar la onda del jugador de golpe (Ejecución a ciegas)
+            let pPath = getSVGPath(activeLevelData.type, pA, pH, pK);
+            let pEl = document.getElementById('path-player');
+            pEl.setAttribute('d', pPath);
+            
+            // Iniciar animación de trazado rápido
+            pEl.classList.remove('error');
+            pEl.classList.add('drawing');
+
+            // Dar tiempo a que termine de dibujarse la onda para dar el veredicto
+            setTimeout(() => {
+                if (checkMatch()) {
+                    // EXITO
+                    sfxSync();
+                    let flash = document.getElementById('sync-flash');
+                    flash.classList.add('active');
+                    
+                    score++;
+                    updateScore();
+
+                    setTimeout(()=> flash.classList.remove('active'), 500);
+
+                    setTimeout(() => {
+                        document.getElementById('m-title').style.color = "var(--accent)";
+                        document.getElementById('m-score').style.display = "none";
+                        showModal("¡SEÑAL SINCRONIZADA! 📡", "Las ondas coinciden perfectamente.\nHas deducido la transformación matemática.", () => {
+                            generateProceduralLevel();
+                        }, "SIGUIENTE FRECUENCIA");
+                    }, 600);
+
+                } else {
+                    // FALLO
+                    sfxError();
+                    pEl.classList.add('error');
+                    
+                    document.querySelector('.oscilloscope-panel').classList.add('shake-screen');
+                    setTimeout(()=> document.querySelector('.oscilloscope-panel').classList.remove('shake-screen'), 300);
+
+                    hp--;
+                    updateHearts();
+                    
+                    if (hp <= 0) {
+                        sfxGameOver();
+                        document.getElementById('m-title').style.color = "var(--danger)";
+                        document.getElementById('m-score').style.display = "block";
+                        document.getElementById('m-score').innerText = score;
+                        showModal("ENLACE PERDIDO 💥", "Has calculado incorrectamente demasiadas veces.\nTu puntuación final es:", () => {
+                            score = 0;
+                            hp = 3;
+                            updateScore();
+                            updateHearts();
+                            generateProceduralLevel(); 
+                        }, "REINICIAR SISTEMA");
+                    } else {
+                        document.getElementById('m-title').style.color = "var(--warning)";
+                        document.getElementById('m-score').style.display = "none";
+                        showModal("DESFASE DETECTADO ⚠️", `La forma o posición de tu onda no coincide.\nFíjate en el error trazado en amarillo.\nTe quedan ${hp} intentos.`, () => {
+                            // Ocultar onda errónea para que sigan intentando
+                            pEl.classList.remove('drawing', 'error');
+                            pEl.style.opacity = '0';
+                            isSystemLocked = false;
+                        }, "RECALIBRAR");
+                    }
+                }
+            }, 600); // 600ms es lo que dura la animación drawWave
+        }
+
+        function updateHearts() {
+            for(let i=1; i<=3; i++) {
+                let h = document.getElementById(`h${i}`);
+                if(i <= hp) h.classList.remove('lost');
+                else h.classList.add('lost');
+            }
+        }
+        
+        function updateScore() {
+            document.getElementById('score-display').innerText = score;
+        }
+
+        let modalCallback = null;
+        function showModal(title, msg, callback = null, btnText = "CONTINUAR") { 
+            document.getElementById('m-title').innerText = title; 
+            document.getElementById('m-msg').innerText = msg; 
+            document.getElementById('m-btn').innerText = btnText;
+            document.getElementById('modal').classList.add('active'); 
+            modalCallback = callback; 
+        }
+        function closeModal() { 
+            sfxClick(); 
+            document.getElementById('modal').classList.remove('active'); 
+            if(modalCallback) { modalCallback(); modalCallback = null; } 
+        }
+
+    </script>
+</body>
+</html>
