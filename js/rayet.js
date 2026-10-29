@@ -1,3 +1,117 @@
+try { localStorage.setItem('rugged_audio_enabled', 'true'); } catch (_) {}
+(function prepareGameSlots() {
+    document.querySelectorAll('.game-card[data-game]').forEach(card => {
+        const path = card.dataset.game.trim();
+        if (!path) return;
+        // Solo rutas locales o direcciones web; nunca código ejecutable.
+        let url;
+        try { url = new URL(path, document.baseURI); } catch (_) { return; }
+        if (!['http:', 'https:', 'file:'].includes(url.protocol)) return;
+        const oldLink = card.querySelector('.game-card-link');
+        if (!oldLink) return;
+        const link = document.createElement('a');
+        link.className = oldLink.className;
+        link.setAttribute('href', path);
+        link.setAttribute('aria-label', 'Abrir juego ' + card.querySelector('.game-title').textContent.trim());
+        link.removeAttribute('target');
+        link.rel = 'noopener noreferrer';
+        while (oldLink.firstChild) link.appendChild(oldLink.firstChild);
+        oldLink.replaceWith(link);
+        card.classList.remove('disabled', 'is-coming-soon');
+        card.querySelectorAll('.placeholder-overlay').forEach(el => el.remove());
+        const thumb = card.querySelector('.game-card-thumb');
+        thumb.classList.add('has-image');
+        const preview = document.createElement('iframe');
+        preview.className = 'dynamic-thumb';
+        preview.src = path;
+        preview.loading = 'lazy';
+        preview.tabIndex = -1;
+        preview.setAttribute('aria-hidden', 'true');
+        preview.setAttribute('scrolling', 'no');
+        preview.setAttribute('sandbox', 'allow-same-origin allow-scripts');
+        thumb.prepend(preview);
+    });
+    // Los espacios que se activen en el futuro también pasan al inicio del curso.
+    document.querySelectorAll('.games-grid').forEach(grid => {
+        const cards = [...grid.querySelectorAll(':scope > .game-card')];
+        cards.sort((a, b) => Number(a.classList.contains('disabled')) - Number(b.classList.contains('disabled')));
+        cards.forEach(card => grid.appendChild(card));
+    });
+
+    // Numeración correlativa según el orden final de las tarjetas.
+    document.querySelectorAll('.games-grid > .game-card').forEach((card, index) => {
+        const badge = card.querySelector('.game-number');
+        if (badge) badge.textContent = String(index + 1).padStart(2, '0');
+    });
+})();
+
+(function() {
+      const visor=document.getElementById('visor-juego');
+      const frame=document.getElementById('frame-juego');
+      const tab=document.getElementById('visorExitTab');
+      const panel=document.getElementById('visorExitPanel');
+      let dragging=false, moved=false, startY=0, startTop=0;
+      function showPanel(show) {
+        panel.hidden=!show;
+        tab.setAttribute('aria-expanded',String(show));
+        if(show) document.getElementById('visorContinue').focus();
+      }
+      tab.addEventListener('pointerdown',e=>{
+        dragging=true;moved=false;startY=e.clientY;
+        startTop=tab.getBoundingClientRect().top-visor.getBoundingClientRect().top;
+        tab.setPointerCapture(e.pointerId);
+      });
+      tab.addEventListener('pointermove',e=>{
+        if(!dragging)return;
+        const dy=e.clientY-startY;
+        if(Math.abs(dy)>7)moved=true;
+        if(moved)tab.style.top=Math.max(0,Math.min(visor.clientHeight-tab.offsetHeight,startTop+dy))+'px';
+      });
+      tab.addEventListener('pointerup',()=>{dragging=false;});
+      tab.addEventListener('pointercancel',()=>{dragging=false;});
+      tab.addEventListener('click',e=>{
+        if(moved){e.preventDefault();moved=false;return;}
+        showPanel(panel.hidden);
+      });
+      document.getElementById('visorContinue').addEventListener('click',()=>showPanel(false));
+      document.getElementById('visorFullscreen').addEventListener('click',()=>{
+        showPanel(false);
+        if(!document.fullscreenElement && !document.webkitFullscreenElement){
+          if(visor.requestFullscreen)visor.requestFullscreen().catch(()=>{});
+          else if(visor.webkitRequestFullscreen)visor.webkitRequestFullscreen();
+        }
+      });
+      document.getElementById('visorConfirmExit').addEventListener('click',()=>window.cerrarJuego());
+      document.addEventListener('click', e => {
+        const link=e.target.closest?.('.game-card-link');
+        if(!link) return;
+        e.preventDefault();
+        if(link.closest('.disabled, .is-coming-soon')) return;
+        const url=link.getAttribute('href');
+        if(!url || url==='#') return;
+        window.dispatchEvent(new Event('rugged:game-open'));
+        frame.src=url; visor.classList.add('activo'); showPanel(false);
+        if(visor.requestFullscreen) visor.requestFullscreen().catch(()=>{});
+        else if(visor.webkitRequestFullscreen) visor.webkitRequestFullscreen();
+      }, true);
+      window.cerrarJuego=function(){
+        visor.classList.remove('activo');showPanel(false);frame.src='';
+        window.dispatchEvent(new Event('rugged:game-close'));
+        if(document.fullscreenElement || document.webkitFullscreenElement){
+          if(document.exitFullscreen)document.exitFullscreen().catch(()=>{});
+          else if(document.webkitExitFullscreen)document.webkitExitFullscreen();
+        }
+      };
+      document.addEventListener('keydown',e=>{
+        if(e.key==='Escape' && visor.classList.contains('activo') &&
+           !document.fullscreenElement && !document.webkitFullscreenElement){
+          e.preventDefault();showPanel(panel.hidden);
+        }
+      });
+      // Al elegir un archivo el navegador puede salir de fullscreen.
+      // Nunca cerrar el juego por fullscreenchange.
+    })();
+
 /* ============================================================
    AVENTURAS DE RAYET — JAVASCRIPT PRINCIPAL DEL PORTAL PRIMARIA
    Versión 1.0 — 20 juegos organizados en 5 secciones temáticas
@@ -750,3 +864,27 @@ console.log(
     'background: linear-gradient(90deg, #ffb347, #ff8c42, #d96a1e); color: #fff; padding: 6px 14px; border-radius: 8px; font-weight: 900; font-family: sans-serif;',
     'color: #ff8c42; font-weight: 700; padding: 4px 8px; font-family: sans-serif;'
 );
+(function equalGameCards() {
+    const cards = [...document.querySelectorAll('.game-card')];
+    let queued = false;
+    function measure() {
+        queued = false;
+        document.documentElement.style.removeProperty('--equal-card-height');
+        // Incluye tarjetas ocultas por el filtro sin mostrarlas en pantalla.
+        const hidden = cards.filter(card => card.hidden);
+        hidden.forEach(card => { card.hidden = false; });
+        const height = Math.ceil(Math.max(0, ...cards.map(card => card.offsetHeight)));
+        hidden.forEach(card => { card.hidden = true; });
+        document.documentElement.style.setProperty('--equal-card-height', height + 'px');
+    }
+    function schedule() {
+        if (!queued) { queued = true; requestAnimationFrame(measure); }
+    }
+    new ResizeObserver(schedule).observe(document.querySelector('.games-grid'));
+    new MutationObserver(schedule).observe(document.querySelector('#juegos') || document.body,
+        {subtree:true, childList:true, characterData:true});
+    window.addEventListener('resize', schedule);
+    window.addEventListener('load', schedule);
+    if (document.fonts) document.fonts.ready.then(schedule);
+    schedule();
+})();

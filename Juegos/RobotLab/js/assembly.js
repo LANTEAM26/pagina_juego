@@ -1,0 +1,56 @@
+// A controller owns one state and one scene. Two players never share mutable state.
+RL.geometry={left:6,top:15,width:88};
+RL.geometry.bottom=RL.geometry.top+RL.geometry.width*1.25/(RL.body.viewport[2]/RL.body.viewport[3]);
+RL.createAssembly=function({state,scene,onChange=()=>{},onSelection=()=>{},message=()=>{},isUnlocked=()=>true,limit=5,prefix='piece',canMutate=()=>true}){
+  let serial=0;const getState=typeof state==='function'?state:()=>state,getScene=typeof scene==='function'?scene:()=>scene;
+  const api={
+    save(){const s=getState();s.history.push(JSON.stringify({placed:s.placed,layers:s.layers}));if(s.history.length>60)s.history.shift()},
+    syncLayers(){const s=getState(),body=s.layers.indexOf('body');s.placed.forEach(p=>p.layer=s.layers.indexOf(p.uid)<body?'back':'front')},
+    height(p){const item=RL.itemBy(p.id);return p.size*1.25/(item.viewport[2]/item.viewport[3])},
+    keepVisible(p){const h=this.height(p);p.x=Math.max(0,Math.min(100-p.size,p.x));p.y=Math.max(0,Math.min(100-h,p.y));if(RL.itemBy(p.id).category==='patitas'&&p.layer==='back')p.y=Math.max(p.y,Math.min(100-h,RL.geometry.bottom-h*.65))},
+    notify(){this.draw();onChange()},
+    equip(id){
+      const s=getState(),item=RL.itemBy(id);if(!item||s.done||!canMutate())return;
+      if(!isUnlocked(item)){message('Resuelve el reto para desbloquear la pieza.');return}
+      const copies=s.placed.filter(p=>p.id===id).length;
+      if(copies>=limit){message('Ya tienes '+limit+' copias de esta pieza.');RL.beep(false);return}
+      this.save();const cat=item.category;
+      const sizes={ojos:13,bocas:15,sonrojos:15,accesorios:item.kind==='sombreros'?46:39,patitas:16,botones:12};
+      const positions={ojos:[61,45],bocas:[70,64],sonrojos:[59,63],accesorios:[51,15],patitas:[18,77],botones:[19,32]};
+      let [x,y]=positions[cat];const count=s.placed.filter(p=>RL.itemBy(p.id).category===cat).length;
+      if(cat==='ojos'||cat==='sonrojos')x=count%2?79:60;
+      if(cat==='patitas')x=[17,35,55,74,8][count%5];
+      if(cat==='botones')[x,y]=[[19,31],[36,20],[27,41],[46,30],[12,45]][count%5];
+      const p={id,uid:prefix+'-'+(++serial),x:x+(copies%8)*.8,y:y+(copies%8)*.8,size:sizes[cat],angle:0,layer:cat==='patitas'?'back':'front'};
+      if(cat==='patitas')p.y=RL.geometry.bottom-this.height(p)*.6+(copies%2)*.8;
+      s.placed.push(p);if(cat==='patitas')s.layers.splice(s.layers.indexOf('body'),0,p.uid);else s.layers.push(p.uid);
+      this.syncLayers();this.keepVisible(p);s.selected=p.uid;this.notify();
+    },
+    select(uid){const s=getState();if(s.done||!canMutate())return;s.selected=uid;this.draw();onSelection()},
+    remove(){const s=getState();if(!s.selected||s.done||!canMutate())return;this.save();s.placed=s.placed.filter(p=>p.uid!==s.selected);s.layers=s.layers.filter(uid=>uid!==s.selected);s.selected=null;this.notify()},
+    tool(action){
+      const s=getState();if(s.done||!canMutate())return;
+      if(action==='undo'){if(s.history.length){const old=JSON.parse(s.history.pop());s.placed=old.placed;s.layers=old.layers;s.selected=null;this.syncLayers();this.notify()}return}
+      if(action==='reset'){if(s.placed.length){this.save();s.placed=[];s.layers=['body'];s.selected=null;this.notify()}return}
+      const p=s.placed.find(p=>p.uid===s.selected);if(!p){message('Selecciona una copia para editarla.');return}
+      if(action==='front'||action==='back'){const i=s.layers.indexOf(p.uid),j=i+(action==='front'?1:-1);if(j<0||j>=s.layers.length)return;this.save();[s.layers[i],s.layers[j]]=[s.layers[j],s.layers[i]];this.syncLayers()}
+      else{this.save();if(action==='rotate')p.angle+=15;if(action==='left')p.angle-=15;if(action==='plus')p.size=Math.min(65,p.size+2);if(action==='minus')p.size=Math.max(5,p.size-2)}
+      this.keepVisible(p);this.notify();
+    },
+    moveSelected(dx,dy){const s=getState(),p=s.placed.find(p=>p.uid===s.selected);if(!p||s.done||!canMutate())return;this.save();p.x+=dx;p.y+=dy;this.keepVisible(p);this.notify()},
+    draw(){
+      const s=getState(),root=getScene();if(!root)return;
+      root.querySelectorAll('.placed').forEach(el=>el.remove());root.querySelector('.base-piece').style.zIndex=20+s.layers.indexOf('body');
+      s.placed.forEach(p=>{
+        const item=RL.itemBy(p.id),el=document.createElement('div');el.className='placed'+(s.selected===p.uid?' active':'');el.dataset.uid=p.uid;el.dataset.layer=p.layer;
+        el.style.cssText=`left:${p.x}%;top:${p.y}%;width:${p.size}%;height:${api.height(p)}%;transform:rotate(${p.angle}deg);z-index:${20+s.layers.indexOf(p.uid)}`;
+        el.setAttribute('aria-label',item.name);el.innerHTML=RL.sprite(p.id);root.appendChild(el);let drag=null,pointer=null;
+        el.addEventListener('pointerdown',ev=>{if(s.done||pointer!==null||!canMutate())return;ev.preventDefault();pointer=ev.pointerId;s.selected=p.uid;api.save();drag={cx:ev.clientX,cy:ev.clientY,x:p.x,y:p.y};el.setPointerCapture(ev.pointerId);root.querySelectorAll('.placed').forEach(node=>node.classList.remove('active'));el.classList.add('active');onSelection()});
+        el.addEventListener('pointermove',ev=>{if(!drag||ev.pointerId!==pointer||!canMutate())return;const box=root.getBoundingClientRect();p.x=drag.x+(ev.clientX-drag.cx)*100/box.width;p.y=drag.y+(ev.clientY-drag.cy)*100/box.height;api.keepVisible(p);el.style.left=p.x+'%';el.style.top=p.y+'%'});
+        const stop=ev=>{if(!drag||ev.pointerId!==pointer)return;drag=null;pointer=null;onSelection()};el.addEventListener('pointerup',stop);el.addEventListener('pointercancel',stop);el.addEventListener('lostpointercapture',stop);
+      });
+    }
+  };return api;
+};
+RL.assembly=RL.createAssembly({state:()=>RL.state,scene:()=>document.querySelector('#robot-scene'),onChange:()=>RL.onAssemblyChanged?.(),onSelection:()=>RL.onSelectionChanged?.(),message:text=>RL.message?.(text),isUnlocked:item=>RL.isUnlocked?.(item)});
+RL.drawBoard=()=>RL.assembly.draw();

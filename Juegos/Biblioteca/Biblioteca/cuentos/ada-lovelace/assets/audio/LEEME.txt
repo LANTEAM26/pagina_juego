@@ -1,0 +1,3 @@
+Ada no incluía grabaciones. El lector utiliza la voz española del navegador.
+Puedes colocar los MP3 aquí y añadir audio: "assets/audio/archivo.mp3" en cada
+página de js/cuento.js. El volumen se regula desde el menú Narrador.

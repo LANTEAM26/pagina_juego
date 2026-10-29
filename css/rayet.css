@@ -2482,3 +2482,22 @@ body.portal-primaria.rugged-game-open #soundToggle.rugged-sound-button { display
 .portal-primaria .hero-character .rayet-shadow,
 .portal-primaria .hero-character .rayet-aura { display:none; }
 .portal-primaria .rayet-stage .robot-img { filter:none; }
+
+
+/* Tarjetas compactas: conserva el estilo y las miniaturas existentes. */
+.portal-primaria .games-grid { align-items:stretch; }
+.portal-primaria .game-card { height:var(--equal-card-height, auto); }
+.portal-primaria .game-card .game-card-link { height:100%; }
+.portal-primaria .game-card .game-card-thumb { aspect-ratio:16/9; }
+.portal-primaria .game-card .game-card-body { padding:14px 16px; gap:8px; }
+.portal-primaria .game-card .game-card-top { gap:6px; margin:0; }
+.portal-primaria .game-card .game-category-tag { white-space:normal; }
+.portal-primaria .game-card .game-title { margin:2px 0; font-size:1.1rem; line-height:1.25; }
+.portal-primaria .game-card .game-desc { display:block; -webkit-line-clamp:unset; overflow:visible; overflow-wrap:anywhere; line-height:1.4; margin:0; flex:none; }
+.portal-primaria .game-card .game-card-bottom { margin-top:auto; padding-top:8px; }
+
+/* La portada conserva su altura aunque el texto ocupe más espacio. */
+.portal-primaria .game-card .game-card-thumb { flex:0 0 auto; min-height:0; width:100%; }
+.portal-primaria .game-card .game-card-body { min-height:min-content; }
+.portal-primaria .game-card .dynamic-thumb { display:block; position:absolute; inset:0 auto auto 0; width:400%; height:400%; transform:scale(.25); transform-origin:top left; border:0; pointer-events:none; z-index:1; }
+.portal-primaria .game-card .game-thumb-bg { pointer-events:none; }
