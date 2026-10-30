@@ -10,6 +10,7 @@ window.HISTORIAS = [
     description: 'Tres hermanos construyen sus casas y descubren la importancia del esfuerzo y la colaboración.' },
   { id: 'ada', title: 'Ada Lovelace', shortTitle: 'Ada Lovelace', cover: 'cuentos/ada-lovelace/assets/portada.png', href: 'cuentos/ada-lovelace/index.html', symbol: '⚙',
     kicker: 'Imaginación y tecnología', description: 'Conoce a una pionera de la programación y explora cómo las matemáticas y la imaginación pueden trabajar juntas.' },
+  {"id": "olga", "title": "Olga Lock Sing", "shortTitle": "Olga Lock Sing", "cover": "assets/olga.png", "href": "cuentos/olga-lock-sing/index.html", "kicker": "Ciencia y naturaleza", "description": "Conoce a una científica peruana que investigó las plantas, compartió sus conocimientos y nunca dejó de aprender."},
   { id: 'nueva-aventura', title: 'Una nueva aventura', shortTitle: 'Próximamente', symbol: '✦', tone: 'garnet',
     description: 'Un nuevo libro llegará pronto a nuestra biblioteca. ¡Todavía hay muchas aventuras por descubrir!' },
   { id: 'nueva-historia', title: 'Una historia por descubrir', shortTitle: 'Próximamente', symbol: '✧', tone: 'forest',

@@ -7,6 +7,7 @@ const paragraphs=t=>t.split(/\n\s*\n/).map(p=>`<p>${esc(p)}</p>`).join('');
 const activities=data.activities||[];
 const definitions=data.cards||{};
 let items=[],pos=0,readingMode='activities',narrationMode='page',started=false,busy=false,epoch=0;
+let recordingRun=0;
 let narrationId='',pendingNarration=0,activity=null,activityVoice='',activityWin=false,context;
 const pageTimers=new Set();
 function later(fn,ms){const id=setTimeout(()=>{pageTimers.delete(id);fn();},ms);pageTimers.add(id);return id;}
@@ -168,7 +169,7 @@ function winActivity(){
 }
 function stopVoice(){
  if(pendingNarration){clearTimeout(pendingNarration);pageTimers.delete(pendingNarration);pendingNarration=0;}
- narrationId='';narrator.pause();narrator.currentTime=0;narrator.onended=null;window.speechSynthesis?.cancel();activeSpeech=null;$('#voiceStatus').textContent='';musicVolume();
+ recordingRun++;narrationId='';narrator.onended=null;narrator.onerror=null;narrator.pause();narrator.currentTime=0;narrator.onended=null;window.speechSynthesis?.cancel();activeSpeech=null;$('#voiceStatus').textContent='';musicVolume();
 }
 function stopEffects(){winSound.onended=null;winSound.onerror=null;winSound.pause();winSound.currentTime=0;loseSound.pause();loseSound.currentTime=0;musicVolume();}
 function scheduleVoice(){
@@ -179,6 +180,7 @@ let activeSpeech=null,speechOffset=0;
 function playVoice(startAt=0){
  if(narrationMode==='off'||busy||!started||modeDialog.open||endDialog.open||activityWin)return;
  const item=items[pos],token=epoch;stopVoice();
+ if(data.id==='olga'&&item.type!=='activity'){playOlgaRecording(item,token);return;}
  const src=item.audio;
  if(item.type==='activity'||!src){
   const fullText=item.type==='activity'?activityVoice+' '+item.hint:item.text;
@@ -195,6 +197,60 @@ function playVoice(startAt=0){
  narrator.onerror=()=>{if(epoch!==token)return;$('#voiceStatus').textContent='No se pudo reproducir. Puedes volver a escuchar.';musicVolume();updateControls();};
  narrator.play().then(()=>{if(epoch!==token){narrator.pause();return;}$('#voiceStatus').textContent='Narrando esta página';musicVolume();updateControls();}).catch(()=>{if(epoch===token){$('#voiceStatus').textContent='Pulsa Volver a escuchar para iniciar la voz.';updateControls();}});
 }
+// Archivos existentes en assets/audio/narrador/. La página 2 tiene una sola parte.
+// Se prueban las extensiones habituales porque el explorador puede ocultarlas.
+const OLGA_NARRADOR = {
+  1:['pag1-1','pag1-2'], 2:['pag2'], 3:['pag3-1','pag3-2'],
+  4:['pag4-1','pag4-2'], 5:['pag5-1','pag5-2'],
+  6:['pag6-1','pag6-2'], 7:['pag7-1','pag7-2'],
+  8:['pag8-1','pag8-2'], 9:['pag9-1','pag9-2'],
+  10:['pag10-1','pag10-2']
+};
+function playOlgaRecording(item,token){
+ const files=OLGA_NARRADOR[item.page];
+ if(!files){$('#voiceStatus').textContent='Esta página no tiene una grabación.';return;}
+ const run=++recordingRun,extensions=['mp3','wav','m4a','ogg','aac'];
+ let part=0,extension=0;
+ narrationId=item.id;
+ const valid=()=>run===recordingRun&&epoch===token&&narrationId===item.id&&narrationMode!=='off'&&!busy&&!modeDialog.open&&!endDialog.open;
+ const status=()=>`Narrando · parte ${part+1} de ${files.length}`;
+ function loadPart(){
+  if(!valid())return;
+  narrator.onended=null;narrator.onerror=null;
+  narrator.volume=window.BibliotecaAudio.voice();
+  narrator.src='assets/audio/narrador/'+files[part]+'.'+extensions[extension];
+  narrator.onended=()=>{
+   if(!valid())return;
+   part++;extension=0;
+   if(part<files.length){loadPart();return;}
+   narrator.onended=null;narrator.onerror=null;
+   $('#voiceStatus').textContent='Narración terminada';musicVolume();updateControls();
+   if(narrationMode==='auto')move(1);
+  };
+  const nextExtension=()=>{
+   if(!valid())return;
+   if(extension<extensions.length-1){extension++;loadPart();return;}
+   narrator.onended=null;narrator.onerror=null;
+   $('#voiceStatus').textContent='No se pudo abrir '+files[part]+'. Revisa assets/audio/narrador/.';
+   musicVolume();updateControls();
+  };
+  narrator.onerror=nextExtension;
+  const requested=narrator.src;
+  narrator.play().then(()=>{
+   if(!valid()||narrator.src!==requested)return;
+   $('#voiceStatus').textContent=status();musicVolume();updateControls();
+  }).catch(error=>{
+   if(!valid()||narrator.src!==requested)return;
+   // Los errores de archivo los gestiona onerror. No se omite ninguna parte.
+   if(error.name==='NotAllowedError'){
+    $('#voiceStatus').textContent='Pulsa Volver a escuchar para iniciar la grabación.';
+    musicVolume();updateControls();
+   }
+  });
+ }
+ loadPart();
+}
+
 function musicVolume(){window.BibliotecaAudio.duck(!narrator.paused||window.speechSynthesis?.speaking||!winSound.paused||!loseSound.paused);}
 function ensureMusic(){return window.BibliotecaAudio.ensure();}
 function snapshot(side){if(items[pos].type!=='activity')return (side==='right'?right:left).innerHTML;return `<div class="activity-spread activity-snapshot ${side}" data-story="${data.id}" style="${esc(spread.getAttribute('style')||'')}">${spread.innerHTML}</div>`;}
