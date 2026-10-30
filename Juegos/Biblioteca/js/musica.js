@@ -1,6 +1,0 @@
-(()=>{'use strict';const a=document.querySelector('#bgm'),b=document.querySelector('#musicToggle'),v=document.querySelector('#volume'),s=document.querySelector('#track');if(!a||!b||!v||!s)return;a.src=s.value;a.volume=Number(v.value)/100;let wanted=true,pending;
-function update(){const on=!a.paused;b.textContent=on?'♫ Música: activada':'♫ Activar música';b.setAttribute('aria-pressed',String(on));}
-function remove(){document.removeEventListener('pointerdown',first,true);document.removeEventListener('keydown',first,true);}
-async function play(){if(pending)return pending;pending=a.play().then(remove).catch(()=>{}).finally(()=>{pending=null;update()});return pending;}
-function first(e){if(wanted&&!e.target.closest?.('#musicToggle'))play();}
-b.onclick=()=>{if(!a.paused){wanted=false;a.pause();remove();update()}else{wanted=true;play()}};v.oninput=()=>a.volume=Number(v.value)/100;s.onchange=()=>{const on=!a.paused;a.src=s.value;if(on)play()};a.addEventListener('play',update);a.addEventListener('pause',update);document.addEventListener('pointerdown',first,true);document.addEventListener('keydown',first,true);window.addEventListener('pagehide',()=>a.pause());window.addEventListener('pageshow',e=>{if(e.persisted&&wanted)play()});update();play();})();

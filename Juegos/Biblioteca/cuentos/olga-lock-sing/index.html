@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#30251c"><title>Olga Lock Sing</title><link rel="stylesheet" href="css/lector.css"><link rel="stylesheet" href="css/olga.css"></head>
+<body>
+<header class="reader-header"><a href="../../Biblioteca.html">← Biblioteca</a><strong>Olga Lock Sing</strong><button id="changeMode" type="button">Cambiar modo</button></header>
+<main class="reader-layout">
+<div id="stage" class="stage"><div id="book" class="book">
+<div id="leftPage" class="paper left-paper"></div><div id="rightPage" class="paper right-paper"></div>
+<div class="binding" aria-hidden="true"></div><section id="activitySpread" class="activity-spread" hidden aria-label="Actividad del cuento"></section>
+<div id="turn" class="turn" aria-hidden="true"><div class="turn-face turn-front paper"></div><div class="turn-face turn-back paper"></div></div>
+<button id="prev" class="page-arrow previous" type="button" aria-label="Página anterior">‹</button><button id="next" class="page-arrow following" type="button" aria-label="Página siguiente">›</button>
+</div></div>
+<div class="bottom-bar">
+<span id="progress" role="status"></span>
+<details id="narrationMenu" class="toolbar-menu"><summary id="narrate">Narrador · Por página <span aria-hidden="true">⌃</span></summary><div class="menu-panel narration-panel" role="group" aria-label="Modo de narración">
+<p class="menu-heading">Cómo quieres leer</p>
+<button type="button" data-narration="off" aria-pressed="false"><span class="option-icon">Aa</span><span><strong>Sin narrador</strong><small>Lee a tu ritmo, sin voz.</small></span><span class="option-check">✓</span></button>
+<button type="button" data-narration="page" aria-pressed="true"><span class="option-icon">♫</span><span><strong>Narrador por página</strong><small>Escucha y pasa la hoja tú.</small></span><span class="option-check">✓</span></button>
+<button type="button" data-narration="auto" aria-pressed="false"><span class="option-icon">▶</span><span><strong>Narrador automático</strong><small>Escucha y avanza; se detiene en los juegos.</small></span><span class="option-check">✓</span></button>
+<label class="volume-label" for="voiceVolume">Volumen de la voz <output id="voiceVolumeValue">85%</output></label><input id="voiceVolume" aria-label="Volumen de la voz" type="range" min="0" max="100" value="85"><div class="menu-playback"><button id="voicePlayback" type="button">Volver a escuchar</button><span id="voiceStatus" role="status"></span></div>
+</div></details>
+<div id="musicControls"></div>
+</div></main>
+<dialog id="modes" aria-labelledby="modeTitle"><p class="dialog-kicker">Una historia para compartir</p><h1 id="modeTitle">Olga Lock Sing</h1><div class="mode-options"><button type="button" data-mode="story"><span aria-hidden="true">✦</span><strong>Solo historia</strong><small>Un cuento para leer y escuchar.</small></button><button type="button" data-mode="activities"><span aria-hidden="true">✧</span><strong>Historia con actividades</strong><small>Lee, escucha y participa en cinco juegos.</small></button></div><button id="resume" type="button" hidden>Continuar donde estaba</button><a href="../../Biblioteca.html">← Volver a la biblioteca</a></dialog>
+<dialog id="ending" aria-labelledby="endTitle"><div class="sparkles" aria-hidden="true">✦ ✧ ✦</div><p class="dialog-kicker">Nunca dejes de sentir curiosidad</p><h2 id="endTitle">¡Fin de la historia!</h2><p>Cada historia nos invita a aprender, imaginar y seguir descubriendo.</p><a class="primary" href="../../Biblioteca.html" id="returnLibrary">Volver a la biblioteca</a><button id="restart" type="button">Leer de nuevo</button><button id="returnMoral" type="button">Volver al mensaje final</button></dialog>
+<audio id="narrator" preload="metadata"></audio><audio id="bgm" loop preload="metadata" autoplay></audio>
+<audio id="winSound" preload="auto" src="assets/audio/efectos/floraphonic-marimba-win-b-2-209675.mp3"></audio>
+<audio id="loseSound" preload="auto" src="assets/audio/efectos/floraphonic-violin-lose-1-175615.mp3"></audio>
+<script src="js/cuento.js"></script><script src="js/audio-comun.js"></script><script src="js/iconos.js"></script><script src="js/lector.js"></script></body></html>

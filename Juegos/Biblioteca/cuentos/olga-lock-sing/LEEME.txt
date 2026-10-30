@@ -1,0 +1,48 @@
+OLGA LOCK SING · UNA VIDA DESCUBRIENDO LA NATURALEZA
+
+INSTALACIÓN
+Copia la carpeta olga-lock-sing dentro de Biblioteca/cuentos/.
+Abre cuentos/olga-lock-sing/index.html desde tu biblioteca o directamente.
+Este paquete contiene solo el cuento de Olga; no reemplaza otros cuentos ni el lector compartido.
+
+PARA MOSTRAR EL LIBRO EN EL ESTANTE
+En Biblioteca/js/catalogo.js, añade el siguiente objeto dentro del arreglo window.HISTORIAS, separado de los demás objetos por una coma:
+
+{
+  id: 'olga',
+  title: 'Olga Lock Sing',
+  shortTitle: 'Olga Lock Sing',
+  cover: 'cuentos/olga-lock-sing/assets/portada.webp',
+  href: 'cuentos/olga-lock-sing/index.html',
+  kicker: 'Ciencia y naturaleza',
+  description: 'Conoce a una científica peruana y descubre el valor de la curiosidad, las plantas y el trabajo en equipo.'
+}
+
+CONTENIDO
+Diez páginas ilustradas, portada y cinco actividades después de las páginas 2, 4, 6, 8 y 10.
+Dos modos: solo historia o historia con actividades.
+Todas las actividades se distribuyen entre las dos hojas. Se pueden cambiar las respuestas antes de comprobar.
+Las cartas muestran color y una marca de selección; las parejas usan números y colores.
+Solo Comprobar evalúa las respuestas y reproduce el sonido de error.
+Al acertar suena el MP3 de victoria completo. El evento de final del audio avanza la página.
+Si el navegador bloquea ese audio, se ofrece Continuar para no bloquear el cuento.
+La actividad final termina con una pantalla de cierre y permite volver al mensaje final.
+
+NARRACIÓN
+No se suministraron grabaciones de voz para Olga. El cuento utiliza la voz en español disponible en el navegador o el sistema. La disponibilidad y el funcionamiento sin conexión dependen del equipo.
+Incluye volumen de voz y tres modos: sin narrador, narración por página y narración automática.
+La voz comienza un segundo después de terminar el cambio de hoja. El modo automático espera a que se resuelvan los juegos.
+Las frases de parejas, nombres de las plantas e indicaciones cuentan con controles para escucharlas.
+
+MÚSICA Y SONIDOS
+Se reutiliza la playlist general en Biblioteca/assets/audio/musica/.
+No se duplican canciones dentro de Olga. Fuera de la estructura Biblioteca/cuentos/ la música y el enlace de regreso requieren esa biblioteca para funcionar.
+La música empieza activada por defecto, después del primer gesto permitido por el navegador; se respetan las preferencias guardadas.
+Los sonidos de victoria y error sí se incluyen para que las actividades puedan funcionar de forma independiente.
+Las imágenes se optimizaron a WebP conservando las transparencias.
+
+EDICIÓN
+Textos, tarjetas y respuestas: js/cuento.js.
+Diseño específico y márgenes de las dos hojas: css/olga.css.
+No hace falta modificar el lector de los otros cuentos.
+El mensaje final dirigido a los niños es una adaptación educativa, no una cita literal de Olga.
