@@ -40,7 +40,7 @@ function render(){
   const visible=Math.abs(offset)<=1, featured=offset===0;
   btn.classList.toggle('featured',featured);btn.classList.toggle('side',!featured);
   btn.dataset.visible=String(visible);btn.setAttribute('aria-hidden',String(!visible));btn.inert=!visible;btn.tabIndex=visible?0:-1;
-  btn.style.setProperty('--book-x',`${offset*23.2}cqw`);btn.style.setProperty('--book-scale',featured?'1':'.76');
+  btn.style.setProperty('--book-x',`${offset*22}cqw`);btn.style.setProperty('--book-scale',featured?'1':'.76');
   btn.style.zIndex=featured?'3':visible?'2':'1';
  });
  dots.forEach((dot,i)=>dot.setAttribute('aria-current',String(i===selected)));
@@ -59,7 +59,8 @@ stage.addEventListener('click',e=>{if(stage.dataset.swiped){e.preventDefault();e
 document.querySelector('.close').onclick=()=>dialog.close();
 document.querySelector('#modal-action').onclick=()=>{const b=catalog.find(b=>b.id===dialog.dataset.book);if(b?.href){document.querySelector('#bgm').pause();window.BookSounds?.stop();location.href=b.href;}else dialog.close();};
 dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close();});
-function fitShelf(){const r=stage.getBoundingClientRect();shell.style.width=Math.max(1,Math.min(r.width,r.height*16/9,1900))+'px';}
+function fitShelf(){const r=stage.getBoundingClientRect();shell.style.width=Math.max(1,Math.min(r.width/.84,r.height*1920/995))+'px';}
+document.querySelector('#collectionCount').textContent=`${catalog.filter(b=>b.href).length} cuentos disponibles · ${catalog.filter(b=>!b.href).length} próximamente`;
 if(window.ResizeObserver)new ResizeObserver(fitShelf).observe(stage);
 window.addEventListener('resize',fitShelf);render();fitShelf();
 })();

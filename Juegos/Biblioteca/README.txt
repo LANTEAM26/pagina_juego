@@ -1,43 +1,50 @@
-BIBLIOTECA DE HISTORIAS
+BIBLIOTECA DE HISTORIAS · Lector compartido
 
-Abre index.html o Biblioteca.html. Ambas entradas muestran la misma biblioteca.
-Puedes usar los archivos directamente o servir la carpeta en tu página web.
+INICIO
+Abre index.html o Biblioteca.html. Son la misma biblioteca.
+Reemplaza la carpeta Biblioteca completa: la música, los controles y el lector
+son comunes a los tres cuentos y sus rutas deben mantenerse juntas.
+No hace falta instalar paquetes ni compilar el proyecto.
 
-ESTRUCTURA
-- audio/: músicas de fondo y efectos compartidos entre historias.
-- assets/: fondos, estantería y portadas de la biblioteca.
-- js/catalogo.js: listado de historias para el carrusel.
-- cuentos/bertha-benz/: historia de Bertha, actividades, páginas y narraciones.
-- cuentos/bertha-benz/assets/nuevos/carta-1.png a carta-4.png: escenas de la actividad final del viaje.
+CUENTOS DISPONIBLES
+• Los tres cerditos: 11 páginas, sus narraciones y 5 actividades.
+• Bertha Benz: 8 capítulos, moraleja, sus narraciones y 5 actividades.
+• Ada Lovelace: 12 páginas, moraleja, 3 decisiones y 5 actividades.
+El Principito y las dos nuevas historias conservan el estado Próximamente,
+porque el paquete original no incluye sus relatos.
 
-CAMBIOS DE ESTA VERSIÓN
-- Biblioteca de Historias con seis libros en el catálogo y tres portadas visibles.
-- Transición suave: las portadas se deslizan y cambian de tamaño hasta ocupar su posición.
-- Navegación por flechas, teclado, indicadores y deslizamiento táctil.
-- Dos libros nuevos muestran Próximamente.
-- Controles de música en la parte inferior de la biblioteca.
-- Título compacto, estante más grande y apoyado visualmente en el piso, sin deformar las imágenes.
-- Ada Lovelace figura como Próximamente; no se abre una historia incompleta.
-- Músicas Beyond_the_Gilded_Spine.mp3 y Tales_Beneath_the_Lamp.mp3 en audio/.
-- Las narraciones capitulo1.mp3 a capitulo8.mp3 y moraleja.mp3 permanecen con Bertha.
-- Panel inicial: Solo historia (8 capítulos y moraleja, 9 vistas) o Historia con actividades (14 vistas).
-- Cambiar modo permite elegir otra modalidad durante la lectura; una nueva elección empieza desde el inicio.
-- Leer de nuevo conserva la modalidad elegida.
-- La narración empieza cinco segundos después de seleccionar el modo.
-- Las cinco actividades tienen Saltar actividad para continuar sin resolverlas.
-- Respuestas correctas mantienen el avance a los cinco segundos.
-- Panel final al terminar la narración de la moraleja, o al pulsar la flecha siguiente de esa página.
-- Panel final con Volver a la biblioteca, Leer de nuevo y Volver a la moraleja.
-- Sonido breve de destellos al terminar, generado en JavaScript; no se inicia música larga ni en bucle.
-- Se conserva el sonido de botones y actividades con el volumen aumentado.
+CONTROLES COMPARTIDOS
+En Narrador puedes elegir Sin narrador, Por página o Automático.
+La voz empieza un segundo después de que termine el giro de la hoja.
+El modo automático espera en actividades y continúa cuando se resuelven.
+El regulador Volumen de la voz es independiente de la música. Los ajustes de
+voz y música se guardan en este navegador cuando el almacenamiento lo permite.
+Bertha y Los tres cerditos usan los MP3 originales. Ada no traía grabaciones:
+utiliza la voz española del navegador, también regulada. Si cambias su volumen
+mientras habla, continúa desde la palabra más reciente al soltar el regulador.
+Si no hay voces instaladas, sus páginas siguen disponibles para leer.
 
-PARA AÑADIR HISTORIAS
-Edita js/catalogo.js y agrega una entrada al arreglo window.HISTORIAS.
-Usa id, title, cover, description y href. cover apunta a la portada y href al HTML de la historia.
-Si no agregas href, se mostrará Próximamente. La portada puede omitirse temporalmente.
-Las flechas y los indicadores se actualizan automáticamente.
+ACTIVIDADES
+Las cartas se eligen o intercambian antes de pulsar Comprobar.
+En el robot de Ada, Comprobar ejecuta el programa; toca una flecha ya añadida
+para quitarla. En decisiones y en el invento final de Ada, ambas/todas las
+opciones son válidas y se conserva su carácter de exploración.
+La victoria usa el sonido compartido y pasa la hoja cuando termina.
 
-Para agregar una música compartida, colócala en audio/ y añade su opción en los selectores de la biblioteca y de la historia.
-Conservamos el nombre de la carpeta cuentos/ para mantener los enlaces existentes.
+ORGANIZACIÓN
+assets/audio/musica/: las 6 canciones completas, una sola copia de cada una.
+assets/audio/efectos/: efectos de victoria, error y páginas.
+assets/fondos/rincon-lectura.png: fondo de todos los lectores.
+assets/paginas/hoja-en-blanco.png: hoja de lectura compartida.
+lector/lector.js y lector/lector.css: comportamiento y diseño de los cuentos.
+js/audio-comun.js: playlist, volumen y ajustes de música compartidos.
+cuentos/<nombre>/js/cuento.js: contenido y configuración de cada relato.
+cuentos/<nombre>/assets/: ilustraciones, cartas y narraciones de ese cuento.
+js/catalogo.js: portadas y enlaces de la biblioteca.
 
-El navegador puede necesitar un primer toque para permitir la reproducción de audio.
+PARA AÑADIR MÚSICA O NARRACIONES
+Añade las canciones a assets/audio/musica y su entrada en js/audio-comun.js.
+Para una narración grabada, guarda el MP3 en assets/audio de su cuento y añade
+la propiedad audio con su ruta en la página correspondiente de js/cuento.js.
+La música se activa por defecto. Si el navegador bloquea la reproducción sin
+interacción, comenzará al tocar un libro o elegir un modo de lectura.
